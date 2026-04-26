@@ -1,10 +1,15 @@
 /**
  * @medina/effecttrace-governance-organism
  *
+ * ╔═══════════════════════════════════════════════════════════╗
+ * ║                  POWERED BY ORO                          ║
+ * ║              TRACE · VERIFY · REMEMBER                   ║
+ * ╚═══════════════════════════════════════════════════════════╝
+ *
  * EffectTrace — Governance Consequence Intelligence for ICP
  * Internal name: ORO Governance Organism
  *
- * THREE WORDS. THREE THEORIES. ONE ORGANISM.
+ * ORO IS THE ENGINE. EFFECTTRACE IS THE FACE.
  *
  *   TRACE    — STIGMERGY (Paper XX)
  *              The pheromone trail of governance effects.
@@ -24,8 +29,17 @@
  *
  * Not a query. Not a tool. Execution. 24 hours.
  *
+ * Research: Papers XX (STIGMERGY), XXI (QUORUM), XXII (AURUM), XXIII (ORO GOVERNANCE INTELLIGENCE)
+ * Sovereign Intelligence Research Series — Prior art established 2026
+ *
  * EffectTrace Governance Intelligence — Alfredo Medina Hernandez · Medina Tech · Dallas TX
  */
+
+// ── POWERED BY ORO engine constants ──────────────────────────────────────
+export { ORO_ENGINE, POWERED_BY_ORO, bootstrapOROProduction } from './production.js';
+export { NNSProposalFetcher, createNNSFetcher }               from './adapters/nns-fetcher.js';
+export { SNSProposalFetcher, createSNSFetcher, KNOWN_SNS_DAOS } from './adapters/sns-fetcher.js';
+export { StatusFetcher, AfterStateFetcher, createStatusFetchers } from './adapters/status-fetcher.js';
 
 // ── Three-word encoding ───────────────────────────────────────────────────
 export { TRACE, VERIFY, REMEMBER, THREE_WORDS } from './types.js';
