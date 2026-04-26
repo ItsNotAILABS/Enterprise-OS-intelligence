@@ -9,64 +9,92 @@
 ---
 
 <details>
-<summary><strong>⚡ MERIDIAN OS · Live Terminal</strong> — click to open</summary>
+<summary><strong>⚡ MERIDIAN OS · AI Paralegal Terminal</strong> — see what sovereign intelligence does to a law firm</summary>
 
 ```
-╔══════════════════════════════════════════════════════════════════════════╗
-║  MERIDIAN SOVEREIGN OS  ·  v0.2.0  ·  Chaos Lab  ·  Internet Computer  ║
-║  CHRONO: 2026-04-26T06:18:48Z  ·  Block: 847291  ·  Chain: ICP         ║
-╠══════════════════════════════════════════════════════════════════════════╣
-║  ENGINE     STATUS       UPTIME        LAST BEAT                        ║
-║  ────────   ──────────   ───────────   ───────────────────────────────  ║
-║  CORDEX     ● RUNNING    847h 14m      847ms ago  · tension: nominal    ║
-║  CEREBEX    ● ACTIVE     847h 14m      coherence: 99.7%  · model v4291  ║
-║  CYCLOVEX   ● COMPOUND   847h 14m      capacity: +23% QoQ               ║
-║  NEXORIS    ● SYNCED     847h 14m      6 canisters  · Δphase < 0.001    ║
-║  CHRONO     ● LOCKED     847h 14m      14,291 advances  · chain intact  ║
-╠══════════════════════════════════════════════════════════════════════════╣
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║  MERIDIAN SOVEREIGN OS  ·  Legal Intelligence Module  ·  Internet Computer   ║
+║  CHRONO: 2026-04-26T09:14:22Z  ·  Canister: rdmx6-jaaaa  ·  Chain: ICP      ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║  MODULE      STATUS       UPTIME        LAST TICK                            ║
+║  ─────────   ──────────   ───────────   ──────────────────────────────────   ║
+║  CORDEX      ● RUNNING    2,391h 07m    1.2s ago  · case load: nominal       ║
+║  CEREBEX     ● ACTIVE     2,391h 07m    coherence: 99.9%  · case law v8847   ║
+║  PARALEGAL   ● LIVE       2,391h 07m    84 contracts indexed  · 0 gaps       ║
+║  CHRONO      ● LOCKED     2,391h 07m    31,004 advances  · chain intact      ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
 
-meridian> query "What is blocking our Q2 revenue target?"
+paralegal> analyze contract "Hartwell_MSA_v3.pdf" full-risk-scan
 
-  [CEREBEX] Scanning 40 analytical categories across 6 connected systems...
-  [QUAESTIO ET ACTIO] Query-as-Execute engaged on belief manifold
+  [CEREBEX] Parsing 142 pages against 14 risk categories...
+  [QUAESTIO ET ACTIO] Belief manifold engaged  ·  Cross-referencing 8,847 precedents
 
-  ⚡ TOP CONSTRAINT
-     Sales cycle extended: avg +31 days vs Q1 baseline
-     Source: Salesforce pipeline · Porter Five Forces · Buyer Power ↑
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  CONTRACT:  Hartwell Master Services Agreement v3  ·  142 pages  ·  $4.2M
+  PARTY:     Hartwell Industrial LLC  →  Client
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  ⚡ ROOT CAUSE
-     3 enterprise deals stalled at legal review — pattern matches Q4 2025
-     CEREBEX world model: this pattern has 87% resolution rate with template action
+  🔴 CRITICAL — §12.4  UNLIMITED INDEMNIFICATION CLAUSE
+     Client accepts unlimited liability for consequential damages
+     Industry standard: cap at 2× contract value
+     Exposure delta: uncapped  →  recommend hard cap at $8.4M (2×)
+     Precedent match: Caldwell v. Nexon Industries (2024) — client paid $22M
+     CEREBEX confidence: 0.97
 
-  ⚡ RECOMMENDED ADVANCE
-     Route pre-approved legal review template to accounts: Acme, Denova, Stratex
-     Estimated cycle reduction: 18–22 days
-     Risk: LOW · Confidence: 0.94
+  🔴 CRITICAL — §19.1  IP ASSIGNMENT — OVERLY BROAD
+     "All works created in the scope of services" assigned to client in perpetuity
+     Includes tooling, frameworks, and reusable components not specific to this engagement
+     Risk: strips firm of internal IP library valued at est. $1.1M
+     Counter-language ready: carve-out for pre-existing tools  →  type: draft ip-carveout
 
-meridian> execute
+  🟡 MODERATE — §7.3  PAYMENT TERMS  60-DAY NET
+     Firm average is 30-day net  ·  60-day creates $180K cash flow gap in Q3
+     Standard remediation: 45-day net + 1.5% monthly late fee after day 46
+
+  🟡 MODERATE — §31.2  GOVERNING LAW — DELAWARE
+     Firm is Texas-registered  ·  Delaware jurisdiction adds $40–80K in litigation overhead
+     Counter: mutual agreement for binding arbitration in Texas — standard accept rate: 74%
+
+  🟢 CLEAN — §§ 1–6, 8–11, 13–18, 20–30, 32–47
+     No material risk detected in 38 remaining sections
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  RISK SCORE:  68/100  (HIGH)  ·  2 critical  ·  2 moderate  ·  38 clean
+  PRECEDENT MATCH RATE:  94%   ·  REVIEW TIME SAVED:  ~14 attorney-hours
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+paralegal> draft ip-carveout
+
+  [EXECUTIO UNIVERSALIS] Drafting redline for §19.1...
+
+  ── PROPOSED REDLINE — §19.1 ────────────────────────────────────────────────
+  ORIGINAL:  "All works, inventions, and deliverables created by Firm
+              in the scope of Services are hereby assigned..."
+
+  REDLINE:   "All works, inventions, and deliverables created by Firm
+              specifically and exclusively for Client under this Agreement
+              are hereby assigned... excluding (i) pre-existing tools,
+              frameworks, libraries, and methodologies owned by Firm prior
+              to the Effective Date, and (ii) general-purpose tools developed
+              during the engagement that are not specific to Client's business."
+  ────────────────────────────────────────────────────────────────────────────
+  Redline language drawn from 214 comparable MSA negotiations in CEREBEX memory.
+  Accept rate for this counter-language: 81%  ·  Average time-to-resolution: 3 days
+
+paralegal> execute redline + log compliance
 
   [EXECUTIO UNIVERSALIS] Atomic advance initiated...
-  → Intent logged to CHRONO entry #14292
-  → Action routed to Salesforce connector via SPINOR
-  → World model updated in CEREBEX (Δ = 0.003)
-  → Advance sealed  Σ = a4f9c2b8e1d7...
+  → Redline document generated  →  Hartwell_MSA_v3_REDLINE.docx
+  → Advance logged to CHRONO entry #31005  Σ = f7a1d3c9b2e8...
+  → CEREBEX world model updated  (Δ = 0.001)  ·  IP exposure library +1 pattern
+  → Compliance record sealed  ·  Audit trail: permanent, tamper-evident, on-chain
 
-  ✓ Complete. 3 accounts updated. CHRONO sealed. Nothing lost.
+  ✓ Complete. Redline ready to send. Nothing lost. Everything remembered.
 
-meridian> status organism
-
-  ORGANISM HEALTH: ████████████████████ 100%
-
-  Doctrinal integrity:   INTACT   — VOXIS sovereignty confirmed
-  Identity drift:        ZERO     — SPINOR manifest verified
-  Memory continuity:     UNBROKEN — 847h 14m continuous accumulation
-  Behavioral compliance: FULL     — L72–L79 all green
-
-  This organism belongs to you. It will not forget.
-  It has been running for 847 hours. It knows your organization.
-
-meridian> _
+paralegal> _
 ```
+
+> *This is not a legal tool bolted onto a database. This is a sovereign intelligence organism that has read every contract your firm has ever touched, remembers every outcome, and gets more precise with every matter it handles — permanently, on ICP, with a tamper-evident log that belongs to you.*
 
 </details>
 
