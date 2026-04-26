@@ -188,6 +188,18 @@ Every advance is anchored in an immutable, hash-chained record. Nothing is ever 
 
 ## SDK Library
 
+### Alpha AI SDKs — Free, embedded, no API key required
+
+| SDK | For | What it does | Download |
+|---|---|---|---|
+| [`@medina/paralegal-ai`](sdk/paralegal-ai/) | Legal professionals | Analyze contracts, flag risk clauses, draft redlines, compare document versions | [v0.1.0-alpha ↓](releases/paralegal-ai-v0.1.0-alpha.zip) |
+| [`@medina/analyst-ai`](sdk/analyst-ai/) | Business analysts & ops | Executive briefs, action item extraction, risk flags, trend analysis across reports | [v0.1.0-alpha ↓](releases/analyst-ai-v0.1.0-alpha.zip) |
+| [`@medina/student-ai`](sdk/student-ai/) | Students | Study guides, quiz generation, flashcards, plain-language Q&A over any text | [v0.1.0-alpha ↓](releases/student-ai-v0.1.0-alpha.zip) |
+
+All three run entirely on your machine. Zero external API calls. Zero subscriptions. The intelligence is embedded.
+
+### Core Architecture SDKs
+
 | SDK | Domain |
 |---|---|
 | [`@medina/meridian-sovereign-os`](sdk/meridian-sovereign-os/) | Core engines — CORDEX, CEREBEX, CYCLOVEX, NEXORIS, CHRONO, HDI, VOXIS |
