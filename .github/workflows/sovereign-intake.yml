@@ -1,0 +1,77 @@
+name: Sovereign Intake — Auto-Sanitize and Commit
+
+# ─────────────────────────────────────────────────────────────────────────────
+# This workflow is the live end of the document pipeline.
+# When any markdown document is pushed to papers/, this job:
+#   1. Runs the Mundator Documentorum sanitizer
+#   2. If the sanitizer made changes (brand fixes, etc.), commits them back
+#      to the same branch automatically — no human step required
+#   3. If the sanitizer finds critical sensitive content it cannot auto-fix,
+#      the job fails and blocks the push until the author resolves it
+#
+# The doc-clean.yml workflow is the GUARD (fails on problems).
+# This workflow is the INTAKE (cleans what it can, then guards).
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  push:
+    branches-ignore:
+      - main          # main is protected — nothing auto-commits to it
+    paths:
+      - 'papers/**'
+
+permissions:
+  contents: write   # needed to push the sanitized commit back
+
+jobs:
+  intake:
+    name: Sovereign Paper Intake
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Use the token so the auto-commit push is accepted
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # Fetch the full branch so we can push back
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Mundator Documentorum (auto-fix mode)
+        id: sanitize
+        run: |
+          node tools/doc-sanitizer.js papers/
+          # Capture whether any files were modified
+          if [ -n "$(git diff --name-only)" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Sanitizer made corrections — will commit cleaned files."
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "All documents were already clean."
+          fi
+
+      - name: Commit sanitized documents
+        if: steps.sanitize.outputs.changed == 'true'
+        run: |
+          git config user.name  "Mundator Documentorum"
+          git config user.email "actions@github.com"
+          git add papers/
+          git commit -m "chore(sanitize): auto-clean incoming documents [skip ci]"
+          git push
+
+      - name: Summary
+        run: |
+          echo "### Sovereign Paper Intake" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ steps.sanitize.outputs.changed }}" == "true" ]; then
+            echo "✅ Documents sanitized and committed back to branch." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "✅ All documents were already public-showcase ready." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "*Mundator Documentorum — Medina Tech · Chaos Lab*" >> "$GITHUB_STEP_SUMMARY"

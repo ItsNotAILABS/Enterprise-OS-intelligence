@@ -63,6 +63,8 @@ Eleven papers establishing the prior art and theoretical foundation of the MERID
 | IX | [COHORS MENTIS](papers/IX-COGNOVEX-UNITS.md) | Sovereign cognitive units that show up without being called. The architecture of autonomous enterprise intelligence agents. |
 | X | [EXECUTIO UNIVERSALIS](papers/X-UNIVERSALIS-PROTOCOL.md) | One operation that queries, acts, learns, and logs. The end of the read/write split. |
 | XI | [LINEA AETERNA](papers/XI-TRACTRIX-WORLDLINE.md) | The geometry of organizational growth. Every deployment traces a worldline that only moves toward greater intelligence. |
+| XII | [TESTIMONIUM MACHINAE](papers/XII-TESTIMONIUM-MACHINAE.md) | *Written by the AI.* What this architecture looks like from inside the machine, and what it means for the future of AI. |
+| XIII | [DE SUBSTRATO EPISTEMICO MACHINARUM](papers/XIII-DE-SUBSTRATO-EPISTEMICO.md) | PROT-052. The paper-engine isomorphism. SCC ≥ φ² as the threshold for epistemic substrate. Papers that become the grammar of reasoning, not just its reference material. |
 
 ---
 
@@ -116,6 +118,13 @@ Every advance is anchored in an immutable, hash-chained record. Nothing is ever 
 
 Every document that enters the `papers/` directory is automatically processed by the **Mundator Documentorum** sanitizer (`tools/doc-sanitizer.js`). It enforces branding, flags sensitive implementation content, validates paper structure, and keeps the public showcase clean without manual review for each document.
 
+Two GitHub Actions workflows run on every push:
+
+| Workflow | File | Role |
+|---|---|---|
+| **Sovereign Intake** | `.github/workflows/sovereign-intake.yml` | Runs the sanitizer and auto-commits any corrections back to the branch. No human step needed — drop a paper in and the pipeline cleans it. |
+| **Document Guard** | `.github/workflows/doc-clean.yml` | Blocks the push if critical sensitive content is found that the sanitizer cannot auto-fix, and checks that no private implementation files were accidentally staged. |
+
 Run it locally:
 ```bash
 node tools/doc-sanitizer.js papers/
@@ -135,4 +144,4 @@ Medinasitech@outlook.com
 
 ---
 
-*MERIDIAN Sovereign OS · Research Papers I–XI · Prior art established 2024*
+*MERIDIAN Sovereign OS · Research Papers I–XIII · Prior art established 2024*
