@@ -4,7 +4,7 @@
 **Author:** Alfredo Medina Hernandez  
 **Affiliation:** Medina Tech · Chaos Lab · Dallas, Texas  
 **Contact:** Medinasitech@outlook.com  
-**Series:** Sovereign Intelligence Research — Paper V of XIV
+**Series:** Sovereign Intelligence Research — Paper V of XV
 
 ---
 

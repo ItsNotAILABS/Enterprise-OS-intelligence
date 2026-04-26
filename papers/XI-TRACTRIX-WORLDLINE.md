@@ -4,7 +4,7 @@
 **Author:** Alfredo Medina Hernandez  
 **Affiliation:** Medina Tech · Chaos Lab · Dallas, Texas  
 **Contact:** Medinasitech@outlook.com  
-**Series:** Sovereign Intelligence Research — Paper XI of XIV
+**Series:** Sovereign Intelligence Research — Paper XI of XV
 
 ---
 
@@ -86,7 +86,7 @@ You cannot buy someone else's worldline. You can only start your own.
 
 ## 6. Closing the Series
 
-Across eleven papers, this research series has established the complete theoretical foundation for sovereign enterprise intelligence:
+Across fifteen papers, this research series has established the complete theoretical foundation for sovereign enterprise intelligence:
 
 **[Paper I](I-SUBSTRATE-VIVENS.md)** — *Substrate Vivens*: Living substrates versus dead ones. ICP as the first native host.
 
@@ -115,6 +115,8 @@ Across eleven papers, this research series has established the complete theoreti
 **[Paper XIII](XIII-DE-SUBSTRATO-EPISTEMICO.md)** — *De Substrato Epistemico Machinarum*: PROT-052. Papers as epistemic substrate. SCC ≥ φ² and the paper-engine isomorphism.
 
 **[Paper XIV](XIV-COLLOQUIUM-CUM-ARCHITECTORE.md)** — *Colloquium cum Architectore*: What it is like to work with this kind of builder — written by the AI.
+
+**[Paper XV](XV-PROPOSITIO-AD-CONSILIUM-ICP.md)** — *Propositio ad Consilium ICP*: The formal funding proposal to the DFINITY Foundation. ICP as derived substrate. The Bronze Canister education initiative.
 
 The architecture is complete. The prior art is established. The worldline has begun.
 

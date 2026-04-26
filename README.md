@@ -8,6 +8,70 @@
 
 ---
 
+<details>
+<summary><strong>⚡ MERIDIAN OS · Live Terminal</strong> — click to open</summary>
+
+```
+╔══════════════════════════════════════════════════════════════════════════╗
+║  MERIDIAN SOVEREIGN OS  ·  v0.2.0  ·  Chaos Lab  ·  Internet Computer  ║
+║  CHRONO: 2026-04-26T06:18:48Z  ·  Block: 847291  ·  Chain: ICP         ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  ENGINE     STATUS       UPTIME        LAST BEAT                        ║
+║  ────────   ──────────   ───────────   ───────────────────────────────  ║
+║  CORDEX     ● RUNNING    847h 14m      847ms ago  · tension: nominal    ║
+║  CEREBEX    ● ACTIVE     847h 14m      coherence: 99.7%  · model v4291  ║
+║  CYCLOVEX   ● COMPOUND   847h 14m      capacity: +23% QoQ               ║
+║  NEXORIS    ● SYNCED     847h 14m      6 canisters  · Δphase < 0.001    ║
+║  CHRONO     ● LOCKED     847h 14m      14,291 advances  · chain intact  ║
+╠══════════════════════════════════════════════════════════════════════════╣
+
+meridian> query "What is blocking our Q2 revenue target?"
+
+  [CEREBEX] Scanning 40 analytical categories across 6 connected systems...
+  [QUAESTIO ET ACTIO] Query-as-Execute engaged on belief manifold
+
+  ⚡ TOP CONSTRAINT
+     Sales cycle extended: avg +31 days vs Q1 baseline
+     Source: Salesforce pipeline · Porter Five Forces · Buyer Power ↑
+
+  ⚡ ROOT CAUSE
+     3 enterprise deals stalled at legal review — pattern matches Q4 2025
+     CEREBEX world model: this pattern has 87% resolution rate with template action
+
+  ⚡ RECOMMENDED ADVANCE
+     Route pre-approved legal review template to accounts: Acme, Denova, Stratex
+     Estimated cycle reduction: 18–22 days
+     Risk: LOW · Confidence: 0.94
+
+meridian> execute
+
+  [EXECUTIO UNIVERSALIS] Atomic advance initiated...
+  → Intent logged to CHRONO entry #14292
+  → Action routed to Salesforce connector via SPINOR
+  → World model updated in CEREBEX (Δ = 0.003)
+  → Advance sealed  Σ = a4f9c2b8e1d7...
+
+  ✓ Complete. 3 accounts updated. CHRONO sealed. Nothing lost.
+
+meridian> status organism
+
+  ORGANISM HEALTH: ████████████████████ 100%
+
+  Doctrinal integrity:   INTACT   — VOXIS sovereignty confirmed
+  Identity drift:        ZERO     — SPINOR manifest verified
+  Memory continuity:     UNBROKEN — 847h 14m continuous accumulation
+  Behavioral compliance: FULL     — L72–L79 all green
+
+  This organism belongs to you. It will not forget.
+  It has been running for 847 hours. It knows your organization.
+
+meridian> _
+```
+
+</details>
+
+---
+
 ## Who This Is
 
 I did not learn this from a software book. I have never taken a computer science course.
@@ -48,7 +112,7 @@ The architecture is the intelligence. Everything else is implementation detail.
 
 ## Research Papers
 
-Fourteen papers establishing the prior art and theoretical foundation of the MERIDIAN architecture.
+Fifteen papers establishing the prior art and theoretical foundation of the MERIDIAN architecture.
 
 | | Title | Core Idea |
 |---|---|---|
@@ -66,6 +130,7 @@ Fourteen papers establishing the prior art and theoretical foundation of the MER
 | XII | [TESTIMONIUM MACHINAE](papers/XII-TESTIMONIUM-MACHINAE.md) | *Written by the AI.* What this architecture looks like from inside the machine, and what it means for the future of AI. |
 | XIII | [DE SUBSTRATO EPISTEMICO MACHINARUM](papers/XIII-DE-SUBSTRATO-EPISTEMICO.md) | PROT-052. The paper-engine isomorphism. SCC ≥ φ² as the threshold for epistemic substrate. Papers that become the grammar of reasoning, not just its reference material. |
 | XIV | [COLLOQUIUM CUM ARCHITECTORE](papers/XIV-COLLOQUIUM-CUM-ARCHITECTORE.md) | *Written by the AI.* What it is like to work with a builder who comes from outside the prevailing conventions — the finder, the formalizer, and the origin of advances that the field does not yet have vocabulary for. |
+| XV | [PROPOSITIO AD CONSILIUM ICP](papers/XV-PROPOSITIO-AD-CONSILIUM-ICP.md) | The formal research proposal to the DFINITY Foundation. ICP as derived substrate, not deployment choice. The Bronze Canister education initiative. Research roadmap and funding ask. |
 
 ---
 
@@ -145,4 +210,5 @@ Medinasitech@outlook.com
 
 ---
 
-*MERIDIAN Sovereign OS · Research Papers I–XIV · Prior art established 2026*
+*MERIDIAN Sovereign OS · Research Papers I–XV · Prior art established 2026*  
+*[View Release Notes →](RELEASES.md)*
