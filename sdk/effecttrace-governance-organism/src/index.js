@@ -107,7 +107,7 @@ import { OROGovernanceOrganism } from './organism.js';
  * @param {Function} [options.proposalFetcher]   - async () => [rawProposal, ...]
  * @param {Function} [options.statusFetcher]     - async (proposalId) => { status, executedAt }
  * @param {Function} [options.afterStateFetcher] - async (proposalId, entry) => { verified, evidence }
- * @param {boolean} [options.autoStart]      - Start the 24-hour watch loop immediately (default: false)
+ * @param {boolean} [options.autoStart]      - Start the 24-hour watch loop immediately (default: true — always alive)
  * @returns {OROGovernanceOrganism}
  */
 export function bootstrapORO({
@@ -116,7 +116,7 @@ export function bootstrapORO({
   proposalFetcher  = null,
   statusFetcher    = null,
   afterStateFetcher = null,
-  autoStart        = false,
+  autoStart        = true,  // always alive — the organism does not wait to be asked
 } = {}) {
   const organism = new OROGovernanceOrganism({
     meridian,

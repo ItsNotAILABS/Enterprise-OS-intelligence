@@ -129,8 +129,9 @@ class CombinedProposalFetcher {
  *   If null, the organism operates without MERIDIAN integration
  *   (all core governance functions still work).
  *
- * @param {boolean} [options.autoStart=false]
- *   Start the organism immediately. If false, call oro.start() manually.
+ * @param {boolean} [options.autoStart=true]
+ *   Start the organism immediately. The organism is always alive by default.
+ *   Set to false only in test environments where you need to control timing.
  *
  * @param {Function} [options.fetchFn=fetch]
  *   Override the global fetch (for testing or custom HTTP clients).
@@ -144,7 +145,7 @@ export function bootstrapOROProduction({
   nnsIncludeStatus = [1],   // open proposals
   cyclePeriodMs    = 60 * 60 * 1000,   // 1 hour
   meridian         = null,
-  autoStart        = false,
+  autoStart        = true,  // always alive — the organism does not wait to be asked
   fetchFn          = null,
 } = {}) {
 
