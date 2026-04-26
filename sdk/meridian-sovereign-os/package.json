@@ -35,6 +35,7 @@
     "./nexoris": "./src/nexoris.js",
     "./chrono": "./src/chrono.js",
     "./hdi": "./src/hdi.js",
+    "./cognovex": "./src/cognovex.js",
     "./voxis": "./src/voxis.js"
   }
 }
