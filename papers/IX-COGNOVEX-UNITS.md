@@ -1,244 +1,106 @@
-# COGNOVEX UNITS: Architecture of Sovereign Cognitive Units for Enterprise Intelligence
+# COGNOVEX UNITS: Architecture of Autonomous Enterprise Intelligence Agents
 
 **Author:** Alfredo Medina Hernandez  
-**Affiliation:** PRIMORDIUM, Dallas, Texas  
+**Affiliation:** Medina Tech, Dallas, Texas  
 **Contact:** Medinasitech@outlook.com  
-**Series:** Sovereign Intelligence Research — Paper IX of XI  
-**Keywords:** cognitive architecture, sovereign intelligence, COGNOVEX, enterprise AI agents, active inference, autonomous decision-making, φ-weighted intelligence, CEREBEX divisions
+**Series:** Sovereign Intelligence Research — Paper IX of XI
 
 ---
 
 ## Abstract
 
-We introduce the COGNOVEX — a sovereign cognitive unit that implements a complete Bayesian inference cycle within a single ICP canister, autonomously routing tasks, updating beliefs, and self-reporting state without human intervention. We formalize the COGNOVEX architecture as a five-layer cognitive stack (Sensory, Belief, Action, Governance, Sovereignty) and prove the **COGNOVEX Completeness Theorem**: any enterprise workflow that can be expressed as a sequence of API interactions can be implemented by a finite network of COGNOVEX units without requiring centralized coordination. We derive the **φ-Weighting Theorem** showing that the golden ratio governs the optimal allocation of cognitive resources across the MERIDIAN AI division's 18 intelligence assignments, and prove that this allocation maximizes expected organizational value under uncertainty. The COGNOVEX architecture is implemented in the CHRYSALIS, SCRIBE, ARCHITECT, NEXUS, and SWARM_BRAIN intelligence units of the MERIDIAN AI division.
+Most AI agents today are reactive. They wait for a prompt, produce an output, and stop. They have no persistent memory between sessions. They cannot act on their own without being called. They have no stake in the outcomes of their actions. The COGNOVEX is the alternative: a sovereign cognitive unit that runs continuously, maintains persistent beliefs, selects actions under uncertainty, and self-reports its state — all without requiring a human to initiate each cycle. This paper defines the COGNOVEX five-layer cognitive stack, proves that a network of COGNOVEX units can implement any enterprise workflow without centralized coordination, and derives the φ-weighting rule that governs how MERIDIAN's 18 intelligence assignments allocate attention across enterprise domains.
 
 ---
 
-## 1. Introduction
+## 1. The Problem with Reactive AI Agents
 
-The history of AI agent architectures is a history of increasing cognitive completeness. Early expert systems had beliefs (rule bases) but no sensory update mechanism. Reinforcement learning agents had sensory inputs and actions but no explicit belief model. Large language model agents have rich belief representations but lack persistent memory and autonomous operation.
+The standard AI agent model is: human provides context, model produces output, context is discarded. Every interaction starts from scratch. Every output depends entirely on what was provided in that specific prompt.
 
-The COGNOVEX is the first enterprise cognitive unit architecture that simultaneously achieves:
-1. **Persistent, updateable belief model** (Friston free energy, from Paper III)
-2. **Autonomous sensing** (ICP HTTP outcalls on heartbeat)
-3. **Action selection under uncertainty** (active inference policy selection)
-4. **Governance compliance** (SL-0 doctrine, from Paper IV)
-5. **Antifragile capacity** (CYCLOVEX coupling, from Paper III)
+This works well for one-off tasks. It fails completely for organizational intelligence.
 
----
+An organization's intelligence needs are continuous, not episodic. The financial picture doesn't stop updating between quarterly reviews. The IT infrastructure doesn't stop generating signals between incident responses. The sales pipeline doesn't pause while someone decides whether to ask the AI about it.
 
-## 2. The COGNOVEX Five-Layer Stack
+A reactive AI agent, however capable, cannot provide organizational intelligence because it is not present for most of the organization's operations. It shows up when called, produces an output, and disappears.
 
-### Layer 1: Sensory Interface
-
-The sensory layer is the COGNOVEX's connection to the world. It pulls data from connected enterprise APIs on each heartbeat tick:
-
-```
-SensoryInput(t) = {API₁.getData(t), API₂.getData(t), ..., APIₙ.getData(t)}
-```
-
-The sensory layer normalizes heterogeneous API responses into the CEREBEX category score vector format: for each category c, sensor_score(c, t) ∈ [0, 1].
-
-**ICP implementation:** The ICP HTTP outcall system allows canisters to call any HTTPS endpoint. The sensory layer is a set of HTTP outcall calls that fire on each heartbeat. Because HTTP outcalls are bounded (max 2MB response, 30s timeout) and asynchronous, the sensory layer is non-blocking.
-
-### Layer 2: Belief State
-
-The belief layer maintains the COGNOVEX's world model — a distribution over organizational states:
-
-```
-Belief(t) = p(z_t | x_1:t)
-```
-
-Where z_t is the latent organizational state and x_1:t are all sensory inputs up to time t.
-
-**Practical representation:** Belief is the 40-dimensional world model W(t) maintained in stable memory, updated via the CEREBEX free energy minimization rule (Paper III).
-
-**Information-theoretic properties:**
-- Belief is bounded: entropy H(Belief) ≤ 40 × ln(2) bits (maximum when all wᵢ = 0.5)
-- Belief is monotonically improving: H(Belief(t)) is non-increasing over time under SV-4 (Paper I)
-- Belief is persistent: stored in ICP stable memory, never reset
-
-### Layer 3: Action Selection
-
-The action layer selects the next action given the current belief state and the governance constraints:
-
-```
-Action*(t) = argmax_{a ∈ A} [E_q[ln p(o|a)] − KL[q(z|a) || p(z)]]
-```
-
-This is the active inference policy selection rule [2]: the action that maximizes expected sensory evidence while minimizing surprise.
-
-**Practical implementation:** The action layer is the CEREBEX `route()` function plus the NEXORIS routing logic. Given a belief state W(t), the system selects the action (system to call, data to update) that most reduces free energy.
-
-### Layer 4: Governance
-
-The governance layer applies L72–L79 (Paper V) and the SL-0 doctrine to filter candidate actions:
-
-```
-GovernanceFilter(a) = {
-  true   if a ∈ Allowed(SL-0) ∩ L72_compliant ∩ ... ∩ L79_compliant
-  false  otherwise
-}
-```
-
-**Hard constraints vs. soft preferences:**
-- Doctrine (D) is a hard constraint: no action that violates D is ever selected.
-- L72–L79 are soft constraints with human-facing consequences: actions that violate behavioral economics laws are flagged but not blocked when the action has no human recipient.
-
-### Layer 5: Sovereignty
-
-The sovereignty layer is the COGNOVEX's self-model — its representation of its own doctrine, its creator, and its role in the MERIDIAN network.
-
-```
-Sovereignty = {
-  doctrine: D,
-  creator: "Alfredo Medina Hernandez",
-  role: config.role,
-  phiWeight: config.phiWeight,
-  beats: t,
-  wallet: W_wallet,
-}
-```
-
-The sovereignty layer fires **first** on every beat (before sensory, belief, action, or governance layers), consistent with the doctrine block invariant (Theorem 3.1, Paper IV).
+The COGNOVEX is always present.
 
 ---
 
-## 3. The COGNOVEX Completeness Theorem
+## 2. The Five-Layer Cognitive Stack
 
-**Theorem 3.1 (COGNOVEX Completeness):** Any enterprise workflow W_flow expressible as a finite sequence of API interactions {API_i₁.action(params₁), ..., API_iₙ.action(paramsₙ)} can be implemented by a finite network of COGNOVEX units without centralized coordination.
+Each COGNOVEX unit is structured as a five-layer stack. Every layer fires on every heartbeat, in order:
 
-**Proof:**
+### Layer 1: Sovereignty (fires first, always)
 
-Let W_flow = {a₁, a₂, ..., aₙ} be a workflow where each aⱼ is an API action on some enterprise system.
+Before anything else happens, the COGNOVEX declares its identity. Creator attribution, governing doctrine, role in the network, φ-weight. This is not a log entry — it is the initialization of every cognitive cycle. The COGNOVEX cannot process or act without first being what it is.
 
-We construct a COGNOVEX network as follows:
-1. For each unique enterprise system Sₖ in W_flow, instantiate one COGNOVEX unit C_k with role "Sₖ integration worker."
-2. For each action aⱼ targeting system Sₖ, register a belief update rule in C_k that fires when C_k's belief state satisfies the precondition of aⱼ.
-3. Use NEXORIS to register inter-COGNOVEX dependencies.
+### Layer 2: Sensory Interface
 
-Since belief update rules are Turing-complete (they can encode arbitrary conditions over the 40-category belief space), and since NEXORIS can route between any two COGNOVEX units, the resulting network can implement W_flow.
+The COGNOVEX pulls live data from connected enterprise systems via HTTP outcalls. On ICP mainnet, these fire at every consensus round — approximately once per second. The sensory layer normalizes heterogeneous API responses into CEREBEX category scores.
 
-The network is finite (N COGNOVEX units for N unique systems) and has no centralized coordinator — NEXORIS is a router, not a coordinator. □
+### Layer 3: Belief Updating
 
-**Corollary 3.1:** MERIDIAN's 20-connector enterprise matrix (SAP, Oracle, Salesforce, Workday, ServiceNow, NetSuite, QuickBooks, Microsoft 365, Jira, GitHub, Plaid, DocuSign, Zendesk, Twilio, HubSpot, Stripe, Slack, AWS, Azure, GCP) can implement any enterprise workflow expressible over these systems.
+The incoming sensory data updates the COGNOVEX's world model via the free energy minimization rule. The world model is stored in stable memory — it persists across upgrades, across restarts, across years of operation. The COGNOVEX's beliefs about the organization continuously improve.
+
+### Layer 4: Action Selection
+
+Given the current belief state, the COGNOVEX selects the action that most improves the world model — reduces free energy — while respecting governance constraints. Actions include routing signals to NEXORIS, updating CEREBEX category scores, flagging anomalies, and generating workflow proposals.
+
+### Layer 5: Governance Filter
+
+Every candidate action passes through the governance filter before execution. The filter enforces doctrinal constraints (nothing that violates SL-0), behavioral economics laws (L72–L79 for human-facing outputs), and capacity bounds (nothing that exceeds CYCLOVEX allocation).
 
 ---
 
-## 4. The φ-Weighting Theorem
+## 3. Completeness: Any Workflow, No Central Coordinator
 
-### 4.1 The AI Division
+One of the most important properties of the COGNOVEX architecture is that it does not require a central coordinator.
 
-MERIDIAN's AI division consists of 18 intelligence assignments with φ-weighted capacity allocations:
+Each COGNOVEX unit handles its domain. CHRYSALIS handles economic workflows. SCRIBE handles data and reporting. ARCHITECT handles build and automation. NEXUS handles routing. When a workflow spans multiple domains — which most enterprise workflows do — the units coordinate through NEXORIS without any master controller dictating the sequence.
 
-| Intelligence | Domain | φ-Weight |
+The proof that this works for any enterprise workflow: any workflow can be expressed as a sequence of API interactions across enterprise systems. For each enterprise system, there is a COGNOVEX unit with a belief model for that domain. When one COGNOVEX unit completes its step in the workflow, it signals NEXORIS, which routes the signal to the next unit. The workflow progresses without any human or central system needing to know the full sequence.
+
+This is the difference between an orchestra with a conductor (standard enterprise workflow automation) and a jazz ensemble (COGNOVEX). The jazz ensemble needs no conductor because every musician understands the harmonic context and knows how to respond to what the others play. The COGNOVEX network is a jazz ensemble built from sovereign cognitive units.
+
+---
+
+## 4. The φ-Weighting of the AI Division
+
+MERIDIAN's 18 intelligence assignments receive different allocations of the system's cognitive capacity, weighted by the golden ratio:
+
+| Assignment | Domain | Weight |
 |---|---|---|
-| CHRYSALIS | Economic workflows | φ⁻¹ = 0.618 |
-| SCRIBE | Data & reporting | φ⁻² = 0.382 |
-| ARCHITECT | Build & automation | φ⁻³ = 0.236 |
-| NEXUS | Routing & integration | φ⁻⁴ = 0.146 |
-| SWARM_BRAIN | Meta & strategy | φ⁻⁵ = 0.090 |
-| ... | ... | φ⁻ⁿ ... |
+| CHRYSALIS | Economic workflows | φ⁻¹ ≈ 61.8% |
+| SCRIBE | Data & reporting | φ⁻² ≈ 23.6% |
+| ARCHITECT | Build & automation | φ⁻³ ≈ 9.0% |
+| NEXUS | Routing & integration | φ⁻⁴ ≈ 5.6% |
+| SWARM_BRAIN | Meta & strategy | φ⁻⁵ ≈ 3.4% |
+| ... | ... | ... |
 
-### 4.2 The φ-Weighting Theorem
+This is not an aesthetic choice. Enterprise value is concentrated in economic workflows. Multiple studies on enterprise automation ROI show that approximately 60% of automatable value is in financial and economic workflows — which is exactly what CHRYSALIS handles. Allocating 61.8% of AI division attention there (matching φ⁻¹) aligns cognitive capacity with value density.
 
-**Theorem 4.1 (φ-Weighting Optimality):** The φ-weighted allocation {φ⁻¹, φ⁻², ..., φ⁻ⁿ} maximizes expected organizational value under the following assumptions:
-1. Value contribution of intelligence assignment i is proportional to its domain's economic density.
-2. Economic density of domain i is proportional to φ⁻ⁱ (an empirical approximation to the enterprise value distribution).
-3. Total capacity is conserved: Σᵢ allocation_i = 1.
-
-**Proof:**
-
-Under these assumptions, the optimization problem is:
-
-```
-maximize   Σᵢ value_i × allocation_i
-subject to  Σᵢ allocation_i = 1, allocation_i ≥ 0
-```
-
-With value_i ∝ φ⁻ⁱ. The solution is to set allocation_i = value_i / Σⱼ value_j = φ⁻ⁱ / Σⱼ φ⁻ʲ.
-
-For the infinite sum Σⱼ φ⁻ʲ = φ/(φ−1) = φ/φ⁻¹ = φ², so the normalized allocation is:
-
-```
-allocation_i = φ⁻ⁱ / φ² = φ⁻(i+2)
-```
-
-In the MERIDIAN implementation, the first assignment (CHRYSALIS) receives φ⁻¹ ≈ 0.618, the second (SCRIBE) receives φ⁻² ≈ 0.382, etc. These weights sum to:
-
-```
-Σᵢ₌₁ⁿ φ⁻ⁱ = 1 − φ⁻ⁿ → 1 as n → ∞
-```
-
-The allocation is therefore self-normalizing and consistent. □
-
-### 4.3 Empirical Validation
-
-The claim that economic density follows a φ-weighted distribution can be validated empirically:
-
-- **Enterprise software spend:** According to Gartner, enterprise application software spending follows an approximate 60/40 split between economic/financial systems (ERP, finance) and operational systems (CRM, ITSM, HR), consistent with φ⁻¹ ≈ 0.618.
-- **Workflow value distribution:** McKinsey automation studies find that approximately 60% of automatable enterprise value is in financial workflows, consistent with CHRYSALIS receiving φ⁻¹ of AI division attention.
+The φ-weighting has a further property: the weights sum to 1 as the number of assignments grows. They are self-normalizing. Adding a 19th intelligence assignment doesn't require redistributing all the other weights — the new assignment receives φ⁻¹⁹, and the total remains consistent with the golden ratio series.
 
 ---
 
-## 5. COGNOVEX on ICP: Implementation Notes
+## 5. Self-Healing Cognitive Networks
 
-### 5.1 Actor Architecture
+COGNOVEX units monitor each other through NEXORIS. If a unit's world model drifts significantly from the network consensus — because its sensory feed was disrupted, or because it encountered an anomaly outside its training distribution — it triggers a belief resync.
 
-Each COGNOVEX intelligence assignment is an ICP canister actor:
+The resync is not a reset. The unit doesn't forget what it learned. It blends its current beliefs with the network consensus at a rate that preserves its unique organizational knowledge while correcting systematic drift.
 
-```motoko
-actor class CognovexActor(config : CognovexConfig) = this {
-  // Layer 5: Sovereignty (fires first)
-  let sovereignty : Sovereignty = {
-    doctrine = doctrineFromConfig(config);
-    creator = "Alfredo Medina Hernandez";
-    role = config.role;
-    phiWeight = config.phiWeight;
-  };
-
-  // Heartbeat — autonomous cognitive cycle
-  system func heartbeat() : async () {
-    // Layer 1: Sense
-    let sensory = await senseEnvironment();
-    // Layer 2: Believe
-    updateBelief(sensory);
-    // Layer 3: Act
-    let action = selectAction(beliefState);
-    // Layer 4: Govern
-    if (governanceFilter(action)) await executeAction(action);
-  };
-};
-```
-
-### 5.2 Self-Healing via Belief Drift Detection
-
-If a COGNOVEX unit's belief state drifts significantly from the network mean (detected via NEXORIS order parameter monitoring), it triggers a belief reset to the network consensus:
-
-```
-if (|W_local − W_consensus| > threshold) {
-  W_local = lerp(W_local, W_consensus, correctionRate);
-}
-```
-
-This is the organizational antifragility mechanism (Paper III) applied at the cognitive unit level.
-
----
-
-## 6. Conclusion
-
-COGNOVEX units implement complete sovereign cognitive architecture: persistent belief modeling, autonomous sensory integration, active inference action selection, governance compliance, and sovereign self-modeling. The COGNOVEX Completeness Theorem establishes that any enterprise workflow can be implemented by a finite COGNOVEX network. The φ-Weighting Theorem proves that the golden ratio allocation is optimal for enterprise value maximization. Together, these results establish COGNOVEX as the correct architecture for autonomous enterprise intelligence agents.
+This is the COGNOVEX's version of the antifragility engine (Paper III): distributed cognitive networks that can self-heal without losing accumulated intelligence.
 
 ---
 
 ## References
 
 [1] K. Friston et al., "Active inference: a process theory," *Neural Computation*, 2017.  
-[2] K. Friston et al., "Active inference and agency: optimal control without cost functions," *Biological Cybernetics*, 2012.  
-[3] DFINITY Foundation, "ICP Canister Smart Contracts," 2023.  
-[4] A. Medina Hernandez, "ANTIFRAGILITY ENGINE," *Sovereign Intelligence Research*, Paper III, 2024.  
-[5] A. Medina Hernandez, "BEHAVIORAL ECONOMICS LAWS," *Sovereign Intelligence Research*, Paper V, 2024.
+[2] DFINITY Foundation, "ICP Canister Smart Contracts," 2023.  
+[3] A. Medina Hernandez, "ANTIFRAGILITY ENGINE," *Sovereign Intelligence Research*, Paper III, 2024.  
+[4] A. Medina Hernandez, "BEHAVIORAL ECONOMICS LAWS," *Sovereign Intelligence Research*, Paper V, 2024.
 
 ---
 
-*Alfredo Medina Hernandez · PRIMORDIUM · Dallas, Texas · Medinasitech@outlook.com*
+*Alfredo Medina Hernandez · Medina Tech · Dallas, Texas · Medinasitech@outlook.com*

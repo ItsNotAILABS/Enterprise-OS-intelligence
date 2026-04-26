@@ -27,7 +27,7 @@ export class VOXIS {
   static PHI = 1.6180339887;
 
   /** @type {string} Sovereign Learning Level — immutable doctrine tag */
-  static SL0 = 'SL-0:PRIMORDIUM:ALFREDO_MEDINA_HERNANDEZ:DALLAS_TX';
+  static SL0 = 'SL-0:Medina Tech:ALFREDO_MEDINA_HERNANDEZ:DALLAS_TX';
 
   /**
    * @param {Object} config

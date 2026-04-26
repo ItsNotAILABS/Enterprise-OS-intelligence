@@ -3,7 +3,7 @@
 **MERIDIAN SUBSTRATE** — the sovereign operating system that runs underneath your existing enterprise stack and connects all of it.
 
 **Creator:** Alfredo Medina Hernandez · Dallas, Texas · Medinasitech@outlook.com  
-**Forge:** PRIMORDIUM
+**Forge:** Medina Tech
 
 ---
 

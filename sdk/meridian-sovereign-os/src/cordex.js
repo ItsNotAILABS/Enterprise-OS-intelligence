@@ -13,7 +13,7 @@
  *   x = expansion force  (growth initiatives, new signals)
  *   y = resistance force (bureaucracy, technical debt, legacy friction)
  *
- * Creator: Alfredo Medina Hernandez · PRIMORDIUM
+ * Creator: Alfredo Medina Hernandez · Medina Tech
  */
 export class CORDEX {
   /** @type {number} Golden ratio */

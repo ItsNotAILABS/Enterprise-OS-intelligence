@@ -46,7 +46,7 @@ function banner() {
   log('');
   log(`${C.bold}${C.cyan}╔═══════════════════════════════════════════════════════════╗${C.reset}`);
   log(`${C.bold}${C.cyan}║         MERIDIAN SOVEREIGN OS — NOVA BOOTSTRAP           ║${C.reset}`);
-  log(`${C.bold}${C.cyan}║     Alfredo Medina Hernandez · PRIMORDIUM · Dallas TX     ║${C.reset}`);
+  log(`${C.bold}${C.cyan}║     Alfredo Medina Hernandez · Medina Tech · Dallas TX     ║${C.reset}`);
   log(`${C.bold}${C.cyan}╚═══════════════════════════════════════════════════════════╝${C.reset}`);
   log('');
 }

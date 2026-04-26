@@ -1,124 +1,146 @@
-# front-end-is-all-intelligence-
+# Enterprise OS Intelligence
 
-> The frontend is not a thin shell over the backend; it is a compressed intelligence field with at least 115 distinguishable model species, and those species can be traced to primitives, flipped into sovereign versions, and reinserted into the organism exactly the way backend and substrate tools were.
+**Alfredo Medina Hernandez · Medina Tech · Dallas, Texas · Medinasitech@outlook.com**
+
+---
+
+> *The enterprise doesn't need another dashboard. It needs a nervous system.*
+
+---
+
+## What This Is
+
+MERIDIAN is a sovereign operating system that runs underneath your existing enterprise stack and connects all of it.
+
+You keep SAP, Oracle, Salesforce, Workday, ServiceNow, NetSuite — whatever you run. MERIDIAN integrates into all of it through a single sovereign command layer. One OS. Every system talking to each other. Every workflow automated. Every decision informed by live data from everywhere at once.
+
+Built on the Internet Computer Protocol.
+
+---
+
+## The Core Idea
+
+Every major enterprise system — SAP, Oracle, Salesforce, Workday — exposes an API. Those APIs are ports. MERIDIAN speaks all of them simultaneously, routes intelligence between them, and executes across all of them in one command.
+
+The enterprise does not change anything. They gain an OS that makes everything they already own work together for the first time.
+
+```
+You speak in plain language.
+MERIDIAN routes to the right systems.
+All systems execute simultaneously.
+Everything is logged permanently.
+The world model updates.
+```
+
+---
+
+## Research Papers
+
+The theoretical foundation of MERIDIAN is documented in eleven research papers. These establish the prior art and the scientific basis for the architecture.
+
+| # | Paper | Core Contribution |
+|---|---|---|
+| I | [SUBSTRATE VIVENS](papers/I-SUBSTRATE-VIVENS.md) | Living vs. dead compute — why ICP is the first native host for sovereign intelligence |
+| II | [FRACTAL SOVEREIGNTY](papers/II-FRACTAL-SOVEREIGNTY.md) | Synchronization theory for enterprise systems — the order parameter R as an organizational coherence index |
+| III | [ANTIFRAGILITY ENGINE](papers/III-ANTIFRAGILITY-ENGINE.md) | CORDEX + CEREBEX + CYCLOVEX — the three-engine system that improves under stress |
+| IV | [VOXIS DOCTRINE](papers/IV-VOXIS-DOCTRINE.md) | The sovereign compute unit — doctrine, helix, SPINOR, heartbeat |
+| V | [BEHAVIORAL ECONOMICS LAWS](papers/V-BEHAVIORAL-ECONOMICS-LAWS.md) | L72–L79 — how sovereign systems stay trusted by the humans they serve |
+| VI | [SPINOR DEPLOYMENT](papers/VI-SPINOR-DEPLOYMENT.md) | Zero-drift sovereign identity transport across any substrate |
+| VII | [INFORMATION GEOMETRY](papers/VII-INFORMATION-GEOMETRY.md) | The Query-as-Execute theorem — asking and acting are the same operation on the belief manifold |
+| VIII | [NOETHER SOVEREIGNTY](papers/VIII-NOETHER-SOVEREIGNTY.md) | Sovereignty as conservation law — SL-0 symmetry and its three conserved quantities |
+| IX | [COGNOVEX UNITS](papers/IX-COGNOVEX-UNITS.md) | Autonomous enterprise cognitive agents — the five-layer stack and φ-weighted AI division |
+| X | [UNIVERSALIS PROTOCOL](papers/X-UNIVERSALIS-PROTOCOL.md) | Replacing read/write with unified execute — one operation that queries, acts, learns, and logs |
+| XI | [TRACTRIX WORLDLINE](papers/XI-TRACTRIX-WORLDLINE.md) | The 4D geometry of sovereign organism evolution — the path every deployment traces toward full organizational intelligence |
+
+---
 
 ## Architecture
 
-```
-Fracture → Primitive → Sovereign SDK → Organism → Doctrine
-```
+### The Three Gold Engines
 
-Every external frontend technology is a **fracture**. Each fracture is reduced to a **primitive function** (relation / visibility / flow / state / synchronization / projection / transformation / verification), rebuilt as a **sovereign SDK module**, wired into the **organism runtime**, and governed by **architectural laws**.
+**CORDEX — The Organizational Heart**  
+Always running. Models organizational expansion vs. resistance as a continuous field. When friction dominates, CORDEX signals automation deployment into the high-friction zones. The org gets lighter without anyone deciding to make it lighter.
 
-## Registry Artifacts
+**CEREBEX — The Organizational Brain**  
+40 analytical categories activated in parallel on every command. SWOT, Porter's Five Forces, OKR builder, unit economics, failure mode analysis, Fermi estimation, scenario planning — all active simultaneously, all grounded in live organizational data. Every query and command accumulates into a world model that never resets.
 
-| Artifact | Description |
-|---|---|
-| `Frontend_Frontier_100_Register.csv` | 100 frontend model species with intelligence type, ring affinity, and sovereign replacement candidates |
-| `Phantom_Blockchain_Model_Register.csv` | Phantom/substrate model families for parallel blockchain intelligence mapping |
-| `Architectural_Laws_Register.csv` | 40 architectural laws governing the organism across all layers |
-| `SDK_Model_Manifest.json` | Unified manifest wiring all 5 SDKs to the frontier register and laws |
+**CYCLOVEX — The Capacity Engine**  
+Generates and distributes sovereign compute capacity. Compounds at the golden ratio per beat. Child cycle engines can be spawned per department. The longer MERIDIAN runs, the more capable it becomes — without additional spend.
 
-## Sovereign SDKs
+### The Integration Layer
 
-### 1. `@medina/sovereign-memory-sdk` — v1.0.0
-
-**License:** MIT (open-core) · **Ring:** Memory Ring · **Marketplace:** "Enterprise memory that never forgets"
-
-| Module | Primitive Function |
-|---|---|
-| `SpatialMemoryStore` | Store/retrieve memories by 5-axis spatial coordinates (θ/φ/ρ/ring/beat) |
-| `DualLayerSearch` | Search by semantic meaning and phi-resonance proximity simultaneously |
-| `MemoryLineage` | Track ancestor chains and fork/consolidate memory branches |
-| `LivingDocument` | Manage documents as evolving organisms with mutation history |
-| `PhiCoordinateGenerator` | Generate and manipulate phi-encoded spatial coordinates |
-
-### 2. `@medina/enterprise-integration-sdk` — v1.0.0
-
-**License:** Proprietary · **Ring:** Interface Ring · **Marketplace:** "Plug any enterprise into a sovereign intelligence substrate"
-
-| Module | Primitive Function |
-|---|---|
-| `CompanyOnboarding` | Onboard companies in express/standard/sovereign modes |
-| `Connectors (8)` | Salesforce, SAP, Google, Slack, HubSpot, Stripe, Twilio, Shopify |
-| `CampaignManager` | Create, launch, and measure multi-channel campaigns |
-| `MultiChannelMessenger` | Send messages across email/sms/slack/webhook channels |
-| `ExportPipeline` | Define and execute data export pipelines with scheduling |
-
-### 3. `@medina/intelligence-routing-sdk` — v1.0.0
-
-**License:** MIT (open-core) · **Ring:** Interface Ring · **Marketplace:** "Intelligent task routing for AI workforces"
-
-| Module | Primitive Function |
-|---|---|
-| `ModelRouter` | Route tasks to best matching model by capability/priority/cost |
-| `CommandParser` | Parse natural language and structured commands into actions |
-| `TerminalDispatch` | Dispatch commands to local/remote/edge terminals |
-| `IntelligenceWire` | Create encrypted wires between intelligence endpoints |
-| `WorkforceRouter` | Assign tasks to agents and rebalance workload |
-
-### 4. `@medina/organism-runtime-sdk` — v1.0.0
-
-**License:** MIT (open-core) · **Ring:** Sovereign Ring · **Marketplace:** "A living runtime for autonomous AI systems"
-
-| Module | Primitive Function |
-|---|---|
-| `OrganismState` | 4-register architecture (Cognitive/Affective/Somatic/Sovereign) |
-| `Heartbeat` | 873ms organism pulse — the fundamental clock |
-| `KernelExecutor` | Load and execute computation kernels with sandboxed isolation |
-| `EdgeSensor` | Sense edge environment (temperature/network/resource/signal/custom) |
-| `CrossOrganismResonance` | Exchange resonance signals with peer organisms |
-
-### 5. `@medina/document-absorption-engine` — v1.0.0
-
-**License:** Proprietary · **Ring:** Memory Ring · **Marketplace:** "Turn raw documents into living organism knowledge"
-
-| Module | Primitive Function |
-|---|---|
-| `DocumentIntake` | Ingest multi-format documents (text/markdown/html/json/csv) |
-| `ContentExtractor` | Extract entities, keywords, and summaries from content |
-| `KnowledgeGraph` | Build and query typed knowledge graphs from absorbed content |
-| `AbsorptionPipeline` | Orchestrate intake→extract→classify→index→absorb pipeline |
-| `DigestGenerator` | Generate brief/detailed/executive digests from document sets |
-
-## Architectural Laws (40)
-
-The organism is governed by 40 architectural laws across these domains:
-
-- **Structural** (AL-001): Every element must be semantically contained
-- **Visual** (AL-002–003): Visual priority by specificity cascade; atomic composability
-- **Projection** (AL-004): Components project their own state — never inherit mutable parent state
-- **State** (AL-005–007): Unidirectional flow, state locality, immutable transitions
-- **Build** (AL-008–009): Deterministic output, transform transparency
-- **Verification** (AL-010–011): Completeness of proofs, visual truth consistency
-- **Scene** (AL-012–013): Scene sovereignty, animation continuity
-- **Communication** (AL-014–015): Channel isolation, request idempotency
-- **Storage** (AL-016–017): Cache coherence, token ephemerality
-- **Native** (AL-018): Capability gating
-- **Runtime** (AL-019–020): Heartbeat sovereignty (873ms), register integrity
-- **Governance** (AL-021): Doctrine alignment
-- **Memory** (AL-022–024): Lineage preservation, phi-encoded coordinates, dual-layer search
-- **Routing** (AL-025–027): Intelligent routing, wire encryption, workforce balance
-- **Integration** (AL-028–029): Connector neutrality, onboarding sovereignty
-- **Absorption** (AL-030–032): Pipeline discipline, graph integrity, digest fidelity
-- **Resilience** (AL-033): Anti-collapse
-- **Edge** (AL-034): Continuous edge sensing
-- **Resonance** (AL-035): Cross-organism resonance
-- **Execution** (AL-036): Kernel isolation
-- **Architecture** (AL-037–040): Fracture recognition → primitive reduction → sovereign rebuild → organism reintegration
-
-## Project Structure
+MERIDIAN integrates natively with:
 
 ```
-├── Frontend_Frontier_100_Register.csv    # 100 frontend intelligence models
-├── Phantom_Blockchain_Model_Register.csv # Phantom blockchain model families
-├── Architectural_Laws_Register.csv       # 40 architectural laws
-├── SDK_Model_Manifest.json               # Unified SDK-to-frontier wiring manifest
-├── README.md
-└── sdk/
-    ├── sovereign-memory-sdk/             # Spatial memory, phi-coordinates, lineage
-    ├── enterprise-integration-sdk/       # Onboarding, connectors, campaigns
-    ├── intelligence-routing-sdk/         # Model routing, wires, workforce
-    ├── organism-runtime-sdk/             # Heartbeat, state, kernels, edge sensing
-    └── document-absorption-engine/       # Intake, extraction, knowledge graphs
+SAP · Oracle · Salesforce · Workday · ServiceNow · NetSuite · QuickBooks
+Microsoft 365 · Slack · Jira · GitHub · Stripe · Plaid · DocuSign
+Twilio · Zendesk · HubSpot · AWS · Azure · GCP
 ```
+
+Every integration is a VOXIS worker — sovereign, autonomous, self-healing. New integrations are added by telling CEREBEX what system to connect.
+
+### The Human Device Interface (HDI)
+
+No dashboards. No modules. No training.
+
+You command in plain language. The OS understands intent, routes to the correct systems, executes, and logs — in one motion.
+
+```
+"Move the Acme contract from review to signed and update the revenue forecast"
+→ DocuSign (mark signed) + Salesforce (update opportunity stage) + NetSuite (update forecast line)
+→ All three simultaneously
+→ Logged to CHRONO with sovereign proof
+→ "Acme contract closed. Revenue forecast updated. Logged."
+```
+
+### CHRONO — The Permanent Record
+
+Every execution is anchored in an immutable, hash-chained audit log. Nothing is ever lost. The audit trail is automatic, permanent, and tamper-evident.
+
+---
+
+## SDK Library
+
+| SDK | Description |
+|---|---|
+| [`@medina/meridian-sovereign-os`](sdk/meridian-sovereign-os/) | Core MERIDIAN engines — CORDEX, CEREBEX, CYCLOVEX, NEXORIS, CHRONO, HDI, VOXIS |
+| [`@medina/enterprise-integration-sdk`](sdk/enterprise-integration-sdk/) | 22 enterprise connectors — SAP through GCP |
+| [`@medina/sovereign-memory-sdk`](sdk/sovereign-memory-sdk/) | Spatial memory, phi-coordinates, lineage tracking |
+| [`@medina/intelligence-routing-sdk`](sdk/intelligence-routing-sdk/) | Model routing, intelligence wires, workforce orchestration |
+| [`@medina/organism-runtime-sdk`](sdk/organism-runtime-sdk/) | Heartbeat, state registers, kernel execution, edge sensing |
+| [`@medina/document-absorption-engine`](sdk/document-absorption-engine/) | Document intake, extraction, knowledge graphs |
+
+---
+
+## Built On
+
+- **Internet Computer Protocol** — the sovereign compute substrate
+- **Motoko / Rust** — canister implementation
+- **React / TypeScript** — sovereign UI layer
+- **HTTP Outcalls** — live enterprise data feeds
+- **Internet Identity** — sovereign authentication
+- **vetKeys** — end-to-end encryption
+
+---
+
+## Deployment
+
+```bash
+node scripts/nova.js bootstrap --mainnet
+```
+
+Reads `nova.json`, deploys 62 canisters to ICP mainnet in dependency order, starts all heartbeats, confirms all three gold engines, outputs sovereign proof.
+
+---
+
+## Creator
+
+**Alfredo Medina Hernandez**  
+Medina Tech · Dallas, Texas  
+Medinasitech@outlook.com
+
+*Not a vendor. The intelligence layer enterprises did not know they were missing.*
+
+---
+
+*MERIDIAN Sovereign OS · Research Series I–XI · Prior art established 2024*
