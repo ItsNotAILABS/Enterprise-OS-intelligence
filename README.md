@@ -60,6 +60,62 @@ MERIDIAN is a sovereign OS that lives beneath your existing stack and adds a ner
 
 ---
 
+## Theory
+
+Three essays on the architecture of sovereign collective intelligence. Each one stands alone. They build on each other.
+
+---
+
+### STIGMERGY — The Architecture of Sovereign Collective Intelligence
+
+*Alfredo Medina | AI Labs*
+
+Every ant has a brain. Every ant thinks. Every ant decides independently, protects its node, and operates with full sovereign awareness of its immediate field. This is not metaphor. This is biology.
+
+And yet the colony solves the shortest path problem, the load-balancing problem, and the resource-allocation problem simultaneously — without a scheduler, without a coordinator, without a single ant that knows the full picture.
+
+The mechanism is stigmergy. Each ant writes to the environment. Each ant reads from the environment. The environment is not passive substrate — it is the living memory of every decision every agent ever made, weighted by recency and reinforcement. The correct paths accumulate. The wrong paths decay. The intelligence is not distributed across agents. It is crystallized in the structure between them.
+
+This breaks every assumption modern AI architecture is built on. We build systems where intelligence lives in the model. The colony builds systems where intelligence lives in the field. The model can be replaced. The field cannot — it is the accumulated record of every sovereign decision every node ever made.
+
+We are not building smarter agents. We are building a better field.
+
+---
+
+### QUORUM — On How Decisions Happen Without Authority
+
+*Alfredo Medina | AI Labs*
+
+The honeybee swarm does not vote. It does not elect a leader. It does not reach consensus. It reaches quorum — and the difference is architectural, not semantic.
+
+When scouts evaluate nest sites, each one thinks independently. Each one dances in proportion to what it found. No scout is told to stop dancing. It stops when its own conviction runs out — when it returns to verify a site and finds other scouts have already moved. The dance dies on its own merits.
+
+The swarm moves when enough sovereign agents independently arrive at the same conclusion at the same time. Not because a majority agreed. Because the signal density crossed a threshold and the field resolved.
+
+This is a phase transition, not a decision. The swarm does not choose. The swarm crystallizes.
+
+Every governance system ever designed by humans operates on authority — someone breaks the tie, someone calls the vote, someone holds the override. The swarm has no override. It has a threshold. When the threshold is crossed the system moves. When it is not the system waits. No authority required. No failure mode from bad leadership. No deadlock from disagreement.
+
+This is the governance architecture we should be building.
+
+---
+
+### AURUM — On Why the Substrate Is the Intelligence
+
+*Alfredo Medina | AI Labs*
+
+φ = 1.6180339887. The golden ratio. It appears in the spiral of a nautilus, the branching of a tree, the seed arrangement of a sunflower. It is not decoration. It is the geometry of optimal packing — the mathematical answer to how a growing system fits the most into the least space without collision.
+
+The ant colony encodes the same principle in its trail network. Shorter paths get reinforced faster. Longer paths decay before they compound. The pheromone concentration gradient is a living Fibonacci sequence — the colony is always converging toward the golden structure, not because any ant computed it, but because the reinforcement dynamics of the substrate naturally select for it.
+
+The substrate is not neutral. The substrate has a shape. And the shape is optimal by construction.
+
+Every system we build treats the substrate as infrastructure — a place to put things. The colony treats the substrate as the primary intelligence layer. The agents are the input mechanism. The substrate is the processor.
+
+When you build the environment correctly, the agents do not need to be smart. They need to be sovereign. The environment does the rest.
+
+---
+
 ## Research Papers · XIX · Prior Art Established April 2026
 
 Nineteen papers. The theoretical foundation of the full build. All prior art. All public.
