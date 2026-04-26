@@ -1,0 +1,52 @@
+name: Mundator Documentorum — Document Sanitizer
+
+on:
+  push:
+    paths:
+      - 'papers/**'
+      - 'tools/doc-sanitizer.js'
+  pull_request:
+    paths:
+      - 'papers/**'
+
+jobs:
+  sanitize:
+    name: Sanitize Public Documents
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Mundator Documentorum
+        run: node tools/doc-sanitizer.js papers/
+
+      - name: Check for sensitive files accidentally staged
+        run: |
+          echo "Checking for accidentally committed sensitive files..."
+          FORBIDDEN=(
+            "nova.json"
+            "scripts/"
+            "extensions/"
+            "protocols/"
+            "*/src/"
+            "*_Register.csv"
+            "*_Manifest.json"
+          )
+          FOUND=0
+          for pattern in "${FORBIDDEN[@]}"; do
+            if git ls-files --error-unmatch "$pattern" 2>/dev/null; then
+              echo "::error::Sensitive file found in repo: $pattern"
+              FOUND=1
+            fi
+          done
+          if [ "$FOUND" -eq "0" ]; then
+            echo "No sensitive files detected. Repository is clean."
+          else
+            exit 1
+          fi
