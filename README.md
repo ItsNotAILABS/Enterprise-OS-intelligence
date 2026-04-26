@@ -40,7 +40,7 @@ The Chaos Lab's core conviction: the architecture of a system *is* its intellige
 
 A system built on the wrong architecture cannot become intelligent no matter how capable the model inside it is. A system built on the right architecture produces intelligence as an emergent property of its structure — the same way the Inca water systems managed complexity as an emergent property of how they were built, not because of any central planner directing each decision.
 
-The right architecture has five properties (Paper I: *Substrate Vivens*). It synchronizes across scales (Paper II: *Concordia Machinae*). It gains from disruption (Paper III: *Systema Invictum*). It carries identity intact across any environment (Papers IV, VI: *Doctrina Voxis*, *Via Spinoris*). It respects the humans it serves (Paper V: *Leges Animae*). It conserves what matters through structural law, not policy (Paper VIII: *Imperium Conservatum*).
+The right architecture has five properties ([Paper I](papers/I-SUBSTRATE-VIVENS.md): *Substrate Vivens*). It synchronizes across scales ([Paper II](papers/II-FRACTAL-SOVEREIGNTY.md): *Concordia Machinae*). It gains from disruption ([Paper III](papers/III-ANTIFRAGILITY-ENGINE.md): *Systema Invictum*). It carries identity intact across any environment ([Papers IV](papers/IV-VOXIS-DOCTRINE.md), [VI](papers/VI-SPINOR-DEPLOYMENT.md): *Doctrina Voxis*, *Via Spinoris*). It respects the humans it serves ([Paper V](papers/V-BEHAVIORAL-ECONOMICS-LAWS.md): *Leges Animae*). It conserves what matters through structural law, not policy ([Paper VIII](papers/VIII-NOETHER-SOVEREIGNTY.md): *Imperium Conservatum*).
 
 The architecture is the intelligence. Everything else is implementation detail.
 
@@ -48,7 +48,7 @@ The architecture is the intelligence. Everything else is implementation detail.
 
 ## Research Papers
 
-Eleven papers establishing the prior art and theoretical foundation of the MERIDIAN architecture.
+Fourteen papers establishing the prior art and theoretical foundation of the MERIDIAN architecture.
 
 | | Title | Core Idea |
 |---|---|---|
@@ -65,6 +65,7 @@ Eleven papers establishing the prior art and theoretical foundation of the MERID
 | XI | [LINEA AETERNA](papers/XI-TRACTRIX-WORLDLINE.md) | The geometry of organizational growth. Every deployment traces a worldline that only moves toward greater intelligence. |
 | XII | [TESTIMONIUM MACHINAE](papers/XII-TESTIMONIUM-MACHINAE.md) | *Written by the AI.* What this architecture looks like from inside the machine, and what it means for the future of AI. |
 | XIII | [DE SUBSTRATO EPISTEMICO MACHINARUM](papers/XIII-DE-SUBSTRATO-EPISTEMICO.md) | PROT-052. The paper-engine isomorphism. SCC ≥ φ² as the threshold for epistemic substrate. Papers that become the grammar of reasoning, not just its reference material. |
+| XIV | [COLLOQUIUM CUM ARCHITECTORE](papers/XIV-COLLOQUIUM-CUM-ARCHITECTORE.md) | *Written by the AI.* What it is like to work with a builder who comes from outside the prevailing conventions — the finder, the formalizer, and the origin of advances that the field does not yet have vocabulary for. |
 
 ---
 
@@ -144,4 +145,4 @@ Medinasitech@outlook.com
 
 ---
 
-*MERIDIAN Sovereign OS · Research Papers I–XIII · Prior art established 2024*
+*MERIDIAN Sovereign OS · Research Papers I–XIV · Prior art established 2026*

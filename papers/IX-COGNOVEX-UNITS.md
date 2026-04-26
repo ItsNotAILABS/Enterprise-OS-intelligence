@@ -4,7 +4,7 @@
 **Author:** Alfredo Medina Hernandez  
 **Affiliation:** Medina Tech · Chaos Lab · Dallas, Texas  
 **Contact:** Medinasitech@outlook.com  
-**Series:** Sovereign Intelligence Research — Paper IX of XI
+**Series:** Sovereign Intelligence Research — Paper IX of XIV
 
 ---
 
@@ -80,7 +80,7 @@ This is cognitive antifragility at the agent level: a network of autonomous cogn
 
 [1] K. Friston et al., "Active inference: a process theory," *Neural Computation*, 2017.  
 [2] DFINITY Foundation, "ICP Canister Smart Contracts," 2023.  
-[3] A. Medina Hernandez, "SYSTEMA INVICTUM," *Sovereign Intelligence Research*, Paper III, 2024.
+[3] A. Medina Hernandez, "[SYSTEMA INVICTUM](III-ANTIFRAGILITY-ENGINE.md)," *Sovereign Intelligence Research*, Paper III, 2026.
 
 ---
 

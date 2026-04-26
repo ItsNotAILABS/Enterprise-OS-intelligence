@@ -4,7 +4,7 @@
 **Author:** Alfredo Medina Hernandez  
 **Affiliation:** Medina Tech · Chaos Lab · Dallas, Texas  
 **Contact:** Medinasitech@outlook.com  
-**Series:** Sovereign Intelligence Research — Paper IV of XI
+**Series:** Sovereign Intelligence Research — Paper IV of XIV
 
 ---
 
@@ -80,7 +80,7 @@ When a VOXIS deploys into a new substrate via SPINOR, the doctrine block is tran
 
 A VOXIS that migrates from a test environment to staging to production to ICP mainnet arrives at every stage with the same doctrine it had at the beginning. The migration path is invisible to the identity.
 
-This is the geometric interpretation: the SPINOR is a flat connection across the space of all possible substrates — it accumulates no phase shift, no identity drift, regardless of how many environments the VOXIS passes through. Paper VI develops this geometry in full.
+This is the geometric interpretation: the SPINOR is a flat connection across the space of all possible substrates — it accumulates no phase shift, no identity drift, regardless of how many environments the VOXIS passes through. [Paper VI](VI-SPINOR-DEPLOYMENT.md) develops this geometry in full.
 
 ---
 
@@ -88,7 +88,7 @@ This is the geometric interpretation: the SPINOR is a flat connection across the
 
 [1] S. Kobayashi and K. Nomizu, *Foundations of Differential Geometry*, Vol. I. Wiley, 1963.  
 [2] DFINITY Foundation, "Internet Computer Interface Specification," 2023.  
-[3] A. Medina Hernandez, "SUBSTRATE VIVENS," *Sovereign Intelligence Research*, Paper I, 2024.
+[3] A. Medina Hernandez, "[SUBSTRATE VIVENS](I-SUBSTRATE-VIVENS.md)," *Sovereign Intelligence Research*, Paper I, 2026.
 
 ---
 

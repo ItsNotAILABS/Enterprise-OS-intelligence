@@ -4,7 +4,7 @@
 **Author:** Alfredo Medina Hernandez  
 **Affiliation:** Medina Tech · Chaos Lab · Dallas, Texas  
 **Contact:** Medinasitech@outlook.com  
-**Series:** Sovereign Intelligence Research — Paper I of XI
+**Series:** Sovereign Intelligence Research — Paper I of XIV
 
 ---
 
@@ -99,4 +99,4 @@ MERIDIAN does not restart. It accumulates. The organizational intelligence it bu
 ---
 
 *Alfredo Medina Hernandez · Medina Tech · Chaos Lab · Dallas, Texas*  
-*Sovereign Intelligence Research Series — Prior art established 2024*
+*Sovereign Intelligence Research Series — Prior art established 2026*

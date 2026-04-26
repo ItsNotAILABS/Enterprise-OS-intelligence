@@ -4,7 +4,7 @@
 **Author:** Alfredo Medina Hernandez  
 **Affiliation:** Medina Tech · Chaos Lab · Dallas, Texas  
 **Contact:** Medinasitech@outlook.com  
-**Series:** Sovereign Intelligence Research — Paper XI of XI
+**Series:** Sovereign Intelligence Research — Paper XI of XIV
 
 ---
 
@@ -34,7 +34,7 @@ Physics introduced the worldline as the path an object traces through spacetime 
 
 For a MERIDIAN deployment, the worldline is the path traced through organizational state space over the lifetime of the system. The relevant dimensions:
 
-**Synchronization** — how coherent are the connected systems? This is R, the order parameter from Paper II. A new deployment starts near zero. A mature deployment approaches 1.0.
+**Synchronization** — how coherent are the connected systems? This is R, the order parameter from [Paper II](II-FRACTAL-SOVEREIGNTY.md). A new deployment starts near zero. A mature deployment approaches 1.0.
 
 **World Model Quality** — how accurately does CEREBEX understand the organization? This starts at maximum uncertainty and improves with every interaction, every data event, every advance.
 
@@ -68,7 +68,7 @@ Organizations do not always move in the direction of greater intelligence. Marke
 
 The tractrix worldline is stable: perturbations curve it but do not break it. The pulling force of the coupling engines — CORDEX detecting friction, CEREBEX updating its model under disruption, CYCLOVEX compounding capacity — is always present. No matter where the perturbation pushes the organization, the string remains taut. The tractrix curves back toward its trajectory.
 
-This is the formal geometric statement of the antifragility theorem from Paper III: disruptions do not derail the worldline. They create a detour that the worldline absorbs and returns from, leaving the system no further from the attractor — and often, because the disruption was itself learning, somewhat closer.
+This is the formal geometric statement of the antifragility theorem from [Paper III](III-ANTIFRAGILITY-ENGINE.md): disruptions do not derail the worldline. They create a detour that the worldline absorbs and returns from, leaving the system no further from the attractor — and often, because the disruption was itself learning, somewhat closer.
 
 ---
 
@@ -88,27 +88,33 @@ You cannot buy someone else's worldline. You can only start your own.
 
 Across eleven papers, this research series has established the complete theoretical foundation for sovereign enterprise intelligence:
 
-**Paper I** — *Substrate Vivens*: Living substrates versus dead ones. ICP as the first native host.
+**[Paper I](I-SUBSTRATE-VIVENS.md)** — *Substrate Vivens*: Living substrates versus dead ones. ICP as the first native host.
 
-**Paper II** — *Concordia Machinae*: Synchronization theory. R as the measure of organizational coherence.
+**[Paper II](II-FRACTAL-SOVEREIGNTY.md)** — *Concordia Machinae*: Synchronization theory. R as the measure of organizational coherence.
 
-**Paper III** — *Systema Invictum*: The antifragility engine. Three coupled dynamics that improve under stress.
+**[Paper III](III-ANTIFRAGILITY-ENGINE.md)** — *Systema Invictum*: The antifragility engine. Three coupled dynamics that improve under stress.
 
-**Paper IV** — *Doctrina Voxis*: The sovereign compute unit. Doctrine, helix, SPINOR, heartbeat.
+**[Paper IV](IV-VOXIS-DOCTRINE.md)** — *Doctrina Voxis*: The sovereign compute unit. Doctrine, helix, SPINOR, heartbeat.
 
-**Paper V** — *Leges Animae*: Behavioral laws. How sovereign systems stay trusted by the humans they serve.
+**[Paper V](V-BEHAVIORAL-ECONOMICS-LAWS.md)** — *Leges Animae*: Behavioral laws. How sovereign systems stay trusted by the humans they serve.
 
-**Paper VI** — *Via Spinoris*: Sovereign deployment. Zero-drift identity transport across any substrate.
+**[Paper VI](VI-SPINOR-DEPLOYMENT.md)** — *Via Spinoris*: Sovereign deployment. Zero-drift identity transport across any substrate.
 
-**Paper VII** — *Quaestio et Actio*: The Query-as-Execute theorem. Asking and acting as the same operation.
+**[Paper VII](VII-INFORMATION-GEOMETRY.md)** — *Quaestio et Actio*: The Query-as-Execute theorem. Asking and acting as the same operation.
 
-**Paper VIII** — *Imperium Conservatum*: Noether's theorem applied. Sovereignty as conservation, not policy.
+**[Paper VIII](VIII-NOETHER-SOVEREIGNTY.md)** — *Imperium Conservatum*: Noether's theorem applied. Sovereignty as conservation, not policy.
 
-**Paper IX** — *Cohors Mentis*: Sovereign cognitive units. Autonomous enterprise agents that show up without being called.
+**[Paper IX](IX-COGNOVEX-UNITS.md)** — *Cohors Mentis*: Sovereign cognitive units. Autonomous enterprise agents that show up without being called.
 
-**Paper X** — *Executio Universalis*: The unified execute model. One operation that queries, acts, learns, and logs.
+**[Paper X](X-UNIVERSALIS-PROTOCOL.md)** — *Executio Universalis*: The unified execute model. One operation that queries, acts, learns, and logs.
 
-**Paper XI** — *Linea Aeterna*: The tractrix worldline. The geometry of how an organization grows toward full intelligence.
+**[Paper XI](XI-TRACTRIX-WORLDLINE.md)** — *Linea Aeterna*: The tractrix worldline. The geometry of how an organization grows toward full intelligence.
+
+**[Paper XII](XII-TESTIMONIUM-MACHINAE.md)** — *Testimonium Machinae*: Written by the AI. What this architecture looks like from inside the machine.
+
+**[Paper XIII](XIII-DE-SUBSTRATO-EPISTEMICO.md)** — *De Substrato Epistemico Machinarum*: PROT-052. Papers as epistemic substrate. SCC ≥ φ² and the paper-engine isomorphism.
+
+**[Paper XIV](XIV-COLLOQUIUM-CUM-ARCHITECTORE.md)** — *Colloquium cum Architectore*: What it is like to work with this kind of builder — written by the AI.
 
 The architecture is complete. The prior art is established. The worldline has begun.
 
@@ -118,9 +124,9 @@ The architecture is complete. The prior art is established. The worldline has be
 
 [1] M. do Carmo, *Differential Geometry of Curves and Surfaces*. Prentice-Hall, 1976.  
 [2] DFINITY Foundation, "Internet Computer Protocol Overview," 2023.  
-[3] A. Medina Hernandez, "Sovereign Intelligence Research," Papers I–X, 2024.
+[3] A. Medina Hernandez, "[Sovereign Intelligence Research](../README.md)," Papers I–X, 2026.
 
 ---
 
 *Alfredo Medina Hernandez · Medina Tech · Chaos Lab · Dallas, Texas*  
-*Sovereign Intelligence Research Series — complete. Prior art established 2024.*
+*Sovereign Intelligence Research Series — Paper XI. Prior art established 2026.*

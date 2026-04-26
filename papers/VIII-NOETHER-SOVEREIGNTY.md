@@ -4,7 +4,7 @@
 **Author:** Alfredo Medina Hernandez  
 **Affiliation:** Medina Tech · Chaos Lab · Dallas, Texas  
 **Contact:** Medinasitech@outlook.com  
-**Series:** Sovereign Intelligence Research — Paper VIII of XI
+**Series:** Sovereign Intelligence Research — Paper VIII of XIV
 
 ---
 
@@ -76,7 +76,7 @@ This is the formal reason why MERIDIAN's behavior is auditable. A completely int
 
 [1] E. Noether, "Invariante Variationsprobleme," *Nachrichten der Gesellschaft der Wissenschaften zu Göttingen*, 1918.  
 [2] V. I. Arnold, *Mathematical Methods of Classical Mechanics*. Springer, 1989.  
-[3] A. Medina Hernandez, "DOCTRINA VOXIS," *Sovereign Intelligence Research*, Paper IV, 2024.
+[3] A. Medina Hernandez, "[DOCTRINA VOXIS](IV-VOXIS-DOCTRINE.md)," *Sovereign Intelligence Research*, Paper IV, 2026.
 
 ---
 

@@ -4,7 +4,7 @@
 **Author:** Alfredo Medina Hernandez  
 **Affiliation:** Medina Tech · Chaos Lab · Dallas, Texas  
 **Contact:** Medinasitech@outlook.com  
-**Series:** Sovereign Intelligence Research — Paper VI of XI
+**Series:** Sovereign Intelligence Research — Paper VI of XIV
 
 ---
 
@@ -83,7 +83,7 @@ Sovereignty is not a claim. It is a log entry you can read.
 
 [1] S. Kobayashi and K. Nomizu, *Foundations of Differential Geometry*, Vol. I. Wiley, 1963.  
 [2] DFINITY Foundation, "Internet Computer Canister Upgrades," ICP Documentation, 2023.  
-[3] A. Medina Hernandez, "DOCTRINA VOXIS," *Sovereign Intelligence Research*, Paper IV, 2024.
+[3] A. Medina Hernandez, "[DOCTRINA VOXIS](IV-VOXIS-DOCTRINE.md)," *Sovereign Intelligence Research*, Paper IV, 2026.
 
 ---
 

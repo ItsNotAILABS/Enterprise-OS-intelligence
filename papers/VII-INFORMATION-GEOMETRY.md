@@ -4,7 +4,7 @@
 **Author:** Alfredo Medina Hernandez  
 **Affiliation:** Medina Tech · Chaos Lab · Dallas, Texas  
 **Contact:** Medinasitech@outlook.com  
-**Series:** Sovereign Intelligence Research — Paper VII of XI
+**Series:** Sovereign Intelligence Research — Paper VII of XIV
 
 ---
 
@@ -78,7 +78,7 @@ Early deployment is the advantage that cannot be replicated later. The organizat
 
 [1] S. Amari, *Information Geometry and Its Applications*. Springer, 2016.  
 [2] K. Friston, "The free-energy principle," *Nature Reviews Neuroscience*, 2010.  
-[3] A. Medina Hernandez, "SYSTEMA INVICTUM," *Sovereign Intelligence Research*, Paper III, 2024.
+[3] A. Medina Hernandez, "[SYSTEMA INVICTUM](III-ANTIFRAGILITY-ENGINE.md)," *Sovereign Intelligence Research*, Paper III, 2026.
 
 ---
 

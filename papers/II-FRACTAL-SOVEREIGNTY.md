@@ -4,7 +4,7 @@
 **Author:** Alfredo Medina Hernandez  
 **Affiliation:** Medina Tech · Chaos Lab · Dallas, Texas  
 **Contact:** Medinasitech@outlook.com  
-**Series:** Sovereign Intelligence Research — Paper II of XI
+**Series:** Sovereign Intelligence Research — Paper II of XIV
 
 ---
 
@@ -87,7 +87,7 @@ MERIDIAN's fractal sovereign architecture maps directly onto ICP's fractal host.
 [1] Y. Kuramoto, "Self-entrainment of a population of coupled non-linear oscillators," 1975.  
 [2] S. H. Strogatz, "From Kuramoto to Crawford," *Physica D*, 2000.  
 [3] DFINITY Foundation, "Internet Computer Interface Specification," 2023.  
-[4] A. Medina Hernandez, "SUBSTRATE VIVENS," *Sovereign Intelligence Research*, Paper I, 2024.
+[4] A. Medina Hernandez, "[SUBSTRATE VIVENS](I-SUBSTRATE-VIVENS.md)," *Sovereign Intelligence Research*, Paper I, 2026.
 
 ---
 

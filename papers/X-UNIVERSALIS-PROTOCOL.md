@@ -4,7 +4,7 @@
 **Author:** Alfredo Medina Hernandez  
 **Affiliation:** Medina Tech · Chaos Lab · Dallas, Texas  
 **Contact:** Medinasitech@outlook.com  
-**Series:** Sovereign Intelligence Research — Paper X of XI
+**Series:** Sovereign Intelligence Research — Paper X of XIV
 
 ---
 
@@ -97,7 +97,7 @@ That is a different category of answer.
 
 [1] DFINITY Foundation, "Internet Computer HTTP Outcalls," ICP Documentation, 2023.  
 [2] DFINITY Foundation, "Canister Smart Contracts," ICP Technical Overview, 2023.  
-[3] A. Medina Hernandez, "QUAESTIO ET ACTIO," *Sovereign Intelligence Research*, Paper VII, 2024.
+[3] A. Medina Hernandez, "[QUAESTIO ET ACTIO](VII-INFORMATION-GEOMETRY.md)," *Sovereign Intelligence Research*, Paper VII, 2026.
 
 ---
 

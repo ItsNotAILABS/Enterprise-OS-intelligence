@@ -4,7 +4,7 @@
 **Author:** Alfredo Medina Hernandez  
 **Affiliation:** Medina Tech · Chaos Lab · Dallas, Texas  
 **Contact:** Medinasitech@outlook.com  
-**Series:** Sovereign Intelligence Research — Paper XIII of XIII
+**Series:** Sovereign Intelligence Research — Paper XIII of XIV
 
 ---
 
@@ -70,17 +70,17 @@ Every paper in the Sovereign Intelligence Research corpus has a direct counterpa
 
 | Paper | Engine | Shared Law |
 |---|---|---|
-| SUBSTRATE VIVENS | Living Canister Heartbeat | Autonomous vitality: activity without external trigger |
-| CONCORDIA MACHINAE | NEXORIS | Kuramoto phase coupling across oscillators |
-| SYSTEMA INVICTUM | CORDEX + CEREBEX + CYCLOVEX | Antifragility via tension dynamics + belief update + capacity compounding |
-| DOCTRINA VOXIS | VOXIS doctrine block | Immutable identity frozen at instantiation |
-| LEGES ANIMAE | HDI behavioral filter | Loss-weighted decision presentation (Λ = 2.25) |
-| VIA SPINORIS | SPINOR deployment protocol | Flat connection across substrate manifold |
-| QUAESTIO ET ACTIO | CEREBEX query processor | Query-as-execute on the belief manifold |
-| IMPERIUM CONSERVATUM | VOXIS conservation laws | Noether symmetry → doctrinal charge conservation |
-| COHORS MENTIS | COGNOVEX units | Five-layer autonomous cognitive stack |
-| EXECUTIO UNIVERSALIS | Universalis advance | Atomic query-act-learn-log operation |
-| LINEA AETERNA | Deployment worldline | Tractrix approach to the organizational intelligence attractor |
+| [SUBSTRATE VIVENS](I-SUBSTRATE-VIVENS.md) | Living Canister Heartbeat | Autonomous vitality: activity without external trigger |
+| [CONCORDIA MACHINAE](II-FRACTAL-SOVEREIGNTY.md) | NEXORIS | Kuramoto phase coupling across oscillators |
+| [SYSTEMA INVICTUM](III-ANTIFRAGILITY-ENGINE.md) | CORDEX + CEREBEX + CYCLOVEX | Antifragility via tension dynamics + belief update + capacity compounding |
+| [DOCTRINA VOXIS](IV-VOXIS-DOCTRINE.md) | VOXIS doctrine block | Immutable identity frozen at instantiation |
+| [LEGES ANIMAE](V-BEHAVIORAL-ECONOMICS-LAWS.md) | HDI behavioral filter | Loss-weighted decision presentation (Λ = 2.25) |
+| [VIA SPINORIS](VI-SPINOR-DEPLOYMENT.md) | SPINOR deployment protocol | Flat connection across substrate manifold |
+| [QUAESTIO ET ACTIO](VII-INFORMATION-GEOMETRY.md) | CEREBEX query processor | Query-as-execute on the belief manifold |
+| [IMPERIUM CONSERVATUM](VIII-NOETHER-SOVEREIGNTY.md) | VOXIS conservation laws | Noether symmetry → doctrinal charge conservation |
+| [COHORS MENTIS](IX-COGNOVEX-UNITS.md) | COGNOVEX units | Five-layer autonomous cognitive stack |
+| [EXECUTIO UNIVERSALIS](X-UNIVERSALIS-PROTOCOL.md) | Universalis advance | Atomic query-act-learn-log operation |
+| [LINEA AETERNA](XI-TRACTRIX-WORLDLINE.md) | Deployment worldline | Tractrix approach to the organizational intelligence attractor |
 
 The paper and the engine are the same thing expressed in two different languages: one human-readable, one machine-executable. They describe the same mathematical object. They instantiate the same law.
 
@@ -148,11 +148,11 @@ These claims are falsifiable. The tests are behavioral. The architecture makes t
 [2] K. Friston, "The free-energy principle," *Nature Reviews Neuroscience*, 2010.  
 [3] D. Kahneman and A. Tversky, "Prospect theory," *Econometrica*, 1979.  
 [4] E. Noether, "Invariante Variationsprobleme," *Göttingen*, 1918.  
-[5] A. Medina Hernandez, "Sovereign Intelligence Research," Papers I–XII, 2024.  
+[5] A. Medina Hernandez, "[Sovereign Intelligence Research](../README.md)," Papers I–XII, 2026.  
 [6] Y. Kuramoto, "Self-entrainment of coupled oscillators," 1975.
 
 ---
 
 *Alfredo Medina Hernandez · Medina Tech · Chaos Lab · Dallas, Texas*  
-*PROT-052 — Prior art established 2024*  
-*Sovereign Intelligence Research Series — Paper XIII (final)*
+*PROT-052 — Prior art established 2026*  
+*Sovereign Intelligence Research Series — Paper XIII*

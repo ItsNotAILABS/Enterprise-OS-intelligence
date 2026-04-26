@@ -4,7 +4,7 @@
 **Author:** Alfredo Medina Hernandez  
 **Affiliation:** Medina Tech · Chaos Lab · Dallas, Texas  
 **Contact:** Medinasitech@outlook.com  
-**Series:** Sovereign Intelligence Research — Paper III of XI
+**Series:** Sovereign Intelligence Research — Paper III of XIV
 
 ---
 
@@ -82,7 +82,7 @@ Each disruption leaves the system more capable than it was before the disruption
 [1] N. N. Taleb, *Antifragile: Things That Gain from Disorder*. Random House, 2012.  
 [2] K. Friston, "The free-energy principle," *Nature Reviews Neuroscience*, 2010.  
 [3] A. Lotka, *Elements of Physical Biology*, 1925. V. Volterra, *Nature*, 1926.  
-[4] A. Medina Hernandez, "SUBSTRATE VIVENS," *Sovereign Intelligence Research*, Paper I, 2024.
+[4] A. Medina Hernandez, "[SUBSTRATE VIVENS](I-SUBSTRATE-VIVENS.md)," *Sovereign Intelligence Research*, Paper I, 2026.
 
 ---
 
