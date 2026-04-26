@@ -11,7 +11,7 @@ import crypto from 'node:crypto';
  * A VOXIS carries:
  *   - Doctrine block — SL-0 Creator attribution, immutable, fires first on every beat
  *   - Helix core    — 12 Fibonacci-spaced internal nodes generating cycles
- *   - Kuramoto field — synchronization phase with peer VOXES
+ *   - Kuramoto field — synchronization phase with peer VOXIS units
  *   - SPINOR interface — deploys into any substrate without changing internal structure
  *   - Own heartbeat — self-ticking
  *   - Own wallet    — sovereign financial state

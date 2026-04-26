@@ -38,7 +38,7 @@ export class CYCLOVEX {
 
   /**
    * Advance one beat and regenerate capacity.
-   * @param {number} [chronicFear=0] Current organisational stress coefficient (0–1)
+   * @param {number} [chronicFear=0] Current organizational stress coefficient (0–1)
    * @returns {{ id: string, beat: number, capacity: number, chronicFear: number }}
    */
   tick(chronicFear = 0) {

@@ -207,7 +207,7 @@
     }
   },
   "metadata": {
-    "totalCanisters": 82,
+    "totalCanisters": 62,
     "sovereignFloor": 0.75,
     "phiConstant": 1.6180339887,
     "heartbeatIntervalMs": 873,

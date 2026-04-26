@@ -2,7 +2,7 @@
  * CORDEX — The Organizational Heart
  *
  * Runs the Lotka-Volterra tension field between expansion forces and
- * organisational resistance. Tracks the dominanceRatio in real time and
+ * organizational resistance. Tracks the dominanceRatio in real time and
  * emits correction signals when resistance dominates.
  *
  * Equations:
@@ -12,6 +12,8 @@
  * Where:
  *   x = expansion force  (growth initiatives, new signals)
  *   y = resistance force (bureaucracy, technical debt, legacy friction)
+ *
+ * Creator: Alfredo Medina Hernandez · PRIMORDIUM
  */
 export class CORDEX {
   /** @type {number} Golden ratio */
@@ -20,7 +22,7 @@ export class CORDEX {
   /**
    * @param {Object} [params]
    * @param {number} [params.r=0.3]    Intrinsic growth rate of expansion
-   * @param {number} [params.K=1.0]    Carrying capacity of the organisation
+   * @param {number} [params.K=1.0]    Carrying capacity of the organization
    * @param {number} [params.alpha=0.4] Predation coefficient (resistance on expansion)
    * @param {number} [params.delta=0.3] Conversion efficiency (expansion → resistance)
    * @param {number} [params.beta=0.2]  Natural decay of resistance
