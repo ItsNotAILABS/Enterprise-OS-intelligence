@@ -2,13 +2,31 @@
   "name": "@medina/analyst-ai",
   "version": "0.1.0-alpha",
   "description": "AI analyst for business professionals. Turn long reports, emails, and meeting notes into executive briefs, action items, and trend insights — all embedded, no subscription, no data leaves your machine.",
-  "license": "Apache-2.0",
-  "author": { "name": "Alfredo Medina Hernandez", "email": "Medinasitech@outlook.com" },
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "Alfredo Medina Hernandez",
+    "email": "Medinasitech@outlook.com"
+  },
   "type": "module",
   "main": "src/index.js",
-  "exports": { ".": "./src/index.js" },
-  "keywords": ["ai","analyst","business-intelligence","brief","action-items","no-api","medina-tech"],
-  "repository": { "type": "git", "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence" },
-  "engines": { "node": ">=18.0.0" },
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "keywords": [
+    "ai",
+    "analyst",
+    "business-intelligence",
+    "brief",
+    "action-items",
+    "no-api",
+    "medina-tech"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {}
 }

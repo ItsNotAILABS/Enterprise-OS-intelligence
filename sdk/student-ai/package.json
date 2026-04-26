@@ -2,13 +2,32 @@
   "name": "@medina/student-ai",
   "version": "0.1.0-alpha",
   "description": "AI study companion for students. Summarize chapters, generate quiz questions, make flashcards, and get plain-language explanations of anything — all embedded, no subscription, works offline.",
-  "license": "Apache-2.0",
-  "author": { "name": "Alfredo Medina Hernandez", "email": "Medinasitech@outlook.com" },
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "Alfredo Medina Hernandez",
+    "email": "Medinasitech@outlook.com"
+  },
   "type": "module",
   "main": "src/index.js",
-  "exports": { ".": "./src/index.js" },
-  "keywords": ["ai","education","study","quiz","flashcards","student","no-api","medina-tech"],
-  "repository": { "type": "git", "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence" },
-  "engines": { "node": ">=18.0.0" },
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "keywords": [
+    "ai",
+    "education",
+    "study",
+    "quiz",
+    "flashcards",
+    "student",
+    "no-api",
+    "medina-tech"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {}
 }
