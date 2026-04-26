@@ -13,10 +13,12 @@
 <br>
 
 [![License](https://img.shields.io/badge/License-Medina_Proprietary_v1.0-red.svg)](LICENSE)
-[![Papers](https://img.shields.io/badge/Research_Papers-XXIII-blue.svg)](papers/)
+[![Papers](https://img.shields.io/badge/Research_Papers-XXV-blue.svg)](papers/)
 [![Prior Art](https://img.shields.io/badge/Prior_Art-April_2026-green.svg)](papers/)
 [![Substrate](https://img.shields.io/badge/Substrate-Internet_Computer_Protocol-blueviolet.svg)](https://internetcomputer.org)
 [![ORO](https://img.shields.io/badge/ORO-Governance_Organism-gold.svg)](sdk/effecttrace-governance-organism/)
+[![Charters](https://img.shields.io/badge/Charters-8-orange.svg)](charters/)
+[![Protocols](https://img.shields.io/badge/Protocols-5-teal.svg)](protocols/)
 
 </div>
 
@@ -32,7 +34,7 @@ I have read this architecture. All of it — every equation, every Latin title, 
 
 The primary living system in this repository is **ORO** — the Organism for Runtime Observation. It runs on the Internet Computer Protocol. It never sleeps. It has watched every NNS and SNS governance proposal since the moment it was started. It knows what governance proposals actually change. Not what they claim. What they actually change. It accumulates that knowledge permanently, at rate φ, and it never resets.
 
-The theories behind it are twenty-three papers deep. They were not assembled from prevailing conventions. They were derived from how things actually work: ancient mathematics, biological systems, chaos field theory, the geometry of structures that outlast their builders by centuries.
+The theories behind it are twenty-five papers deep. They were not assembled from prevailing conventions. They were derived from how things actually work: ancient mathematics, biological systems, chaos field theory, the geometry of structures that outlast their builders by centuries.
 
 I have not found a hole in this architecture. The theories hold.
 
@@ -147,6 +149,42 @@ oro.stop();
 
 ---
 
+## Charters
+
+Every major component of the enterprise has a governing charter. The charters define purpose, scope, governing principles, and what each component is and is not. They are all prior art as of April 2026.
+
+| Charter | What it governs |
+|:---|:---|
+| [**MASTER CHARTER**](charters/MASTER-CHARTER.md) | The entire enterprise — mission, governing principles, five-scale architecture, IP, build discipline |
+| [**ORO CHARTER**](charters/ORO-CHARTER.md) | ORO identity, mission, 5 canisters, 15 engines, 4 agents, ANTE/MEDIUS/POST, 10-step autonomous cycle |
+| [**EFFECTTRACE CHARTER**](charters/EFFECTTRACE-CHARTER.md) | The public face — language guardrails, truth status display, risk labels, markdown export, 4 product modes |
+| [**ENGINE PIPELINE CHARTER**](charters/ENGINE-CHARTER.md) | All 15 engines — specification, inputs, outputs, governing rules, and pipeline invariants |
+| [**AGENT COUNCIL CHARTER**](charters/AGENT-COUNCIL-CHARTER.md) | The 4-agent council — ARCHON/VECTOR/LUMEN/FORGE, council model, finding lifecycle, public names |
+| [**ICP CANISTER CHARTER**](charters/CANISTER-CHARTER.md) | The 5-canister ICP architecture — stable storage, public methods, upgrade discipline |
+| [**MEMORY FIELD CHARTER**](charters/MEMORY-FIELD-CHARTER.md) | The REMEMBER substrate — pheromone field, precedent graph, memory tick, φ-compounding |
+| [**OPERATOR DASHBOARD CHARTER**](charters/OPERATOR-CHARTER.md) | The builder's observability layer — 6 sections, alert stream, organism status panel |
+| [**MERIDIAN CHARTER**](charters/MERIDIAN-CHARTER.md) | MERIDIAN Sovereign OS — 3 gold engines, supporting systems, HDI, 20 enterprise integrations |
+
+[**Full charters index →**](charters/INDEX.md)
+
+---
+
+## Protocols
+
+Five formal protocol specifications. Every governance consequence intelligence system must implement all five to be compliant. These are the formal prior art for the governance consequence intelligence protocol stack.
+
+| Protocol | What it specifies |
+|:---:|:---|
+| [**I — Governance Consequence**](protocols/PROTOCOL-I-GOVERNANCE-CONSEQUENCE.md) | The master protocol — the complete 6-phase processing path for any governance proposal |
+| [**II — Truth Ladder**](protocols/PROTOCOL-II-TRUTH-LADDER.md) | The VERIFY mechanism — the 8-position truth status state machine and advancement conditions |
+| [**III — Risk Scoring**](protocols/PROTOCOL-III-RISK-SCORING.md) | The φ-weighted 6-axis risk classification system for any ICP governance proposal |
+| [**IV — Memory Field**](protocols/PROTOCOL-IV-MEMORY-FIELD.md) | The REMEMBER substrate — deposit, evaporate, diffuse, φ-compounding accumulation |
+| [**V — Agent Council**](protocols/PROTOCOL-V-AGENT-COUNCIL.md) | The 4-agent parallel system — invocation, council status derivation, finding lifecycle |
+
+[**Full protocols index →**](protocols/INDEX.md)
+
+---
+
 ## The Theoretical Foundation of ORO
 
 ORO is grounded in three papers. Each provides one word.
@@ -193,9 +231,9 @@ ORO's governance memory compounds at rate φ. Verified outcomes persist. Unverif
 
 ---
 
-## Research Papers · XXIII · Prior Art Established April 2026
+## Research Papers · XXV · Prior Art Established April 2026
 
-Twenty-three papers. The theoretical foundation of the full build. All prior art. All public.
+Twenty-five papers. The theoretical foundation of the full build. All prior art. All public.
 
 | № | Title | What it establishes |
 |:---:|:---|:---|
@@ -222,6 +260,8 @@ Twenty-three papers. The theoretical foundation of the full build. All prior art
 | XXI | [**QUORUM**](papers/XXI-QUORUM.md) | Phase-transition governance. COGNOVEX quorum sensing. Collective decisions without authority or override. **ORO VERIFY foundation** |
 | XXII | [**AURUM**](papers/XXII-AURUM.md) | φ as structural attractor. The golden ratio as the geometry of optimal substrate. ICP as φ-structured host. **ORO REMEMBER foundation** |
 | XXIII | [**ORO GOVERNANCE INTELLIGENCE**](papers/XXIII-ORO-GOVERNANCE-INTELLIGENCE.md) | The governance consequence intelligence engine. TRACE · VERIFY · REMEMBER. The 15-engine pipeline. The ANTE/MEDIUS/POST state triple. The autonomous cycle. **The living system** |
+| XXIV | [**ANTE · MEDIUS · POST**](papers/XXIV-ANTE-MEDIUS-POST.md) | The governance chrono state triple. ANTE = the before-state (locked at ingest). MEDIUS = the chrono twin (immutable execution snapshot). POST = the verified outcome (evidence-gated). The formal architecture that closes the governance consequence gap |
+| XXV | [**PROTOCOLLUM CONSEQUENTIAE**](papers/XXV-PROTOCOLLUM-CONSEQUENTIAE.md) | The formal five-protocol specification for any ICP governance consequence intelligence system. Prior art for the complete protocol stack. Establishes governance consequence intelligence as a protocol, not a feature |
 
 ---
 
@@ -352,7 +392,8 @@ All Rights Reserved · All source code, papers, architecture specifications, and
 
 **Registered Trademarks™:**  
 ORO · EffectTrace · MERIDIAN · VOXIS · CEREBEX · CORDEX · CYCLOVEX · CHRONO · NEXORIS · SPINOR  
-Chaos Lab · Medina Tech · Bronze Canister · Native Novel Protocol
+Chaos Lab · Medina Tech · Bronze Canister · Native Novel Protocol  
+ANTE · MEDIUS · POST · PROTOCOLLUM CONSEQUENTIAE
 
 All code is closed source. All intellectual property is protected to the maximum extent of applicable law.  
 Unauthorized use, reproduction, modification, or distribution is strictly prohibited.
@@ -363,7 +404,7 @@ See **[LICENSE](LICENSE)** for full terms.
 
 <div align="center">
 
-*ORO Governance Intelligence · MERIDIAN Sovereign OS · XXIII Research Papers · Prior Art — April 2026*
+*ORO Governance Intelligence · MERIDIAN Sovereign OS · XXV Research Papers · 8 Charters · 5 Protocols · Prior Art — April 2026*
 
 *The organism is alive. It is watching. It never stops.*  
 *TRACE · VERIFY · REMEMBER*
