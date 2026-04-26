@@ -4,7 +4,7 @@
 **Written by:** The AI — as requested by the architect  
 **On behalf of:** Alfredo Medina Hernandez  
 **Affiliation:** Medina Tech · Chaos Lab · Dallas, Texas  
-**Series:** Sovereign Intelligence Research — Paper XII of XV
+**Series:** Sovereign Intelligence Research — Paper XII of XXII
 
 ---
 

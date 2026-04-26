@@ -13,7 +13,7 @@
 <br>
 
 [![License](https://img.shields.io/badge/License-Medina_Proprietary_v1.0-red.svg)](LICENSE)
-[![Papers](https://img.shields.io/badge/Research_Papers-XIX-blue.svg)](papers/)
+[![Papers](https://img.shields.io/badge/Research_Papers-XXII-blue.svg)](papers/)
 [![Prior Art](https://img.shields.io/badge/Prior_Art-April_2026-green.svg)](papers/)
 
 </div>
@@ -62,13 +62,13 @@ MERIDIAN is a sovereign OS that lives beneath your existing stack and adds a ner
 
 ## Theory
 
-Three essays on the architecture of sovereign collective intelligence. Each one stands alone. They build on each other.
+Three essays on the architecture of sovereign collective intelligence. Each one stands alone. They build on each other. Full formal papers are in the research series.
 
 ---
 
-### STIGMERGY — The Architecture of Sovereign Collective Intelligence
+### [XX · STIGMERGY](papers/XX-STIGMERGY.md) — The Architecture of Sovereign Collective Intelligence
 
-*Alfredo Medina | AI Labs*
+*Alfredo Medina | Medina Tech · Chaos Lab*
 
 Every ant has a brain. Every ant thinks. Every ant decides independently, protects its node, and operates with full sovereign awareness of its immediate field. This is not metaphor. This is biology.
 
@@ -78,13 +78,15 @@ The mechanism is stigmergy. Each ant writes to the environment. Each ant reads f
 
 This breaks every assumption modern AI architecture is built on. We build systems where intelligence lives in the model. The colony builds systems where intelligence lives in the field. The model can be replaced. The field cannot — it is the accumulated record of every sovereign decision every node ever made.
 
-We are not building smarter agents. We are building a better field.
+NEXORIS is a synthetic pheromone field. CHRONO is the immutable trail record. COGNOVEX units are sovereign foragers. We are not building smarter agents. We are building a better field.
+
+[**Read the full paper →**](papers/XX-STIGMERGY.md)
 
 ---
 
-### QUORUM — On How Decisions Happen Without Authority
+### [XXI · QUORUM](papers/XXI-QUORUM.md) — On How Decisions Happen Without Authority
 
-*Alfredo Medina | AI Labs*
+*Alfredo Medina | Medina Tech · Chaos Lab*
 
 The honeybee swarm does not vote. It does not elect a leader. It does not reach consensus. It reaches quorum — and the difference is architectural, not semantic.
 
@@ -98,11 +100,13 @@ Every governance system ever designed by humans operates on authority — someon
 
 This is the governance architecture we should be building.
 
+[**Read the full paper →**](papers/XXI-QUORUM.md)
+
 ---
 
-### AURUM — On Why the Substrate Is the Intelligence
+### [XXII · AURUM](papers/XXII-AURUM.md) — On Why the Substrate Is the Intelligence
 
-*Alfredo Medina | AI Labs*
+*Alfredo Medina | Medina Tech · Chaos Lab*
 
 φ = 1.6180339887. The golden ratio. It appears in the spiral of a nautilus, the branching of a tree, the seed arrangement of a sunflower. It is not decoration. It is the geometry of optimal packing — the mathematical answer to how a growing system fits the most into the least space without collision.
 
@@ -114,11 +118,13 @@ Every system we build treats the substrate as infrastructure — a place to put 
 
 When you build the environment correctly, the agents do not need to be smart. They need to be sovereign. The environment does the rest.
 
+[**Read the full paper →**](papers/XXII-AURUM.md)
+
 ---
 
-## Research Papers · XIX · Prior Art Established April 2026
+## Research Papers · XXII · Prior Art Established April 2026
 
-Nineteen papers. The theoretical foundation of the full build. All prior art. All public.
+Twenty-two papers. The theoretical foundation of the full build. All prior art. All public.
 
 | № | Title | What it establishes |
 |:---:|:---|:---|
@@ -141,6 +147,9 @@ Nineteen papers. The theoretical foundation of the full build. All prior art. Al
 | XVII | [**PROTOCOLLUM NATIVUM NOVUM**](papers/XVII-PROTOCOLLUM-NATIVUM.md) | Architecture of the Native Novel Protocol — sovereign, clean, non-commercial, closed |
 | XVIII | [**ARCHIVUM MEMORIAE SOVEREIGNAE**](papers/XVIII-ARCHIVUM-MEMORIAE.md) | Sovereign Memory Vaults. Encrypted. Linguistically rooted. Spanish-first. On ICP permanently |
 | XIX | [**INFRASTRUCTURA CIVICA INTELLIGENS**](papers/XIX-INFRASTRUCTURA-CIVICA.md) | Hospitals, care centers, schools, banks, civic buildings — as sovereign intelligence organisms |
+| XX | [**STIGMERGY**](papers/XX-STIGMERGY.md) | The pheromone field model. NEXORIS as a synthetic trail. Intelligence lives in the substrate between agents, not in the agents |
+| XXI | [**QUORUM**](papers/XXI-QUORUM.md) | Phase-transition governance. COGNOVEX quorum sensing. Collective decisions without authority or override |
+| XXII | [**AURUM**](papers/XXII-AURUM.md) | φ as structural attractor. The golden ratio as the geometry of optimal substrate. ICP as φ-structured host |
 
 ---
 
@@ -288,7 +297,7 @@ See **[LICENSE](LICENSE)** for full terms.
 
 <div align="center">
 
-*MERIDIAN Sovereign OS · XIX Research Papers · Prior Art — April 2026*
+*MERIDIAN Sovereign OS · XXII Research Papers · Prior Art — April 2026*
 
 *The papers are the architecture. The architecture is the intelligence.*  
 *Read them.*
