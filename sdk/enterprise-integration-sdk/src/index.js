@@ -2,7 +2,7 @@
  * @medina/enterprise-integration-sdk — v1.0.0
  *
  * Plug any enterprise into a sovereign intelligence substrate.
- * Company onboarding, 8 connector templates, campaign management,
+ * Company onboarding, 22 connector templates, campaign management,
  * multi-channel messaging, and export pipelines.
  */
 
@@ -12,6 +12,20 @@ export {
   BaseConnector,
   SalesforceConnector,
   SAPConnector,
+  OracleConnector,
+  WorkdayConnector,
+  ServiceNowConnector,
+  NetSuiteConnector,
+  QuickBooksConnector,
+  Microsoft365Connector,
+  JiraConnector,
+  GitHubConnector,
+  PlaidConnector,
+  DocuSignConnector,
+  ZendeskConnector,
+  AWSConnector,
+  AzureConnector,
+  GCPConnector,
   GoogleConnector,
   SlackConnector,
   HubSpotConnector,
