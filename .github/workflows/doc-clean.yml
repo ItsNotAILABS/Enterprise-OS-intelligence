@@ -1,4 +1,4 @@
-name: "Mundator Documentorum [E13·E14] — Document Sanitizer Guard"
+name: "Mundator Cognitus [E13] — Document Verify Guard (PASS 2)"
 
 on:
   push:
@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   sanitize:
-    name: "[E13·E14] Sanitize Public Documents"
+    name: "[E13] Verify Guard — PASS 2 Only (strict read-only)"
     runs-on: ubuntu-latest
 
     steps:
@@ -35,8 +35,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: "[E13·E14] Evidence Registry + Dispute/Correction — Run Mundator Documentorum"
-        run: node tools/doc-sanitizer.js papers/
+      - name: "[E13·E14] Evidence Registry + Dispute/Correction — Run Mundator Cognitus (PASS 2 — strict verify)"
+        run: node tools/doc-sanitizer.js papers/ --verify
 
       - name: "[E13] Evidence Registry — Check for sensitive files accidentally staged"
         run: |

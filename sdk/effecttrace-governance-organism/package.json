@@ -7,6 +7,8 @@
   "main": "src/index.js",
   "exports": {
     ".":                                "./src/index.js",
+    "./release":                        "./src/release.js",
+    "./speedster":                      "./src/speedster.js",
     "./production":                     "./src/production.js",
     "./types":                          "./src/types.js",
     "./organism":                       "./src/organism.js",

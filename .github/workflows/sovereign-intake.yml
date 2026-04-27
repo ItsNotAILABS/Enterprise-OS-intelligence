@@ -1,23 +1,32 @@
-name: "Sovereign Intake [E13·E14·E15] — Auto-Sanitize and Commit"
+name: "Sovereign Intake [E13·E14·E15] — Two-Pass AI Document Intelligence"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Engine identity mapping
-#   E13 — Evidence Registry     : keeps every claim attached to a source
-#   E14 — Dispute/Correction    : allows auto-corrections and version history
-#   E15 — Render/Export Engine  : writes the final clean public-safe output
+#   E13 — Evidence Registry     : detects all sensitive / non-compliant content
+#   E14 — Dispute/Correction    : auto-fixes what can be auto-fixed
+#   E15 — Render/Export Engine  : writes the final clean output, commits, exports
 #
-# This workflow is the live INTAKE end of the document pipeline.
-# When any markdown document is pushed to papers/, this job:
-#   1. [E13] Runs the Mundator Documentorum sanitizer
-#      — auto-redacts canister IDs, logic code blocks, brand strings, API keys
-#   2. [E14] If the sanitizer made corrections, commits the cleaned files back
-#      to the same branch automatically — no human step required
-#   3. [E15] Produces a public-showcase-ready summary in the Actions step summary
-#   4. If any content cannot be auto-fixed, the job fails and blocks the push
-#      until the author resolves it manually
+# TWO-PASS AI PIPELINE:
 #
-# The doc-clean.yml workflow is the GUARD (fails on problems, read-only).
-# This workflow is the INTAKE (cleans what it can, then guards).
+#   PASS 1 — INGEST + FIX  [E13·E14]
+#     Read incoming document → detect all issues → auto-fix everything detectable
+#     (brand strings, canister IDs, API keys, logic code blocks, internal paths)
+#     Write cleaned file back to disk.
+#     If anything cannot be auto-fixed, fail immediately — do not proceed to PASS 2.
+#
+#   PASS 2 — STRICT VERIFY  [E13]
+#     Re-read the file PASS 1 wrote.
+#     Confirm that zero sensitive patterns survive.
+#     Read-only — no writes. Fails loudly if any pattern escaped PASS 1.
+#     If clean, proceed to commit.
+#
+#   COMMIT  [E15]
+#     Only if both PASS 1 and PASS 2 succeed.
+#     Git auto-commit with [E13·E14·E15] signature.
+#     GitHub Actions step summary published.
+#
+# The doc-clean.yml workflow runs PASS 2 only (guard check on PRs, read-only).
+# This workflow is the INTAKE (PASS 1 → PASS 2 → commit).
 # ─────────────────────────────────────────────────────────────────────────────
 
 on:
@@ -32,16 +41,14 @@ permissions:
 
 jobs:
   intake:
-    name: "[E13·E14·E15] Sovereign Paper Intake"
+    name: "[E13·E14·E15] Two-Pass Sovereign Paper Intake"
     runs-on: ubuntu-latest
 
     steps:
       - name: "[E1] Ingest — Checkout branch"
         uses: actions/checkout@v4
         with:
-          # Use the token so the auto-commit push is accepted
           token: ${{ secrets.GITHUB_TOKEN }}
-          # Fetch the full branch so we can push back
           fetch-depth: 0
 
       - name: "[E2] Parse — Setup Node.js runtime"
@@ -49,38 +56,54 @@ jobs:
         with:
           node-version: '20'
 
-      - name: "[E13·E14] Evidence Registry + Dispute/Correction — Run Mundator Documentorum (auto-fix mode)"
-        id: sanitize
+      - name: "[E13·E14] PASS 1 — Evidence Registry + Dispute/Correction — Ingest and Auto-Fix"
+        id: pass1
         run: |
+          echo "=== PASS 1: INGEST + AUTO-FIX ==="
           node tools/doc-sanitizer.js papers/
-          # Capture whether any files were modified by the auto-fixer
+          # Capture whether PASS 1 modified any files
           if [ -n "$(git diff --name-only)" ]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "Sanitizer auto-fixed corrections — will commit cleaned files."
+            echo "changed=true"  >> "$GITHUB_OUTPUT"
+            echo "PASS 1 auto-fixed content — proceeding to PASS 2 verification."
           else
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "All documents were already clean."
+            echo "PASS 1 found no issues — all documents were already clean."
           fi
 
-      - name: "[E14·E15] Dispute/Correction + Export — Commit sanitized documents"
-        if: steps.sanitize.outputs.changed == 'true'
+      - name: "[E13] PASS 2 — Evidence Registry — Strict Verify (zero-tolerance)"
+        id: pass2
         run: |
-          git config user.name  "Mundator Documentorum [E13·E14]"
+          echo "=== PASS 2: STRICT VERIFY ==="
+          node tools/doc-sanitizer.js papers/ --verify
+          echo "PASS 2 complete — all documents verified sovereign-public-ready."
+
+      - name: "[E14·E15] Dispute/Correction + Export — Commit verified documents"
+        if: steps.pass1.outputs.changed == 'true'
+        run: |
+          git config user.name  "Mundator Cognitus [E13·E14·E15]"
           git config user.email "actions@github.com"
           git add papers/
-          git commit -m "chore(sanitize): [E13·E14] auto-clean incoming documents [skip ci]"
+          git commit -m "chore(sanitize): [E13·E14] two-pass auto-clean — PASS 1 fix + PASS 2 verified [skip ci]"
           git push
 
       - name: "[E15] Render/Export — Publish intake summary"
         run: |
-          echo "### Sovereign Paper Intake [E13·E14·E15]" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Two-Pass Sovereign Paper Intake [E13·E14·E15]" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          if [ "${{ steps.sanitize.outputs.changed }}" == "true" ]; then
-            echo "✅ Documents auto-sanitized (E14) and committed back to branch (E15)." >> "$GITHUB_STEP_SUMMARY"
-            echo "" >> "$GITHUB_STEP_SUMMARY"
-            echo "**What was fixed:** canister IDs redacted · logic code blocks replaced · brand strings normalised" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Pass | Engine | Action | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|------|--------|--------|--------|" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ steps.pass1.outputs.changed }}" == "true" ]; then
+            echo "| PASS 1 | E13·E14 | Ingest + Auto-Fix | ✅ Fixed |" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "✅ All documents were already public-showcase ready." >> "$GITHUB_STEP_SUMMARY"
+            echo "| PASS 1 | E13·E14 | Ingest + Auto-Fix | ✅ Already clean |" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "| PASS 2 | E13     | Strict Verify      | ✅ Verified |" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ steps.pass1.outputs.changed }}" == "true" ]; then
+            echo "| COMMIT | E15     | Export to branch   | ✅ Committed |" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "| COMMIT | E15     | Export to branch   | ⏭ No changes |" >> "$GITHUB_STEP_SUMMARY"
           fi
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "*Mundator Documentorum [E13·E14·E15] — Medina Tech · Chaos Lab*" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Pipeline:** INGEST → FIX (E14) → VERIFY (E13) → COMMIT (E15)" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "*Mundator Cognitus — MERIDIAN Cognitive Governance Runtime — Medina Tech · Chaos Lab*" >> "$GITHUB_STEP_SUMMARY"
