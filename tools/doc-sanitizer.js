@@ -50,6 +50,9 @@ const BRAND_REPLACEMENTS = [
 // δ, Σ, φ, ρ, etc.) are academic notation, not implementation code.
 // NOTE: → ← ↔ are intentionally excluded — they appear in code comments and
 //       template literals and would create false positives.
+// NOTE: · (U+00B7, middle dot) is the mathematical interpunct used as a
+//       multiplication operator in the papers, distinct from × which is also
+//       included. Both are unambiguously academic notation.
 // Returns true when the block content looks like math/pseudo-code, not JS/Motoko.
 function isMathOrPseudoBlock(blockContent) {
   const mathSignals = /[∂∇∑∫δΣφρ∈⊂·≤≥≠≈∞∏√∀∃¬∧∨⊕±×÷π]/;
@@ -58,8 +61,10 @@ function isMathOrPseudoBlock(blockContent) {
   // Pseudo-code structs used in formal specification papers (e.g. ANTE/MEDIUS/POST)
   // have the shape:  Name = TypeName { field: value ... }
   // They look like JS objects but are NOT implementation code.
+  // `hasJsKeywords` uses patterns that avoid \b next to non-word characters (dots,
+  // parentheses) which would cause \b to never match.
   const pseudoCodeShape = /^\s*\w+\s*[=(]\s*\w+\s*\{[\s\S]*?\}/m;
-  const hasJsKeywords   = /\b(import|export|require|console\.|\.then\(|\.catch\(|Promise|async\s+function|await\s+\w+\s*\()\b/;
+  const hasJsKeywords   = /\b(?:import|export|require|Promise)\b|console\.|\.then\(|\.catch\(|\basync\s+function|\bawait\s+\w+\s*\(/;
   if (pseudoCodeShape.test(blockContent) && !hasJsKeywords.test(blockContent)) {
     return true;
   }
@@ -73,7 +78,9 @@ function isMathOrPseudoBlock(blockContent) {
 const CODE_BLOCK_RE = /```([a-z]*)\n([\s\S]*?)```/g;
 
 // Keywords that identify real implementation code (not prose or pseudo-code).
-const LOGIC_KEYWORDS = /\b(import|export|require|function\s+\w|const\s+\w|let\s+\w|var\s+\w|class\s+\w|async\s+function|await\s+\w|\.\w+\s*=>|Promise\.)\b/;
+// Patterns avoid placing \b next to non-word characters (dots, parentheses)
+// where a word-boundary assertion can never match.
+const LOGIC_KEYWORDS = /\b(?:import|export|require)\b|\bfunction\s+\w|\bconst\s+\w|\blet\s+\w|\bvar\s+\w|\bclass\s+\w|\basync\s+function|\bawait\s+\w|\.\w+\s*=>|Promise\./;
 
 function redactLogicBlocks(text) {
   let redacted = false;

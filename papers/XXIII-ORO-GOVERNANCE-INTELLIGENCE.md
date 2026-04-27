@@ -228,8 +228,7 @@ The architectural commitment of Paper XXII: ICP is the only substrate that can s
 Stores all `ProposalRecord` entries in stable memory. Indexes by NNS proposal ID and SNS (root canister ID, proposal ID) pair. Maps proposal IDs to trace IDs. Survives upgrades through stable variable persistence.
 
 ```motoko
-stable var proposals : HashMap<Text, ProposalRecord> = HashMap.HashMap(16, Text.equal, Text.hash);
-stable var proposalToTrace : HashMap<Text, Text> = HashMap.HashMap(16, Text.equal, Text.hash);
+[IMPLEMENTATION REDACTED — see ORO SDK]
 ```
 
 **Canister 2 — EffectTrace Canister**

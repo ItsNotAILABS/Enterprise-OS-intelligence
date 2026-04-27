@@ -18,6 +18,9 @@ on:
 # The sovereign-intake.yml workflow is the INTAKE (auto-fixes, then guards).
 # ─────────────────────────────────────────────────────────────────────────────
 
+permissions:
+  contents: read   # read-only guard — this workflow never pushes
+
 jobs:
   sanitize:
     name: "[E13·E14] Sanitize Public Documents"
@@ -38,6 +41,9 @@ jobs:
       - name: "[E13] Evidence Registry — Check for sensitive files accidentally staged"
         run: |
           echo "Checking for accidentally committed sensitive files..."
+          # NOTE: protocols/ and sdk/*/src/ are intentionally omitted from this list —
+          # the ORO protocol specifications ship as public research documents, and the
+          # SDK src/ directories are part of the published open-source packages.
           FORBIDDEN=(
             "nova.json"
             "scripts/"
