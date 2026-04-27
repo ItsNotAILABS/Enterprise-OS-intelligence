@@ -94,10 +94,13 @@ export const MULTI_SYSTEM_SCOPE = Object.freeze({
   icpRole:          'First target — highest visibility, public proposals, established developer ecosystem, WASM runtime matches MERIDIAN architecture',
   icpIsNotOnly:     true,
   targetSystems: [
-    { id: 'A', name: 'ICP NNS/SNS',              status: 'primary entry point',  scope: 'Public NNS proposals; SNS-governed projects on ICP' },
-    { id: 'B', name: "Alfredo's Blockbox Builds", status: 'founder ecosystem',   scope: '~200 deployed canisters; autonomous heartbeat maintenance; upgrade governance' },
-    { id: 'C', name: 'Any ICP-based project',     status: 'general operator',    scope: 'Any Operator deploys Sovereign Packet against their canister ecosystem' },
-    { id: 'N', name: 'Future systems',            status: 'unbounded',           scope: 'Any distributed system with a ProposalFetcher adapter' },
+    { id: 'A', name: 'ICP NNS/SNS',              status: 'primary entry point',  scope: 'Public NNS proposals; SNS-governed projects on ICP', adapter: 'nns-fetcher.js + sns-fetcher.js' },
+    { id: 'B', name: "Alfredo's Blockbox Builds", status: 'founder ecosystem',   scope: '~200 deployed canisters; autonomous heartbeat; upgrade/controller/settings governance', adapter: 'blockbox-fetcher.js' },
+    { id: 'C', name: 'Ethereum Snapshot',         status: 'live',                scope: '1000s of EVM DAOs — ENS, Uniswap, AAVE, Optimism, Arbitrum, Gitcoin, Balancer, Curve, Lido, Sushi, dYdX, and more', adapter: 'ethereum-snapshot-fetcher.js' },
+    { id: 'D', name: 'Tally On-Chain EVM',        status: 'live',                scope: 'Governor Bravo + OpenZeppelin Governor — Compound, Uniswap on-chain, Nouns, Arbitrum DAO, ENS on-chain', adapter: 'tally-governance-fetcher.js' },
+    { id: 'E', name: 'Cosmos SDK Chains',         status: 'live',                scope: 'Any Cosmos SDK chain — ATOM, OSMO, JUNO, NTRN, STRD, INJ, TIA, DYDX, AKT, STARS, and 15+ more', adapter: 'cosmos-governance-fetcher.js' },
+    { id: 'F', name: 'Polkadot OpenGov',          status: 'live',                scope: 'DOT + KSM multi-track referenda — Root, Treasurer, Spenders, Whitelisted Caller, Admin tracks', adapter: 'polkadot-governance-fetcher.js' },
+    { id: 'N', name: 'Future systems',            status: 'unbounded',           scope: 'Any distributed system with a ProposalFetcher adapter — interface: async () => ProposalRecord[]', adapter: 'custom ProposalFetcher adapter' },
   ],
   shadowCorrectionNote: 'Paper XXIX shadow-mirror-to-ICP framing was incorrect and is superseded by XXXI. Self-governance and external governance are distinct operations. Cross-system intelligence comes from accumulated pheromone patterns, not mirroring.',
   // SDK autonomy extension — npm auto-update IS VIVIT at the distribution layer

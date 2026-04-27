@@ -232,5 +232,11 @@ function _printBanner() {
 export { NNSProposalFetcher, createNNSFetcher }    from './adapters/nns-fetcher.js';
 export { SNSProposalFetcher, createSNSFetcher, KNOWN_SNS_DAOS } from './adapters/sns-fetcher.js';
 export { StatusFetcher, AfterStateFetcher, createStatusFetchers } from './adapters/status-fetcher.js';
+// Universal governance adapters (Paper XXXI — Universalis Gubernatio)
+export { BlockboxFetcher, createBlockboxFetcher }                from './adapters/blockbox-fetcher.js';
+export { EthereumSnapshotFetcher, createSnapshotFetcher, KNOWN_SNAPSHOT_SPACES } from './adapters/ethereum-snapshot-fetcher.js';
+export { TallyGovernanceFetcher, createTallyFetcher, KNOWN_TALLY_GOVERNORS, TALLY_CHAIN_IDS } from './adapters/tally-governance-fetcher.js';
+export { CosmosGovernanceFetcher, createCosmosFetcher, KNOWN_COSMOS_CHAINS } from './adapters/cosmos-governance-fetcher.js';
+export { PolkadotGovernanceFetcher, createPolkadotFetcher, POLKADOT_TRACKS, POLKADOT_TRACK_IDS } from './adapters/polkadot-governance-fetcher.js';
 export { OROGovernanceOrganism }                   from './organism.js';
 export { TRACE, VERIFY, REMEMBER, THREE_WORDS }    from './types.js';
