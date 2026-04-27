@@ -1,0 +1,4 @@
+/home/runner/work/Enterprise-OS-intelligence/Enterprise-OS-intelligence/native/build/CMakeFiles/organism_kernel_demo.dir
+/home/runner/work/Enterprise-OS-intelligence/Enterprise-OS-intelligence/native/build/CMakeFiles/test.dir
+/home/runner/work/Enterprise-OS-intelligence/Enterprise-OS-intelligence/native/build/CMakeFiles/edit_cache.dir
+/home/runner/work/Enterprise-OS-intelligence/Enterprise-OS-intelligence/native/build/CMakeFiles/rebuild_cache.dir
