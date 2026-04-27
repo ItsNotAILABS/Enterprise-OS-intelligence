@@ -65,4 +65,4 @@ export {
 // ── Ecosystem catalog ──────────────────────────────────────────────────────────
 export { ECOSYSTEM_CATALOG, SYSTEM_IDENTITY,
          BEHAVIORAL_LAWS, CONSERVATION_LAWS, MATHEMATICAL_LAWS,
-         ENGINES, AGENTS, PROTOCOLS } from './ecosystem-catalog.js';
+         ENGINES, AGENTS, PROTOCOLS, SOVEREIGN_DISTRIBUTION } from './ecosystem-catalog.js';

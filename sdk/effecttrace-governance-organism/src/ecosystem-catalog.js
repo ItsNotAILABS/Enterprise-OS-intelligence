@@ -28,10 +28,22 @@ export const SYSTEM_IDENTITY = Object.freeze({
     MERIDIAN:    'the substrate — the sovereign OS layer',
     EffectTrace: 'the face — the public interface',
   },
-  author:        'Alfredo Medina Hernandez',
-  affiliation:   'Medina Tech · Chaos Lab · Dallas, Texas',
-  priorArt:      'April 2026',
-  version:       '1.1.0',
+  // Mirror Governance sub-identity (Paper XXIX)
+  mirrorIdentity: {
+    latinName:   'Gubernatio Specularis',
+    latinMeaning:'Mirror Governance',
+    motto:       'REGIT · SPECTAT · SIMULAT',
+    mottoMeaning:'It Governs · It Mirrors · It Simulates',
+    threeWords:  ['SELF', 'SHADOW', 'SIMULATE'],
+  },
+  truePrimitive:    'φ = 1.6180339887498948482...',
+  primitiveLatin:   'Primitivo Uno, Fractura Cetera',
+  primitiveMeaning: 'One Primitive, All Else Fracture',
+  inventor:         'Alfredo Medina Hernandez — complete, total, without qualification',
+  author:           'Alfredo Medina Hernandez',
+  affiliation:      'Medina Tech · Chaos Lab · Dallas, Texas',
+  priorArt:         'April 2026',
+  version:          '1.1.0',
 });
 
 // ── The Laws ──────────────────────────────────────────────────────────────────
@@ -82,14 +94,18 @@ export const ENGINES = Object.freeze([
   { id: 'E11', name: 'Agent Council',              group: 'REMEMBER', file: 'engines/e11-agent-council.js',       role: 'Runs 4 sovereign agents in parallel; derives consensus without coordinator' },
   { id: 'E12', name: 'Public Summary Engine',      group: 'REMEMBER', file: 'engines/e12-public-summary.js',      role: 'Generates public-safe EffectTrace display and forum export' },
   { id: 'E15', name: 'Render/Export Engine',       group: 'REMEMBER', file: 'engines/e15-render-export.js',       role: 'Certified HTTPS responses; immutable hash-chained audit export' },
+  // SIMULATE GROUP (Paper XXIX — Mirror Governance)
+  { id: 'E16', name: 'Variance Simulation Engine', group: 'SIMULATE', file: 'engines/e16-variance-simulation.js', role: 'Generates N proposal variants; simulates consequences against memory field; identifies optimal variant before implementation' },
 ]);
 
 // ── The 4 Agents ──────────────────────────────────────────────────────────────
 export const AGENTS = Object.freeze([
-  { codename: 'ARCHON', className: 'IntegrityAgent',       file: 'agents/integrity.js',        domain: 'Governance integrity — doctrine compliance, conflict detection' },
-  { codename: 'VECTOR', className: 'ExecutionTraceAgent',  file: 'agents/execution-trace.js',  domain: 'Execution mapping — causal chain, canister call trace' },
-  { codename: 'LUMEN',  className: 'ContextMapAgent',      file: 'agents/context-map.js',       domain: 'Historical context — precedent, prior proposals, pattern recognition' },
-  { codename: 'FORGE',  className: 'VerificationLabAgent', file: 'agents/verification-lab.js',  domain: 'Verification — executable proof steps, after-state confirmation' },
+  { codename: 'ARCHON',       className: 'IntegrityAgent',           file: 'agents/integrity.js',        domain: 'Governance integrity — doctrine compliance, conflict detection' },
+  { codename: 'VECTOR',       className: 'ExecutionTraceAgent',      file: 'agents/execution-trace.js',  domain: 'Execution mapping — causal chain, canister call trace' },
+  { codename: 'LUMEN',        className: 'ContextMapAgent',          file: 'agents/context-map.js',       domain: 'Historical context — precedent, prior proposals, pattern recognition' },
+  { codename: 'FORGE',        className: 'VerificationLabAgent',     file: 'agents/verification-lab.js',  domain: 'Verification — executable proof steps, after-state confirmation' },
+  // Autonomous research agent (Paper XXIX — Mirror Governance)
+  { codename: 'PROTOCOLLUM',  className: 'ProtocolResearchAgent',    file: 'agents/protocollum.js',       domain: 'Autonomous ICP protocol research — always-on career agent; pulls all NNS/SNS data; builds Protocol Knowledge Field; goal-sees patterns and blindspots' },
 ]);
 
 // ── The 5 Protocols ───────────────────────────────────────────────────────────
@@ -101,7 +117,23 @@ export const PROTOCOLS = Object.freeze([
   { id: 'V',   name: 'Agent Council',          domain: 'Parallel invocation, council status derivation, finding lifecycle' },
 ]);
 
-// ── The SDK Editions ──────────────────────────────────────────────────────────
+// ── Sovereign Packets + Operator Terminology (Paper XXVIII) ──────────────────
+// When MERIDIAN distributes itself, it does not distribute "SDKs".
+// It distributes Sovereign Packets — compute units that carry their own doctrine.
+export const SOVEREIGN_DISTRIBUTION = Object.freeze({
+  unitName:          'Sovereign Packet',
+  unitDescription:   'The distributed unit of MERIDIAN intelligence — carries its own doctrine, heartbeat, governance record, and PROTOCOLLUM endpoint',
+  recipientName:     'Operator',
+  recipientRole:     'Deploys Sovereign Packets into Sovereign Runtimes; provides operational context; does not override doctrine',
+  runtimeName:       'Sovereign Runtime',
+  runtimeDescription:'A live deployment of a Sovereign Packet — always alive from start until stop',
+  compilationName:   'Packet Compilation',
+  compilationRule:   'Autonomous and native — triggered by version bump, not human action; validates all engines before publishing',
+  editions: [
+    { name: 'Release Sovereign Packet',    path: '/release',    audience: 'External Operators — production deployments' },
+    { name: 'Speedster Sovereign Packet',  path: '/speedster',  audience: 'Internal Operators — fast iteration and debugging' },
+  ],
+});
 export const SDK_EDITIONS = Object.freeze([
   {
     name:         'Release Edition',
@@ -165,6 +197,8 @@ export const PAPERS = Object.freeze([
   { roman: 'XXV',    slug: 'XXV-PROTOCOLLUM-CONSEQUENTIAE',  title: 'Protocollum Consequentiae',         keyContrib: 'Five-protocol formal specification — prior art' },
   { roman: 'XXVI',   slug: 'XXVI-GUBERNATIO-VIVA',           title: 'Gubernatio Viva',                   keyContrib: 'Complete formal system specification — ICP impact + release research paper' },
   { roman: 'XXVII',  slug: 'XXVII-PERSPECTIVA-AUCTORIS',     title: 'Perspectiva Auctoris',              keyContrib: "Honest point-of-view assessment — what was built, why it's novel, ICP impact" },
+  { roman: 'XXVIII', slug: 'XXVIII-DE-PRIMITIVO',             title: 'De Primitivo',                      keyContrib: 'φ as the ONLY true primitive; everything else is a fracture; Alfredo as complete inventor; Sovereign Packets terminology' },
+  { roman: 'XXIX',   slug: 'XXIX-GUBERNATIO-SPECULARIS',      title: 'Gubernatio Specularis',             keyContrib: 'Mirror Governance: organism self-governance, shadow copy pattern (MERIDIAN↔ICP), E16 Variance Simulation Engine, PROTOCOLLUM autonomous protocol research agent' },
 ]);
 
 // ── Document Intelligence Pipeline ────────────────────────────────────────────
@@ -207,6 +241,7 @@ export const ENGINES_BY_GROUP = Object.freeze({
   TRACE:    ENGINES.filter(e => e.group === 'TRACE'),
   VERIFY:   ENGINES.filter(e => e.group === 'VERIFY'),
   REMEMBER: ENGINES.filter(e => e.group === 'REMEMBER'),
+  SIMULATE: ENGINES.filter(e => e.group === 'SIMULATE'),
 });
 
 export const AGENTS_BY_CODENAME = Object.freeze(
@@ -215,23 +250,24 @@ export const AGENTS_BY_CODENAME = Object.freeze(
 
 // ── Full catalog (single import) ──────────────────────────────────────────────
 export const ECOSYSTEM_CATALOG = Object.freeze({
-  identity:         SYSTEM_IDENTITY,
-  behavioralLaws:   BEHAVIORAL_LAWS,
-  conservationLaws: CONSERVATION_LAWS,
-  math:             MATHEMATICAL_LAWS,
-  engines:          ENGINES,
-  enginesByGroup:   ENGINES_BY_GROUP,
-  engineById:       ENGINES_BY_ID,
-  agents:           AGENTS,
-  agentByCodename:  AGENTS_BY_CODENAME,
-  protocols:        PROTOCOLS,
-  sdkEditions:      SDK_EDITIONS,
-  canisters:        CANISTERS,
-  charters:         CHARTERS,
-  papers:           PAPERS,
-  pipeline:         DOCUMENT_PIPELINE,
-  supportingSdks:   SUPPORTING_SDKS,
-  generatedAt:      '2026-04-27T00:00:00.000Z',
+  identity:              SYSTEM_IDENTITY,
+  behavioralLaws:        BEHAVIORAL_LAWS,
+  conservationLaws:      CONSERVATION_LAWS,
+  math:                  MATHEMATICAL_LAWS,
+  engines:               ENGINES,
+  enginesByGroup:        ENGINES_BY_GROUP,
+  engineById:            ENGINES_BY_ID,
+  agents:                AGENTS,
+  agentByCodename:       AGENTS_BY_CODENAME,
+  protocols:             PROTOCOLS,
+  sdkEditions:           SDK_EDITIONS,
+  sovereignDistribution: SOVEREIGN_DISTRIBUTION,
+  canisters:             CANISTERS,
+  charters:              CHARTERS,
+  papers:                PAPERS,
+  pipeline:              DOCUMENT_PIPELINE,
+  supportingSdks:        SUPPORTING_SDKS,
+  generatedAt:           '2026-04-27T08:00:00.000Z',
 });
 
 export default ECOSYSTEM_CATALOG;

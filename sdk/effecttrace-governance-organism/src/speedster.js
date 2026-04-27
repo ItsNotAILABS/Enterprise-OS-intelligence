@@ -47,7 +47,7 @@ export { VerificationLabAgent as FORGE  } from './agents/verification-lab.js';
 export { ECOSYSTEM_CATALOG as ECOSYSTEM,
          ENGINES_BY_ID, ENGINES_BY_GROUP, AGENTS_BY_CODENAME,
          DOCUMENT_PIPELINE, SUPPORTING_SDKS, PAPERS, CANISTERS,
-         SDK_EDITIONS, CHARTERS } from './ecosystem-catalog.js';
+         SDK_EDITIONS, CHARTERS, SOVEREIGN_DISTRIBUTION } from './ecosystem-catalog.js';
 
 // ── Speedster defaults ────────────────────────────────────────────────────────
 export const SPEEDSTER_DEFAULTS = Object.freeze({

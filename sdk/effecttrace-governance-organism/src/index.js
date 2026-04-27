@@ -97,6 +97,7 @@ export { ECOSYSTEM_CATALOG, SYSTEM_IDENTITY,
          BEHAVIORAL_LAWS, CONSERVATION_LAWS, MATHEMATICAL_LAWS,
          ENGINES, AGENTS, PROTOCOLS, SDK_EDITIONS, CANISTERS, PAPERS,
          ENGINES_BY_ID, ENGINES_BY_GROUP, AGENTS_BY_CODENAME,
+         SOVEREIGN_DISTRIBUTION,
          DOCUMENT_PIPELINE }                             from './ecosystem-catalog.js';
 
 // ---------------------------------------------------------------------------
