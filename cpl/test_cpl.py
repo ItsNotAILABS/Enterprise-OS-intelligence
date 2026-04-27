@@ -1,11 +1,14 @@
 """
-test_cpl.py — CPL test suite (v2.0)
+test_cpl.py — CPL test suite (v3.0)
 
 Tests for:
-  - cpl_tokens  : token dictionary, all 7 families, lookups, domains
-  - cpl_lexer   : tokenisation, parsing, AST
-  - cpl_encoder : binary encode/decode, roundtrip
-  - cpl_vm      : expression evaluation, Pythagorean constants, sacred geometry
+  - cpl_tokens   : token dictionary, all 7 families, lookups, domains
+  - cpl_lexer    : tokenisation, parsing, AST
+  - cpl_encoder  : binary encode/decode, roundtrip
+  - cpl_vm       : expression evaluation, Pythagorean constants, sacred geometry
+  - cpl_registry : official language/structure codenames, 16-language grid
+  - blockbox     : QFB, SHL, QFC, PHXChain, phi-expansion
+  - cpl_bridge   : CPLBridge polyglot emission, synopsis, query call
 
 Run with: pytest test_cpl.py -v
 """
@@ -1091,6 +1094,457 @@ class TestRegistry:
         decoded = roundtrip(src)
         assert "Τετρε" in decoded
         assert "Δδκ" in decoded
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CPL REGISTRY TESTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TestCPLRegistry:
+
+    def setup_method(self):
+        from cpl_registry import LANGUAGES, STRUCTURES, BY_CODE, STRUCT_MAP, \
+            CPL_VARIANTS, FUSION_LANGS, CRYPTO_LANGS, language, structure, registry_summary
+        self.LANGUAGES      = LANGUAGES
+        self.STRUCTURES     = STRUCTURES
+        self.BY_CODE        = BY_CODE
+        self.STRUCT_MAP     = STRUCT_MAP
+        self.CPL_VARIANTS   = CPL_VARIANTS
+        self.FUSION_LANGS   = FUSION_LANGS
+        self.CRYPTO_LANGS   = CRYPTO_LANGS
+        self.language       = language
+        self.structure      = structure
+        self.registry_summary = registry_summary
+
+    def test_sixteen_languages(self):
+        assert len(self.LANGUAGES) == 16
+
+    def test_unique_codes(self):
+        codes = [l.code for l in self.LANGUAGES]
+        assert len(codes) == len(set(codes)), "Language codes must be unique"
+
+    def test_unique_numbers(self):
+        nums = [l.number for l in self.LANGUAGES]
+        assert sorted(nums) == list(range(1, 17))
+
+    def test_cpl_is_number_one(self):
+        lang = self.language("CPL")
+        assert lang is not None
+        assert lang.number == 1
+
+    def test_cxl_is_fusion(self):
+        lang = self.language("CXL")
+        assert lang is not None
+        assert lang.is_fusion
+
+    def test_phx_is_crypto(self):
+        lang = self.language("PHX")
+        assert lang is not None
+        assert lang.is_crypto
+
+    def test_three_cpl_variants(self):
+        # CPL, CPP, CPX
+        assert len(self.CPL_VARIANTS) == 3
+        codes = {v.code for v in self.CPL_VARIANTS}
+        assert "CPL" in codes
+        assert "CPP" in codes
+        assert "CPX" in codes
+
+    def test_go_is_gol(self):
+        lang = self.language("GOL")
+        assert lang is not None
+        assert "Go" in lang.short_name
+        assert lang.number == 7
+
+    def test_rust_is_rst(self):
+        lang = self.language("RST")
+        assert lang is not None
+        assert lang.number == 8
+
+    def test_motoko_is_mot(self):
+        lang = self.language("MOT")
+        assert lang is not None
+        assert "ICP" in lang.role or "canister" in lang.role.lower()
+
+    def test_python_is_pyt(self):
+        lang = self.language("PYT")
+        assert lang is not None
+
+    def test_syn_is_sixteen(self):
+        lang = self.language("SYN")
+        assert lang is not None
+        assert lang.number == 16
+
+    def test_six_structures(self):
+        assert len(self.STRUCTURES) >= 5
+
+    def test_qfb_structure(self):
+        s = self.structure("QFB")
+        assert s is not None
+        assert "Quantum Fusion Block" in s.full_name
+
+    def test_shl_structure(self):
+        s = self.structure("SHL")
+        assert s is not None
+        assert "Sphere Helix" in s.full_name
+
+    def test_qfc_structure(self):
+        s = self.structure("QFC")
+        assert s is not None
+        assert "Core" in s.full_name
+
+    def test_phx_structure(self):
+        s = self.structure("PHX")
+        assert s is not None
+        assert "Phi Hash" in s.full_name
+
+    def test_registry_summary_contains_all_codes(self):
+        s = self.registry_summary()
+        for code in ["CPL","CPP","CPX","CXL","PYT","MOT","GOL","RST","PHX","SYN"]:
+            assert code in s, f"Code {code} missing from registry summary"
+
+    def test_unknown_language_returns_none(self):
+        assert self.language("XYZ") is None
+
+    def test_unknown_structure_returns_none(self):
+        assert self.structure("ZZZ") is None
+
+    def test_fusion_langs_includes_cxl_and_mls(self):
+        codes = {l.code for l in self.FUSION_LANGS}
+        assert "CXL" in codes
+        assert "MLS" in codes
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# QFB (BLOCK BOX) TESTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TestQFB:
+
+    def setup_method(self):
+        import os
+        from blockbox import (
+            QFB, SphereHelixLayer, QuantumFusionCore, PhiCoord,
+            PHXChain, phx_token, _phi_expand,
+        )
+        self.QFB                = QFB
+        self.SphereHelixLayer   = SphereHelixLayer
+        self.QuantumFusionCore  = QuantumFusionCore
+        self.PhiCoord           = PhiCoord
+        self.PHXChain           = PHXChain
+        self.phx_token          = phx_token
+        self._phi_expand        = _phi_expand
+        self.key                = os.urandom(32)
+
+    def test_create_from_cpl(self):
+        qfb = self.QFB.from_cpl(["Λγ", "∧", "Ηθ", "→", "Τκτ"], self.key)
+        assert qfb.qfb_id
+        assert qfb.version == 1
+        assert "Λγ" in qfb.cpl_tokens()
+
+    def test_create_from_bytes(self):
+        qfb = self.QFB.from_bytes("data", b"hello organism", self.key)
+        assert qfb.qfc.payload_type == "data"
+        assert b"hello organism" in qfb.qfc.decode_bytes()
+
+    def test_verify_integrity(self):
+        qfb = self.QFB.from_cpl(["Μν", "→", "Τκτ"], self.key)
+        assert qfb.verify(self.key)
+
+    def test_wrong_key_fails_verify(self):
+        import os
+        qfb = self.QFB.from_cpl(["Μν", "→", "Τκτ"], self.key)
+        assert not qfb.verify(os.urandom(32))
+
+    def test_json_roundtrip(self):
+        qfb = self.QFB.from_cpl(["Ηθ", "⊗", "Πθ"], self.key)
+        json_str = qfb.to_json()
+        restored = self.QFB.from_json(json_str)
+        assert restored.qfb_id        == qfb.qfb_id
+        assert restored.phx_seal      == qfb.phx_seal
+        assert restored.cpl_tokens()  == qfb.cpl_tokens()
+
+    def test_dict_roundtrip(self):
+        qfb = self.QFB.from_cpl(["☿", "⊗", "☉"], self.key)
+        restored = self.QFB.from_dict(qfb.to_dict())
+        assert restored.qfb_id == qfb.qfb_id
+
+    def test_cpl_expression(self):
+        tokens = ["Λγ", "∧", "Ηθ"]
+        qfb = self.QFB.from_cpl(tokens, self.key)
+        assert qfb.cpl_expression() == "Λγ ∧ Ηθ"
+
+    def test_substrate_default_is_memory(self):
+        qfb = self.QFB.from_cpl(["Μν"], self.key)
+        assert "memory" in qfb.substrate
+
+    def test_substrate_tagging(self):
+        qfb = self.QFB.from_cpl(["Μν"], self.key)
+        qfb.tag_substrate("icp", "canister-abc-123")
+        assert "icp" in qfb.substrate
+        assert qfb.substrate_tags["icp"] == "canister-abc-123"
+
+    def test_supports_substrate(self):
+        qfb = self.QFB.from_cpl(["Μν"], self.key, substrates=["memory", "icp"])
+        assert qfb.supports_substrate("memory")
+        assert qfb.supports_substrate("icp")
+        assert not qfb.supports_substrate("quantum")
+
+    def test_phi_coord_sovereign(self):
+        coord = self.PhiCoord.sovereign(beat=42)
+        assert coord.ring == "Sovereign"
+        assert coord.beat == 42
+        assert abs(coord.phi - 1.618033988749895) < 1e-10
+
+    def test_shl_surface_area(self):
+        import math
+        shl = self.SphereHelixLayer(sphere_radius=1.618)
+        area = shl.surface_area()
+        assert abs(area - 4 * math.pi * 1.618 ** 2) < 1e-6
+
+    def test_shl_helix_length_positive(self):
+        shl = self.SphereHelixLayer()
+        assert shl.helix_length() > 0
+
+    def test_qfc_from_cpl(self):
+        qfc = self.QuantumFusionCore.from_cpl(["△", "▽", "✶"])
+        assert qfc.payload_type == "cpl_expression"
+        assert qfc.cpl_token_count == 3
+        assert "△" in qfc.cpl_manifest
+
+    def test_qfc_decode_bytes(self):
+        qfc = self.QuantumFusionCore.from_cpl(["Μν", "Δδ"])
+        raw = qfc.decode_bytes()
+        assert "Μν".encode("utf-8") in raw
+
+    def test_summary_contains_qfb(self):
+        qfb = self.QFB.from_cpl(["Λγ"], self.key)
+        s = qfb.summary()
+        assert "QFB" in s
+        assert "substrates" in s
+
+    def test_qfb_with_all_substrates(self):
+        qfb = self.QFB.from_cpl(
+            ["⊙", "☿", "Τκτ"], self.key,
+            substrates=["memory", "icp", "evm", "solana", "edge"],
+        )
+        for sub in ["memory", "icp", "evm", "solana", "edge"]:
+            assert qfb.supports_substrate(sub)
+
+    def test_phi_expand_length(self):
+        seed = b"phi-test"
+        expanded = self._phi_expand(seed, 64)
+        assert len(expanded) == 64
+
+    def test_phi_expand_differs_from_seed(self):
+        seed = b"\x00" * 64
+        expanded = self._phi_expand(seed, 64)
+        # phi-expanded zeros should not all be zero
+        assert any(b != 0 for b in expanded)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHX CHAIN TESTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TestPHXChain:
+
+    def setup_method(self):
+        import os
+        from blockbox import PHXChain, phx_token
+        self.key      = os.urandom(32)
+        self.PHXChain = PHXChain
+        self.phx_token = phx_token
+
+    def test_single_decision(self):
+        chain = self.PHXChain(self.key)
+        tok = chain.advance(b"decision: route to GPT-4", label="routing")
+        assert len(tok) == 32
+
+    def test_chain_advances_beat(self):
+        chain = self.PHXChain(self.key)
+        chain.advance(b"event-1")
+        chain.advance(b"event-2")
+        assert chain.beat == 2
+
+    def test_tokens_are_different(self):
+        chain = self.PHXChain(self.key)
+        t1 = chain.advance(b"event-1")
+        t2 = chain.advance(b"event-2")
+        assert t1 != t2
+
+    def test_same_event_different_beat_different_token(self):
+        chain = self.PHXChain(self.key)
+        t1 = chain.advance(b"same-event")
+        t2 = chain.advance(b"same-event")
+        assert t1 != t2   # beat differs → tokens differ
+
+    def test_log_tracks_decisions(self):
+        chain = self.PHXChain(self.key)
+        chain.advance(b"decision-1", label="d1")
+        chain.advance(b"decision-2", label="d2")
+        log = chain.log()
+        assert len(log) == 2
+        assert log[0]["label"] == "d1"
+        assert log[1]["label"] == "d2"
+
+    def test_log_contains_phx_token_hex(self):
+        chain = self.PHXChain(self.key)
+        tok = chain.advance(b"event")
+        log = chain.log()
+        assert log[0]["phx_token"] == tok.hex()
+
+    def test_latest_token_is_last(self):
+        chain = self.PHXChain(self.key)
+        chain.advance(b"a")
+        t = chain.advance(b"b")
+        assert chain.latest_token == t
+
+    def test_chain_summary(self):
+        chain = self.PHXChain(self.key)
+        chain.advance(b"x")
+        s = chain.chain_summary()
+        assert "PHXChain" in s
+        assert "beat=1" in s
+
+    def test_phx_token_is_32_bytes(self):
+        tok = self.phx_token(b"event", self.key, beat=0)
+        assert len(tok) == 32
+
+    def test_phx_token_changes_with_previous(self):
+        t1 = self.phx_token(b"event", self.key, previous_token=None, beat=0)
+        t2 = self.phx_token(b"event", self.key, previous_token=t1, beat=1)
+        assert t1 != t2
+
+    def test_phx_token_changes_with_key(self):
+        import os
+        k2 = os.urandom(32)
+        t1 = self.phx_token(b"event", self.key, beat=0)
+        t2 = self.phx_token(b"event", k2, beat=0)
+        assert t1 != t2
+
+    def test_short_key_raises(self):
+        with pytest.raises(ValueError):
+            self.PHXChain(b"short")
+
+    def test_genesis_token_no_previous(self):
+        chain = self.PHXChain(self.key)
+        tok = chain.advance(b"genesis")
+        assert tok is not None
+        assert len(tok) == 32
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CPL BRIDGE (CXL) TESTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TestCPLBridge:
+
+    def setup_method(self):
+        from cpl_bridge import CPLBridge
+        self.bridge = CPLBridge()
+
+    def test_available_targets(self):
+        targets = self.bridge.available_targets()
+        assert "python" in targets
+        assert "motoko" in targets
+        assert "go"     in targets
+        assert "rust"   in targets
+
+    def test_emit_python(self):
+        code = self.bridge.emit("Λγ ∧ Ηθ → Τκτ", "python")
+        assert "python" in code.lower() or "CPLVM" in code or "cpl_vm" in code.lower()
+
+    def test_emit_motoko(self):
+        code = self.bridge.emit("Λγ ∧ Ηθ → Τκτ", "motoko")
+        assert "Motoko" in code or "motoko" in code.lower() or "mo:" in code.lower()
+
+    def test_emit_go(self):
+        code = self.bridge.emit("Λγ ∧ Ηθ → Τκτ", "go")
+        assert "go" in code.lower() or "Go" in code or "golang" in code.lower() \
+               or "package" in code or "func" in code
+
+    def test_emit_rust(self):
+        code = self.bridge.emit("Λγ ∧ Ηθ → Τκτ", "rust")
+        assert "rust" in code.lower() or "fn " in code or "Vec" in code
+
+    def test_emit_unknown_target_raises(self):
+        with pytest.raises(ValueError):
+            self.bridge.emit("Λγ", "cobol")
+
+    def test_polyglot_returns_all_targets(self):
+        result = self.bridge.polyglot("Μν → Δδ → Τρδ")
+        assert set(result.keys()) == {"python", "motoko", "go", "rust"}
+
+    def test_polyglot_all_non_empty(self):
+        result = self.bridge.polyglot("Μν → Δδ")
+        for name, code in result.items():
+            assert len(code) > 0, f"{name} emitted empty code"
+
+    def test_source_in_python_output(self):
+        src = "Ηθ ∧ Πθ"
+        code = self.bridge.emit(src, "python")
+        # Source should appear as a comment or string in the output
+        assert "Ηθ" in code or "ETHOS" in code
+
+    def test_source_in_motoko_output(self):
+        src = "Ηθ ∧ Πθ"
+        code = self.bridge.emit(src, "motoko")
+        assert "Ηθ" in code or "ETHOS" in code
+
+    def test_history_grows(self):
+        self.bridge.emit("Μν", "python")
+        self.bridge.emit("Δδ", "rust")
+        assert len(self.bridge.history) == 2
+
+    def test_query_returns_value(self):
+        result = self.bridge.query("⊤")
+        assert "value" in result
+        assert result["value"]["type"] == "truth"
+        assert result["value"]["result"] == "True"
+
+    def test_query_returns_polyglot(self):
+        result = self.bridge.query("Μν → Δδ")
+        assert "polyglot" in result
+        assert "python" in result["polyglot"]
+
+    def test_query_beat_is_873(self):
+        result = self.bridge.query("φ")
+        assert result["beat"] == 873
+
+    def test_synopsis_token_count(self):
+        result = self.bridge.synopsis("Λγ ∧ Ηθ ∧ Πθ")
+        # Should find at least 3 tokens (Λγ, Ηθ, Πθ — ∧ may not be in token dict)
+        assert result["token_count"] >= 3
+
+    def test_synopsis_qfb_id(self):
+        result = self.bridge.synopsis("Τκτ → φ")
+        assert "qfb_id" in result
+        assert len(result["qfb_id"]) > 8
+
+    def test_synopsis_domains_populated(self):
+        result = self.bridge.synopsis("Ηθ ∧ Πθ → Τκτ")
+        assert len(result["domains"]) >= 1
+
+    def test_synopsis_cpl_version(self):
+        result = self.bridge.synopsis("Μν")
+        assert result["cpl_version"] == "3.0.0"
+
+    def test_bridge_cpl_plus_pythagorean(self):
+        # Full rhetoric + Pythagorean expression
+        src = "Λγ ∧ Ηθ ∧ Πθ → Φρ ⊗ Τκτ"
+        result = self.bridge.polyglot(src)
+        assert all(len(code) > 20 for code in result.values())
+
+    def test_bridge_sacred_geometry_expression(self):
+        src = "⊙ → Στγ → Κκλ → Σφρ"
+        result = self.bridge.polyglot(src)
+        assert "python" in result
+
+    def test_bridge_alchemy_expression(self):
+        src = "☿ ⊗ ☉ → ⊚"
+        result = self.bridge.polyglot(src)
+        assert all(len(code) > 0 for code in result.values())
 
 
 if __name__ == "__main__":
