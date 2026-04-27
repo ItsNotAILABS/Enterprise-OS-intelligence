@@ -9,6 +9,7 @@
     ".":                                "./src/index.js",
     "./release":                        "./src/release.js",
     "./speedster":                      "./src/speedster.js",
+    "./ecosystem":                      "./src/ecosystem-catalog.js",
     "./production":                     "./src/production.js",
     "./types":                          "./src/types.js",
     "./organism":                       "./src/organism.js",
@@ -50,7 +51,11 @@
     "stigmergy",
     "quorum",
     "aurum",
-    "trace-verify-remember"
+    "trace-verify-remember",
+    "gubernatio-viva",
+    "vivit-meminit-gubernat",
+    "cognitive-governance-runtime",
+    "mcgr"
   ],
   "author": {
     "name": "Alfredo Medina Hernandez",

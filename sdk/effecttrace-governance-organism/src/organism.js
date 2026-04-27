@@ -56,6 +56,8 @@ import {
   TRACE, VERIFY, REMEMBER,
 } from './types.js';
 
+import { ECOSYSTEM_CATALOG, SYSTEM_IDENTITY } from './ecosystem-catalog.js';
+
 // 24-hour default cycle: check every hour (3,600,000 ms)
 // For development, set cyclePeriodMs to a shorter interval
 const DEFAULT_CYCLE_PERIOD_MS = 60 * 60 * 1000;   // 1 hour
@@ -178,6 +180,15 @@ export class OROGovernanceOrganism {
         startedAt: this._startedAt,
       });
     }
+
+    // Emit ecosystem catalog on start — every instance knows its own architecture
+    this._emit('ecosystem_loaded', {
+      identity:   SYSTEM_IDENTITY,
+      engineCount: ECOSYSTEM_CATALOG.engines.length,
+      paperCount:  ECOSYSTEM_CATALOG.papers.length,
+      motto:       SYSTEM_IDENTITY.motto,
+      catalog:     ECOSYSTEM_CATALOG,
+    });
 
     // Run first cycle immediately, then on interval
     this._runCycle().catch(() => {});
@@ -437,6 +448,12 @@ export class OROGovernanceOrganism {
     if (filter.riskClass) all = all.filter((t) => t.riskProfile?.riskClass === filter.riskClass);
     return all.slice(filter.offset ?? 0, (filter.offset ?? 0) + (filter.limit ?? 100));
   }
+
+  // ── Ecosystem self-knowledge ──────────────────────────────────────────────
+  // The organism knows its own architecture at runtime.
+  // Every instance carries the full ecosystem catalog from the moment it starts.
+  get ecosystem() { return ECOSYSTEM_CATALOG; }
+  get identity()  { return SYSTEM_IDENTITY; }
 
   // ── Events ────────────────────────────────────────────────────────────────
 

@@ -33,6 +33,12 @@ on:
   pull_request:
     paths:
       - 'sdk/**'
+  schedule:
+    # Runs every 4 hours — autonomous, always-on
+    # The organism watches without being asked. So does its CI.
+    # VIVIT · MEMINIT · GUBERNAT
+    - cron: '0 */4 * * *'
+  workflow_dispatch:  # manual trigger for on-demand runs
 
 permissions:
   contents: read
@@ -166,7 +172,8 @@ jobs:
           // Release edition
           const release = await import('./src/release.js');
           const releaseExports = ['OROGovernanceOrganism', 'bootstrapORORelease',
-                                  'ORO_ENGINE', 'POWERED_BY_ORO', 'PHI'];
+                                  'ORO_ENGINE', 'POWERED_BY_ORO', 'PHI',
+                                  'ECOSYSTEM_CATALOG', 'SYSTEM_IDENTITY'];
           for (const name of releaseExports) {
             if (!(name in release)) {
               console.error(`  ✗  Release edition missing: ${name}`);
@@ -179,7 +186,7 @@ jobs:
           const speedster = await import('./src/speedster.js');
           const speedsterExports = ['createSpeedsterOrganism', 'withDebug',
                                     'buildEngineChain', 'DEBUG_EVENTS',
-                                    'SPEEDSTER_DEFAULTS',
+                                    'SPEEDSTER_DEFAULTS', 'ECOSYSTEM',
                                     'E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8',
                                     'E9', 'E10', 'E11', 'E12', 'E13', 'E14', 'E15',
                                     'ARCHON', 'VECTOR', 'LUMEN', 'FORGE'];
@@ -191,8 +198,14 @@ jobs:
             console.log(`  ✓  Speedster.${name}`);
           }
 
-          console.log(`\n  Release edition: ${releaseExports.length} exports verified`);
-          console.log(`  Speedster edition: ${speedsterExports.length} exports verified\n`);
+          // Ecosystem catalog
+          const { ECOSYSTEM_CATALOG, SYSTEM_IDENTITY } = await import('./src/ecosystem-catalog.js');
+          if (ECOSYSTEM_CATALOG.engines.length !== 15) { process.exit(1); }
+          if (!SYSTEM_IDENTITY.latinName) { process.exit(1); }
+          console.log(`  ✓  Ecosystem catalog: ${ECOSYSTEM_CATALOG.engines.length} engines · ${ECOSYSTEM_CATALOG.papers.length} papers`);
+          console.log(`  ✓  Identity: ${SYSTEM_IDENTITY.latinName} — ${SYSTEM_IDENTITY.motto}`);
+
+          console.log(`\n  Release: ${releaseExports.length} · Speedster: ${speedsterExports.length} · Catalog: verified\n`);
           EOF
 
       - name: "[E15] Render/Export — Publish CI summary"
@@ -206,5 +219,6 @@ jobs:
           echo "| REMEMBER | E9 E10 E11 E12 E15 | ✅ |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Agent Council | ARCHON VECTOR LUMEN FORGE | ✅ |" >> "$GITHUB_STEP_SUMMARY"
           echo "| SDK Editions | Release · Speedster | ✅ |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Ecosystem Catalog | Gubernatio Viva | ✅ |" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "*MERIDIAN Cognitive Governance Runtime — Medina Tech · Chaos Lab*" >> "$GITHUB_STEP_SUMMARY"
+          echo "*Gubernatio Viva — VIVIT · MEMINIT · GUBERNAT — Medina Tech · Chaos Lab*" >> "$GITHUB_STEP_SUMMARY"
