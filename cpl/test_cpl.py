@@ -1,11 +1,11 @@
 """
-test_cpl.py — CPL test suite
+test_cpl.py — CPL test suite (v2.0)
 
 Tests for:
-  - cpl_tokens  : token dictionary, lookups
+  - cpl_tokens  : token dictionary, all 7 families, lookups, domains
   - cpl_lexer   : tokenisation, parsing, AST
   - cpl_encoder : binary encode/decode, roundtrip
-  - cpl_vm      : expression evaluation, environment, quantifiers
+  - cpl_vm      : expression evaluation, Pythagorean constants, sacred geometry
 
 Run with: pytest test_cpl.py -v
 """
@@ -15,9 +15,10 @@ from __future__ import annotations
 import pytest
 
 from cpl_tokens import (
-    ALL_TOKENS, BY_GLYPH, BY_CODE, BY_NAME,
-    LATIN_ROOTS, GREEK_ROOTS, OPERATORS,
-    lookup_glyph, lookup_code, lookup_name,
+    ALL_TOKENS, BY_GLYPH, BY_CODE, BY_NAME, BY_DOMAIN, FAMILIES,
+    LATIN_ROOTS, LATIN_GEOMETRY, GREEK_ROOTS,
+    RHETORIC, PYTHAGOREAN, SACRED_GEOMETRY, OPERATORS,
+    lookup_glyph, lookup_code, lookup_name, tokens_for_domain, summary,
     CPLToken,
 )
 from cpl_lexer import (
@@ -507,6 +508,589 @@ class TestVM:
         vm.bind("Λγ", _TRUE)
         summary = vm.environment_summary()
         assert "Λγ" in summary
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LATIN GEOMETRY FAMILY TESTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TestLatinGeometry:
+
+    def test_family_is_nonempty(self):
+        assert len(LATIN_GEOMETRY) > 0
+
+    def test_all_codes_in_range(self):
+        for tok in LATIN_GEOMETRY:
+            assert 0x0060 <= tok.code <= 0x00FF, \
+                f"{tok.name} code {tok.code:#06x} out of Latin-Geometry range"
+
+    def test_all_glyphs_uppercase(self):
+        # Latin geometry glyphs use ALL-CAPS Greek letters (same convention as LATIN_ROOTS)
+        for tok in LATIN_GEOMETRY:
+            assert tok.glyph == tok.glyph.upper(), \
+                f"{tok.name} glyph '{tok.glyph}' should be all-caps"
+
+    def test_punctum_is_point(self):
+        tok = lookup_name("PUNCTUM")
+        assert tok is not None
+        assert tok.domain == "GEOMETRY"
+        assert "point" in tok.english.lower()
+
+    def test_semen_is_seed(self):
+        tok = lookup_name("SEMEN")
+        assert tok is not None
+        assert tok.domain == "SEED"
+        assert "seed" in tok.english.lower()
+
+    def test_aether_is_alchemy(self):
+        tok = lookup_name("AETHER")
+        assert tok is not None
+        assert tok.domain == "ALCHEMY"
+
+    def test_harmonia_lat_is_pythagorean(self):
+        tok = lookup_name("HARMONIA_LAT")
+        assert tok is not None
+        assert tok.domain == "PYTHAGOREAN"
+
+    def test_aurum_is_gold(self):
+        tok = lookup_name("AURUM")
+        assert tok is not None
+        assert "gold" in tok.english.lower()
+
+    def test_all_have_latin_field(self):
+        for tok in LATIN_GEOMETRY:
+            assert tok.latin is not None, f"{tok.name} missing latin root"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# RHETORIC TRIAD TESTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TestRhetoric:
+
+    def test_family_size(self):
+        assert len(RHETORIC) >= 5   # at minimum: Ethos, Pathos + 3 more
+
+    def test_all_codes_in_range(self):
+        for tok in RHETORIC:
+            assert 0x1050 <= tok.code <= 0x105F, \
+                f"{tok.name} code {tok.code:#06x} out of Rhetoric range"
+
+    def test_ethos_present(self):
+        tok = lookup_name("ETHOS")
+        assert tok is not None
+        assert tok.domain == "RHETORIC"
+        assert "Ἦθος" in (tok.greek or "")
+
+    def test_pathos_present(self):
+        tok = lookup_name("PATHOS")
+        assert tok is not None
+        assert tok.domain == "RHETORIC"
+        assert "Πάθος" in (tok.greek or "")
+
+    def test_logos_still_present(self):
+        # LOGOS lives in GREEK_ROOTS (0x1001) — the first of the triad
+        tok = lookup_name("LOGOS")
+        assert tok is not None
+        assert tok.code == 0x1001
+
+    def test_rhetoric_triad_complete(self):
+        # All three Aristotelian appeals must be in the token registry
+        logos  = lookup_name("LOGOS")
+        ethos  = lookup_name("ETHOS")
+        pathos = lookup_name("PATHOS")
+        assert logos  is not None, "LOGOS missing"
+        assert ethos  is not None, "ETHOS missing"
+        assert pathos is not None, "PATHOS missing"
+
+    def test_eudaimonia_in_rhetoric(self):
+        tok = lookup_name("EUDAIMONIA")
+        assert tok is not None
+        assert "flourishing" in tok.english.lower() or "happiness" in tok.english.lower()
+
+    def test_katharsis_greek_root(self):
+        tok = lookup_name("KATHARSIS")
+        assert tok is not None
+        assert tok.greek is not None
+
+    def test_praxis_is_action(self):
+        tok = lookup_name("PRAXIS")
+        assert tok is not None
+        assert "action" in tok.english.lower()
+
+    def test_all_rhetoric_have_greek(self):
+        for tok in RHETORIC:
+            assert tok.greek is not None, f"RHETORIC token {tok.name} missing greek field"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PYTHAGOREAN PRINCIPLES TESTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TestPythagorean:
+
+    def test_family_size(self):
+        assert len(PYTHAGOREAN) >= 10
+
+    def test_all_codes_in_range(self):
+        for tok in PYTHAGOREAN:
+            assert 0x1060 <= tok.code <= 0x106F, \
+                f"{tok.name} code {tok.code:#06x} out of Pythagorean range"
+
+    def test_monad_present(self):
+        tok = lookup_name("MONAD")
+        assert tok is not None
+        assert tok.domain == "PYTHAGOREAN"
+        assert "unity" in tok.english.lower() or "one" in tok.english.lower()
+
+    def test_dyad_present(self):
+        tok = lookup_name("DYAD")
+        assert tok is not None
+
+    def test_triad_present(self):
+        tok = lookup_name("TRIAD")
+        assert tok is not None
+
+    def test_tetractys_present(self):
+        tok = lookup_name("TETRACTYS")
+        assert tok is not None
+        assert "10" in tok.english or "1+2+3+4" in tok.english
+
+    def test_gnomon_present(self):
+        tok = lookup_name("GNOMON")
+        assert tok is not None
+
+    def test_harmonia_present(self):
+        tok = lookup_name("HARMONIA")
+        assert tok is not None
+        assert "harmoni" in tok.english.lower() or "proportion" in tok.english.lower()
+
+    def test_apeiron_present(self):
+        tok = lookup_name("APEIRON")
+        assert tok is not None
+        assert "unlimited" in tok.english.lower() or "infinite" in tok.english.lower()
+
+    def test_peras_present(self):
+        tok = lookup_name("PERAS")
+        assert tok is not None
+        assert "limit" in tok.english.lower()
+
+    def test_syzygy_present(self):
+        tok = lookup_name("SYZYGY")
+        assert tok is not None
+        assert "pairing" in tok.english.lower() or "conjunction" in tok.english.lower()
+
+    def test_monad_through_tetrad_ordered(self):
+        # codes must be sequential: MONAD < DYAD < TRIAD < TETRAD
+        m = lookup_name("MONAD").code
+        d = lookup_name("DYAD").code
+        t = lookup_name("TRIAD").code
+        q = lookup_name("TETRAD").code
+        assert m < d < t < q
+
+    def test_vm_monad_resolves_to_one(self):
+        vm = CPLVM()
+        val = vm.eval_source("Μν")
+        assert isinstance(val, NumberValue)
+        assert val.value == 1.0
+
+    def test_vm_dyad_resolves_to_two(self):
+        vm = CPLVM()
+        val = vm.eval_source("Δδ")
+        assert isinstance(val, NumberValue)
+        assert val.value == 2.0
+
+    def test_vm_triad_resolves_to_three(self):
+        vm = CPLVM()
+        val = vm.eval_source("Τρδ")
+        assert isinstance(val, NumberValue)
+        assert val.value == 3.0
+
+    def test_vm_tetractys_resolves_to_ten(self):
+        vm = CPLVM()
+        val = vm.eval_source("Τκτ")
+        assert isinstance(val, NumberValue)
+        assert val.value == 10.0
+
+    def test_encode_decode_pythagorean(self):
+        src = "Μν ∧ Δδ → Τρδ"
+        decoded = roundtrip(src)
+        assert "Μν" in decoded
+        assert "→" in decoded
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SACRED GEOMETRY & SEEDS TESTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TestSacredGeometry:
+
+    def test_family_size(self):
+        assert len(SACRED_GEOMETRY) >= 15
+
+    def test_all_codes_in_range(self):
+        for tok in SACRED_GEOMETRY:
+            assert 0x1080 <= tok.code <= 0x109F, \
+                f"{tok.name} code {tok.code:#06x} out of Sacred-Geometry range"
+
+    def test_stigme_is_point(self):
+        tok = lookup_name("STIGME")
+        assert tok is not None
+        assert "point" in tok.english.lower()
+        assert tok.domain == "GEOMETRY"
+
+    def test_kuklos_is_circle(self):
+        tok = lookup_name("KUKLOS")
+        assert tok is not None
+        assert "circle" in tok.english.lower()
+
+    def test_sphaira_is_sphere(self):
+        tok = lookup_name("SPHAIRA")
+        assert tok is not None
+        assert "sphere" in tok.english.lower()
+
+    def test_helix_present(self):
+        tok = lookup_name("HELIX")
+        assert tok is not None
+        assert "helix" in tok.english.lower()
+
+    def test_toros_is_torus(self):
+        tok = lookup_name("TOROS")
+        assert tok is not None
+        assert "torus" in tok.english.lower()
+
+    def test_five_platonic_solids_present(self):
+        names = ["TETRAHEDRON", "HEXAHEDRON", "OCTAHEDRON", "DODECAHEDRON", "ICOSAHEDRON"]
+        for name in names:
+            tok = lookup_name(name)
+            assert tok is not None, f"Platonic solid {name} missing"
+
+    def test_sperma_is_seed(self):
+        tok = lookup_name("SPERMA")
+        assert tok is not None
+        assert tok.domain == "SEED"
+        assert "seed" in tok.english.lower()
+
+    def test_vesica_is_two_circles(self):
+        tok = lookup_name("VESICA")
+        assert tok is not None
+        assert "circle" in tok.english.lower() or "piscis" in tok.english.lower()
+
+    def test_seed_of_life_present(self):
+        tok = lookup_name("SEED_LIFE")
+        assert tok is not None
+        assert tok.domain == "SEED"
+
+    def test_flower_of_life_present(self):
+        tok = lookup_name("FLOWER_LIFE")
+        assert tok is not None
+
+    def test_merkaba_present(self):
+        tok = lookup_name("MERKABA")
+        assert tok is not None
+        assert "star" in tok.english.lower() or "merkaba" in tok.english.lower()
+
+    def test_metatron_present(self):
+        tok = lookup_name("METATRON")
+        assert tok is not None
+        assert "platonic" in tok.english.lower() or "cube" in tok.english.lower()
+
+    def test_phyllotaxis_phi_growth(self):
+        tok = lookup_name("PHYLLOTAXIS")
+        assert tok is not None
+        assert "phi" in tok.english.lower() or "spiral" in tok.english.lower()
+
+    def test_trigonon_is_triangle(self):
+        tok = lookup_name("TRIGONON")
+        assert tok is not None
+        assert "triangle" in tok.english.lower()
+
+    def test_encode_decode_sacred(self):
+        src = "Στγ → Γρμ → Τργ → Κκλ"
+        decoded = roundtrip(src)
+        assert "Στγ" in decoded
+        assert "→" in decoded
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SACRED GEOMETRY OPERATOR TESTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TestSacredOperators:
+
+    def test_monad_point_operator(self):
+        tok = lookup_glyph("⊙")
+        assert tok is not None
+        assert tok.name == "MONAD_POINT"
+        assert tok.domain == "SACRED"
+
+    def test_triad_triangle_operator(self):
+        tok = lookup_glyph("△")
+        assert tok is not None
+        assert tok.name == "TRIAD_TRI"
+
+    def test_dyad_inverted_triangle(self):
+        tok = lookup_glyph("▽")
+        assert tok is not None
+        assert tok.name == "DYAD_TRI"
+
+    def test_star_six_merkaba(self):
+        tok = lookup_glyph("✶")
+        assert tok is not None
+        assert tok.name == "STAR_SIX"
+
+    def test_seed_operator(self):
+        tok = lookup_glyph("⊛")
+        assert tok is not None
+        assert tok.name == "SEED_OP"
+        assert tok.domain == "SEED"
+
+    def test_analogia_is_proportional(self):
+        tok = lookup_glyph("∝")
+        assert tok is not None
+        assert tok.name == "ANALOGIA"
+        assert tok.arity == 2
+
+    def test_hexad_operator(self):
+        tok = lookup_glyph("⬡")
+        assert tok is not None
+        assert tok.name == "HEXAD"
+
+    def test_vesica_operator(self):
+        tok = lookup_glyph("⊜")
+        assert tok is not None
+        assert tok.name == "VESICA_OP"
+        assert tok.arity == 2
+
+    def test_pi_constant(self):
+        tok = lookup_glyph("π")
+        assert tok is not None
+        assert tok.name == "PI_CONST"
+
+    def test_tau_constant(self):
+        tok = lookup_glyph("τ")
+        assert tok is not None
+        assert tok.name == "TAU_CONST"
+
+    def test_euler_constant(self):
+        tok = lookup_glyph("ℯ")
+        assert tok is not None
+        assert tok.name == "EULER"
+
+    def test_vm_pi_resolves(self):
+        import math
+        vm = CPLVM()
+        val = vm.eval_source("π")
+        assert isinstance(val, NumberValue)
+        assert abs(val.value - math.pi) < 1e-10
+
+    def test_vm_tau_equals_two_pi(self):
+        import math
+        vm = CPLVM()
+        val = vm.eval_source("τ")
+        assert isinstance(val, NumberValue)
+        assert abs(val.value - 2 * math.pi) < 1e-10
+
+    def test_vm_monad_point_is_unity(self):
+        vm = CPLVM()
+        val = vm.eval_source("⊙")
+        assert isinstance(val, NumberValue)
+        assert val.value == 1.0
+
+    def test_sacred_code_range(self):
+        sacred_ops = [t for t in OPERATORS if 0x2050 <= t.code <= 0x206F]
+        assert len(sacred_ops) >= 8
+
+    def test_ratio_operator(self):
+        tok = lookup_glyph("∷")
+        assert tok is not None
+        assert tok.name == "RATIO_OP"
+        assert tok.arity == 2
+
+    def test_integral_operator(self):
+        tok = lookup_glyph("∫")
+        assert tok is not None
+        assert tok.name == "INTEGRAL"
+
+    def test_sqrt_operator(self):
+        tok = lookup_glyph("√")
+        assert tok is not None
+        assert tok.name == "ROOT_OP"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ALCHEMICAL OPERATOR TESTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TestAlchemy:
+
+    def test_mercury_present(self):
+        tok = lookup_glyph("☿")
+        assert tok is not None
+        assert tok.name == "MERCURY_AL"
+        assert tok.domain == "ALCHEMY"
+
+    def test_sol_present(self):
+        tok = lookup_glyph("☉")
+        assert tok is not None
+        assert tok.name == "SOL_AL"
+        assert "sun" in tok.english.lower() or "gold" in tok.english.lower()
+
+    def test_luna_present(self):
+        tok = lookup_glyph("☽")
+        assert tok is not None
+        assert tok.name == "LUNA_AL"
+
+    def test_saturn_present(self):
+        tok = lookup_glyph("♄")
+        assert tok is not None
+        assert tok.name == "SATURN_AL"
+        assert "time" in tok.english.lower() or "structure" in tok.english.lower()
+
+    def test_jupiter_present(self):
+        tok = lookup_glyph("♃")
+        assert tok is not None
+        assert tok.name == "JUPITER_AL"
+
+    def test_conjunct_is_binary(self):
+        tok = lookup_glyph("☌")
+        assert tok is not None
+        assert tok.name == "CONJUNCT"
+        assert tok.arity == 2
+
+    def test_oppositio_is_binary(self):
+        tok = lookup_glyph("☍")
+        assert tok is not None
+        assert tok.arity == 2
+
+    def test_quinta_is_fifth_element(self):
+        tok = lookup_glyph("⊚")
+        assert tok is not None
+        assert tok.name == "QUINTA"
+        assert "quintessence" in tok.english.lower() or "fifth" in tok.english.lower()
+
+    def test_vm_quinta_is_five(self):
+        vm = CPLVM()
+        val = vm.eval_source("⊚")
+        assert isinstance(val, NumberValue)
+        assert val.value == 5.0
+
+    def test_fire_element(self):
+        tok = lookup_glyph("🜁")
+        assert tok is not None
+        assert tok.name == "FIRE_AL"
+
+    def test_water_element(self):
+        tok = lookup_glyph("🜄")
+        assert tok is not None
+        assert tok.name == "WATER_AL"
+
+    def test_alchemy_code_range(self):
+        alch_ops = [t for t in OPERATORS if 0x2070 <= t.code <= 0x208F]
+        assert len(alch_ops) >= 8
+
+    def test_vm_fire_resolves_to_one(self):
+        vm = CPLVM()
+        val = vm.eval_source("🜁")
+        assert isinstance(val, NumberValue)
+        assert val.value == 1.0
+
+    def test_encode_decode_alchemy(self):
+        src = "☿ ⊗ ☉ → ⊚"
+        decoded = roundtrip(src)
+        assert "☿" in decoded
+        assert "☉" in decoded
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CROSS-FAMILY REGISTRY TESTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TestRegistry:
+
+    def test_families_dict_has_all_seven(self):
+        assert "latin_roots"     in FAMILIES
+        assert "latin_geometry"  in FAMILIES
+        assert "greek_roots"     in FAMILIES
+        assert "rhetoric"        in FAMILIES
+        assert "pythagorean"     in FAMILIES
+        assert "sacred_geometry" in FAMILIES
+        assert "operators"       in FAMILIES
+
+    def test_total_token_count_grew(self):
+        # v2.0 must have substantially more tokens than v1.0 (which had 121)
+        assert len(ALL_TOKENS) > 180
+
+    def test_all_tokens_globally_unique_codes(self):
+        codes = [t.code for t in ALL_TOKENS]
+        assert len(codes) == len(set(codes)), "All token codes must be globally unique"
+
+    def test_all_tokens_globally_unique_glyphs(self):
+        glyphs = [t.glyph for t in ALL_TOKENS]
+        assert len(glyphs) == len(set(glyphs)), "All glyphs must be globally unique"
+
+    def test_by_domain_populated(self):
+        assert "RHETORIC"    in BY_DOMAIN
+        assert "PYTHAGOREAN" in BY_DOMAIN
+        assert "GEOMETRY"    in BY_DOMAIN
+        assert "SEED"        in BY_DOMAIN
+        assert "SACRED"      in BY_DOMAIN
+        assert "ALCHEMY"     in BY_DOMAIN
+
+    def test_tokens_for_domain_geometry(self):
+        geom = tokens_for_domain("GEOMETRY")
+        assert len(geom) >= 5
+
+    def test_tokens_for_domain_seed(self):
+        seeds = tokens_for_domain("SEED")
+        assert len(seeds) >= 4
+
+    def test_tokens_for_domain_alchemy(self):
+        alch = tokens_for_domain("ALCHEMY")
+        assert len(alch) >= 5
+
+    def test_summary_string(self):
+        s = summary()
+        assert "CPL" in s
+        assert "tokens" in s
+
+    def test_lookup_name_rhetoric(self):
+        assert lookup_name("ethos")  is not None
+        assert lookup_name("pathos") is not None
+
+    def test_lookup_name_pythagorean(self):
+        assert lookup_name("TETRACTYS") is not None
+        assert lookup_name("gnomon")    is not None
+
+    def test_lookup_name_sacred(self):
+        assert lookup_name("merkaba") is not None
+        assert lookup_name("vesica")  is not None
+
+    def test_encode_decode_cross_family(self):
+        # Mix rhetoric + pythagorean + sacred geometry + alchemy in one expression
+        src = "Ηθ ∧ Πθ → (Τκτ ∝ φ) ⊗ ☉"
+        decoded = roundtrip(src)
+        assert "Ηθ" in decoded
+        assert "φ" in decoded
+
+    def test_full_cpl_expression(self):
+        # "Logos AND Ethos AND Pathos imply Phronesis, grounded in the Tetractys"
+        src = "Λγ ∧ Ηθ ∧ Πθ → Φρ ⊗ Τκτ"
+        decoded = roundtrip(src)
+        assert "Λγ" in decoded
+        assert "Φρ" in decoded
+
+    def test_seed_of_life_expression(self):
+        src = "⊛ → Σπλφ → Φλφ → Μτρν"
+        decoded = roundtrip(src)
+        assert "⊛" in decoded
+
+    def test_platonic_solids_sequence(self):
+        # Fire → Air → Water → Earth → Cosmos
+        src = "Τετρε → Οκτ → Ικσ → Εξεδ → Δδκ"
+        decoded = roundtrip(src)
+        assert "Τετρε" in decoded
+        assert "Δδκ" in decoded
 
 
 if __name__ == "__main__":

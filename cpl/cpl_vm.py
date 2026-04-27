@@ -170,13 +170,45 @@ class CPLVM:
         bound = env.get(node.token.glyph) or env.get(node.token.name)
         if bound is not None:
             return bound
-        # Special constants
-        if node.token.glyph in ("⊤", "TRUE"):   return _TRUE
-        if node.token.glyph in ("⊥", "FALSE"):  return _FALSE
-        if node.token.glyph in ("∞", "INFIN"):  return NumberValue(float("inf"))
-        if node.token.glyph in ("φ", "PHI"):    return NumberValue(1.618033988749895)
+
+        # ── Boolean constants ─────────────────────────────────────────────────
+        if node.token.glyph in ("⊤", "TRUE"):    return _TRUE
+        if node.token.glyph in ("⊥", "FALSE"):   return _FALSE
+
+        # ── Mathematical constants ────────────────────────────────────────────
+        if node.token.glyph in ("∞", "INFIN"):   return NumberValue(float("inf"))
+        if node.token.glyph in ("φ", "PHI"):     return NumberValue(1.618033988749895)
         if node.token.glyph in ("Φ", "PHI_UPPER"): return NumberValue(1.618033988749895)
+        if node.token.glyph in ("π", "PI_CONST"): return NumberValue(3.141592653589793)
+        if node.token.glyph in ("τ", "TAU_CONST"): return NumberValue(6.283185307179586)
+        if node.token.glyph in ("ℯ", "EULER"):   return NumberValue(2.718281828459045)
+
+        # ── Organism constants ────────────────────────────────────────────────
         if node.token.glyph in ("⟳", "HEARTBEAT"): return NumberValue(873.0)
+
+        # ── Pythagorean number constants ──────────────────────────────────────
+        # The Monad through Tetrad reduce to their sacred integer values.
+        # The Tetractys = 1+2+3+4 = 10 (the perfect number of the Pythagoreans).
+        if node.token.glyph in ("Μν",  "MONAD"):     return NumberValue(1.0)
+        if node.token.glyph in ("Δδ",  "DYAD"):      return NumberValue(2.0)
+        if node.token.glyph in ("Τρδ", "TRIAD"):     return NumberValue(3.0)
+        if node.token.glyph in ("Τετ", "TETRAD"):    return NumberValue(4.0)
+        if node.token.glyph in ("Τκτ", "TETRACTYS"): return NumberValue(10.0)  # 1+2+3+4
+
+        # ── Sacred geometry constants ─────────────────────────────────────────
+        # ⊙ (monad-point) = φ (unity is the seed of all phi-growth)
+        if node.token.glyph in ("⊙",  "MONAD_POINT"): return NumberValue(1.0)
+        # ○ (kuklos-op) = 2π (circle = tau)
+        if node.token.glyph in ("○",  "KUKLOS_OP"):  return NumberValue(6.283185307179586)
+
+        # ── Alchemical elemental values ───────────────────────────────────────
+        # Encoded as classical elemental numbers (fire=1, air=2, water=3, earth=4)
+        if node.token.glyph in ("🜁", "FIRE_AL"):   return NumberValue(1.0)
+        if node.token.glyph in ("🜂", "AIR_AL"):    return NumberValue(2.0)
+        if node.token.glyph in ("🜄", "WATER_AL"):  return NumberValue(3.0)
+        if node.token.glyph in ("🜃", "EARTH_EL"):  return NumberValue(4.0)
+        if node.token.glyph in ("⊚",  "QUINTA"):    return NumberValue(5.0)  # quintessence
+
         # Otherwise return a ConceptValue
         return ConceptValue(node.token)
 
