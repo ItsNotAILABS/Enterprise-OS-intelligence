@@ -1,42 +1,47 @@
 """
-cpl_bridge.py — CPL Cross-Language Bridge (CXL Emitter)
+cpl_bridge.py — CPL Cross-Language Bridge (CXL Emitter)  (Medina)
 
 Author : Medina
-Version: 1.1.0
+Version: 2.0.0
 Ring   : Sovereign Ring
 
 ─────────────────────────────────────────────────────────────────────────────
 PURPOSE
 ─────────────────────────────────────────────────────────────────────────────
 
-CXL (Cognitive eXchange Language) is the fusion of all 16 organism languages.
-The bridge here takes a CPL expression (or a list of CPL tokens) and emits
-equivalent code in the target language.
+CXL (Cognitive eXchange Language) is the fusion of all organism languages.  (Medina)
+The bridge takes a CPL expression (or list of CPL tokens) and emits equivalent
+code in any registered target language.
 
 Supported targets
 ─────────────────
-  python   — Python intelligence layer        (PYT)
-  motoko   — Motoko ICP canister call         (MOT)
-  go       — Go service call                  (GOL)
-  rust     — Rust kernel expression           (RST)
-  java     — Java enterprise SDK call         (JAV)
-  solidity — Solidity / EVM smart contract    (SOL)
+  python      — Python intelligence layer              (PYT)
+  motoko      — Motoko AI-survival canister            (MOT)  (Medina)
+  go          — Go service mesh call                   (GOL)
+  rust        — Rust kernel expression                 (RST)
+  java        — Java enterprise SDK call               (JAV)
+  solidity    — Solidity / EVM smart contract          (SOL)
+  move        — Move / Aptos smart contract            (MVO)
+  ink         — Ink! / Polkadot WASM contract          (INK)
+  cosmwasm    — CosmWasm / Cosmos smart contract       (CMW)
+  cairo       — Cairo / StarkNet contract              (CAI)
+  typescript  — TypeScript / Node intelligence layer   (TSN)
+  swift       — Swift native / Apple substrate         (SWF)
+  phx_chain   — PHX sovereign decision chain           (PHX)  (Medina)
+  qfb         — QFB Quantum Fusion Block canister      (QFB)  (Medina)
 
 Usage
 ─────
   bridge = CPLBridge()
   py_code  = bridge.emit("Λγ ∧ Ηθ → Τκτ", "python")
   mo_code  = bridge.emit("Λγ ∧ Ηθ → Τκτ", "motoko")
-  go_code  = bridge.emit("Λγ ∧ Ηθ → Τκτ", "go")
-  rs_code  = bridge.emit("Λγ ∧ Ηθ → Τκτ", "rust")
-  ja_code  = bridge.emit("Λγ ∧ Ηθ → Τκτ", "java")
-  so_code  = bridge.emit("Λγ ∧ Ηθ → Τκτ", "solidity")
+  mv_code  = bridge.emit("Λγ ∧ Ηθ → Τκτ", "move")
+  phx_code = bridge.emit("Λγ ∧ Ηθ → Τκτ", "phx_chain")
+  qfb_code = bridge.emit("Λγ ∧ Ηθ → Τκτ", "qfb")
 
 Full polyglot sync (emit to all targets at once)
 ─────────────────────────────────────────────────
   result = bridge.polyglot("Λγ ∧ Ηθ → Τκτ")
-  # result["python"], result["motoko"], result["go"], result["rust"],
-  # result["java"], result["solidity"]
 """
 
 from __future__ import annotations
@@ -118,32 +123,82 @@ class PythonEmitter(_Emitter):
 # ── Motoko Emitter ─────────────────────────────────────────────────────────────
 
 class MotokoEmitter(_Emitter):
-    """Emit CPL as a Motoko canister call fragment."""
+    """
+    Emit CPL as a Motoko AI-survival canister.  (Medina)
+
+    Architectural statement: A Motoko canister on ICP has orthogonal
+    persistence — its state survives upgrades automatically without any
+    explicit migration code.  In the Medina organism this is the AI-survival
+    property: the canister IS the AI model.  Its CPL bindings, PHX chain
+    position, and intelligence state persist across every upgrade as if the
+    upgrade never happened.  The AI does not restart.  It continues.
+
+    This is CPO (Cognitive Procurement Oracle) territory: an intelligence
+    contract that binds a Motoko canister to a specific CPL reasoning role
+    and guarantees that reasoning state survives indefinitely.
+    """
 
     LANGUAGE = "motoko"
 
     def emit(self, tokens: list[CPLToken], raw_source: str) -> str:
-        token_list = ", ".join(f'"{t.glyph}"' for t in tokens)
-        domain_set = ", ".join({f'"{t.domain}"' for t in tokens})
+        token_list  = ", ".join(f'"{t.glyph}"' for t in tokens)
+        domain_set  = ", ".join({f'"{t.domain}"' for t in tokens})
+        token_count = len(tokens)
         return textwrap.dedent(f"""\
-            // CPL → Motoko  (MOT bridge)
+            // CPL → Motoko AI-survival canister  (MOT bridge)  (Medina)
             // source: {raw_source}
+            // Architectural property: orthogonal persistence — state survives upgrades.
+            // This canister IS the AI model.  It does not restart on upgrade; it continues.
 
             import CPLOracle "mo:cpl/CPLOracle";
+            import PHXChain  "mo:cpl/PHXChain";
+            import QFBStore  "mo:cpl/QFBStore";
 
-            // Token sequence
-            let tokens : [Text] = [{token_list}];
+            // ── Stable variables survive every canister upgrade automatically ────────
+            // No migration code required.  This is the AI-survival guarantee.
+            stable var cpl_state   : [Text] = [{token_list}];
+            stable var phx_beat    : Nat    = 0;
+            stable var phx_latest  : Blob   = Blob.fromArray([]);
+            stable var intelligence_bindings : [(Text, Text)] = [];
+
+            // ── CPL expression evaluation ────────────────────────────────────────────
+            let tokens  : [Text] = [{token_list}];
             let domains : [Text] = [{domain_set}];
 
-            // Execute via CPL oracle canister
-            let result = await CPLOracle.eval(tokens);
+            // Query call — read-only, free, always available
+            public query func evalCPL() : async CPLOracle.VMValue {{
+                CPLOracle.eval(tokens)
+            }};
 
-            // Query call pattern (synopsis canister)
-            let synopsis = await CPLOracle.synopsis({{
-              cpl_source  = "{raw_source}";
-              token_count = {len(tokens)};
-              domains     = domains;
-            }});
+            // Update call — mutates state, advances PHX chain
+            public shared func executeCPL() : async CPLOracle.VMValue {{
+                let result = await CPLOracle.eval(tokens);
+                phx_beat  += 1;
+                // PHX chain advances on every AI decision — sovereign ledger  (Medina)
+                phx_latest := await PHXChain.advance(
+                    Text.encodeUtf8("{raw_source}"),
+                    phx_beat
+                );
+                result
+            }};
+
+            // Intelligence contract binding — CPP domain  (Medina)
+            public shared func bindIntelligenceContract(role: Text, capability: Text) : async () {{
+                intelligence_bindings := Array.append(
+                    intelligence_bindings,
+                    [(role, capability)]
+                );
+            }};
+
+            // Synopsis — full organism query call  (Medina)
+            public query func synopsis() : async CPLOracle.Synopsis {{
+                CPLOracle.synopsis({{
+                    cpl_source  = "{raw_source}";
+                    token_count = {token_count};
+                    domains     = domains;
+                    beat        = phx_beat;
+                }})
+            }};
             """)
 
 
@@ -196,7 +251,473 @@ class RustEmitter(_Emitter):
             """)
 
 
-# ── Java Emitter ──────────────────────────────────────────────────────────────
+# ── Move / Aptos Emitter ───────────────────────────────────────────────────────
+
+class MoveEmitter(_Emitter):
+    """Emit CPL as a Move / Aptos smart contract module (MVO)."""
+
+    LANGUAGE = "move"
+
+    def emit(self, tokens: list[CPLToken], raw_source: str) -> str:
+        token_count = len(tokens)
+        push_tokens = "\n".join(
+            f"        vector::push_back(&mut tokens, b\"{t.glyph}\");"
+            for t in tokens
+        )
+        return textwrap.dedent(f"""\
+            // CPL → Move / Aptos  (MVO bridge)
+            // source: {raw_source}
+            module medina::cpl_expression {{
+
+                use std::vector;
+                use std::string::{{Self, String}};
+                use aptos_framework::event;
+
+                // CPL expression sealed as a Move resource  (Medina)
+                struct CPLExpression has key, store, drop {{
+                    tokens:    vector<vector<u8>>,
+                    phx_seal:  vector<u8>,
+                    token_count: u64,
+                }}
+
+                // PHX integrity event  (Medina)
+                #[event]
+                struct PHXSealEvent has drop, store {{
+                    phx_seal: vector<u8>,
+                    beat:     u64,
+                }}
+
+                public fun build_expression(): CPLExpression {{
+                    let tokens = vector::empty<vector<u8>>();
+            {push_tokens}
+                    CPLExpression {{
+                        tokens,
+                        phx_seal:    vector::empty(),
+                        token_count: {token_count},
+                    }}
+                }}
+
+                public fun token_count(expr: &CPLExpression): u64 {{
+                    expr.token_count
+                }}
+
+                public fun seal(expr: &mut CPLExpression, phx: vector<u8>, beat: u64) {{
+                    expr.phx_seal = phx;
+                    event::emit(PHXSealEvent {{ phx_seal: phx, beat }});
+                }}
+            }}
+            """)
+
+
+# ── Ink! / Polkadot Emitter ───────────────────────────────────────────────────
+
+class InkEmitter(_Emitter):
+    """Emit CPL as an Ink! / Polkadot WASM smart contract (INK)."""
+
+    LANGUAGE = "ink"
+
+    def emit(self, tokens: list[CPLToken], raw_source: str) -> str:
+        token_vec = ", ".join(f'b"{t.glyph}"' for t in tokens)
+        token_count = len(tokens)
+        return textwrap.dedent(f"""\
+            // CPL → Ink! / Polkadot  (INK bridge)
+            // source: {raw_source}
+            #![cfg_attr(not(feature = "std"), no_std, no_main)]
+
+            // Sovereign CPL expression sealed as an Ink! contract  (Medina)
+            #[ink::contract]
+            mod cpl_expression {{
+                use ink::prelude::vec::Vec;
+                use ink::prelude::vec;
+
+                #[ink(storage)]
+                pub struct CPLExpression {{
+                    /// CPL token glyphs (UTF-8 encoded)
+                    tokens:     Vec<Vec<u8>>,
+                    /// PHX integrity seal (Medina sovereign hash)
+                    phx_seal:   Vec<u8>,
+                    /// Organism heartbeat at creation
+                    beat:       u64,
+                }}
+
+                impl CPLExpression {{
+                    #[ink(constructor)]
+                    pub fn new(phx_seal: Vec<u8>, beat: u64) -> Self {{
+                        let tokens: Vec<Vec<u8>> = vec![{token_vec}]
+                            .into_iter()
+                            .map(|s: &[u8]| s.to_vec())
+                            .collect();
+                        Self {{ tokens, phx_seal, beat }}
+                    }}
+
+                    #[ink(message)]
+                    pub fn token_count(&self) -> u32 {{
+                        {token_count}
+                    }}
+
+                    #[ink(message)]
+                    pub fn verify_phx(&self, seal: Vec<u8>) -> bool {{
+                        self.phx_seal == seal
+                    }}
+
+                    #[ink(message)]
+                    pub fn beat(&self) -> u64 {{
+                        self.beat
+                    }}
+                }}
+            }}
+            """)
+
+
+# ── CosmWasm / Cosmos Emitter ─────────────────────────────────────────────────
+
+class CosmWasmEmitter(_Emitter):
+    """Emit CPL as a CosmWasm / Cosmos smart contract (CMW)."""
+
+    LANGUAGE = "cosmwasm"
+
+    def emit(self, tokens: list[CPLToken], raw_source: str) -> str:
+        token_vec = ", ".join(f'"{t.glyph}".to_string()' for t in tokens)
+        token_count = len(tokens)
+        return textwrap.dedent(f"""\
+            // CPL → CosmWasm / Cosmos  (CMW bridge)
+            // source: {raw_source}
+            use cosmwasm_std::{{
+                entry_point, to_json_binary, Binary, Deps, DepsMut,
+                Env, MessageInfo, Response, StdResult,
+            }};
+            use serde::{{Deserialize, Serialize}};
+            use cw_storage_plus::Item;
+
+            // ── State ──────────────────────────────────────────────────────────────
+            #[derive(Serialize, Deserialize, Clone, Debug)]
+            pub struct CPLState {{
+                pub tokens:    Vec<String>,
+                pub phx_seal:  String,   // hex PHX token  (Medina)
+                pub beat:      u64,
+            }}
+
+            const STATE: Item<CPLState> = Item::new("cpl_state");
+
+            // ── Messages ───────────────────────────────────────────────────────────
+            #[derive(Serialize, Deserialize)]
+            pub struct InstantiateMsg {{ pub phx_seal: String, pub beat: u64 }}
+
+            #[derive(Serialize, Deserialize)]
+            #[serde(rename_all = "snake_case")]
+            pub enum QueryMsg {{ TokenCount {{}}, PhxSeal {{}}, Eval {{}} }}
+
+            // ── Entry points ───────────────────────────────────────────────────────
+            #[entry_point]
+            pub fn instantiate(
+                deps: DepsMut, _env: Env, _info: MessageInfo, msg: InstantiateMsg,
+            ) -> StdResult<Response> {{
+                let state = CPLState {{
+                    tokens:   vec![{token_vec}],
+                    phx_seal: msg.phx_seal,
+                    beat:     msg.beat,
+                }};
+                STATE.save(deps.storage, &state)?;
+                Ok(Response::new().add_attribute("token_count", "{token_count}"))
+            }}
+
+            #[entry_point]
+            pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {{
+                let state = STATE.load(deps.storage)?;
+                match msg {{
+                    QueryMsg::TokenCount {{}} => to_json_binary(&{token_count}u64),
+                    QueryMsg::PhxSeal    {{}} => to_json_binary(&state.phx_seal),
+                    QueryMsg::Eval       {{}} => to_json_binary(&state.tokens),
+                }}
+            }}
+            """)
+
+
+# ── Cairo / StarkNet Emitter ──────────────────────────────────────────────────
+
+class CairoEmitter(_Emitter):
+    """Emit CPL as a Cairo / StarkNet contract (CAI)."""
+
+    LANGUAGE = "cairo"
+
+    def emit(self, tokens: list[CPLToken], raw_source: str) -> str:
+        token_count = len(tokens)
+        felt_tokens = "\n".join(
+            f"            array.append('{t.glyph}');"
+            for t in tokens
+        )
+        return textwrap.dedent(f"""\
+            // CPL → Cairo / StarkNet  (CAI bridge)
+            // source: {raw_source}
+
+            // Sovereign CPL expression — StarkNet felt252 encoding  (Medina)
+            #[starknet::contract]
+            mod CPLExpression {{
+                use starknet::ContractAddress;
+                use array::ArrayTrait;
+
+                #[storage]
+                struct Storage {{
+                    phx_seal: felt252,   // PHX sovereign hash  (Medina)
+                    beat:     u64,
+                }}
+
+                #[constructor]
+                fn constructor(ref self: ContractState, phx_seal: felt252, beat: u64) {{
+                    self.phx_seal.write(phx_seal);
+                    self.beat.write(beat);
+                }}
+
+                // Build the CPL token array as felt252 values
+                #[external(v0)]
+                fn get_tokens(self: @ContractState) -> Array<felt252> {{
+                    let mut array = ArrayTrait::new();
+            {felt_tokens}
+                    array
+                }}
+
+                #[external(v0)]
+                fn token_count(self: @ContractState) -> u32 {{
+                    {token_count}
+                }}
+
+                #[external(v0)]
+                fn verify_phx(self: @ContractState, seal: felt252) -> bool {{
+                    self.phx_seal.read() == seal
+                }}
+
+                #[external(v0)]
+                fn beat(self: @ContractState) -> u64 {{
+                    self.beat.read()
+                }}
+            }}
+            """)
+
+
+# ── TypeScript / Node Emitter ─────────────────────────────────────────────────
+
+class TypeScriptEmitter(_Emitter):
+    """Emit CPL as TypeScript / Node.js intelligence code (TSN)."""
+
+    LANGUAGE = "typescript"
+
+    def emit(self, tokens: list[CPLToken], raw_source: str) -> str:
+        token_array = ", ".join(f'"{t.glyph}"' for t in tokens)
+        domain_array = ", ".join(f'"{t.domain}"' for t in tokens)
+        token_count  = len(tokens)
+        return textwrap.dedent(f"""\
+            // CPL → TypeScript / Node  (TSN bridge)
+            // source: {raw_source}
+            import {{ CPLVM, VMValue }} from "@medina/organism-cpl";
+            import {{ PHXChain }}       from "@medina/organism-phx";  // (Medina)
+            import {{ QFB }}            from "@medina/organism-qfb";  // (Medina)
+
+            const TOKENS:  readonly string[] = [{token_array}];
+            const DOMAINS: readonly string[] = [{domain_array}];
+            const TOKEN_COUNT = {token_count};
+
+            // Evaluate CPL expression
+            async function evalExpression(): Promise<VMValue> {{
+                const vm = new CPLVM();
+                return vm.evalTokens(TOKENS);
+            }}
+
+            // Full organism query call  (Medina)
+            async function queryOrganism(phxKey: Uint8Array): Promise<{{
+                value:    VMValue;
+                phxToken: string;
+                qfbId:    string;
+            }}> {{
+                const vm    = new CPLVM();
+                const value = await vm.evalTokens(TOKENS);
+
+                const chain    = new PHXChain(phxKey);
+                const phxToken = chain.advance(
+                    new TextEncoder().encode({repr(raw_source)})
+                );
+
+                const qfb = QFB.fromCPL(Array.from(TOKENS), phxKey);
+
+                return {{
+                    value,
+                    phxToken: Buffer.from(phxToken).toString("hex"),
+                    qfbId:    qfb.id,
+                }};
+            }}
+
+            export {{ evalExpression, queryOrganism, TOKENS, DOMAINS, TOKEN_COUNT }};
+            """)
+
+
+# ── Swift / Apple Emitter ─────────────────────────────────────────────────────
+
+class SwiftEmitter(_Emitter):
+    """Emit CPL as Swift native code for Apple substrate (SWF)."""
+
+    LANGUAGE = "swift"
+
+    def emit(self, tokens: list[CPLToken], raw_source: str) -> str:
+        token_array = ", ".join(f'"{t.glyph}"' for t in tokens)
+        token_count = len(tokens)
+        return textwrap.dedent(f"""\
+            // CPL → Swift / Apple substrate  (SWF bridge)
+            // source: {raw_source}
+            import Foundation
+            import MedinaOrganism
+
+            // Sovereign CPL expression  (Medina)
+            struct CPLExpression {{
+
+                static let tokens: [String] = [{token_array}]
+                static let tokenCount: Int  = {token_count}
+                static let source: String   = {repr(raw_source)}
+
+                // Evaluate the CPL expression synchronously
+                static func evaluate() -> VMValue {{
+                    let vm = CPLVM()
+                    return vm.evalTokens(tokens)
+                }}
+
+                // Evaluate asynchronously (SwiftUI / Combine compatible)
+                static func evaluateAsync() async throws -> VMValue {{
+                    try await Task.detached(priority: .userInitiated) {{
+                        let vm = CPLVM()
+                        return vm.evalTokens(Self.tokens)
+                    }}.value
+                }}
+
+                // Full organism query — PHX-sealed  (Medina)
+                static func query(sovereignKey: Data) throws -> OrganismQueryResult {{
+                    let vm     = CPLVM()
+                    let value  = vm.evalTokens(tokens)
+                    let chain  = PHXChain(sovereignKey: sovereignKey)
+                    let token  = try chain.advance(source.data(using: .utf8)!)
+                    let qfb    = QFB.fromCPL(tokens: tokens, key: sovereignKey)
+                    return OrganismQueryResult(value: value, phxToken: token, qfb: qfb)
+                }}
+            }}
+            """)
+
+
+# ── PHX Chain Emitter  (Medina) ───────────────────────────────────────────────
+
+class PHXChainEmitter(_Emitter):
+    """
+    Emit PHX sovereign decision chain setup code.  (Medina)
+
+    PHX (Phi Hash eXchange) is the organism's sovereign encryption and
+    decision-ledger protocol.  This emitter generates the chain bootstrap
+    code that records the CPL expression as the first sovereign decision.
+
+    Formal definition (parallel to SHA-256):
+        PHX(e, k, p, β) = HMAC-SHA256(k, BLAKE2b-512(e ‖ p ‖ β₈) ⊕ φ_expand(β))
+    where φ = 1.618033988749895  (Medina)
+    """
+
+    LANGUAGE = "phx_chain"
+
+    def emit(self, tokens: list[CPLToken], raw_source: str) -> str:
+        token_count = len(tokens)
+        domains     = sorted({t.domain for t in tokens})
+        domain_list = ", ".join(f'"{d}"' for d in domains)
+        return textwrap.dedent(f"""\
+            # CPL → PHX sovereign decision chain  (PHX bridge)  (Medina)
+            # source: {raw_source}
+            #
+            # PHX formal definition:
+            #   PHX(e, k, p, β) = HMAC-SHA256(k, BLAKE2b-512(e ‖ p ‖ β₈) ⊕ φ_expand(β))
+            #   where φ = 1.618033988749895 (golden ratio — the Medina diffusion constant)
+            #
+            # This is structurally equivalent to SHA-256's compression function but:
+            #   · uses BLAKE2b-512 (not SHA-256 compression rounds) as the base primitive
+            #   · uses φ as the diffusion constant (not cube-root-of-prime K constants)
+            #   · chains across the full decision history (not per-message)
+            #   · is keyed with the organism sovereign key (HMAC envelope)
+            #
+            from blockbox import PHXChain
+            import os
+
+            # Organism sovereign key — hold this secret  (Medina)
+            sovereign_key: bytes = os.urandom(32)   # replace with persisted key in production
+
+            # Initialise the PHX decision chain
+            chain = PHXChain(sovereign_key=sovereign_key)
+
+            # Record the CPL expression as a sovereign decision event
+            # token_count={token_count}  domains=[{domain_list}]
+            phx_token = chain.advance(
+                event_bytes={repr(raw_source.encode())},
+                label="cpl_expression",
+            )
+
+            # phx_token is a 32-byte sovereign hash — chain it into the next decision
+            print(chain.chain_summary())
+            # PHXChain  beat=1  decisions=1  latest=<hex>…
+            """)
+
+
+# ── QFB Block Box Emitter  (Medina) ───────────────────────────────────────────
+
+class QFBEmitter(_Emitter):
+    """
+    Emit QFB Quantum Fusion Block creation code.  (Medina)
+
+    QFB is the sovereign meaning canister — the block box of the organism.
+    This emitter packages the CPL expression as a QFB ready for deployment
+    to any substrate (memory, ICP, EVM, Solana, edge, quantum).
+    """
+
+    LANGUAGE = "qfb"
+
+    def emit(self, tokens: list[CPLToken], raw_source: str) -> str:
+        glyph_list  = ", ".join(f'"{t.glyph}"' for t in tokens)
+        token_count = len(tokens)
+        return textwrap.dedent(f"""\
+            # CPL → QFB Quantum Fusion Block  (QFB bridge)  (Medina)
+            # source: {raw_source}
+            #
+            # QFB structure  (Medina):
+            #   QFB
+            #   └── SHL (Sphere Helix Layer)   — geometric membrane, radius φ
+            #       └── QFC (Quantum Fusion Core) — CPL payload + PHX seal
+            #
+            from blockbox import QFB, SphereHelixLayer, PHXChain, PHI
+            import os
+
+            # Organism sovereign key
+            sovereign_key: bytes = os.urandom(32)   # replace with persisted key
+
+            # CPL token manifest for this expression
+            cpl_tokens = [{glyph_list}]   # {token_count} tokens
+
+            # Build the QFB block box  (Medina)
+            qfb = QFB.from_cpl(
+                cpl_tokens  = cpl_tokens,
+                key         = sovereign_key,
+                substrates  = ["memory", "icp"],   # deploy to organism memory + ICP
+                shl         = SphereHelixLayer(
+                    sphere_radius   = PHI,       # φ-envelope
+                    helix_turns     = 3,         # Triad
+                    helix_pitch     = PHI,       # φ-pitch
+                    helix_chirality = "right",   # right-handed helix
+                ),
+            )
+
+            # Inspect the sealed block box
+            print(qfb.summary())
+            # QFB <id>…  substrates=['memory', 'icp']  tokens={token_count}
+            #            cpl='...'  shl=ϕ1.618×3T  phx=<hex>…
+
+            # Deploy to additional substrates if needed
+            # qfb.tag_substrate("evm",    "0x...")
+            # qfb.tag_substrate("solana", "<pubkey>")
+
+            # Serialise for wire transport
+            wire = qfb.to_json(indent=2)
+            """)
+
+
+
 
 class JavaEmitter(_Emitter):
     """Emit CPL as Java enterprise SDK code (JAV)."""
@@ -302,12 +823,24 @@ class CPLBridge:
     """
 
     _EMITTERS: dict[str, _Emitter] = {
-        "python":    PythonEmitter(),
-        "motoko":    MotokoEmitter(),
-        "go":        GoEmitter(),
-        "rust":      RustEmitter(),
-        "java":      JavaEmitter(),
-        "solidity":  SolidityEmitter(),
+        # ── Standard organism languages ────────────────────────────────────────
+        "python":     PythonEmitter(),
+        "motoko":     MotokoEmitter(),      # AI-survival canister  (Medina)
+        "go":         GoEmitter(),
+        "rust":       RustEmitter(),
+        "java":       JavaEmitter(),
+        # ── Crypto / smart-contract substrates ────────────────────────────────
+        "solidity":   SolidityEmitter(),    # EVM (SOL)
+        "move":       MoveEmitter(),        # Aptos / Move (MVO)
+        "ink":        InkEmitter(),         # Polkadot / Ink! (INK)
+        "cosmwasm":   CosmWasmEmitter(),    # Cosmos / CosmWasm (CMW)
+        "cairo":      CairoEmitter(),       # StarkNet / Cairo (CAI)
+        # ── General runtimes ──────────────────────────────────────────────────
+        "typescript": TypeScriptEmitter(),  # Node / TypeScript (TSN)
+        "swift":      SwiftEmitter(),       # Apple substrate (SWF)
+        # ── Medina sovereign originals  (Medina) ──────────────────────────────
+        "phx_chain":  PHXChainEmitter(),    # PHX decision ledger
+        "qfb":        QFBEmitter(),         # QFB Quantum Fusion Block
     }
 
     def __init__(self) -> None:

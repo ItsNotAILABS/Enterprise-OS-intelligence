@@ -1474,7 +1474,11 @@ class TestCPLBridge:
 
     def test_polyglot_returns_all_targets(self):
         result = self.bridge.polyglot("Μν → Δδ → Τρδ")
-        assert set(result.keys()) == {"python", "motoko", "go", "rust", "java", "solidity"}
+        assert set(result.keys()) == {
+            "python", "motoko", "go", "rust", "java",
+            "solidity", "move", "ink", "cosmwasm", "cairo",
+            "typescript", "swift", "phx_chain", "qfb",
+        }
 
     def test_polyglot_all_non_empty(self):
         result = self.bridge.polyglot("Μν → Δδ")
