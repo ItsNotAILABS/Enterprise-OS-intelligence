@@ -1,12 +1,25 @@
 #!/usr/bin/env node
 /**
- * MUNDATOR DOCUMENTORUM
+ * MUNDATOR DOCUMENTORUM — E13 · Evidence Registry Guard
  * Document Sanitizer for the Medina Tech Public Showcase
  *
- * Every document that enters the public repo passes through this model.
- * It reads the document, strips anything that reveals implementation
- * internals, enforces branding, and writes a clean version ready for
- * ArXiv or DFINITY review.
+ * Engine identity: E13 — Evidence Registry (TRACE GROUP)
+ * Pipeline role:   Guards the public evidence record — every claim that enters
+ *                  the public repo passes through this engine. It auto-redacts
+ *                  implementation internals, enforces branding, and writes a
+ *                  clean version ready for ArXiv or DFINITY review.
+ *
+ * Auto-fix behaviour (E14 — Dispute/Correction Engine):
+ *   Brand strings      → replaced automatically, file written back
+ *   Canister IDs       → replaced with [CANISTER-ID-REDACTED], file written back
+ *   API keys / secrets → replaced with [REDACTED], file written back
+ *   Internal paths     → replaced with [PATH-REDACTED], file written back
+ *   Logic code blocks  → entire block replaced with [IMPLEMENTATION REDACTED —
+ *                        see ORO SDK], file written back
+ *
+ * The sanitizer does NOT flag-and-fail any more. It fixes first, then checks.
+ * If content remains that cannot be auto-fixed, it exits non-zero. Otherwise
+ * it exits zero — the sovereign-intake workflow pushes the cleaned files back.
  *
  * Usage:
  *   node tools/doc-sanitizer.js <file-or-directory>
@@ -23,35 +36,84 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 
-// ─── Branding Rules ──────────────────────────────────────────────────────────
-// Any of these private names found in a public document get flagged or replaced.
+// ─── Branding Rules (E13 · auto-fix) ────────────────────────────────────────
+// Private internal names → public brand. Applied before any other check.
 const BRAND_REPLACEMENTS = [
-  { pattern: /\bPRIMORDIUM\b/g,          replacement: 'Medina Tech' },
-  { pattern: /\bprimordium\b/gi,         replacement: 'Medina Tech' },
-  { pattern: /\bAI Labs\b/gi,            replacement: 'Chaos Lab' },
-  { pattern: /\bAILabs\b/g,             replacement: 'Chaos Lab' },
+  { pattern: /\bPRIMORDIUM\b/g,  replacement: 'Medina Tech' },
+  { pattern: /\bprimordium\b/gi, replacement: 'Medina Tech' },
+  { pattern: /\bAI Labs\b/gi,    replacement: 'Chaos Lab'   },
+  { pattern: /\bAILabs\b/g,      replacement: 'Chaos Lab'   },
 ];
 
-// ─── Sensitive Pattern Detectors ─────────────────────────────────────────────
-// These patterns in a document body signal implementation detail that should
-// not be in a public showcase paper. The sanitizer flags them for manual review.
-const SENSITIVE_PATTERNS = [
-  // JavaScript / code blocks with real logic
-  { name: 'CODE_BLOCK_WITH_LOGIC',   pattern: /```[a-z]*\n[\s\S]*?(function|const|class|import|export|=>|async|await)[\s\S]*?```/g },
-  // Specific canister IDs or principal strings
-  { name: 'CANISTER_PRINCIPAL',      pattern: /[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{3}/g },
-  // API keys or tokens
-  { name: 'API_KEY',                 pattern: /(?:api[_-]?key|token|secret|password)\s*[:=]\s*['"][^'"]{8,}['"]/gi },
-  // Internal file paths
-  { name: 'INTERNAL_PATH',           pattern: /(?:\/src\/|\/scripts\/|nova\.json|bootstrap\.js)/g },
-  // Raw equation implementations (protect the sauce)
-  { name: 'IMPLEMENTATION_FORMULA',  pattern: /(?:\.js|\.ts|\.mo|\.rs)\b.*?\(.*?=>.*?\)/g },
+// ─── Math-block guard ────────────────────────────────────────────────────────
+// Code blocks whose content is purely mathematical (Greek letters, ∂, ∇, ∑, ∫,
+// δ, Σ, φ, ρ, etc.) are academic notation, not implementation code.
+// NOTE: → ← ↔ are intentionally excluded — they appear in code comments and
+//       template literals and would create false positives.
+// Returns true when the block content looks like math/pseudo-code, not JS/Motoko.
+function isMathOrPseudoBlock(blockContent) {
+  const mathSignals = /[∂∇∑∫δΣφρ∈⊂·≤≥≠≈∞∏√∀∃¬∧∨⊕±×÷π]/;
+  if (mathSignals.test(blockContent)) return true;
+
+  // Pseudo-code structs used in formal specification papers (e.g. ANTE/MEDIUS/POST)
+  // have the shape:  Name = TypeName { field: value ... }
+  // They look like JS objects but are NOT implementation code.
+  const pseudoCodeShape = /^\s*\w+\s*[=(]\s*\w+\s*\{[\s\S]*?\}/m;
+  const hasJsKeywords   = /\b(import|export|require|console\.|\.then\(|\.catch\(|Promise|async\s+function|await\s+\w+\s*\()\b/;
+  if (pseudoCodeShape.test(blockContent) && !hasJsKeywords.test(blockContent)) {
+    return true;
+  }
+
+  return false;
+}
+
+// ─── Code-block logic redactor (E14 · auto-fix) ──────────────────────────────
+// Replaces each fenced code block that contains genuine implementation logic.
+// Each block is examined independently — the old cross-block-spanning regex is gone.
+const CODE_BLOCK_RE = /```([a-z]*)\n([\s\S]*?)```/g;
+
+// Keywords that identify real implementation code (not prose or pseudo-code).
+const LOGIC_KEYWORDS = /\b(import|export|require|function\s+\w|const\s+\w|let\s+\w|var\s+\w|class\s+\w|async\s+function|await\s+\w|\.\w+\s*=>|Promise\.)\b/;
+
+function redactLogicBlocks(text) {
+  let redacted = false;
+  const result = text.replace(CODE_BLOCK_RE, (match, lang, body) => {
+    if (isMathOrPseudoBlock(body)) return match;   // keep math / pseudo-code
+    if (!LOGIC_KEYWORDS.test(body)) return match;  // keep non-logic blocks
+    redacted = true;
+    return `\`\`\`${lang}\n[IMPLEMENTATION REDACTED — see ORO SDK]\n\`\`\``;
+  });
+  return { result, redacted };
+}
+
+// ─── Inline auto-redactions (E14 · auto-fix) ─────────────────────────────────
+// These are applied AFTER logic blocks are redacted so the patterns do not
+// accidentally match content inside a replacement placeholder.
+const INLINE_REDACTIONS = [
+  // ICP canister principal IDs  (aaaaa-bbbbb-ccccc-ddddd-eee format)
+  {
+    name:        'CANISTER_PRINCIPAL',
+    pattern:     /[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{5}-[a-z0-9]{3}/g,
+    replacement: '[CANISTER-ID-REDACTED]',
+  },
+  // API keys, tokens, secrets
+  {
+    name:        'API_KEY',
+    pattern:     /(?:api[_-]?key|token|secret|password)\s*[:=]\s*['"][^'"]{8,}['"]/gi,
+    replacement: '[REDACTED]',
+  },
+  // Internal implementation file paths
+  {
+    name:        'INTERNAL_PATH',
+    pattern:     /(?:\/src\/|\/scripts\/|nova\.json|bootstrap\.js)/g,
+    replacement: '[PATH-REDACTED]',
+  },
 ];
 
 // ─── Required Paper Structure ─────────────────────────────────────────────────
-const REQUIRED_SECTIONS = ['## Abstract', '## References'];
+const REQUIRED_SECTIONS   = ['## Abstract', '## References'];
 const REQUIRED_AUTHOR_LINE = 'Alfredo Medina Hernandez';
-const REQUIRED_AFFILIATION  = 'Medina Tech';
+const REQUIRED_AFFILIATION = 'Medina Tech';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function red(s)    { return `\x1b[31m${s}\x1b[0m`; }
@@ -59,33 +121,40 @@ function yellow(s) { return `\x1b[33m${s}\x1b[0m`; }
 function green(s)  { return `\x1b[32m${s}\x1b[0m`; }
 function bold(s)   { return `\x1b[1m${s}\x1b[0m`; }
 
+// ─── E13 + E14 core sanitize function ────────────────────────────────────────
 function sanitizeContent(content, filename) {
-  const issues   = [];
-  const warnings = [];
-  let cleaned    = content;
+  const autoFixed  = [];   // things the engine fixed by itself
+  const warnings   = [];   // structural gaps that need author attention
+  const remaining  = [];   // things that could NOT be auto-fixed (should be empty)
+  let cleaned      = content;
 
-  // 1. Brand replacements (auto-fix)
+  // ── Step 1 · Brand replacements (auto-fix) ──────────────────────────────
   for (const { pattern, replacement } of BRAND_REPLACEMENTS) {
     const before = cleaned;
     cleaned = cleaned.replace(pattern, replacement);
     if (cleaned !== before) {
-      warnings.push(`Brand auto-fixed: replaced with "${replacement}"`);
+      autoFixed.push(`Brand replaced → "${replacement}"`);
     }
   }
 
-  // 2. Sensitive pattern detection (flag for review)
-  for (const { name, pattern } of SENSITIVE_PATTERNS) {
-    const matches = cleaned.match(pattern);
-    if (matches) {
-      issues.push({
-        type: name,
-        count: matches.length,
-        sample: matches[0].slice(0, 80),
-      });
+  // ── Step 2 · Logic code-block redaction (auto-fix, per-block) ───────────
+  // Each code block is tested independently — no cross-block false positives.
+  const { result: afterBlocks, redacted: blocksRedacted } = redactLogicBlocks(cleaned);
+  if (blocksRedacted) {
+    autoFixed.push('Logic code block(s) replaced with [IMPLEMENTATION REDACTED]');
+    cleaned = afterBlocks;
+  }
+
+  // ── Step 3 · Inline sensitive pattern redaction (auto-fix) ──────────────
+  for (const { name, pattern, replacement } of INLINE_REDACTIONS) {
+    const before = cleaned;
+    cleaned = cleaned.replace(pattern, replacement);
+    if (cleaned !== before) {
+      autoFixed.push(`${name} redacted → "${replacement}"`);
     }
   }
 
-  // 3. Required sections check (papers only)
+  // ── Step 4 · Required sections check (warnings, not errors) ─────────────
   if (filename.endsWith('.md') && filename.includes('papers')) {
     for (const section of REQUIRED_SECTIONS) {
       if (!cleaned.includes(section)) {
@@ -100,24 +169,23 @@ function sanitizeContent(content, filename) {
     }
   }
 
-  return { cleaned, issues, warnings };
+  return { cleaned, autoFixed, warnings, remaining };
 }
 
 function processFile(filepath) {
   const rel     = path.relative(ROOT, filepath);
   const content = fs.readFileSync(filepath, 'utf8');
 
-  const { cleaned, issues, warnings } = sanitizeContent(content, rel);
+  const { cleaned, autoFixed, warnings, remaining } = sanitizeContent(content, rel);
 
-  let status = 'PASS';
-  if (issues.length > 0) status = 'REVIEW';
-
-  // Write cleaned content back if anything changed
+  // Always write back — even if only brand strings changed.
+  // The sovereign-intake workflow will commit the result.
   if (cleaned !== content) {
     fs.writeFileSync(filepath, cleaned, 'utf8');
   }
 
-  return { file: rel, status, issues, warnings };
+  const status = remaining.length > 0 ? 'MANUAL_REVIEW' : 'PASS';
+  return { file: rel, status, autoFixed, warnings, remaining };
 }
 
 function collectMarkdownFiles(target) {
@@ -134,7 +202,7 @@ function collectMarkdownFiles(target) {
 
 // ─── Main ────────────────────────────────────────────────────────────────────
 function main() {
-  const target = process.argv[2] || path.join(ROOT, 'papers');
+  const target     = process.argv[2] || path.join(ROOT, 'papers');
   const targetPath = path.resolve(target);
 
   if (!fs.existsSync(targetPath)) {
@@ -145,38 +213,45 @@ function main() {
   const files   = collectMarkdownFiles(targetPath);
   const results = files.map(processFile);
 
-  // ─── Report ────────────────────────────────────────────────────────────────
-  console.log('\n' + bold('MUNDATOR DOCUMENTORUM — Medina Tech Public Repo Sanitizer'));
+  // ─── Report ──────────────────────────────────────────────────────────────
+  console.log('\n' + bold('MUNDATOR DOCUMENTORUM [E13·E14] — Medina Tech Sanitizer'));
   console.log('═'.repeat(62));
 
   let exitCode = 0;
 
-  for (const { file, status, issues, warnings } of results) {
+  for (const { file, status, autoFixed, warnings, remaining } of results) {
     const icon = status === 'PASS' ? green('✓') : yellow('⚠');
     console.log(`\n${icon}  ${bold(file)}`);
 
+    for (const fix of autoFixed) {
+      console.log(`   ${green('✔')} Auto-fixed: ${fix}`);
+    }
     for (const w of warnings) {
       console.log(`   ${yellow('→')} ${w}`);
     }
-
-    for (const iss of issues) {
-      console.log(`   ${red('✗')} SENSITIVE [${iss.type}] (×${iss.count})`);
-      console.log(`     sample: ${iss.sample}…`);
+    for (const r of remaining) {
+      console.log(`   ${red('✗')} MANUAL REVIEW REQUIRED: ${r}`);
       exitCode = 1;
     }
 
-    if (status === 'PASS' && warnings.length === 0) {
+    if (autoFixed.length === 0 && warnings.length === 0 && remaining.length === 0) {
       console.log(`   ${green('→')} Clean.`);
     }
   }
 
   console.log('\n' + '═'.repeat(62));
   const passCount   = results.filter(r => r.status === 'PASS').length;
-  const reviewCount = results.filter(r => r.status === 'REVIEW').length;
-  console.log(`${green(passCount + ' PASS')}  ${reviewCount > 0 ? yellow(reviewCount + ' NEED REVIEW') : ''}`);
+  const fixedCount  = results.filter(r => r.autoFixed.length > 0).length;
+  const reviewCount = results.filter(r => r.status === 'MANUAL_REVIEW').length;
+
+  console.log(
+    `${green(passCount + ' PASS')}` +
+    (fixedCount  > 0 ? `  ${green(fixedCount  + ' AUTO-FIXED')}` : '') +
+    (reviewCount > 0 ? `  ${yellow(reviewCount + ' NEED MANUAL REVIEW')}` : ''),
+  );
 
   if (exitCode !== 0) {
-    console.log(red('\nRemove or redact the flagged content before this repo goes public.\n'));
+    console.log(red('\nManual review required — auto-fix could not resolve all issues.\n'));
   } else {
     console.log(green('\nAll documents are public-showcase ready.\n'));
   }

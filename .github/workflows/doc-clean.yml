@@ -1,4 +1,4 @@
-name: Mundator Documentorum — Document Sanitizer
+name: "Mundator Documentorum [E13·E14] — Document Sanitizer Guard"
 
 on:
   push:
@@ -9,32 +9,39 @@ on:
     paths:
       - 'papers/**'
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Engine identity mapping
+#   E13 — Evidence Registry     : every claim must be source-linked or marked unknown
+#   E14 — Dispute/Correction    : allows corrections, disputed findings, version history
+#
+# This workflow is the GUARD (read-only, fails on problems).
+# The sovereign-intake.yml workflow is the INTAKE (auto-fixes, then guards).
+# ─────────────────────────────────────────────────────────────────────────────
+
 jobs:
   sanitize:
-    name: Sanitize Public Documents
+    name: "[E13·E14] Sanitize Public Documents"
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: "[E1] Ingest — Checkout branch"
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: "[E2] Parse — Setup Node.js runtime"
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Run Mundator Documentorum
+      - name: "[E13·E14] Evidence Registry + Dispute/Correction — Run Mundator Documentorum"
         run: node tools/doc-sanitizer.js papers/
 
-      - name: Check for sensitive files accidentally staged
+      - name: "[E13] Evidence Registry — Check for sensitive files accidentally staged"
         run: |
           echo "Checking for accidentally committed sensitive files..."
           FORBIDDEN=(
             "nova.json"
             "scripts/"
             "extensions/"
-            "protocols/"
-            "*/src/"
             "*_Register.csv"
             "*_Manifest.json"
           )

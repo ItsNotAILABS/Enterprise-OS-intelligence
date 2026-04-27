@@ -270,31 +270,7 @@ The cycle period is configurable. The default is one hour (3,600,000 ms). The or
 ### 4.2 The Production Entry Point
 
 ```javascript
-import { bootstrapOROProduction } from '@medina/effecttrace-governance-organism/production';
-
-const oro = bootstrapOROProduction({
-  watchedSNSDaos: [
-    'rrkah-fqaaa-aaaaa-aaaaq-cai',  // OpenChat
-    'zxeu2-7aaaa-aaaaq-aaafa-cai',  // DSCVR
-    // add any SNS root canister ID
-  ],
-  cyclePeriodMs: 60 * 60 * 1000,   // hourly
-  meridian: null,                   // or inject full MERIDIAN engines
-  autoStart: true,
-});
-
-oro.on('alert', ({ proposalId, riskLevel, findings }) => {
-  console.log(`[ORO ALERT] ${proposalId} | Risk: ${riskLevel}`);
-  findings.forEach(f => console.log(`  [${f.severity}] ${f.finding}`));
-});
-
-oro.on('trace_complete', ({ traceId, proposalId, confidence }) => {
-  console.log(`[ORO TRACE] ${proposalId} → ${traceId} | Confidence: ${confidence}`);
-});
-
-oro.on('execution', ({ proposalId, status, executedAt }) => {
-  console.log(`[ORO EXEC] ${proposalId} → ${status}`);
-});
+[IMPLEMENTATION REDACTED — see ORO SDK]
 ```
 
 This is not a demo script. This is a production entry point. Run it. The organism watches.
