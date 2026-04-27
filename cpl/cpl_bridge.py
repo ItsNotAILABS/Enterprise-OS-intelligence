@@ -2,7 +2,7 @@
 cpl_bridge.py — CPL Cross-Language Bridge (CXL Emitter)
 
 Author : Medina
-Version: 1.0.0
+Version: 1.1.0
 Ring   : Sovereign Ring
 
 ─────────────────────────────────────────────────────────────────────────────
@@ -15,10 +15,12 @@ equivalent code in the target language.
 
 Supported targets
 ─────────────────
-  python   — Python intelligence layer  (PYT)
-  motoko   — Motoko ICP canister call   (MOT)
-  go       — Go service call            (GOL)
-  rust     — Rust kernel expression     (RST)
+  python   — Python intelligence layer        (PYT)
+  motoko   — Motoko ICP canister call         (MOT)
+  go       — Go service call                  (GOL)
+  rust     — Rust kernel expression           (RST)
+  java     — Java enterprise SDK call         (JAV)
+  solidity — Solidity / EVM smart contract    (SOL)
 
 Usage
 ─────
@@ -27,11 +29,14 @@ Usage
   mo_code  = bridge.emit("Λγ ∧ Ηθ → Τκτ", "motoko")
   go_code  = bridge.emit("Λγ ∧ Ηθ → Τκτ", "go")
   rs_code  = bridge.emit("Λγ ∧ Ηθ → Τκτ", "rust")
+  ja_code  = bridge.emit("Λγ ∧ Ηθ → Τκτ", "java")
+  so_code  = bridge.emit("Λγ ∧ Ηθ → Τκτ", "solidity")
 
 Full polyglot sync (emit to all targets at once)
 ─────────────────────────────────────────────────
   result = bridge.polyglot("Λγ ∧ Ηθ → Τκτ")
-  # result["python"], result["motoko"], result["go"], result["rust"]
+  # result["python"], result["motoko"], result["go"], result["rust"],
+  # result["java"], result["solidity"]
 """
 
 from __future__ import annotations
@@ -191,6 +196,101 @@ class RustEmitter(_Emitter):
             """)
 
 
+# ── Java Emitter ──────────────────────────────────────────────────────────────
+
+class JavaEmitter(_Emitter):
+    """Emit CPL as Java enterprise SDK code (JAV)."""
+
+    LANGUAGE = "java"
+
+    def emit(self, tokens: list[CPLToken], raw_source: str) -> str:
+        token_array = ", ".join(f'"{t.glyph}"' for t in tokens)
+        domain_set  = ", ".join(f'"{t.domain}"' for t in tokens)
+        return textwrap.dedent(f"""\
+            // CPL → Java  (JAV bridge)
+            // source: {raw_source}
+            package medina.organism.cpl;
+
+            import medina.organism.cpl.CPLVM;
+            import medina.organism.cpl.VMValue;
+            import java.util.Arrays;
+            import java.util.List;
+
+            public class CPLExpression {{
+
+                private static final String[] TOKENS = {{ {token_array} }};
+                private static final String[] DOMAINS = {{ {domain_set} }};
+
+                public static VMValue evaluate() throws Exception {{
+                    CPLVM vm = new CPLVM();
+                    List<String> tokenList = Arrays.asList(TOKENS);
+                    return vm.evalTokens(tokenList);
+                }}
+
+                public static void main(String[] args) throws Exception {{
+                    VMValue result = evaluate();
+                    System.out.println("CPL result: " + result);
+                }}
+            }}
+            """)
+
+
+# ── Solidity Emitter ───────────────────────────────────────────────────────────
+
+class SolidityEmitter(_Emitter):
+    """Emit CPL as a Solidity / EVM smart contract fragment (SOL)."""
+
+    LANGUAGE = "solidity"
+
+    _SOLIDITY_VERSION = "^0.8.24"
+
+    def emit(self, tokens: list[CPLToken], raw_source: str) -> str:
+        token_count  = len(tokens)
+        glyph_hashes = "\n".join(
+            f"        tokenHash[{i}] = keccak256(abi.encodePacked(\"{t.glyph}\"));"
+            for i, t in enumerate(tokens)
+        )
+        domain_list  = ", ".join(f'"{t.domain}"' for t in tokens)
+        return textwrap.dedent(f"""\
+            // CPL → Solidity  (SOL bridge)
+            // source: {raw_source}
+            // SPDX-License-Identifier: MIT
+            pragma solidity {self._SOLIDITY_VERSION};
+
+            /// @title CPLExpression
+            /// @notice Sovereign CPL expression sealed on EVM — QFB substrate adapter
+            contract CPLExpression {{
+
+                // Token count for this CPL expression
+                uint256 public constant TOKEN_COUNT = {token_count};
+
+                // PHX integrity seal (set on deployment)
+                bytes32 public phxSeal;
+
+                // Token hashes (keccak256 of each CPL glyph)
+                bytes32[{token_count}] public tokenHash;
+
+                // Domain labels
+                string[{token_count}] public domains;
+
+                constructor(bytes32 _phxSeal) {{
+                    phxSeal = _phxSeal;
+            {glyph_hashes}
+                }}
+
+                /// @notice Verify the PHX integrity seal of this expression
+                function verifyPhxSeal(bytes32 _seal) external view returns (bool) {{
+                    return phxSeal == _seal;
+                }}
+
+                /// @notice Return the number of CPL tokens in this expression
+                function tokenCount() external pure returns (uint256) {{
+                    return TOKEN_COUNT;
+                }}
+            }}
+            """)
+
+
 # ── CPLBridge (CXL entry point) ────────────────────────────────────────────────
 
 class CPLBridge:
@@ -202,10 +302,12 @@ class CPLBridge:
     """
 
     _EMITTERS: dict[str, _Emitter] = {
-        "python": PythonEmitter(),
-        "motoko": MotokoEmitter(),
-        "go":     GoEmitter(),
-        "rust":   RustEmitter(),
+        "python":    PythonEmitter(),
+        "motoko":    MotokoEmitter(),
+        "go":        GoEmitter(),
+        "rust":      RustEmitter(),
+        "java":      JavaEmitter(),
+        "solidity":  SolidityEmitter(),
     }
 
     def __init__(self) -> None:
