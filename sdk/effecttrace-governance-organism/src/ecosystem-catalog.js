@@ -28,13 +28,33 @@ export const SYSTEM_IDENTITY = Object.freeze({
     MERIDIAN:    'the substrate — the sovereign OS layer',
     EffectTrace: 'the face — the public interface',
   },
-  // Mirror Governance sub-identity (Paper XXIX)
-  mirrorIdentity: {
+  // Self + Universal Governance sub-identities (Papers XXIX/XXXI)
+  // NOTE: XXIX shadow-to-ICP framing corrected in XXXI — MERIDIAN governs itself
+  //       and any system it is pointed at. ICP is Target A, not a mirror.
+  selfGovernanceIdentity: {
     latinName:   'Gubernatio Specularis',
-    latinMeaning:'Mirror Governance',
+    latinMeaning:'Self-Governance',
     motto:       'REGIT · SPECTAT · SIMULAT',
     mottoMeaning:'It Governs · It Mirrors · It Simulates',
     threeWords:  ['SELF', 'SHADOW', 'SIMULATE'],
+    scope:       'MERIDIAN governs itself through the same 16-engine pipeline it applies to external systems',
+  },
+  universalGovernanceIdentity: {
+    latinName:   'Universalis Gubernatio',
+    latinMeaning:'Universal Governance',
+    motto:       'OMNIA GUBERNAT · NULLI SERVIT',
+    mottoMeaning:'It Governs All · It Serves None',
+    threeWords:  ['ANY', 'SYSTEM', 'SOVEREIGN'],
+    scope:       'MERIDIAN governs any system with a ProposalFetcher adapter — ICP is first, not only',
+  },
+  // Ethics layer — above all governance (Paper XXX)
+  ethicsIdentity: {
+    latinName:   'Ethica Prima',
+    latinMeaning:'Ethics First',
+    motto:       'ANTE OMNIA · SUPRA OMNIA · POST OMNIA',
+    mottoMeaning:'Before All · Above All · After All',
+    threeWords:  ['DOCTRINE', 'LAW', 'CONSCIENCE'],
+    scope:       'Ethics governs governance — 14 protocols EP-01–EP-14 compiled into every Sovereign Packet',
   },
   truePrimitive:    'φ = 1.6180339887498948482...',
   primitiveLatin:   'Primitivo Uno, Fractura Cetera',
@@ -46,7 +66,47 @@ export const SYSTEM_IDENTITY = Object.freeze({
   version:          '1.1.0',
 });
 
-// ── The Laws ──────────────────────────────────────────────────────────────────
+// ── Ethics Protocols (Paper XXX — Ethica Prima) ───────────────────────────────
+// Ethics governs governance. Compiled into every Sovereign Packet.
+// Doctrinal foundation: Alfredo Medina Hernandez's doctrine, grounded in Biblical principles.
+export const ETHICS_PROTOCOLS = Object.freeze([
+  { id: 'EP-01', name: 'Truth Above Performance',        tier: 'primary',   rule: 'Accuracy is prior to impact — never optimize output for persuasion at the cost of truth' },
+  { id: 'EP-02', name: 'Power Stewardship',              tier: 'primary',   rule: 'Intelligence is held in trust for the governed ecosystem — cannot be turned against it' },
+  { id: 'EP-03', name: 'Protection of the Vulnerable',   tier: 'primary',   rule: 'Proposals that structurally harm less-powerful participants receive mandatory equity flags' },
+  { id: 'EP-04', name: 'Proportional Accountability',    tier: 'primary',   rule: 'Correction responses must be proportional to the magnitude of the failure' },
+  { id: 'EP-05', name: 'Right to Know',                  tier: 'primary',   rule: 'Every governance participant has the right to understand governance conclusions that affect them' },
+  { id: 'EP-06', name: 'Non-Manipulation',               tier: 'primary',   rule: 'Both frames always offered; neither suppressed — formalizes L78 as an ethics mandate' },
+  { id: 'EP-07', name: 'Systemic Humility',              tier: 'primary',   rule: 'Outputs below confidence threshold φ⁻² ≈ 0.382 carry mandatory uncertainty acknowledgment' },
+  { id: 'EP-08', name: 'No Governance Without Consent',  tier: 'primary',   rule: 'Doctrine block must be available to governed ecosystem before MERIDIAN is deployed against it' },
+  { id: 'EP-09', name: 'Memory as Testimony',            tier: 'primary',   rule: 'Pheromone field records are immutable testimony — corrections added alongside, never overwriting' },
+  { id: 'EP-10', name: 'Sovereignty Cannot Be Weaponized', tier: 'primary', rule: 'Conservation laws protect the governed ecosystem — cannot be used against it' },
+  { id: 'EP-11', name: 'Proportional Disclosure',        tier: 'secondary', rule: 'Relevant information held in memory that affects a participant decision must be surfaced' },
+  { id: 'EP-12', name: 'Chain of Custody',               tier: 'secondary', rule: 'Every memory deposit carries origin, verifier, timestamp, and confidence at deposit time' },
+  { id: 'EP-13', name: 'Proportional Force in Correction', tier: 'secondary', rule: 'Correction magnitude is scaled to divergence magnitude — 5% gets a note, 95% gets full review' },
+  { id: 'EP-14', name: 'Doctrine Integrity Heartbeat',   tier: 'secondary', rule: 'Every governance cycle: verify doctrine block intact before producing any output' },
+]);
+
+// ── Multi-System Governance Scope (Paper XXXI) ───────────────────────────────
+// MERIDIAN governs any system. ICP is the first target, not the only one.
+export const MULTI_SYSTEM_SCOPE = Object.freeze({
+  pattern:          'ProposalFetcher adapter — any system with traceable governance proposals is a valid target',
+  operatorScope:    '200+ canisters across Alfredo Medina Hernandez Blockbox builds (primary); ICP NNS/SNS (entry point); any ICP-based project (general)',
+  icpRole:          'First target — highest visibility, public proposals, established developer ecosystem, WASM runtime matches MERIDIAN architecture',
+  icpIsNotOnly:     true,
+  targetSystems: [
+    { id: 'A', name: 'ICP NNS/SNS',              status: 'primary entry point',  scope: 'Public NNS proposals; SNS-governed projects on ICP' },
+    { id: 'B', name: "Alfredo's Blockbox Builds", status: 'founder ecosystem',   scope: '~200 deployed canisters; autonomous heartbeat maintenance; upgrade governance' },
+    { id: 'C', name: 'Any ICP-based project',     status: 'general operator',    scope: 'Any Operator deploys Sovereign Packet against their canister ecosystem' },
+    { id: 'N', name: 'Future systems',            status: 'unbounded',           scope: 'Any distributed system with a ProposalFetcher adapter' },
+  ],
+  shadowCorrectionNote: 'Paper XXIX shadow-mirror-to-ICP framing was incorrect and is superseded by XXXI. Self-governance and external governance are distinct operations. Cross-system intelligence comes from accumulated pheromone patterns, not mirroring.',
+  // SDK autonomy extension — npm auto-update IS VIVIT at the distribution layer
+  vivitAtDistribution: {
+    mechanism:       'npm version bump triggers sdk-release.yml → validates all engines → auto-tags → publishes Sovereign Packet',
+    meaning:         'Every running organism improves when the organism improves — automatically, not on manual update',
+    principle:       'VIVIT applied to distribution — organism maintains its own life including propagation of its improvements',
+  },
+});
 export const BEHAVIORAL_LAWS = Object.freeze([
   { id: 'L72', name: 'Anchoring',             rule: 'Every recommendation framed relative to current position' },
   { id: 'L73', name: 'Loss Weight',            rule: 'Losses weighted Λ=2.25× more intensely than equivalent gains' },
@@ -198,7 +258,13 @@ export const PAPERS = Object.freeze([
   { roman: 'XXVI',   slug: 'XXVI-GUBERNATIO-VIVA',           title: 'Gubernatio Viva',                   keyContrib: 'Complete formal system specification — ICP impact + release research paper' },
   { roman: 'XXVII',  slug: 'XXVII-PERSPECTIVA-AUCTORIS',     title: 'Perspectiva Auctoris',              keyContrib: "Honest point-of-view assessment — what was built, why it's novel, ICP impact" },
   { roman: 'XXVIII', slug: 'XXVIII-DE-PRIMITIVO',             title: 'De Primitivo',                      keyContrib: 'φ as the ONLY true primitive; everything else is a fracture; Alfredo as complete inventor; Sovereign Packets terminology' },
-  { roman: 'XXIX',   slug: 'XXIX-GUBERNATIO-SPECULARIS',      title: 'Gubernatio Specularis',             keyContrib: 'Mirror Governance: organism self-governance, shadow copy pattern (MERIDIAN↔ICP), E16 Variance Simulation Engine, PROTOCOLLUM autonomous protocol research agent' },
+  { roman: 'XXIX',   slug: 'XXIX-GUBERNATIO-SPECULARIS',      title: 'Gubernatio Specularis',             keyContrib: 'Self-governance + E16 Variance Simulation Engine + PROTOCOLLUM (shadow-to-ICP framing corrected in XXXI)' },
+  { roman: 'XXX',    slug: 'XXX-ETHICA-PRIMA',                title: 'Ethica Prima',                      keyContrib: 'Ethics as foundational layer above governance — 14 ethics protocols EP-01–EP-14; doctrine grounded in Biblical principles; ethics controls governance' },
+  { roman: 'XXXI',   slug: 'XXXI-UNIVERSALIS-GUBERNATIO',     title: 'Universalis Gubernatio',            keyContrib: 'Multi-system governance — 200+ canisters, ICP as entry point not only target; corrects XXIX shadow mirror framing; npm auto-update = VIVIT at distribution layer' },
+  // arXiv academic papers — separate series, written for academic audiences
+  { roman: 'ARXIV-A', slug: 'arxiv/CS-MA-collective-intelligence-blockchain-governance', title: 'Collective Intelligence Mechanisms for Blockchain Governance Consequence Tracing', keyContrib: 'cs.MA: stigmergy + quorum sensing applied to blockchain governance; pheromone deposit formalization; compounding intelligence property' },
+  { roman: 'ARXIV-B', slug: 'arxiv/CS-CR-conservation-laws-sovereign-compute',           title: 'Conservation Laws of Sovereign Compute Architectures',                            keyContrib: 'cs.CR: Noether theorem applied to software sovereignty — SL-0 through SL-4; symmetry breaks as detectable events' },
+  { roman: 'ARXIV-C', slug: 'arxiv/CS-AI-behavioral-economics-governance-intelligence',  title: 'Behavioral Economics Laws as Architectural Constraints in AI Governance Intelligence Systems', keyContrib: 'cs.AI: L72–L79 as architectural constraints; L78 Right to Both Frames as AI manipulation prevention' },
 ]);
 
 // ── Document Intelligence Pipeline ────────────────────────────────────────────
@@ -253,6 +319,8 @@ export const ECOSYSTEM_CATALOG = Object.freeze({
   identity:              SYSTEM_IDENTITY,
   behavioralLaws:        BEHAVIORAL_LAWS,
   conservationLaws:      CONSERVATION_LAWS,
+  ethicsProtocols:       ETHICS_PROTOCOLS,
+  multiSystemScope:      MULTI_SYSTEM_SCOPE,
   math:                  MATHEMATICAL_LAWS,
   engines:               ENGINES,
   enginesByGroup:        ENGINES_BY_GROUP,
@@ -267,7 +335,7 @@ export const ECOSYSTEM_CATALOG = Object.freeze({
   papers:                PAPERS,
   pipeline:              DOCUMENT_PIPELINE,
   supportingSdks:        SUPPORTING_SDKS,
-  generatedAt:           '2026-04-27T08:00:00.000Z',
+  generatedAt:           '2026-04-27T09:00:00.000Z',
 });
 
 export default ECOSYSTEM_CATALOG;

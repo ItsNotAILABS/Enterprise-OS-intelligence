@@ -95,6 +95,7 @@ export { VerificationLabAgent }  from './agents/verification-lab.js';
 // Ecosystem catalog — the system's self-knowledge
 export { ECOSYSTEM_CATALOG, SYSTEM_IDENTITY,
          BEHAVIORAL_LAWS, CONSERVATION_LAWS, MATHEMATICAL_LAWS,
+         ETHICS_PROTOCOLS, MULTI_SYSTEM_SCOPE,
          ENGINES, AGENTS, PROTOCOLS, SDK_EDITIONS, CANISTERS, PAPERS,
          ENGINES_BY_ID, ENGINES_BY_GROUP, AGENTS_BY_CODENAME,
          SOVEREIGN_DISTRIBUTION,
