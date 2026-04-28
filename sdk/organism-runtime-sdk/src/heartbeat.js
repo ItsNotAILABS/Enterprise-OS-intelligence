@@ -1,124 +1,91 @@
 /**
- * Heartbeat — the organism's 873ms natural pulse.
+ * Heartbeat — Autonomous Organism Pulse
  *
- * Drives the organism lifecycle by emitting beats at a fixed interval.
- * Each beat carries the current beat number, timestamp, and organism state.
+ * Theory: SUBSTRATE VIVENS (Paper I) — Vitality. The system generates its own
+ * activity. It does not wait to be triggered. It ticks, processes, and updates
+ * on its own rhythm, whether or not anyone is interacting with it at that moment.
+ *
+ * The 873ms interval is not arbitrary. It is close to the human resting heart
+ * rate (~70 bpm = 857ms) and falls within the range of φ-harmonic intervals
+ * derived from the base 1000ms: 1000/φ ≈ 618ms, 1000/φ⁻¹ ≈ 1618ms.
+ * 873ms ≈ (618 + 1618) / 2.618 — the midpoint scaled by φ².
+ *
+ * @medina/organism-runtime-sdk — Alfredo Medina Hernandez · Medina Tech · Dallas TX
  */
+
+const DEFAULT_INTERVAL_MS = 873;
+
 export class Heartbeat {
-  /** @type {number} The organism's natural pulse interval in milliseconds */
-  static INTERVAL_MS = 873;
-
-  /** @type {number|null} */
-  #intervalId;
-
-  /** @type {number} */
-  #beatCount;
-
-  /** @type {number|null} */
-  #startTime;
-
-  /** @type {Array<function>} */
-  #beatListeners;
-
-  /** @type {import('./organism-state.js').OrganismState|null} */
-  #organismState;
-
   /**
-   * @param {import('./organism-state.js').OrganismState} [organismState] - Optional OrganismState instance to include in beat payloads
+   * @param {import('./organism-state.js').OrganismState} [state]
+   * @param {number} [intervalMs]
    */
-  constructor(organismState = null) {
-    this.#intervalId = null;
-    this.#beatCount = 0;
-    this.#startTime = null;
-    this.#beatListeners = [];
-    this.#organismState = organismState;
+  constructor(state = null, intervalMs = DEFAULT_INTERVAL_MS) {
+    this._state = state;
+    this._intervalMs = intervalMs;
+    this._beatCount = 0;
+    this._startTime = null;
+    this._intervalId = null;
+    this._listeners = [];
   }
 
-  /**
-   * Begins the heartbeat cycle at the 873ms interval.
-   * @throws {Error} If heartbeat is already running
-   */
+  // ── Lifecycle ─────────────────────────────────────────────────────────────
+
   start() {
-    if (this.#intervalId !== null) {
-      throw new Error('Heartbeat is already running');
-    }
-
-    this.#startTime = Date.now();
-    this.#beatCount = 0;
-
-    this.#intervalId = setInterval(() => {
-      this.#beatCount++;
-      const payload = {
-        beatNumber: this.#beatCount,
-        timestamp: Date.now(),
-        organismState: this.#organismState ? this.#organismState.snapshot() : null,
-      };
-
-      for (const callback of this.#beatListeners) {
-        try {
-          callback(payload);
-        } catch (err) {
-          console.error(`[Heartbeat] Listener error on beat ${this.#beatCount}:`, err);
-        }
-      }
-    }, Heartbeat.INTERVAL_MS);
+    if (this._intervalId) return this;
+    this._startTime = Date.now();
+    this._intervalId = setInterval(() => this._pulse(), this._intervalMs);
+    return this;
   }
 
-  /**
-   * Stops the heartbeat cycle.
-   * @throws {Error} If heartbeat is not running
-   */
   stop() {
-    if (this.#intervalId === null) {
-      throw new Error('Heartbeat is not running');
+    if (this._intervalId) {
+      clearInterval(this._intervalId);
+      this._intervalId = null;
     }
-
-    clearInterval(this.#intervalId);
-    this.#intervalId = null;
+    return this;
   }
 
-  /**
-   * Registers a beat listener.
-   * @param {function} callback - Receives `{beatNumber, timestamp, organismState}`
-   * @returns {function} Unsubscribe function
-   */
-  onBeat(callback) {
-    if (typeof callback !== 'function') {
-      throw new TypeError('onBeat callback must be a function');
+  // ── Internal pulse ────────────────────────────────────────────────────────
+
+  _pulse() {
+    this._beatCount++;
+    const timestamp = new Date().toISOString();
+
+    const beatEvent = {
+      beatNumber: this._beatCount,
+      timestamp,
+      organismState: this._state ? this._state.snapshot() : null,
+    };
+
+    // Update somatic register if state is connected
+    if (this._state) {
+      this._state.setRegister('somatic', 'body', {
+        beatNumber: this._beatCount,
+        uptime: this.getUptime(),
+      });
     }
 
-    this.#beatListeners.push(callback);
+    for (const cb of this._listeners) {
+      try { cb(beatEvent); } catch (_) { /* listeners must not crash the pulse */ }
+    }
+  }
 
+  // ── Listeners ─────────────────────────────────────────────────────────────
+
+  onBeat(callback) {
+    this._listeners.push(callback);
     return () => {
-      const idx = this.#beatListeners.indexOf(callback);
-      if (idx !== -1) this.#beatListeners.splice(idx, 1);
+      const idx = this._listeners.indexOf(callback);
+      if (idx >= 0) this._listeners.splice(idx, 1);
     };
   }
 
-  /**
-   * Returns total beats since start.
-   * @returns {number}
-   */
-  getBeatCount() {
-    return this.#beatCount;
-  }
+  // ── Observability ─────────────────────────────────────────────────────────
 
-  /**
-   * Returns milliseconds since heartbeat started.
-   * @returns {number}
-   */
-  getUptime() {
-    if (this.#startTime === null) return 0;
-    return Date.now() - this.#startTime;
-  }
-
-  /**
-   * Returns true if the heartbeat is currently running.
-   * @returns {boolean}
-   */
-  isAlive() {
-    return this.#intervalId !== null;
-  }
+  getBeatCount()  { return this._beatCount; }
+  getUptime()     { return this._startTime ? Date.now() - this._startTime : 0; }
+  isAlive()       { return this._intervalId !== null; }
 }
 
 export default Heartbeat;

@@ -1,0 +1,41 @@
+{
+  "name": "@medina/meridian-sovereign-os",
+  "version": "1.0.0",
+  "description": "MERIDIAN SUBSTRATE — the sovereign operating system that runs underneath your existing enterprise stack and connects all of it. One OS. Every system talking to each other. Every workflow automated. Every decision informed by live data from everywhere at once.",
+  "license": "UNLICENSED",
+  "author": {
+    "name": "Alfredo Medina Hernandez",
+    "email": "Medinasitech@outlook.com",
+    "url": "https://primordium.io"
+  },
+  "main": "src/index.js",
+  "type": "module",
+  "keywords": [
+    "sovereign-os",
+    "meridian",
+    "enterprise",
+    "intelligence-layer",
+    "cordex",
+    "cerebex",
+    "cyclovex",
+    "nexoris",
+    "chrono",
+    "hdi",
+    "voxis",
+    "kuramoto",
+    "friston",
+    "lotka-volterra",
+    "primordium"
+  ],
+  "exports": {
+    ".": "./src/index.js",
+    "./cordex": "./src/cordex.js",
+    "./cerebex": "./src/cerebex.js",
+    "./cyclovex": "./src/cyclovex.js",
+    "./nexoris": "./src/nexoris.js",
+    "./chrono": "./src/chrono.js",
+    "./hdi": "./src/hdi.js",
+    "./cognovex": "./src/cognovex.js",
+    "./voxis": "./src/voxis.js"
+  }
+}

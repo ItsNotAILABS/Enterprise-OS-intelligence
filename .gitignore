@@ -1,0 +1,51 @@
+# ─────────────────────────────────────────────────────────────
+# This is a PUBLIC showcase repository.
+# Implementation source code lives in private repos.
+# ─────────────────────────────────────────────────────────────
+
+# Source implementations — never public
+src/
+*/src/
+**/src/
+
+# Deployment & bootstrap
+nova.json
+scripts/
+deploy/
+bootstrap/
+
+# Strategy registers & manifests
+*.csv
+*_Register.csv
+*_Manifest.json
+SDK_Model_Manifest.json
+
+# Extensions and protocols (full implementations)
+extensions/
+protocols/
+
+# Private SDK modules
+sdk/ai-model-engines/
+sdk/sovereign-field-models/
+sdk/frontend-intelligence-models/
+
+# Environment and secrets
+.env
+.env.*
+*.key
+*.pem
+secrets/
+
+# Node
+node_modules/
+dist/
+build/
+.cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
