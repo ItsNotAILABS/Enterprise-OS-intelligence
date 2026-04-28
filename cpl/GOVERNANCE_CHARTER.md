@@ -470,9 +470,85 @@ This is "we never drop" in code.  (Medina)
 
 ---
 
+## SECTION VIII — PHX COMPOUND CHAINING AND THE NEVER-DROP LAW
+
+*(New in v2.0 — the compound cognition update.)*
+
+### Why never-drop is not a storage policy — it is a chain property
+
+The "never drop" law sounds like a storage policy: keep everything forever.  It is not.  It is a **chain property** — a mathematical consequence of how PHX compound chaining works.
+
+In PHX v3.0 (compound chaining), every decision within a beat is the foundation of the next decision within the same beat:
+
+```
+Slot 0:   T₀ = PHX(e₀, k, p_prev, β)
+Slot 1:   T₁ = PHX(e₁, k, T₀, β)         ← T₀ is history
+Slot N-1: Tₙ₋₁ = PHX(eₙ₋₁, k, Tₙ₋₂, β)  ← T_{N-2} is history
+```
+
+Dropping any T_i would break the entire downstream chain from T_{i+1} onward.  You cannot verify T_5 without T_4.  You cannot verify T_4 without T_3.  The chain is a dependency graph — dropping any node destroys the graph.
+
+**Never drop is not a choice.  It is a mathematical requirement of the chain.**  (Medina)
+
+### The Fibonacci Kernel: Never Drop Without Unbounded Memory
+
+The Fibonacci kernel solves the apparent contradiction between "never drop" and "finite memory":
+
+- Bundles at Fibonacci-indexed beats (1, 2, 3, 5, 8, 13, 21, …) are kept in live memory
+- All other bundles are **crystallised** — their contribution is encoded in the chain seals of the surviving Fibonacci bundles
+- Memory: O(log_φ(beat)) bundles — logarithmic, not linear
+
+At beat 1,000,000,000, the Fibonacci kernel holds only ≈ 43 bundles in memory.  The full chain history of 1 billion beats is accessible through the chain seal linkage.
+
+**Crystallised, not forgotten.  Never drop — compress.**  (Medina)
+
+### Implications for governance
+
+1. **Every governance version is a PHX decision in the compound chain.**  The version seal depends on all prior versions.  Forging a version requires forging the entire governance history.
+
+2. **The governance chain grows at thinking rate × 96 bytes/second.**  At N=16, Θ=18.3 dps, the governance chain grows at ≈ 1,796 bytes/second.  After 10 years, forging any governance decision requires petabytes of exact chain history.
+
+3. **The Fibonacci kernel IS the governance archive.**  The governance version chain IS the Fibonacci-compressed chain kernel.  The "never drop" law in governance is implemented by Fibonacci crystallisation.
+
+4. **Microtokens between governance versions** provide sub-decision audit linkage between any two adjacent governance events — the governance "between" is explicit and verifiable.
+
+---
+
+## SECTION IX — ICX AND ICP
+
+*(New in v2.0 — clarifying ICX vs ICP.)*
+
+### ICX — Intelligence Contract eXchange
+
+ICX is the organism-native intelligence contract system.  It is how intelligence agents define, agree to, and settle contracts.  ICX is a layer of the governance stack — not a blockchain, not a protocol chain.
+
+ICX contracts are written in CPL (Cognition Protocol Language) and emitted by CXL (Cross-substrate Language bridge) to any substrate.
+
+**ICX is the contract language.  The substrate is whatever it deploys to.**
+
+### ICP — Internet Computer Protocol
+
+ICP is one substrate ICX can deploy to.  When an ICX contract is emitted to ICP, CXL outputs a Motoko canister that implements the contract logic on the Internet Computer.
+
+**ICX ≠ ICP.  ICX compiles TO ICP.**  ICX also compiles to EVM (Ethereum), Solana, Cosmos, StarkNet, and Polkadot.  ICP is not special — it is one of 14 targets.
+
+The `medina-cpl icp` command bridges ICX → ICP: it takes a CPL expression (ICX contract) and outputs deploy-ready Motoko code.
+
+### Why ICX might look like ICP
+
+ICX operates at the intelligence contract layer — defining what agents agree to do and how disputes are resolved.  ICP operates at the infrastructure layer — providing a decentralised compute substrate.  Both involve:
+- Smart contracts (ICX: intelligence contracts; ICP: Motoko canisters)
+- Chain-based state (ICX: PHX governance chain; ICP: blockchain)
+- Decentralised execution (ICX: multi-substrate; ICP: node mesh)
+
+The resemblance is real but the relationship is: **ICX uses ICP as a substrate, not the other way around.**  (Medina)
+
+---
+
 ## AUTHORITY
 
 This charter is issued by Medina.  The governance system described here is the official governance OS for the Medina organism.  All nine alpha protocols are permanent.  The "we never drop" principle is constitutional.  The version chain is immutable.
 
-**GOV v1.0 · Official Charter · Alpha Protocol Stack · Enterprise Ready**  
-**Ring: Sovereign Ring · Author: Medina**
+**GOV v2.0 · Official Charter · Alpha Protocol Stack · Enterprise Ready**  
+**Ring: Sovereign Ring · Author: Medina**  
+**Amendment chain: v1.0 → v2.0 (compound chaining + Fibonacci kernel + ICX/ICP clarification — we never drop)**

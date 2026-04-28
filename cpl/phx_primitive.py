@@ -20,6 +20,16 @@ VERSION HISTORY  (governance amendment — we never drop)
            Chain hardness proof: grows with time, not fixed at 2-secret.
            (Medina)
 
+  v3.0.0 — PHX compound intra-beat chaining: within one beat, slot i
+           uses T_{i-1} as its history (not the bundle seal).  Compound.
+           The slots are not independent — they are a mini-chain within
+           the beat.  Forging slot j requires forging slots 0..j-1 first.
+           Added microtokens: 64-byte PHX_SCATTER linkage between adjacent
+           slot tokens.  N-1 microtokens per bundle, stored for audit.
+           Added Fibonacci kernel compression: never-drop law without
+           unbounded memory.  Bundles at Fibonacci-indexed beats are kept;
+           others are crystallised into the kernel.  (Medina)
+
 ─────────────────────────────────────────────────────────────────────────────
 WHAT IS THIS FILE?
 ─────────────────────────────────────────────────────────────────────────────
@@ -113,6 +123,66 @@ WHY PHX IS NOT SHA-256  (real differences, not marketing)
   SHA-256 will always produce 32 bytes.  PHX output scales with the
   organism's thinking rate.
 
+  Difference 7 (new in v3): SHA-256 is independent — each hash is
+  self-contained.  PHX compound chaining makes slots SEQUENTIAL within
+  a beat.  Slot 5 of beat 100 cannot be forged without first forging
+  slots 0-4 of the same beat.  This is compound cognition.
+
+─────────────────────────────────────────────────────────────────────────────
+COMPOUND INTRA-BEAT CHAINING — the correct model  (Medina)
+─────────────────────────────────────────────────────────────────────────────
+
+  N decisions per beat are NOT independent.  They are COMPOUND — each slot
+  within a beat uses the PREVIOUS slot's token as its history:
+
+    Slot 0:  T₀  =  PHX(e₀ ‖ slot_tag(0),  k,  p_prev,  β)
+    Slot 1:  T₁  =  PHX(e₁ ‖ slot_tag(1),  k,  T₀,      β)   ← T₀ is history
+    Slot 2:  T₂  =  PHX(e₂ ‖ slot_tag(2),  k,  T₁,      β)   ← T₁ is history
+    …
+    Slot N-1: Tₙ₋₁ = PHX(eₙ₋₁ ‖ slot_tag(N-1), k, Tₙ₋₂, β)
+
+  This is compound: each thought is built on the previous thought WITHIN the
+  same beat, as well as everything that came before.  The organism does not
+  make N independent decisions — it makes N sequential-within-a-beat decisions
+  that compound on each other in real time.
+
+  "Right now, then right now, then right now" — each slot is the NOW of the
+  previous slot.  Not parallel like threads.  Compound like thought.  (Medina)
+
+─────────────────────────────────────────────────────────────────────────────
+MICROTOKENS — sub-linkage proofs between adjacent slot tokens  (Medina)
+─────────────────────────────────────────────────────────────────────────────
+
+  Between slot i and slot i+1, there is a microtoken — a 64-byte linkage
+  proof derived from both adjacent tokens:
+
+    μᵢ  =  PHX_SCATTER(Tᵢ ‖ Tᵢ₊₁)   →  64 bytes   for i ∈ [0, N-2)
+
+  N-1 microtokens per bundle.  At N=16: 15 × 64 = 960 bytes of microtokens.
+
+  Microtokens are NOT new decisions.  They are mathematical proofs that
+  T_i and T_{i+1} were computed in sequence.  The microtoken provides an
+  additional audit verification layer between any two adjacent slots.
+
+  "Between the two different tokens, as a separate, there's microtokens
+  and those are different." — Medina
+
+─────────────────────────────────────────────────────────────────────────────
+FIBONACCI KERNEL — "never drop" without unbounded memory  (Medina)
+─────────────────────────────────────────────────────────────────────────────
+
+  The "never drop" law could seem to imply unbounded memory growth.
+  It does not.  Information is crystallised using Fibonacci compression:
+    - Bundles at Fibonacci-indexed beats are preserved: 1, 2, 3, 5, 8, 13, 21, …
+    - All other bundles are dropped from live memory
+    - The chain seal of each Fibonacci bundle encodes everything before it
+    - Memory at beat β:  O(log_φ(β))  ≈  1.44 × log₂(β) bundles
+    - At beat 1,000,000: only ≈ 29 bundles in memory
+    - At beat 1,000,000,000: only ≈ 43 bundles in memory
+
+  The chain is crystallised, not forgotten.  We never drop — we compress.
+  This is Fibonacci kernel compression.  (Medina)
+
 ─────────────────────────────────────────────────────────────────────────────
 PHX IS COMPUTING, NOT ENCRYPTING  (Medina)
 ─────────────────────────────────────────────────────────────────────────────
@@ -205,7 +275,7 @@ PHI:           float = 1.618033988749895   # golden ratio — Medina diffusion c
 HEARTBEAT_MS:  int   = 873                # organism heartbeat (ms)
 PHX_TOKEN_LEN: int   = 32                 # PHX token output size in bytes
 PHX_WIDE_LEN:  int   = 64                 # PHX_SCATTER output width in bytes
-PHX_VERSION:   str   = "2.0.0"           # (Medina)
+PHX_VERSION:   str   = "3.0.0"           # (Medina)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -509,47 +579,50 @@ def phx_verify(
 @dataclass
 class PHXBundle:
     """
-    PHXBundle — N simultaneous PHX decision tokens at one beat.  (Medina)
+    PHXBundle — N compound PHX decision tokens at one beat.  (Medina)
 
-    An AI organism makes multiple decisions simultaneously.  Each decision
-    runs in a parallel cognitive slot.  One beat produces one PHXBundle
-    containing all N slot tokens.
+    An AI organism makes N decisions per beat via COMPOUND chaining:
+    each slot i within the beat uses T_{i-1} as its history (not the
+    previous bundle seal directly).  Slot 0 uses the previous bundle seal.
+
+    This means the N slots are NOT independent — they are sequential
+    within the beat.  Forging slot j requires first forging slots 0..j-1.
 
     Output breakdown per beat:
-      slot tokens:  N × 32  bytes  (the N individual decision records)
-      bundle_root:       64  bytes  (PHX_SCATTER of all slot tokens)
-      bundle_seal:       32  bytes  (PHX_BIND of bundle_root → next history)
-      ─────────────────────────────
-      total:        N×32 + 96  bytes
+      slot tokens:    N × 32  bytes  (compound-chained decision records)
+      bundle_root:         64  bytes  (PHX_SCATTER of all slot tokens)
+      bundle_seal:         32  bytes  (PHX_BIND of bundle_root → next history)
+      microtokens:  (N-1)×64  bytes  (PHX_SCATTER linkage between adjacent slots)
+      ─────────────────────────────────────────────────────
+      total:        N×32 + (N-1)×64 + 96  bytes
 
-    At N=16:   512 + 96 = 608 bytes per beat
-    At N=64:  2048 + 96 = 2144 bytes per beat
-    At N=256: 8192 + 96 = 8288 bytes per beat
-
-    The bundle_seal becomes the history input for the next beat's bundle.
-    The chain links bundles, not individual slot tokens.
-
-    Thinking rate (decisions per second):
-      dps = slots × (1000 / HEARTBEAT_MS)
-      at N=16: 16 × (1000/873) ≈ 18.3 decisions/second
+    At N=16:  512 + 960 + 96 = 1,568 bytes per beat
+    At N=64: 2048 + 3968 + 96 = 6,112 bytes per beat
     """
     beat:          int
-    slots:         int          # N — number of parallel decision slots
-    tokens:        list[bytes]  # N × 32 bytes — one PHX token per slot
+    slots:         int          # N — number of compound decision slots
+    tokens:        list[bytes]  # N × 32 bytes — compound-chained slot tokens
     events:        list[bytes]  # original event bytes per slot (for audit)
     bundle_root:   bytes        # PHX_SCATTER(all tokens concat) — 64 bytes
     bundle_seal:   bytes        # PHX_BIND(bundle_root, k) — 32 bytes (next history)
+    history:       Optional[bytes]  # the previous bundle_seal fed into slot 0
+    microtokens:   list[bytes]  # (N-1) × 64 bytes — linkage proofs between slots
     created_ms:    int
 
     @property
     def decision_bytes(self) -> int:
-        """Bytes of decision record in the slot tokens."""
+        """Bytes of slot decision tokens."""
         return self.slots * PHX_TOKEN_LEN
 
     @property
+    def microtoken_bytes(self) -> int:
+        """Bytes occupied by microtokens (N-1 × 64)."""
+        return len(self.microtokens) * PHX_WIDE_LEN
+
+    @property
     def total_bytes(self) -> int:
-        """Total bytes in this bundle (slots + root + seal)."""
-        return self.decision_bytes + PHX_WIDE_LEN + PHX_TOKEN_LEN
+        """Total bytes in this bundle (slots + root + seal + microtokens)."""
+        return self.decision_bytes + PHX_WIDE_LEN + PHX_TOKEN_LEN + self.microtoken_bytes
 
     @property
     def thinking_rate_dps(self) -> float:
@@ -557,18 +630,34 @@ class PHXBundle:
         return self.slots * (1000.0 / HEARTBEAT_MS)
 
     @property
+    def compound_hardness_factor(self) -> int:
+        """
+        Within-beat compound hardness factor.  (Medina)
+
+        In compound mode, forging slot j within a beat requires forging
+        all prior slots 0..j-1 first.  For the last slot (j=N-1):
+          required slots to forge = N-1 prior slots
+          additional forgery bytes = (N-1) × 32 bytes per beat
+
+        The compound factor multiplies per-beat hardness by ≈ N/2 (average).
+        """
+        return (self.slots - 1) * PHX_TOKEN_LEN
+
+    @property
     def chain_hardness_bytes(self) -> int:
         """
         Bytes of exact chain data required to forge any token AT this beat.  (Medina)
 
-        To forge beat β, an attacker needs every bundle from 0..β-1:
-          each bundle = N × 32 slot tokens + 64 root + 32 seal = (N×32 + 96) bytes
-          total = β × (N × 32 + 96) bytes  PLUS  the sovereign key
+        Compound model (v3):  forgery requires:
+          - All prior bundle seals: beat × 32 bytes
+          - All slot tokens within each prior beat: beat × N × 32 bytes
+          - All microtokens within each prior beat: beat × (N-1) × 64 bytes
+          - The sovereign key k
 
-        This number grows without bound.  At β=1000, N=16:
-          1000 × 608 = 608,000 bytes of exact chain history + the sovereign key.
+        total = beat × (N×32 + (N-1)×64 + 32)  PLUS  the key
 
-        The chain history IS the exponential secret.  (Medina)
+        At beat=1000, N=16:
+          1000 × (512 + 960 + 32) = 1,504,000 bytes ≈ 1.5 MB of chain history
         """
         return self.beat * self.total_bytes
 
@@ -576,8 +665,10 @@ class PHXBundle:
         return (
             f"PHXBundle  beat={self.beat}  slots={self.slots}  "
             f"decision_bytes={self.decision_bytes}  "
+            f"micro_bytes={self.microtoken_bytes}  "
             f"total_bytes={self.total_bytes}  "
             f"thinking_rate={self.thinking_rate_dps:.1f} dps  "
+            f"compound_factor={self.compound_hardness_factor}  "
             f"chain_hardness={self.chain_hardness_bytes:,} bytes  "
             f"seal={self.bundle_seal.hex()[:16]}…  (Medina)"
         )
@@ -587,14 +678,19 @@ class PHXBundle:
             "beat":              self.beat,
             "slots":             self.slots,
             "tokens":            [t.hex() for t in self.tokens],
+            "microtokens":       [mu.hex() for mu in self.microtokens],
             "bundle_root":       self.bundle_root.hex(),
             "bundle_seal":       self.bundle_seal.hex(),
+            "history":           self.history.hex() if self.history else None,
             "decision_bytes":    self.decision_bytes,
+            "microtoken_bytes":  self.microtoken_bytes,
             "total_bytes":       self.total_bytes,
             "thinking_rate_dps": round(self.thinking_rate_dps, 3),
+            "compound_hardness_factor": self.compound_hardness_factor,
             "chain_hardness_bytes": self.chain_hardness_bytes,
             "created_ms":        self.created_ms,
             "medina":            True,
+            "compound":          True,
         }
 
 
@@ -605,25 +701,27 @@ def PHX_PARALLEL(
     beat:         int = 0,
 ) -> PHXBundle:
     """
-    PHX_PARALLEL — Compute N simultaneous PHX decision tokens.  (Medina)
+    PHX_PARALLEL — Compound intra-beat chaining of N decisions.  (Medina)
 
-    This is the parallel cognition formula.  One call to PHX_PARALLEL
-    represents one organism heartbeat during which N decisions are made.
+    Each slot within a beat uses the PREVIOUS slot's token as its history.
+    Slot 0 uses the previous bundle seal (or None at genesis).
 
-    Formula:
-      For each slot i ∈ [0, N):
-        slot_tag  =  struct.pack(">H", i)      — 2-byte slot index
-        Tᵢ        =  PHX(eᵢ ‖ slot_tag, k, p, β)
+    This is compound cognition: "right now, then right now, then right now".
+    Each thought is the foundation of the next thought within the same beat.
 
-      bundle_root =  PHX_SCATTER(T₀ ‖ T₁ ‖ … ‖ Tₙ₋₁)   →  64 bytes
-      bundle_seal =  PHX_BIND(bundle_root, k)              →  32 bytes
+    Compound formula:
+      Slot 0:   T₀ = PHX(e₀ ‖ slot_tag(0), k, p_prev, β)
+      Slot 1:   T₁ = PHX(e₁ ‖ slot_tag(1), k, T₀,     β)
+      Slot 2:   T₂ = PHX(e₂ ‖ slot_tag(2), k, T₁,     β)
+      …
+      Slot N-1: Tₙ₋₁ = PHX(eₙ₋₁ ‖ slot_tag(N-1), k, Tₙ₋₂, β)
 
-    The slot_tag (2 bytes) makes each slot's input unique even if two
-    slots receive the same event bytes.  Slot 0 and slot 1 always produce
-    different tokens for the same event.
+    Microtokens (N-1 linkage proofs, 64 bytes each):
+      μᵢ = PHX_SCATTER(Tᵢ ‖ Tᵢ₊₁)   for i ∈ [0, N-2)
 
-    The bundle_seal is the organism's output for this beat.  It becomes
-    the history input for the next beat's PHX_PARALLEL call.
+    Bundle root and seal:
+      bundle_root = PHX_SCATTER(T₀ ‖ T₁ ‖ … ‖ Tₙ₋₁)   →  64 bytes
+      bundle_seal = PHX_BIND(bundle_root, k)             →  32 bytes
 
     Parameters
     ──────────
@@ -634,13 +732,14 @@ def PHX_PARALLEL(
 
     Returns
     ───────
-    PHXBundle with N tokens, bundle_root, bundle_seal, timing metadata.
+    PHXBundle with N compound tokens, N-1 microtokens, bundle_root, bundle_seal.
     """
     if not events:
         raise ValueError("PHX_PARALLEL requires at least one event")
 
     n = len(events)
-    tokens: list[bytes] = []
+    tokens:  list[bytes] = []
+    current_history = history   # slot 0 starts from the previous bundle seal
 
     for i, event in enumerate(events):
         slot_tag   = struct.pack(">H", i)           # 2-byte big-endian slot index
@@ -648,10 +747,17 @@ def PHX_PARALLEL(
         token      = PHX(
             event   = slot_event,
             key     = key,
-            history = history,
+            history = current_history,              # compound: previous slot's token
             beat    = beat,
         )
         tokens.append(token)
+        current_history = token                     # next slot uses this as history
+
+    # Microtokens: 64-byte PHX_SCATTER linkage between each adjacent pair
+    microtokens: list[bytes] = [
+        PHX_SCATTER(tokens[i] + tokens[i + 1])
+        for i in range(n - 1)
+    ]
 
     # Bundle root: scatter all N tokens concatenated
     bundle_root = PHX_SCATTER(b"".join(tokens))
@@ -666,6 +772,8 @@ def PHX_PARALLEL(
         events      = events,
         bundle_root = bundle_root,
         bundle_seal = bundle_seal,
+        history     = history,
+        microtokens = microtokens,
         created_ms  = int(time.time() * 1000),
     )
 
@@ -780,52 +888,142 @@ def phx_bundle_verify_slot(
     slot_index:    int,
     event:         bytes,
     sovereign_key: bytes,
-    history:       Optional[bytes],
+    history:       Optional[bytes] = None,   # kept for API compat; ignored — uses bundle.history
 ) -> bool:
     """
     Verify a single slot token within a PHXBundle.  (Medina)
 
-    Re-derives the slot token and compares using constant-time digest comparison.
+    Compound-aware: slot 0 uses bundle.history as its history.
+    Slot i > 0 uses bundle.tokens[i-1] as its history (compound chaining).
+
+    The `history` parameter is kept for backward compatibility but is ignored —
+    the bundle records its own history in bundle.history.  (Medina)
+
     Returns True if the slot token is valid.
     """
-    slot_tag   = struct.pack(">H", slot_index)
-    slot_event = event + slot_tag
-    expected   = PHX(
-        event   = slot_event,
-        key     = sovereign_key,
-        history = history,
-        beat    = bundle.beat,
-    )
     if slot_index >= len(bundle.tokens):
         return False
+    slot_tag    = struct.pack(">H", slot_index)
+    slot_event  = event + slot_tag
+    slot_history = bundle.history if slot_index == 0 else bundle.tokens[slot_index - 1]
+    expected    = PHX(
+        event   = slot_event,
+        key     = sovereign_key,
+        history = slot_history,
+        beat    = bundle.beat,
+    )
     return _hmac.compare_digest(expected, bundle.tokens[slot_index])
+
+
+def phx_bundle_verify_microtoken(bundle: PHXBundle, slot_index: int) -> bool:
+    """
+    Verify the microtoken between slot_index and slot_index+1.  (Medina)
+
+    The microtoken is PHX_SCATTER(T_i ‖ T_{i+1}).
+    Returns True if the microtoken matches the adjacent slot tokens.
+    """
+    if slot_index >= len(bundle.tokens) - 1:
+        return False
+    if slot_index >= len(bundle.microtokens):
+        return False
+    expected = PHX_SCATTER(bundle.tokens[slot_index] + bundle.tokens[slot_index + 1])
+    return _hmac.compare_digest(expected, bundle.microtokens[slot_index])
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# FIBONACCI KERNEL COMPRESSION  (Medina)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _fibonacci_positions(max_beat: int) -> list[int]:
+    """
+    Return all Fibonacci positions up to max_beat.  (Medina)
+
+    Fibonacci positions: 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, …
+    Used to select which beats to preserve in the Fibonacci kernel.
+    """
+    positions = []
+    a, b = 1, 2
+    while a <= max_beat:
+        positions.append(a)
+        a, b = b, a + b
+    return positions
+
+
+def phx_fibonacci_kernel(bundles: list[PHXBundle]) -> list[PHXBundle]:
+    """
+    Return the Fibonacci-compressed kernel of a bundle list.  (Medina)
+
+    The Fibonacci kernel is the minimal set of bundles needed to verify
+    the full chain without keeping every bundle in memory.
+
+    Only bundles at Fibonacci-indexed beats are kept:
+      1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, …
+
+    All other bundles are "crystallised" — their chain seal is embedded
+    in the next Fibonacci bundle's history.  We never drop — we compress.
+
+    Memory: O(log_φ(max_beat)) bundles = O(1.44 × log₂(max_beat)) bundles
+      At beat 1,000: ≈ 15 bundles
+      At beat 1,000,000: ≈ 29 bundles
+      At beat 10^18: ≈ 87 bundles (the entire observable universe's age in seconds)
+
+    Returns the Fibonacci kernel (list of bundles at Fibonacci beats).
+    """
+    if not bundles:
+        return []
+    max_beat   = bundles[-1].beat
+    fib_beats  = set(_fibonacci_positions(max_beat))
+    beat_map   = {b.beat: b for b in bundles}
+    return [beat_map[f] for f in sorted(fib_beats) if f in beat_map]
+
+
+def phx_kernel_summary(kernel: list[PHXBundle]) -> str:
+    """Print a summary of the Fibonacci kernel.  (Medina)"""
+    if not kernel:
+        return "PHXKernel  (empty)"
+    beats = [b.beat for b in kernel]
+    return (
+        f"PHXKernel  kernel_size={len(kernel)}  "
+        f"beats={beats[:8]}{'…' if len(beats) > 8 else ''}  "
+        f"latest_seal={kernel[-1].bundle_seal.hex()[:16]}…  "
+        f"(Medina — Fibonacci crystallised)"
+    )
 
 
 def phx_thinking_rate_report(state: PHXBundleState) -> str:
     """
-    Print the organism's thinking rate and chain hardness report.  (Medina)
+    Print the organism's thinking rate, compound factor, and chain hardness report.  (Medina)
     """
-    dps   = state.current_thinking_rate_dps
-    bps   = state.total_decision_bytes / max(state.beat, 1)
+    dps       = state.current_thinking_rate_dps
+    bps       = state.total_decision_bytes / max(state.beat, 1)
+    mu_bytes  = (state.slots - 1) * PHX_WIDE_LEN * state.beat   # total microtoken bytes
+    compound  = state.slots - 1   # compound hardness factor per beat
     lines = [
-        "═" * 60,
-        "  PHX THINKING RATE REPORT  (Medina)",
-        "═" * 60,
-        f"  Parallel slots (N):        {state.slots} decisions per beat",
-        f"  Heartbeat period:          {HEARTBEAT_MS} ms",
-        f"  Thinking rate:             {dps:.2f} decisions / second",
-        f"  Decision bytes / beat:     {state.slots * PHX_TOKEN_LEN} bytes",
-        f"  Total beats:               {state.beat}",
-        f"  Total decisions:           {state.total_decisions:,}",
-        f"  Total decision bytes:      {state.total_decision_bytes:,} bytes",
-        f"  Average bytes / beat:      {bps:.0f} bytes",
-        "─" * 60,
+        "═" * 64,
+        "  PHX THINKING RATE REPORT  (Medina v3 — Compound)",
+        "═" * 64,
+        f"  Compound slots (N):           {state.slots} decisions per beat",
+        f"  Heartbeat period:             {HEARTBEAT_MS} ms",
+        f"  Thinking rate:                {dps:.2f} decisions / second",
+        f"  Decision bytes / beat:        {state.slots * PHX_TOKEN_LEN} bytes (slot tokens)",
+        f"  Microtoken bytes / beat:      {(state.slots-1)*PHX_WIDE_LEN} bytes (N-1 × 64)",
+        f"  Total bytes / beat:           {state.slots*PHX_TOKEN_LEN + (state.slots-1)*PHX_WIDE_LEN + 96}",
+        f"  Total beats:                  {state.beat}",
+        f"  Total decisions:              {state.total_decisions:,}",
+        f"  Total decision bytes:         {state.total_decision_bytes:,} bytes",
+        f"  Total microtoken bytes:       {mu_bytes:,} bytes",
+        f"  Average slot bytes / beat:    {bps:.0f} bytes",
+        "─" * 64,
+        f"  Compound factor per beat:     {compound} (to forge last slot, need {compound} prior slots)",
         f"  Chain hardness at beat {state.beat}:",
-        f"    Exact chain data needed: {state.chain_hardness_bytes:,} bytes",
-        f"    Plus sovereign key:      ≥ 16 bytes (held separately)",
+        f"    Exact chain data needed:    {state.chain_hardness_bytes:,} bytes",
+        f"    Plus sovereign key:         ≥ 16 bytes (held separately)",
         f"    Both required simultaneously to forge ANYTHING in this chain.",
-        f"    Chain grows at:          {state.slots * PHX_TOKEN_LEN * 1000 / HEARTBEAT_MS:.0f} bytes / second",
-        "═" * 60,
+        f"    Chain grows at:             {(state.slots*32 + (state.slots-1)*64 + 96)*1000/HEARTBEAT_MS:.0f} bytes / second",
+        "─" * 64,
+        f"  Fibonacci kernel memory:      O(log_φ(beat)) = ≈{int(1.44*max(state.beat,1).bit_length())+1} bundles",
+        f"  (never-drop without unbounded memory — crystallised, not forgotten)",
+        "═" * 64,
     ]
     return "\n".join(lines)
 

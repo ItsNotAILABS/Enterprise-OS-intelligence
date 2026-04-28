@@ -2,7 +2,7 @@
 cpl_cli.py — medina-cpl: The Medina Organism CLI  (Medina)
 
 Author : Medina
-Version: 1.0.0
+Version: 2.0.0
 Ring   : Sovereign Ring
 Code   : CLI
 
@@ -11,61 +11,66 @@ WHAT IS THIS?
 ─────────────────────────────────────────────────────────────────────────────
 
 medina-cpl is the command-line interface to the full Medina organism stack.
+It is a chartered protocol — see CLI_CHARTER.md for the formal specification.
 
 One command → ready-to-deploy code in 14 blockchain targets.
 One command → PHX-sealed SVG/HTML/JSON/ASCII scene.
 One command → PHX decision token for any event.
 One command → QFB block sealed and packaged for any substrate.
 One command → Full polyglot: ALL 14 targets simultaneously.
+One command → Compound PHXBundle with microtokens.
+One command → Fibonacci kernel of the chain.
+One command → Thinking rate analysis paper.
+One command → Full chain export (JSON/CSV).
+One command → ICX-to-ICP bridge via CXL.
 
 ─────────────────────────────────────────────────────────────────────────────
-COMMANDS
+COMMANDS  (v1.0)
 ─────────────────────────────────────────────────────────────────────────────
 
   emit     — emit a CPL expression in a single target language
   polyglot — emit a CPL expression in ALL 14 targets simultaneously
   render   — render a CPX expression to a visual scene
   phx      — compute a PHX decision token
-  bundle   — compute a PHXBundle (N parallel decisions)
+  bundle   — compute a PHXBundle (N compound decisions per beat)
   seal     — seal a CPL expression as a QFB
   gov      — governance operations (found, node, grant, check)
 
 ─────────────────────────────────────────────────────────────────────────────
-USAGE
+COMMANDS  (v2.0 — six new)
 ─────────────────────────────────────────────────────────────────────────────
 
-  # Emit to Move (Aptos/Sui)
+  verify   — verify a PHX token or PHXBundle slot (compound-aware)
+  micro    — compute and inspect microtokens for a bundle
+  kernel   — show the Fibonacci-compressed chain kernel
+  rate     — detailed thinking rate analysis and paper
+  chain    — chain operations: advance, inspect, export to JSON/CSV
+  icp      — ICX-to-ICP bridge: compile an ICX contract to a Motoko canister
+
+─────────────────────────────────────────────────────────────────────────────
+USAGE  (v1.0 commands)
+─────────────────────────────────────────────────────────────────────────────
+
   python cpl_cli.py emit --target move "Λγ ∧ Ηθ → Τκτ"
-
-  # Emit to Motoko (ICP canister)
-  python cpl_cli.py emit --target motoko "Λγ ∧ Ηθ → Τκτ"
-
-  # Emit to Solidity (EVM)
-  python cpl_cli.py emit --target solidity "Λγ ∧ Ηθ → Τκτ"
-
-  # Emit to ALL targets at once (polyglot)
   python cpl_cli.py polyglot "Λγ ∧ Ηθ → Τκτ" --output-dir ./generated/
-
-  # Render to SVG
   python cpl_cli.py render --format svg "Κκλ ⊗ Σφρ → Ελκ"
-
-  # Render all formats
-  python cpl_cli.py render --format all "Κκλ ⊗ Σφρ → Ελκ" --output-dir ./scene/
-
-  # Compute PHX token
   python cpl_cli.py phx --event "decision: route query" --key-hex deadbeef01234567
-
-  # Compute PHXBundle (16 parallel decisions)
-  python cpl_cli.py bundle --slots 16 --events "decision A" "decision B" "decision C"
-
-  # Seal a QFB
+  python cpl_cli.py bundle --slots 16 --events "decision A" "decision B"
   python cpl_cli.py seal "Λγ ∧ Ηθ → Τκτ" --substrate icp memory
-
-  # Governance: found an organism
   python cpl_cli.py gov found --cpl "Λγ ∧ Ηθ → Φρ" --node sovereign-000
-
-  # Governance: check PA
   python cpl_cli.py gov check --node node-001 --domain CPL --action execute
+
+─────────────────────────────────────────────────────────────────────────────
+USAGE  (v2.0 commands)
+─────────────────────────────────────────────────────────────────────────────
+
+  python cpl_cli.py verify --event "my decision" --token <hex> --key-hex <hex>
+  python cpl_cli.py micro --events "a" "b" "c" --key-hex <hex>
+  python cpl_cli.py kernel --beats 100 --slots 8 --key-hex <hex>
+  python cpl_cli.py rate --slots 16 --beats 50
+  python cpl_cli.py chain advance --event "decision" --key-hex <hex>
+  python cpl_cli.py chain export --format json --output chain.json
+  python cpl_cli.py icp --contract "Λγ ∧ Ηθ → Τκτ" --canister-name AgentLogic
 """
 
 from __future__ import annotations
@@ -74,6 +79,7 @@ import argparse
 import hashlib
 import json
 import os
+import struct
 import sys
 import textwrap
 from pathlib import Path
@@ -280,6 +286,117 @@ def build_parser() -> argparse.ArgumentParser:
     p_gov_snap.add_argument("--protocol", required=True, help="Protocol name (PA, Fleet, …)")
     p_gov_snap.add_argument("--delta", required=True, help="What changed (the runtime)")
     p_gov_snap.add_argument("--by", default="cli", dest="created_by", help="Authorising node")
+
+    # ── verify ────────────────────────────────────────────────────────────────
+    p_verify = sub.add_parser(
+        "verify",
+        help="Verify a PHX token or PHXBundle slot (compound-aware)",
+        description=(
+            "Verify re-derives a PHX token from the given inputs and checks it\n"
+            "against the expected token.  Compound-aware: slot i uses T_{i-1} as history."
+        ),
+    )
+    p_verify.add_argument("--event", "-e", required=True, help="Decision event string")
+    p_verify.add_argument("--token", "-t", required=True, help="Expected PHX token (hex)")
+    p_verify.add_argument("--key-hex", required=True, help="Sovereign key (hex)")
+    p_verify.add_argument("--beat", type=int, default=0, help="Organism beat")
+    p_verify.add_argument("--history-hex", help="Previous token hex (None at genesis)")
+    p_verify.add_argument("--slot", type=int, default=-1,
+                          help="Bundle slot index (≥ 0 for compound bundle verify)")
+    p_verify.add_argument("--prev-slot-hex",
+                          help="Previous slot token hex for compound verification")
+
+    # ── micro ─────────────────────────────────────────────────────────────────
+    p_micro = sub.add_parser(
+        "micro",
+        help="Compute and inspect microtokens for a PHXBundle",
+        description="μᵢ = PHX_SCATTER(Tᵢ ‖ Tᵢ₊₁)  for i ∈ [0, N-2). N-1 microtokens per bundle.",
+    )
+    p_micro.add_argument("--events", "-e", nargs="+", required=True,
+                         help="Decision events (one per slot)")
+    p_micro.add_argument("--key-hex", help="Sovereign key hex")
+    p_micro.add_argument("--slots", "-N", type=int, default=0,
+                         help="Slot count (default: len(events))")
+    p_micro.add_argument("--beat", type=int, default=0)
+    p_micro.add_argument("--json", action="store_true", help="Output as JSON")
+
+    # ── kernel ────────────────────────────────────────────────────────────────
+    p_kernel = sub.add_parser(
+        "kernel",
+        help="Compute the Fibonacci-compressed chain kernel",
+        description=(
+            "The Fibonacci kernel preserves bundles only at Fibonacci-indexed beats.\n"
+            "Memory: O(log_φ(beats)) — never-drop without unbounded memory.  (Medina)"
+        ),
+    )
+    p_kernel.add_argument("--beats", type=int, default=20,
+                          help="Beats to simulate (default: 20)")
+    p_kernel.add_argument("--slots", "-N", type=int, default=8,
+                          help="Slots per beat (default: 8)")
+    p_kernel.add_argument("--key-hex", help="Sovereign key hex")
+    p_kernel.add_argument("--json", action="store_true", help="Output kernel as JSON")
+
+    # ── rate ──────────────────────────────────────────────────────────────────
+    p_rate = sub.add_parser(
+        "rate",
+        help="Detailed thinking rate analysis and significance paper",
+        description=(
+            "Thinking rate = decisions/second = compound slots × heartbeat_hz.\n"
+            "Higher rate → more chain per second → stronger sovereignty.  (Medina)"
+        ),
+    )
+    p_rate.add_argument("--slots", "-N", type=int, default=16,
+                        help="Compound decision slots (default: 16)")
+    p_rate.add_argument("--beats", type=int, default=1,
+                        help="Beats to simulate for report (default: 1)")
+    p_rate.add_argument("--key-hex", help="Sovereign key hex")
+    p_rate.add_argument("--paper", action="store_true",
+                        help="Output full thinking rate significance paper")
+
+    # ── chain ─────────────────────────────────────────────────────────────────
+    p_chain = sub.add_parser(
+        "chain",
+        help="Chain operations: advance, inspect, export",
+    )
+    chain_sub = p_chain.add_subparsers(dest="chain_command", required=True)
+
+    p_chain_adv = chain_sub.add_parser("advance", help="Advance chain by N events")
+    p_chain_adv.add_argument("--event", "-e", required=True, help="Decision event")
+    p_chain_adv.add_argument("--key-hex", help="Sovereign key hex")
+    p_chain_adv.add_argument("--history-hex", help="Previous token hex")
+    p_chain_adv.add_argument("--beat", type=int, default=0, help="Starting beat")
+    p_chain_adv.add_argument("--steps", type=int, default=1,
+                             help="Number of sequential advances (default: 1)")
+
+    p_chain_ins = chain_sub.add_parser("inspect", help="Inspect a chain JSON file")
+    p_chain_ins.add_argument("--file", "-f", required=True, help="Chain JSON file")
+
+    p_chain_exp = chain_sub.add_parser("export", help="Export chain as JSON or CSV")
+    p_chain_exp.add_argument("--beats", type=int, default=10)
+    p_chain_exp.add_argument("--slots", "-N", type=int, default=4)
+    p_chain_exp.add_argument("--key-hex", help="Sovereign key hex")
+    p_chain_exp.add_argument("--format", choices=["json", "csv"], default="json")
+    p_chain_exp.add_argument("--output", "-o", help="Output file path")
+
+    # ── icp ───────────────────────────────────────────────────────────────────
+    p_icp = sub.add_parser(
+        "icp",
+        help="ICX-to-ICP bridge: compile an ICX contract to Motoko",
+        description=(
+            "ICX (Intelligence Contract eXchange) is organism-native.\n"
+            "ICP (Internet Computer Protocol) is one substrate ICX deploys to.\n"
+            "This command emits a CPL expression as a deploy-ready Motoko canister.\n"
+            "ICX ≠ ICP.  ICX compiles TO ICP (and also to EVM, Solana, Cosmos)."
+        ),
+    )
+    p_icp.add_argument("--contract", "-c", required=True,
+                       help="ICX contract as CPL expression")
+    p_icp.add_argument("--canister-name", default="MedinaAgent",
+                       help="Motoko canister name (default: MedinaAgent)")
+    p_icp.add_argument("--output", "-o", help="Output .mo file path")
+    p_icp.add_argument("--also-emit", nargs="*",
+                       choices=["solidity", "move", "rust", "cosmwasm", "cairo", "ink"],
+                       help="Also emit to additional targets alongside Motoko")
 
     return parser
 
@@ -598,6 +715,279 @@ def cmd_gov(args: argparse.Namespace) -> None:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# v2.0 COMMAND HANDLERS — six new commands  (Medina)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def cmd_verify(args: argparse.Namespace) -> None:
+    """
+    verify — verify a PHX token or PHXBundle slot.  (Medina)
+
+    For a single token: re-derives PHX(event, key, history, beat) and compares.
+    For a bundle slot: uses compound-aware verification (slot i uses T_{i-1}).
+    """
+    import hmac as _hmac
+    from phx_primitive import PHX, PHX_VERSION
+
+    key      = _key_from_hex(getattr(args, "key_hex", None))
+    event    = args.event.encode("utf-8")
+    expected = bytes.fromhex(args.token)
+    history  = bytes.fromhex(args.history_hex) if getattr(args, "history_hex", None) else None
+
+    if args.slot >= 0:
+        # Compound bundle slot verification
+        slot_tag     = struct.pack(">H", args.slot)
+        slot_event   = event + slot_tag
+        slot_history = history  # slot 0 uses bundle history; others use prev_slot
+        if args.slot > 0 and getattr(args, "prev_slot_hex", None):
+            slot_history = bytes.fromhex(args.prev_slot_hex)
+        computed = PHX(event=slot_event, key=key, history=slot_history, beat=args.beat)
+        label    = f"bundle slot {args.slot}"
+    else:
+        computed = PHX(event=event, key=key, history=history, beat=args.beat)
+        label    = "single token"
+
+    passed = _hmac.compare_digest(computed, expected)
+    result = {
+        "verified":  passed,
+        "label":     label,
+        "beat":      args.beat,
+        "computed":  computed.hex(),
+        "expected":  args.token,
+        "version":   PHX_VERSION,
+        "medina":    True,
+    }
+    print(json.dumps(result, indent=2))
+    sys.exit(0 if passed else 1)
+
+
+def cmd_micro(args: argparse.Namespace) -> None:
+    """
+    micro — compute and inspect microtokens for a PHXBundle.  (Medina)
+
+    Microtokens: μᵢ = PHX_SCATTER(Tᵢ ‖ Tᵢ₊₁)  for i ∈ [0, N-2).
+    """
+    from phx_primitive import PHX_PARALLEL, PHXBundleState, phx_bundle_advance
+
+    key    = _key_from_hex(getattr(args, "key_hex", None))
+    events = [e.encode() for e in args.events]
+    slots  = args.slots if args.slots > 0 else len(events)
+
+    state  = PHXBundleState(sovereign_key=key, slots=slots)
+    bundle = phx_bundle_advance(state, events)
+
+    if args.json:
+        out = {
+            "slots":       bundle.slots,
+            "beat":        bundle.beat,
+            "tokens":      [t.hex() for t in bundle.tokens],
+            "microtokens": [mu.hex() for mu in bundle.microtokens],
+            "microtoken_bytes": bundle.microtoken_bytes,
+            "medina":      True,
+        }
+        print(json.dumps(out, indent=2))
+    else:
+        print(f"PHXBundle Microtokens  slots={bundle.slots}  N-1={len(bundle.microtokens)}")
+        print("─" * 64)
+        for i, mu in enumerate(bundle.microtokens):
+            t_i  = bundle.tokens[i].hex()[:16]
+            t_i1 = bundle.tokens[i + 1].hex()[:16]
+            mu_hex = mu.hex()[:16]
+            print(f"  μ[{i:3d}]  T[{i}]={t_i}…  T[{i+1}]={t_i1}…  μ={mu_hex}…  (64 bytes)")
+        print("─" * 64)
+        print(f"  Total microtoken bytes: {bundle.microtoken_bytes}")
+
+
+def cmd_kernel(args: argparse.Namespace) -> None:
+    """
+    kernel — compute the Fibonacci-compressed chain kernel.  (Medina)
+
+    Simulates `beats` beats and applies Fibonacci compression.
+    Only bundles at Fibonacci-indexed beats are kept in the kernel.
+    """
+    from phx_primitive import (
+        PHXBundleState, phx_bundle_advance,
+        phx_fibonacci_kernel, phx_kernel_summary,
+        _fibonacci_positions,
+    )
+
+    key   = _key_from_hex(getattr(args, "key_hex", None))
+    state = PHXBundleState(sovereign_key=key, slots=args.slots)
+
+    for b in range(args.beats):
+        evs = [f"beat:{b}:slot:{s}".encode() for s in range(args.slots)]
+        phx_bundle_advance(state, evs)
+
+    kernel     = phx_fibonacci_kernel(state._bundles)
+    fib_beats  = _fibonacci_positions(args.beats)
+
+    if args.json:
+        out = {
+            "beats_simulated": args.beats,
+            "slots":           args.slots,
+            "full_chain_size": len(state._bundles),
+            "kernel_size":     len(kernel),
+            "fibonacci_beats": fib_beats[:20],
+            "kernel_seals":    [b.bundle_seal.hex() for b in kernel],
+            "memory_savings_pct": round(100 * (1 - len(kernel) / max(len(state._bundles), 1)), 1),
+            "medina":          True,
+            "never_drop":      True,
+        }
+        print(json.dumps(out, indent=2))
+    else:
+        print(phx_kernel_summary(kernel))
+        print(f"  Full chain beats:    {len(state._bundles)}")
+        print(f"  Kernel beats:        {len(kernel)}")
+        savings = 100 * (1 - len(kernel) / max(len(state._bundles), 1))
+        print(f"  Memory savings:      {savings:.1f}%")
+        print(f"  Fibonacci positions: {fib_beats[:12]}{'…' if len(fib_beats) > 12 else ''}")
+
+
+def cmd_rate(args: argparse.Namespace) -> None:
+    """
+    rate — detailed thinking rate analysis.  (Medina)
+
+    Thinking rate = N slots × heartbeat_hz = N × (1000/873) decisions/second.
+    With compound chaining, each additional slot multiplies forgery cost.
+    """
+    from phx_primitive import (
+        PHXBundleState, phx_bundle_advance, phx_thinking_rate_report,
+        HEARTBEAT_MS,
+    )
+
+    key   = _key_from_hex(getattr(args, "key_hex", None))
+    state = PHXBundleState(sovereign_key=key, slots=args.slots)
+
+    for b in range(max(args.beats, 1)):
+        evs = [f"thinking:{b}:{s}".encode() for s in range(args.slots)]
+        phx_bundle_advance(state, evs)
+
+    print(phx_thinking_rate_report(state))
+
+    if args.paper:
+        dps   = args.slots * 1000.0 / HEARTBEAT_MS
+        dph   = dps * 3600
+        dpd   = dps * 86400
+        print()
+        print("═" * 64)
+        print("  THE SIGNIFICANCE OF THINKING RATE  (Medina)")
+        print("  See THINKING_RATE_PAPER.md for the full paper.")
+        print("═" * 64)
+        print(f"  At {args.slots} slots: {dps:.1f} decisions/sec → {dph:,.0f}/hr → {dpd:,.0f}/day")
+        print()
+        print("  WHY THINKING RATE IS THE ORGANISM'S CORE METRIC:")
+        print()
+        print("  1. SECURITY: More decisions/sec = more chain per second.")
+        print("     Chain grows faster → forgery costs grow faster.")
+        print("     A slow-thinking organism is easier to attack.")
+        print()
+        print("  2. INTELLIGENCE: Thinking rate IS the measure of intelligence.")
+        print("     Not processing speed (FLOPS). Not memory (parameters).")
+        print("     DECISIONS per second — sovereign, authenticated, chained.")
+        print()
+        print("  3. ECONOMICS: You compute, you don't encrypt.")
+        print("     Cost = computation (cheap). Security = chain history (free to grow).")
+        print("     Traditional encryption = paying per byte of ciphertext.")
+        print("     PHX = paying per decision. Decisions compound. Cost stays flat.")
+        print()
+        print("  4. COMPOUND FACTOR: N slots × (N-1) compound depth = N²/2 hardness.")
+        print(f"     At N={args.slots}: compound hardness factor = {args.slots*(args.slots-1)//2}")
+        print()
+        print("  5. CONVERGENCE: As thinking rate → ∞, forgery cost → ∞.")
+        print("     The chain becomes practically unbreakable in finite calendar time.")
+        print()
+        print("  6. BIOLOGICAL ANALOGY: The human brain makes ~86 billion neural")
+        print("     'decisions' per second. PHX thinking rate is the AI equivalent —")
+        print("     not synaptic throughput, but sovereign cognitive throughput.")
+        print("═" * 64)
+
+
+def cmd_chain(args: argparse.Namespace) -> None:
+    """chain — chain operations: advance, inspect, export.  (Medina)"""
+    from phx_primitive import PHX, PHXState, phx_chain_advance, PHXBundleState, phx_bundle_advance
+
+    if args.chain_command == "advance":
+        key     = _key_from_hex(getattr(args, "key_hex", None))
+        history = bytes.fromhex(args.history_hex) if getattr(args, "history_hex", None) else None
+        state   = PHXState(sovereign_key=key)
+        state.previous = history
+        state.beat     = args.beat
+
+        print(f"PHX chain advance  steps={args.steps}")
+        print("─" * 64)
+        for i in range(args.steps):
+            ev  = f"{args.event}:{i}".encode() if args.steps > 1 else args.event.encode()
+            tok = phx_chain_advance(state, ev, label=f"step {i}")
+            print(f"  beat={state.beat-1:4d}  token={tok.hex()}")
+        print("─" * 64)
+        print(f"  Final seal: {state.latest_token_hex}")
+
+    elif args.chain_command == "inspect":
+        data = json.loads(Path(args.file).read_text(encoding="utf-8"))
+        print(json.dumps(data, indent=2, ensure_ascii=False))
+
+    elif args.chain_command == "export":
+        key   = _key_from_hex(getattr(args, "key_hex", None))
+        state = PHXBundleState(sovereign_key=key, slots=args.slots)
+        bundles_out = []
+
+        for b in range(args.beats):
+            evs    = [f"export:beat:{b}:slot:{s}".encode() for s in range(args.slots)]
+            bundle = phx_bundle_advance(state, evs)
+            bundles_out.append(bundle.to_dict())
+
+        if args.format == "json":
+            out = json.dumps({"chain": bundles_out, "medina": True}, indent=2)
+            _write(out, args.output)
+        else:
+            # CSV: beat, seal, decision_bytes, total_bytes
+            import io
+            buf = io.StringIO()
+            buf.write("beat,seal,decision_bytes,microtoken_bytes,total_bytes,thinking_rate_dps\n")
+            for b_dict in bundles_out:
+                buf.write(
+                    f"{b_dict['beat']},{b_dict['bundle_seal'][:16]},"
+                    f"{b_dict['decision_bytes']},{b_dict['microtoken_bytes']},"
+                    f"{b_dict['total_bytes']},{b_dict['thinking_rate_dps']}\n"
+                )
+            _write(buf.getvalue(), args.output)
+
+
+def cmd_icp(args: argparse.Namespace) -> None:
+    """
+    icp — compile an ICX contract (CPL expression) to a Motoko canister.  (Medina)
+
+    ICX is the organism-native intelligence contract system.
+    ICP is one substrate ICX can deploy to.
+    This command bridges ICX → ICP via CXL emit("motoko").
+
+    The output is a complete, deployable Motoko canister — not a template.
+    """
+    from cpl_bridge import CPLBridge
+    bridge = CPLBridge()
+
+    # Emit the CPL expression as Motoko
+    motoko_code = bridge.emit(args.contract, "motoko")
+
+    # Inject canister name if the bridge output is generic
+    if "MedinaAgent" in motoko_code and args.canister_name != "MedinaAgent":
+        motoko_code = motoko_code.replace("MedinaAgent", args.canister_name)
+
+    print(f"[medina-cpl icp]  ICX → Motoko canister: {args.canister_name}", file=sys.stderr)
+    print(f"[medina-cpl icp]  Note: ICX ≠ ICP. ICX compiles TO ICP.", file=sys.stderr)
+    _write(motoko_code, args.output)
+
+    # Also emit to additional targets if requested
+    if getattr(args, "also_emit", None):
+        for target in args.also_emit:
+            code = bridge.emit(args.contract, target)
+            ext  = {"solidity": "sol", "move": "move", "rust": "rs",
+                    "cosmwasm": "rs", "cairo": "cairo", "ink": "rs"}.get(target, "txt")
+            out_path = args.output.replace(".mo", f".{ext}") if args.output else None
+            _write(code, out_path)
+            print(f"[medina-cpl icp]  Also emitted: {target}", file=sys.stderr)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -620,6 +1010,18 @@ def main() -> None:
             cmd_seal(args)
         elif args.command == "gov":
             cmd_gov(args)
+        elif args.command == "verify":
+            cmd_verify(args)
+        elif args.command == "micro":
+            cmd_micro(args)
+        elif args.command == "kernel":
+            cmd_kernel(args)
+        elif args.command == "rate":
+            cmd_rate(args)
+        elif args.command == "chain":
+            cmd_chain(args)
+        elif args.command == "icp":
+            cmd_icp(args)
         else:
             parser.print_help()
     except KeyboardInterrupt:
