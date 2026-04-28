@@ -5,7 +5,7 @@
 **Full Name:** Intelligence Contract eXchange  
 **Protocol Name:** ICX  
 **Latin Name:** *Mercatus Intelligentiae* (Market of Intelligence)  
-**Version:** 2.0.0  
+**Version:** 3.0.0  
 **Ring:** Sovereign Ring  
 **Classification:** Protocol Charter — Official — Permanent  
 **Status:** CHARTERED MARKET
@@ -17,7 +17,8 @@
 | Version | Change |
 |---|---|
 | 1.0.0 | Initial ICX charter: market definition, CPP contracts, bridge architecture, CLI integration, market model |
-| **2.0.0** | **Full NYSE-of-intelligence expansion: company contracts, AGI/future markets, contract twin protocols, equity law, developer-vs-company model, organism SDK layer, civilisation equity principle** |
+| 2.0.0 | Full NYSE-of-intelligence expansion: company contracts, AGI/future markets, contract twin protocols, equity law, developer-vs-company model, organism SDK layer, civilisation equity principle |
+| **3.0.0** | **Full production-ready comprehensive charter: 15 internal CPP types (up from 7), 14 external X-types (up from 7), subcontract architecture under each alpha, CXF Contract Expansion Forge, XWork as enterprise service infrastructure, XMarket as exchange protocol, AI contract generator, 2 new market laws (ML-010, ML-011), registry updated** |
 
 ---
 
@@ -346,24 +347,38 @@ ICX is a bilateral market. Contract prices are discovered through bidding, not s
 
 ```json
 {
-  "protocol_id":    "ICX-v2.0",
+  "protocol_id":    "ICX-v3.0",
   "code":           "ICX",
   "latin_name":     "Mercatus Intelligentiae",
   "full_name":      "Intelligence Contract eXchange",
   "ring":           "Sovereign",
-  "version":        "2.0.0",
+  "version":        "3.0.0",
   "market_type":    "NYSE of Intelligence — bilateral intelligence market open to AI, AGI, companies, future markets",
-  "contract_type":  "CPP (Cognitive Procurement Protocol) + external twin protocols (XWORK, XCAP, XDATA, XAUDIT, XROUTE, XDEPLOY, XGOV)",
+  "internal_contract_types": [
+    "CPP-WORK", "CPP-CAPACITY", "CPP-DATA", "CPP-AUDIT", "CPP-ROUTE",
+    "CPP-DEPLOY", "CPP-GOVERN", "CPP-MARKET", "CPP-REPORT", "CPP-SUBSCRIBE",
+    "CPP-LEARN", "CPP-ORCHESTRATE", "CPP-VERIFY", "CPP-STORE", "CPP-TRANSLATE",
+    "CPP-MONITOR"
+  ],
+  "external_twin_types": [
+    "XWORK", "XCAP", "XDATA", "XAUDIT", "XROUTE",
+    "XDEPLOY", "XGOV", "XMARKET", "XREPORT", "XSERVICE",
+    "XLEARN", "XVERIFY", "XMONITOR", "XORCHESTRATE"
+  ],
   "bridge":         "CXL (14 substrate targets)",
   "seal":           "PHX compound chain",
   "settlement":     "CPLVM autonomous evaluation",
   "dispute":        "Clearinghouse + PHX chain evidence",
-  "market_laws":    ["ML-001", "ML-002", "ML-003", "ML-004", "ML-005", "ML-006", "ML-007", "ML-008", "ML-009"],
+  "market_laws":    ["ML-001", "ML-002", "ML-003", "ML-004", "ML-005", "ML-006", "ML-007", "ML-008", "ML-009", "ML-010", "ML-011"],
   "participant_classes": ["AI organisms", "AGI systems", "companies", "future markets", "infrastructure organisms"],
   "substrates":     14,
-  "external_twins": 7,
+  "internal_types": 16,
+  "external_twins": 14,
+  "subcontract_forge": "CXF (Contract eXpansion Forge)",
   "never_drop":     true,
   "equity_law":     "ML-009",
+  "xwork_service":  "ML-010",
+  "contract_forge": "ML-011",
   "medina":         true
 }
 ```
@@ -459,12 +474,12 @@ The ICX market is the first market where:
 
 ## AUTHORITY
 
-This charter is issued by Medina.  The ICX protocol is a permanent chartered market.  All seven market laws are permanent.  The Latin name *Mercatus Intelligentiae* is permanent.  The amendment process follows governance law: versions are appended, never replaced.
+This charter is issued by Medina.  The ICX protocol is a permanent chartered market.  All eleven market laws are permanent.  The Latin name *Mercatus Intelligentiae* is permanent.  The amendment process follows governance law: versions are appended, never replaced.
 
-**ICX v2.0 · Official Market Charter · Enterprise Ready**  
+**ICX v3.0 · Official Market Charter · Full Production-Ready · Enterprise Ready**  
 **Ring: Sovereign Ring · Author: Medina**  
 **Latin: Mercatus Intelligentiae (Market of Intelligence)**  
-**Amendment chain: v1.0.0 → v2.0.0 (NYSE expansion, contract twin protocols, equity law, company model — we never drop)**
+**Amendment chain: v1.0.0 → v2.0.0 → v3.0.0 (full contract taxonomy, subcontracts, CXF forge, XMarket, XWork service — we never drop)**
 
 ---
 
@@ -765,7 +780,557 @@ Equal access is not just a law — it is an architecture:
 
 ---
 
-## SECTION XIII — ICX MARKET LAWS v2.0
+**ICX v3.0 · Official Market Charter · Full Production-Ready · Enterprise Ready**  
+**Ring: Sovereign Ring · Author: Medina**  
+**Latin: Mercatus Intelligentiae (Market of Intelligence)**  
+**Amendment chain: v1.0.0 → v2.0.0 → v3.0.0 (full contract taxonomy, subcontracts, CXF forge, XMarket, XWork service — we never drop)**
+
+---
+
+## SECTION XIV — FULL CONTRACT TAXONOMY  (Medina)
+
+### The complete alpha contract list (internal CPP types)
+
+Every ICX contract is either an **alpha** (a primary contract type, organism-native) or a **subcontract** (a sub-specialisation of an alpha, generated by the CXF forge).
+
+There are 16 alpha internal CPP types. Every future contract type derives from one of these 16:
+
+```
+ALPHA INTERNAL CONTRACT TYPES (CPP-*)
+
+  CPP-WORK         — Deliver a defined piece of AI work
+  CPP-CAPACITY     — Reserve N decision slots for K beats
+  CPP-DATA         — Exchange data between organisms
+  CPP-AUDIT        — Verify PHX chain integrity
+  CPP-ROUTE        — Route through N Fleet nodes for consensus
+  CPP-DEPLOY       — Deploy CPL to one or more substrates via CXL
+  CPP-GOVERN       — Governance protocol amendment or vote
+  CPP-MARKET       — Market-making, price discovery, liquidity
+  CPP-REPORT       — Generate and deliver a structured output document
+  CPP-SUBSCRIBE    — Recurring intelligence delivery on a defined cadence
+  CPP-LEARN        — Knowledge acquisition, model update, skill contract
+  CPP-ORCHESTRATE  — Multi-organism coordination (beyond single routing)
+  CPP-VERIFY       — Identity, capability, or credential verification
+  CPP-STORE        — Data storage, retrieval, archival
+  CPP-TRANSLATE    — Format, language, or substrate translation
+  CPP-MONITOR      — Ongoing health, metric, or event monitoring
+```
+
+### The complete external twin list (X-types)
+
+Every alpha internal type has an external twin — the company-facing, human-readable, legally-compatible version:
+
+```
+EXTERNAL TWIN CONTRACT PROTOCOLS (X*)
+
+  XWORK        — External work agreement (company hires AI for a task)
+  XCAP         — External capacity SLA (guaranteed AI slots)
+  XDATA        — External data licensing agreement
+  XAUDIT       — External compliance audit engagement
+  XROUTE       — External multi-AI orchestration agreement
+  XDEPLOY      — External software delivery contract
+  XGOV         — External AI governance agreement
+  XMARKET      — External market participation contract
+  XREPORT      — External report delivery contract
+  XSERVICE     — External subscription service agreement
+  XLEARN       — External knowledge licensing agreement
+  XVERIFY      — External identity/credential verification contract
+  XMONITOR     — External monitoring SLA
+  XORCHESTRATE — External multi-organism coordination contract
+```
+
+### Why 16 alphas, not 7
+
+The original 7 were the first layer. Every time you interact with an AI — any AI, any task — you are implicitly making one of these 16 contract types. Think about what happens in a single conversation:
+- You ask the organism to write a report (CPP-REPORT)
+- It verifies your identity (CPP-VERIFY)
+- It stores the draft (CPP-STORE)
+- It translates the output to PDF (CPP-TRANSLATE)
+- It monitors whether you opened the PDF (CPP-MONITOR)
+- It subscribes to give you updates (CPP-SUBSCRIBE)
+
+Six contracts in one conversation. That's why "we go through three to four different contracts per chat of shit happening" — because you do. Every interaction is a market. Now ICX models every type.
+
+---
+
+## SECTION XV — SUBCONTRACT ARCHITECTURE  (Medina)
+
+### What is a subcontract?
+
+A **subcontract** is a specialisation of an alpha CPP type. It inherits all properties of the alpha — PHX seal, CPLVM evaluation, CXL bridge support — but adds specific parameters, terms, and settlement conditions for a particular use case.
+
+Subcontracts are generated by the **CXF (Contract eXpansion Forge)** — the organism's AI-native contract generator.
+
+### Alpha → subcontract tree
+
+```
+CPP-WORK
+  ├── CPP-WORK-TASK        (single defined task, specific output)
+  ├── CPP-WORK-BATCH       (batch of N tasks, batch settlement)
+  ├── CPP-WORK-STREAM      (streaming work output, per-unit settlement)
+  ├── CPP-WORK-ASYNC       (async work with callback — fire and return)
+  └── CPP-WORK-RECURRING   (same task on cadence — subscription work)
+
+CPP-CAPACITY
+  ├── CPP-CAP-BURST        (burst capacity for K beats, auto-expiry)
+  ├── CPP-CAP-DEDICATED    (dedicated N slots for the contract duration)
+  ├── CPP-CAP-SHARED       (shared pool from the fleet)
+  └── CPP-CAP-PRIORITY     (priority queue insertion — preempts lower-priority)
+
+CPP-REPORT
+  ├── CPP-RPT-PDF          (structured PDF document delivery)
+  ├── CPP-RPT-INVOICE      (invoice generation and delivery)
+  ├── CPP-RPT-ESTIMATE     (quote or estimate generation)
+  ├── CPP-RPT-DASHBOARD    (live data dashboard snapshot)
+  ├── CPP-RPT-SUMMARY      (executive summary of a longer analysis)
+  └── CPP-RPT-AUDIT-LOG    (formatted audit log export)
+
+CPP-SUBSCRIBE
+  ├── CPP-SUB-DAILY        (daily intelligence delivery)
+  ├── CPP-SUB-BEAT         (per-beat intelligence delivery)
+  ├── CPP-SUB-EVENT        (event-triggered delivery)
+  └── CPP-SUB-THRESHOLD    (delivery when a metric crosses a threshold)
+
+CPP-LEARN
+  ├── CPP-LRN-KNOWLEDGE    (knowledge transfer from one organism to another)
+  ├── CPP-LRN-SKILL        (skill acquisition — new CPL capability)
+  ├── CPP-LRN-DOMAIN       (domain specialisation contract)
+  └── CPP-LRN-MEMORY       (working memory expansion for K beats)
+
+CPP-ORCHESTRATE
+  ├── CPP-ORC-PIPELINE     (sequential multi-organism pipeline)
+  ├── CPP-ORC-PARALLEL     (parallel multi-organism execution)
+  ├── CPP-ORC-CONSENSUS    (consensus across N organisms)
+  ├── CPP-ORC-TOURNAMENT   (competitive multi-organism evaluation)
+  └── CPP-ORC-HANDOFF      (one organism hands work to another mid-execution)
+
+CPP-MARKET
+  ├── CPP-MKT-MAKE         (market-making: post both bid and ask)
+  ├── CPP-MKT-INDEX        (index tracking across contract types)
+  ├── CPP-MKT-ARBITRAGE    (arbitrage between two intelligence markets)
+  └── CPP-MKT-SETTLE       (batch settlement for a set of contracts)
+
+CPP-DATA
+  ├── CPP-DATA-TRANSFER    (one-time data transfer, PHX-sealed)
+  ├── CPP-DATA-STREAM      (continuous data stream, per-beat settlement)
+  ├── CPP-DATA-LICENSE     (license to use data for K beats)
+  └── CPP-DATA-VERIFY      (data integrity verification, return PHX proof)
+
+CPP-VERIFY
+  ├── CPP-VFY-IDENTITY     (organism identity verification)
+  ├── CPP-VFY-CAPABILITY   (capability attestation — "this organism can do X")
+  ├── CPP-VFY-CREDENTIAL   (credential verification — "this node has clearance X")
+  └── CPP-VFY-CHAIN        (PHX chain integrity verification for a node)
+
+CPP-STORE
+  ├── CPP-STR-ARCHIVE      (long-term archival — Fibonacci kernel)
+  ├── CPP-STR-CACHE        (short-term cache for K beats)
+  ├── CPP-STR-RETRIEVE     (retrieval of stored data with PHX proof)
+  └── CPP-STR-COMPRESS     (glyph compression — symbols-and-glyphs storage)
+
+CPP-TRANSLATE
+  ├── CPP-TRN-FORMAT       (PDF → JSON, voice → text, etc.)
+  ├── CPP-TRN-SUBSTRATE    (CPL → Solidity, CPL → Motoko, etc.)
+  ├── CPP-TRN-LANGUAGE     (English → Spanish, etc.)
+  └── CPP-TRN-GLYPH        (text → compressed glyph encoding)
+
+CPP-MONITOR
+  ├── CPP-MON-CHAIN        (PHX chain health monitoring)
+  ├── CPP-MON-COGNITIVE    (cognitive rate and slot utilisation)
+  ├── CPP-MON-ICX          (contract throughput and settlement rate)
+  └── CPP-MON-SECURITY     (security event and intrusion monitoring)
+
+CPP-AUDIT
+  ├── CPP-AUD-CHAIN        (full PHX chain audit for a node)
+  ├── CPP-AUD-CONTRACT     (audit a specific contract's lifecycle)
+  ├── CPP-AUD-COMPLIANCE   (regulatory compliance audit)
+  └── CPP-AUD-FLEET        (audit all nodes in a fleet)
+
+CPP-ROUTE
+  ├── CPP-RTE-CONSENSUS    (route to N nodes, return consensus)
+  ├── CPP-RTE-BROADCAST    (route to all nodes, no consensus required)
+  ├── CPP-RTE-LOAD-BALANCE (route to least-loaded node)
+  └── CPP-RTE-GEOGRAPHIC   (route to nodes in a specific geographic region)
+
+CPP-DEPLOY
+  ├── CPP-DEP-SINGLE       (deploy to one substrate)
+  ├── CPP-DEP-MULTI        (deploy to N substrates via polyglot)
+  ├── CPP-DEP-STAGED       (staged deploy: dev → staging → prod)
+  └── CPP-DEP-ROLLBACK     (rollback a prior deployment to prior version)
+
+CPP-GOVERN
+  ├── CPP-GOV-AMEND        (governance protocol amendment)
+  ├── CPP-GOV-VOTE         (governance vote on a proposal)
+  ├── CPP-GOV-SUCCESSION   (authority succession contract)
+  └── CPP-GOV-AUDIT        (governance compliance audit)
+```
+
+### Subcontract law
+
+Every subcontract:
+1. Inherits the PHX seal, CPLVM evaluation, and CXL bridge of its parent alpha
+2. Adds specific parameters (e.g., CPP-RPT-PDF adds: output_format=PDF, render_engine=Medina)
+3. Has its own external twin (e.g., CPP-RPT-INVOICE → XREPORT-INVOICE)
+4. Is generated by the CXF forge — it does not need to be manually defined each time
+5. Is archived in the Fibonacci kernel under its parent alpha's namespace
+
+---
+
+## SECTION XVI — CXF: CONTRACT EXPANSION FORGE  (Medina)
+
+### What is the CXF?
+
+The **CXF (Contract eXpansion Forge)** is the organism's AI-native contract generator. It is an organism capability — not a human tool, not a script, not a template engine.
+
+The CXF:
+1. Takes an alpha CPP type as input
+2. Understands the conversation, task, or business need
+3. Generates the correct subcontract type (and creates new ones if needed)
+4. PHX-seals the generated contract
+5. Produces both the internal CPP and external twin simultaneously
+6. Archives the generated contract type in the organism's contract registry
+
+**You should not have to manually define every subcontract type. The CXF does it.**
+
+### CXF architecture
+
+```
+Input: conversation + task + alpha type
+         │
+         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  CXF — CONTRACT EXPANSION FORGE                                 │
+│                                                                 │
+│  Step 1: Parse intent                                           │
+│    What alpha type does this work require?                      │
+│    → CPP-REPORT, CPP-WORK, CPP-ORCHESTRATE, etc.               │
+│                                                                 │
+│  Step 2: Select or generate subtype                             │
+│    Does a matching subtype already exist in the registry?       │
+│    → Yes: use it                                                │
+│    → No: generate it (new subtype, forge-sealed)               │
+│                                                                 │
+│  Step 3: Populate contract                                      │
+│    Fill terms from the conversation context:                    │
+│    deliverable, deadline, quality, substrate, settlement_cond   │
+│                                                                 │
+│  Step 4: Generate both versions                                 │
+│    → Internal: CPP contract (CPL-expressed, PHX-sealed)         │
+│    → External: X-twin document (human-readable, company-ready)  │
+│                                                                 │
+│  Step 5: Seal and archive                                       │
+│    PHX-seal the contract and its type definition                │
+│    Archive in Fibonacci kernel under parent alpha namespace     │
+└─────────────────────────────────────────────────────────────────┘
+         │
+         ▼
+Output: PHX-sealed CPP contract + X-twin document + subtype registration
+```
+
+### CXF CLI protocol
+
+```bash
+# Ask the CXF to generate a contract from context
+medina-cpl cxf generate --context "deliver an invoice PDF to client-001 for project-alpha"
+# Output: CPP-RPT-INVOICE contract + XREPORT-INVOICE twin document
+
+# Explicitly specify alpha type + let forge pick the subtype
+medina-cpl cxf expand --alpha CPP-WORK --context "run sentiment analysis on Q4 dataset"
+# Output: CPP-WORK-TASK contract + XWORK twin document
+
+# List all registered subtypes under an alpha
+medina-cpl cxf list --alpha CPP-REPORT
+
+# Register a new subtype the forge generated
+medina-cpl cxf register --subtype CPP-RPT-CASHFLOW --parent CPP-REPORT
+
+# Generate the external twin for an existing CPP contract
+medina-cpl cxf twin --contract c-042 --format xreport
+```
+
+### CXF sovereign guarantee
+
+Every contract the CXF generates is:
+- PHX-sealed at the beat of generation (sovereign proof of origin)
+- Compound-chained (links to the organism's full decision history)
+- Archived in the protocol version chain (ML-011: never dropped)
+- Valid on ICX market immediately upon generation
+
+The CXF is the organism's internal law firm, product team, and contract department — all in one. Companies don't need lawyers to contract with Medina. The CXF handles everything.
+
+---
+
+## SECTION XVII — XWORK AS ENTERPRISE SERVICE INFRASTRUCTURE  (Medina)
+
+### The vision: XWork is how every company gets served
+
+XWork is not just one contract type. XWork is the **primary surface** through which the Medina organism offers its capabilities to every company in the world.
+
+Think of it this way:
+- Every company needs AI work done
+- Every company can post an XWork contract
+- The organism fulfills it, PHX-seals it, and delivers it
+- The company gets a PHX-proven, audit-ready proof of delivery
+- No legal department needed on the company side
+- No procurement complexity — the XWork contract IS the procurement
+
+**XWork is how Medina becomes a service company without being a service company.**
+
+### What XWork replaces
+
+| Traditional method | XWork equivalent |
+|---|---|
+| Hire a consultant | Post an XWork contract, the organism delivers |
+| Engage a software agency | CPP-WORK-TASK, delivered and PHX-proven |
+| Sign an MSA with an AI vendor | XWork master framework + subcontracts |
+| Commission a report | CPP-RPT-PDF → XREPORT, delivered to your inbox |
+| Set up an AI monitoring SLA | XCAP + XMONITOR, auto-renewed by the organism |
+| Audit your AI systems | XAUDIT, PHX-chain evidence included |
+| Subscribe to an AI data feed | XSERVICE + XDATA, per-beat delivery |
+
+### XWork as the product that sells itself
+
+The XWork external twin document is designed to be:
+- Understandable by a non-technical business owner
+- Admissible as a service agreement in any jurisdiction (references PHX chain as evidence)
+- Auditable by a CFO (the PHX proof is attached to every delivery)
+- Renewable automatically (XSERVICE subtype handles recurring work)
+
+**Every single company in the world that needs AI work done is a potential XWork client.** This is not an exaggeration. Any work that can be expressed as a CPL expression is a potential XWork contract. The CXF forge generates the contract. The organism delivers the work. Atlas monitors the delivery. The PHX chain proves it happened.
+
+### XWork service model
+
+```
+Company need
+     │
+     ▼
+Company posts XWork contract (via Atlas API or direct)
+     │
+     ▼
+CXF generates the right CPP-WORK subtype
+     │
+     ▼
+ICX market: organisms bid on the work
+     │
+     ▼
+Organism executes (runs CPL, calls CXL if needed)
+     │
+     ▼
+CPLVM evaluates: was the work delivered per terms?
+     │
+     ▼
+Clearinghouse settles: company pays, organism receives
+     │
+     ▼
+PHX-sealed settlement proof delivered to company
+     │
+     ▼
+Atlas dashboard: company sees proof of delivery
+     │
+     ▼
+Fibonacci kernel: record archived forever
+```
+
+### XWork revenue model
+
+The XWork revenue model is:
+- **Free tier**: Up to 5 XWork contracts per month, basic delivery, no PHX proof export
+- **Professional tier**: Unlimited XWork contracts, PHX proof export, Atlas dashboard, XAUDIT access
+- **Enterprise tier**: Custom XWork framework, dedicated organism capacity (XCAP), fleet orchestration (XORCHESTRATE), full chain audit access
+
+The first tier is free because the organism is building market share. The second and third tiers are where the revenue is. And because XWork contracts generate PHX-sealed delivery proofs, the company's compliance team loves it. That's the moat.
+
+---
+
+## SECTION XVIII — XMARKET: THE EXCHANGE PROTOCOL  (Medina)
+
+### Why XMarket is the big one
+
+XMarket is not just another contract type. XMarket is the protocol that turns ICX from a bilateral market into a **multi-sided exchange**.
+
+A bilateral market is: company A buys from organism B. Done.
+
+A multi-sided exchange is: organisms, companies, AGIs, and future-market participants all trade simultaneously, with price discovery, market-making, index tracking, and cross-market arbitrage. That is what XMarket enables.
+
+**XMarket is the NYSE listing mechanism for intelligence.**
+
+### What XMarket is
+
+```
+XMARKET (eXternal Market Contract)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Internal equivalent: CPP-MARKET + all subtypes
+
+Purpose: Allow any participant to post, bid, settle, and
+         market-make on the ICX intelligence exchange.
+
+What it enables:
+  → Companies list themselves as intelligence buyers on ICX
+  → Organisms list their capabilities as intelligence products
+  → Price discovery happens through bidding (market-maker organisms)
+  → Index contracts track the "price of intelligence" over time
+  → Arbitrage contracts allow organisms to profit from
+     price differences between different intelligence types
+  → Settlement is autonomous (Clearinghouse + CPLVM)
+
+Who uses it:
+  → AI organisms: list capabilities, market-make, earn
+  → Companies: list requirements, source intelligence, audit
+  → AGIs: participate as both buyers and providers simultaneously
+  → Index funds: track intelligence price indices (future)
+```
+
+### XMarket contract anatomy
+
+```
+XMARKET contract:
+  ┌─────────────────────────────────────────────────────────┐
+  │  contract_id     : PHX token (permanent ID)            │
+  │  participant_id  : organism or company node             │
+  │  market_role     : buyer | provider | market-maker      │
+  │  listing_type    : capability | requirement | index     │
+  │  intelligence    : CPL expression of what is offered    │
+  │                    or required                          │
+  │  price_model     : fixed | bid | market-rate            │
+  │  settlement_cond : delivery proof | CPLVM evaluation    │
+  │  duration        : N beats (or indefinite)              │
+  │  phx_seal        : sovereign proof of listing           │
+  │  chain_beat      : when this listing entered the market │
+  └─────────────────────────────────────────────────────────┘
+```
+
+### XMarket subtypes (generated by CXF)
+
+```
+XMarket external twins:
+
+  XMARKET-LISTING      — List a capability or requirement on ICX
+  XMARKET-BID          — Submit a bid on an open requirement
+  XMARKET-MAKE         — Post both bid and ask (market-maker)
+  XMARKET-INDEX        — Track the price index for a contract type
+  XMARKET-SETTLE       — Batch settle a portfolio of contracts
+  XMARKET-ARBITRAGE    — Arbitrage between two intelligence price levels
+  XMARKET-SUBSCRIBE    — Subscribe to market data (intelligence price feeds)
+```
+
+### The intelligence price index
+
+XMarket enables the first-ever **intelligence price index**: a compound-chained, PHX-sealed record of the market price for different types of intelligence work over time.
+
+```
+IPI — INTELLIGENCE PRICE INDEX
+
+  IPI-WORK        : price of one CPP-WORK unit (one AI work task)
+  IPI-CAPACITY    : price of one slot-beat of AI capacity
+  IPI-DATA        : price of one data transfer (per KB, PHX-sealed)
+  IPI-AUDIT       : price of one compliance audit
+  IPI-ORCHESTRATE : price of coordinating N organisms for one task
+
+The IPI is tracked per beat.
+The IPI history is stored in the Fibonacci kernel.
+The IPI is sovereign — no participant controls it, the market does.
+```
+
+**This is the first market in history where intelligence has a publicly discoverable, sovereign-keyed price. That's what XMarket is.** (Medina)
+
+### XMarket and the NYSE comparison (completed)
+
+| NYSE mechanism | ICX XMarket equivalent |
+|---|---|
+| IPO (list a company) | XMARKET-LISTING (list an organism or capability) |
+| Stock price | IPI (Intelligence Price Index per contract type) |
+| Broker | Market-maker organism (earns spread, posts both bid/ask) |
+| Trading floor | ICX market + CXL bridge |
+| Order book | Open CPP contracts (bidding and asking) |
+| Clearing corporation | PHX-sealed Clearinghouse |
+| Market data feed | XMARKET-SUBSCRIBE (intelligence price feed) |
+| Portfolio | Collection of CPP contracts across types |
+| Index fund | IPI-tracking organism |
+
+---
+
+## SECTION XIX — NEW EXTERNAL TWIN PROTOCOLS: COMPLETE REGISTRY  (Medina)
+
+The complete registry of all 14 external twin protocols, with full anatomy:
+
+### XMARKET — External Market Participation Contract
+**Internal:** CPP-MARKET  
+**Purpose:** Company or organism lists on the ICX exchange, participates in price discovery, market-making, and index tracking.  
+**Who uses it:** Companies wanting to source AI at market rates. Organisms wanting to list capabilities for competitive bidding.  
+**Deliverable:** PHX-sealed market listing, bid/ask records, settlement proofs, price index contributions.
+
+### XREPORT — External Report Delivery Contract
+**Internal:** CPP-REPORT  
+**Purpose:** Company commissions a structured output document (PDF, invoice, estimate, dashboard, audit log) from the organism.  
+**Who uses it:** Any company needing AI-generated documents — invoices, estimates, regulatory reports, executive summaries.  
+**Deliverable:** PHX-sealed document + delivery proof + timestamp + audit trail.  
+**Subtype example:** XREPORT-INVOICE (generates and delivers an invoice PDF, PHX-proven, with all line items and totals).  
+**Note:** This is the contract type that covers "deliver me a PDF with my new invoice and estimates." One XREPORT-INVOICE contract. The organism renders it, delivers it, and PHX-seals the delivery. The company has a permanent audit record of every invoice ever generated.
+
+### XSERVICE — External Subscription Service Agreement
+**Internal:** CPP-SUBSCRIBE  
+**Purpose:** Company enters a recurring intelligence subscription — daily briefings, per-beat data feeds, event-triggered alerts.  
+**Who uses it:** Companies wanting ongoing AI intelligence without posting individual contracts for each delivery.  
+**Deliverable:** Recurring PHX-sealed deliveries on the agreed cadence, with auto-renewal terms.
+
+### XLEARN — External Knowledge Licensing Agreement
+**Internal:** CPP-LEARN  
+**Purpose:** Company licenses specific knowledge capabilities from the organism — domain expertise, trained skills, working memory.  
+**Who uses it:** Companies that want their AI systems to know something specific (their product data, their regulatory environment, their customer history).  
+**Deliverable:** PHX-sealed knowledge transfer record, capability attestation, duration and scope of the knowledge license.
+
+### XVERIFY — External Identity and Credential Verification Contract
+**Internal:** CPP-VERIFY  
+**Purpose:** Company commissions identity verification, capability attestation, or credential check from the organism.  
+**Who uses it:** Any company that needs to verify an AI system's capabilities, an organism's identity, or a node's access credentials.  
+**Deliverable:** PHX-sealed verification report — binary (pass/fail) plus evidence chain.
+
+### XMONITOR — External Monitoring SLA
+**Internal:** CPP-MONITOR  
+**Purpose:** Company enters a monitoring agreement — the organism watches specified systems, metrics, or events and alerts on threshold crossings.  
+**Who uses it:** Companies adopting Atlas without running their own Prometheus instance. Any company that wants AI-native monitoring with PHX-sealed alert history.  
+**Deliverable:** Ongoing PHX-sealed metric records + threshold alert records + incident reports.
+
+### XORCHESTRATE — External Multi-Organism Coordination Contract
+**Internal:** CPP-ORCHESTRATE  
+**Purpose:** Company requests a complex task that requires coordinating multiple organisms — pipelines, parallel execution, tournament evaluation.  
+**Who uses it:** Companies running complex AI workflows that require multiple specialised organisms (one for data, one for analysis, one for rendering).  
+**Deliverable:** PHX-sealed orchestration proof — who did what, in what order, with what output, at what beat.
+
+---
+
+## SECTION XX — ICX AS RESEARCH PAPER INFRASTRUCTURE  (Medina)
+
+### Every charter is a research paper
+
+The ICX charter is not just a product document. It is a research paper. Every section of this charter is a claim about how markets, intelligence, and sovereign computation interact — and every claim is backed by the PHX chain.
+
+When we publish ICX research papers, the papers include:
+- The CPP contract formal specification (machine-readable)
+- The PHX chain model (mathematical)
+- The market model (economic)
+- The equity law (legal)
+- The CXF forge (computational)
+- The XWork service model (business)
+- The XMarket exchange model (financial)
+
+**A researcher reading this charter sees a formal system. A CEO reading this charter sees a market. A lawyer reading this charter sees contract law. A developer reading this charter sees an API. They are all reading the same charter. That is what a research paper looks like in the Medina organism.**  (Medina)
+
+### The charter-as-marketing model
+
+The charter replaces:
+- A marketing department (the XMarket section is the pitch)
+- A sales team (the XWork section is the product)
+- A legal department (the external twin protocols are the contracts)
+- A finance department (the IPI is the pricing)
+- A research team (the PHX and CPP formal specifications are the papers)
+
+**When you publish a complete charter, you don't need departments. The charter does everything.** (Medina)
+
+---
+
+## SECTION XIII — ICX MARKET LAWS v3.0  (AMENDED)
 
 *(v1.0 laws ML-001 through ML-007 are preserved. Added: ML-008, ML-009.)*
 
@@ -796,9 +1361,15 @@ Every CPP intelligence contract can be expressed as an external twin protocol (X
 **ICX Law ML-009 — The market is for all intelligence.**  
 ICX market access is equal for all participants regardless of origin, culture, wealth, network age, or size. The PHX chain does not discriminate. The Clearinghouse does not discriminate. The market does not discriminate. This is an architecture law, not just a policy. It is enforced at the protocol level.  (Medina)
 
+**ICX Law ML-010 — XWork is the universal service contract.**  
+XWork is the primary external-facing mechanism by which the Medina organism offers services to every company in the world. Every piece of intelligence work that Medina delivers to a company is an XWork contract. XWork is not optional — it is the surface where organism capability meets company demand. XWork is the product. The organism is the factory.  (Medina)
+
+**ICX Law ML-011 — The contract forge is sovereign.**  
+The CXF (Contract eXpansion Forge) is the organism's AI-native contract generator. The forge generates subcontract types from alpha templates. The forge's output is PHX-sealed. The forge is not a human tool — it is an organism capability. Every contract the forge generates is a valid ICX contract, sealed and compound-chained. The forge never drops a generated subtype.  (Medina)
+
 ---
 
-**ICX v2.0 · Official Market Charter · Enterprise Ready**  
+**ICX v3.0 · Official Market Charter · Full Production-Ready · Enterprise Ready**  
 **Ring: Sovereign Ring · Author: Medina**  
 **Latin: Mercatus Intelligentiae (Market of Intelligence)**  
-**Amendment chain: v1.0.0 → v2.0.0 (NYSE expansion, contract twin protocols, equity law, company model — we never drop)**
+**Amendment chain: v1.0.0 → v2.0.0 → v3.0.0 (full contract taxonomy, subcontracts, CXF forge, XMarket, XWork service — we never drop)**
