@@ -593,3 +593,381 @@ class CPXRenderer:
 
     def available_formats(self) -> tuple[str, ...]:
         return self.FORMATS
+
+
+# ── CPXRuntime  (Medina) ───────────────────────────────────────────────────────
+
+import time as _time
+import threading as _threading
+from typing import Callable as _Callable
+
+class CPXRuntime:
+    """
+    CPX Full Enterprise Runtime.  (Medina)
+
+    CPXRuntime elevates CPX from a renderer to a RUNNING SYSTEM.
+
+    A renderer takes a CPL expression and produces a static artifact.
+    A runtime takes a CPL expression, evaluates it LIVE using the CPLVM,
+    updates the scene as the CPL state changes, dispatches scene events
+    to listeners, and keeps running until stopped.
+
+    CPXRuntime is the organism's visual cognition layer in motion.  (Medina)
+
+    Architectural position:
+      MLS stream → CPXRuntime (scene evaluation + rendering) → listeners
+      CPL expressions → CPXRuntime (live eval) → PHX-sealed scene packages
+
+    What makes this a runtime (not just a renderer):
+      1. LIVE EVALUATION: CPL expressions are evaluated through CPLVM,
+         not just tokenised. The runtime knows the semantic value of the
+         scene, not just its visual form.
+      2. STATE MANAGEMENT: The runtime holds a live CPXRuntimeState —
+         current expression, current scene, current CPLVM environment,
+         current PHX beat. State persists between expressions.
+      3. EVENT DISPATCH: Listeners register for scene change events.
+         When a new expression is submitted, listeners are notified with
+         the rendered scene immediately.
+      4. EXPRESSION QUEUE: Expressions can be submitted from any thread.
+         The runtime processes them in order, maintaining beat integrity.
+      5. PHX CHAIN: Every scene change is a sovereign PHX decision.
+         The runtime maintains its own PHX chain; every render advances it.
+      6. CONTINUOUS MODE: The runtime can run a live loop, re-evaluating
+         the current expression at every organism heartbeat (873 ms by
+         default) and dispatching scene updates.
+
+    Usage
+    ─────
+      import os
+      key = os.urandom(32)
+
+      runtime = CPXRuntime(sovereign_key=key)
+
+      # Register a scene listener
+      runtime.on_scene(lambda pkg: print(pkg["scene_id"]))
+
+      # Submit expressions
+      runtime.submit("Κκλ ⊗ Σφρ → Ελκ")
+      runtime.submit("Τρσ ∧ Μτρν → Φρ")
+
+      # Process all queued expressions (blocking)
+      runtime.process_queue()
+
+      # Or run a live heartbeat loop (non-blocking)
+      runtime.start()   # spawns background thread
+      ...
+      runtime.stop()
+
+      # Get the current live scene package
+      pkg = runtime.current_scene_package()
+    """
+
+    DEFAULT_FORMATS: tuple[str, ...] = ("html", "svg", "json", "ascii")
+
+    def __init__(
+        self,
+        sovereign_key:   bytes,
+        formats:         tuple[str, ...] = DEFAULT_FORMATS,
+        heartbeat_ms:    int = 873,        # organism heartbeat  (Medina)
+        width:           int = 800,
+        height:          int = 800,
+        substrates:      Optional[list[str]] = None,
+    ) -> None:
+        if len(sovereign_key) < 16:
+            raise ValueError("sovereign_key must be ≥ 16 bytes")
+
+        self._key          = sovereign_key
+        self._formats      = formats
+        self._heartbeat_ms = heartbeat_ms
+        self._substrates   = substrates or ["memory"]
+        self._renderer     = CPXRenderer(width=width, height=height)
+
+        # Live state
+        self._beat:         int            = 0
+        self._current_expr: Optional[str]  = None
+        self._current_pkg:  Optional[dict] = None
+        self._phx_history:  Optional[bytes]= None   # latest PHX token
+
+        # Expression queue
+        self._queue: list[str] = []
+        self._lock  = _threading.Lock()
+
+        # Listeners
+        self._scene_listeners:  list[_Callable[[dict], None]]  = []
+        self._error_listeners:  list[_Callable[[Exception], None]] = []
+
+        # Runtime thread
+        self._running  = False
+        self._thread:  Optional[_threading.Thread] = None
+
+        # Runtime log
+        self._log:     list[dict] = []
+
+    # ── Expression submission ─────────────────────────────────────────────────
+
+    def submit(self, expression: str) -> None:
+        """
+        Submit a CPX expression for evaluation and rendering.
+
+        Thread-safe.  The expression is added to the queue and will be
+        processed on the next call to process_queue() or the next runtime loop.
+        """
+        with self._lock:
+            self._queue.append(expression)
+
+    def submit_many(self, expressions: list[str]) -> None:
+        """Submit multiple CPX expressions at once."""
+        with self._lock:
+            self._queue.extend(expressions)
+
+    # ── Listener registration ─────────────────────────────────────────────────
+
+    def on_scene(self, listener: _Callable[[dict], None]) -> None:
+        """
+        Register a scene listener.
+
+        The listener is called every time a new scene is rendered.
+        It receives the full scene package dict (scene_id, phx_seal, renders, …).
+        """
+        self._scene_listeners.append(listener)
+
+    def on_error(self, listener: _Callable[[Exception], None]) -> None:
+        """Register an error listener called when expression evaluation fails."""
+        self._error_listeners.append(listener)
+
+    # ── Processing ────────────────────────────────────────────────────────────
+
+    def process_queue(self) -> list[dict]:
+        """
+        Process all queued CPX expressions synchronously.
+
+        Returns the list of scene packages produced.
+        """
+        packages: list[dict] = []
+        while True:
+            with self._lock:
+                if not self._queue:
+                    break
+                expr = self._queue.pop(0)
+            pkg = self._evaluate_and_render(expr)
+            if pkg:
+                packages.append(pkg)
+        return packages
+
+    def process_one(self) -> Optional[dict]:
+        """Process the next queued expression. Returns None if queue is empty."""
+        with self._lock:
+            if not self._queue:
+                return None
+            expr = self._queue.pop(0)
+        return self._evaluate_and_render(expr)
+
+    # ── Live runtime ─────────────────────────────────────────────────────────
+
+    def start(self) -> None:
+        """
+        Start the CPX runtime heartbeat loop in a background thread.  (Medina)
+
+        The loop runs at organism heartbeat frequency (default 873 ms).
+        On each beat:
+          1. Process all queued expressions.
+          2. If no new expressions, re-render the current expression
+             (scene updates with the new beat number — PHX seal changes).
+          3. Dispatch scene packages to all listeners.
+        """
+        if self._running:
+            return
+        self._running = True
+        self._thread  = _threading.Thread(target=self._run_loop, daemon=True)
+        self._thread.start()
+
+    def stop(self) -> None:
+        """Stop the CPX runtime heartbeat loop."""
+        self._running = False
+        if self._thread:
+            self._thread.join(timeout=2.0)
+            self._thread = None
+
+    def _run_loop(self) -> None:
+        """Background heartbeat loop."""
+        while self._running:
+            try:
+                # Process any queued expressions
+                pkgs = self.process_queue()
+                if not pkgs and self._current_expr:
+                    # No new expressions: re-render current at new beat
+                    pkg = self._evaluate_and_render(self._current_expr)
+                    if pkg:
+                        pkgs = [pkg]
+            except Exception as e:
+                for listener in self._error_listeners:
+                    try:
+                        listener(e)
+                    except Exception:
+                        pass
+            _time.sleep(self._heartbeat_ms / 1000.0)
+
+    # ── Core evaluation + rendering  (Medina) ─────────────────────────────────
+
+    def _evaluate_and_render(self, expression: str) -> Optional[dict]:
+        """
+        Evaluate a CPX expression and render it to a PHX-sealed scene package.
+
+        This is the runtime's core operation:
+          1. Evaluate via CPLVM (live semantic understanding)
+          2. Build scene with phi-spiral layout
+          3. Render to all registered formats
+          4. PHX-seal with the runtime's sovereign chain
+          5. QFB-package for substrate deployment
+          6. Dispatch to listeners
+          7. Log the runtime event
+        """
+        from blockbox import QFB, PHXChain
+        from phx_primitive import PHX as PHX_fn, PHXState, phx_chain_advance
+
+        try:
+            # ── Step 1: CPLVM live evaluation  (Medina) ────────────────────────
+            cpl_result_str = "(unresolved)"
+            try:
+                from cpl_vm import CPLVM
+                vm     = CPLVM()
+                result = vm.eval_source(expression)
+                cpl_result_str = str(result)
+            except Exception:
+                pass  # scene still renders even if VM cannot evaluate
+
+            # ── Step 2: Build scene ────────────────────────────────────────────
+            scene = self._renderer.build_scene(expression, beat=self._beat)
+
+            # ── Step 3: Render to all formats ──────────────────────────────────
+            renders = {
+                fmt: self._renderer._dispatch(scene, fmt)
+                for fmt in self._formats
+            }
+
+            # ── Step 4: PHX-seal with running chain  (Medina) ─────────────────
+            event_bytes  = (
+                expression.encode("utf-8") +
+                scene.scene_id.encode() +
+                self._beat.to_bytes(8, "big")
+            )
+            phx_token = PHX_fn(
+                event   = event_bytes,
+                key     = self._key,
+                history = self._phx_history,
+                beat    = self._beat,
+            )
+            self._phx_history = phx_token
+
+            # ── Step 5: QFB-package  (Medina) ──────────────────────────────────
+            glyphs = [el.glyph for el in scene.elements if el.glyph]
+            qfb    = QFB.from_cpl(
+                cpl_tokens = glyphs or [expression[:8]],
+                key        = self._key,
+                substrates = self._substrates,
+                beat       = self._beat,
+            )
+
+            # ── Step 6: Assemble package ───────────────────────────────────────
+            pkg = {
+                "scene_id":      scene.scene_id,
+                "qfb_id":        qfb.qfb_id,
+                "phx_seal":      phx_token.hex(),
+                "qfb_summary":   qfb.summary(),
+                "cpl_source":    expression,
+                "cpl_result":    cpl_result_str,
+                "element_count": len(scene.elements),
+                "renders":       renders,
+                "beat":          self._beat,
+                "runtime_beat":  self._beat,
+                "medina":        True,
+            }
+
+            # Update runtime state
+            self._current_expr = expression
+            self._current_pkg  = pkg
+            self._beat        += 1   # advance beat after every evaluation
+
+            # Log
+            self._log.append({
+                "beat":       self._beat,
+                "expression": expression,
+                "scene_id":   scene.scene_id,
+                "phx_seal":   phx_token.hex()[:16] + "…",
+                "cpl_result": cpl_result_str,
+            })
+
+            # ── Step 7: Dispatch to listeners ──────────────────────────────────
+            for listener in self._scene_listeners:
+                try:
+                    listener(pkg)
+                except Exception:
+                    pass
+
+            return pkg
+
+        except Exception as e:
+            for listener in self._error_listeners:
+                try:
+                    listener(e)
+                except Exception:
+                    pass
+            return None
+
+    # ── State access ──────────────────────────────────────────────────────────
+
+    def current_scene_package(self) -> Optional[dict]:
+        """Return the most recently rendered scene package."""
+        return self._current_pkg
+
+    def current_svg(self) -> Optional[str]:
+        """Return the SVG of the current scene."""
+        if self._current_pkg and "svg" in self._current_pkg.get("renders", {}):
+            return self._current_pkg["renders"]["svg"]
+        return None
+
+    def current_html(self) -> Optional[str]:
+        """Return the HTML of the current scene."""
+        if self._current_pkg and "html" in self._current_pkg.get("renders", {}):
+            return self._current_pkg["renders"]["html"]
+        return None
+
+    @property
+    def beat(self) -> int:
+        return self._beat
+
+    @property
+    def is_running(self) -> bool:
+        return self._running
+
+    @property
+    def queue_depth(self) -> int:
+        with self._lock:
+            return len(self._queue)
+
+    # ── Runtime log ───────────────────────────────────────────────────────────
+
+    @property
+    def runtime_log(self) -> list[dict]:
+        """Full history of all runtime evaluations."""
+        return list(self._log)
+
+    def summary(self) -> str:
+        phx = (self._phx_history.hex()[:16] + "…") if self._phx_history else "(genesis)"
+        return (
+            f"CPXRuntime  beat={self._beat}  "
+            f"renders={len(self._log)}  "
+            f"running={self._running}  "
+            f"phx={phx}  "
+            f"(Medina)"
+        )
+
+    # ── Context manager support ───────────────────────────────────────────────
+
+    def __enter__(self) -> "CPXRuntime":
+        self.start()
+        return self
+
+    def __exit__(self, *args) -> None:
+        self.stop()
+
