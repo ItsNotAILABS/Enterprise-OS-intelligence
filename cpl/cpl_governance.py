@@ -1286,6 +1286,249 @@ class QFBRegistry:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# PROTOCOL VERSION CHAIN — "We Never Drop"  (Medina)
+# ─────────────────────────────────────────────────────────────────────────────
+
+@dataclass
+class ProtocolVersion:
+    """
+    A single version of a governance protocol.  (Medina)
+
+    When any governance protocol changes, the old version is PRESERVED here.
+    We never drop.  Every version that ever existed is kept.
+
+    Protocol versioning model:
+      v1  →  v2  →  v3  →  …  (append-only)
+      │         │
+      │         delta: what changed between v1 and v2 (the runtime)
+      │
+      content: the full protocol state at this version (never deleted)
+
+    The delta is the RUNTIME CHANGE — the exact description of what changed.
+    The new post (new version) is what gets published and used.
+    Old versions stay in the amendment chain, accessible forever.
+    """
+    version_id:   str
+    protocol:     str          # "PA" | "Fleet" | "ICX" | "Council" | "Audit" etc.
+    version_num:  int          # monotonically increasing
+    content_hash: str          # SHA-256 of the serialised protocol state
+    phx_seal:     str          # PHX seal of this version
+    delta:        str          # human-readable description of what changed
+    full_snapshot:dict         # full protocol state at this version (never deleted)
+    created_ms:   int
+    created_by:   str          # actor who triggered this version change
+
+    def to_dict(self) -> dict:
+        return {
+            "version_id":   self.version_id,
+            "protocol":     self.protocol,
+            "version_num":  self.version_num,
+            "content_hash": self.content_hash,
+            "phx_seal":     self.phx_seal,
+            "delta":        self.delta,
+            "full_snapshot":self.full_snapshot,
+            "created_ms":   self.created_ms,
+            "created_by":   self.created_by,
+        }
+
+
+@dataclass
+class AmendmentRecord:
+    """
+    An amendment record — the transition between two protocol versions.  (Medina)
+
+    This records the EXACT moment a governance protocol changed:
+      - What the old version was (old_seal)
+      - What changed (delta)
+      - What the new version is (new_seal)
+      - Who authorised the change
+      - The PHX seal of the amendment itself
+
+    The amendment record is immutable once created.  You cannot amend an amendment.
+    If you need to change it again, create a new amendment on top.
+    """
+    amendment_id:  str
+    protocol:      str
+    old_version:   int          # version number before this change
+    new_version:   int          # version number after this change
+    old_seal:      str          # PHX seal of old version
+    new_seal:      str          # PHX seal of new version
+    delta:         str          # runtime change description
+    amendment_phx: str          # PHX seal of this amendment event
+    created_ms:    int
+    authorised_by: str          # node_id that authorised this amendment
+
+    def to_dict(self) -> dict:
+        return {
+            "amendment_id":  self.amendment_id,
+            "protocol":      self.protocol,
+            "old_version":   self.old_version,
+            "new_version":   self.new_version,
+            "old_seal":      self.old_seal,
+            "new_seal":      self.new_seal,
+            "delta":         self.delta,
+            "amendment_phx": self.amendment_phx,
+            "created_ms":    self.created_ms,
+            "authorised_by": self.authorised_by,
+            "medina":        True,
+        }
+
+
+class ProtocolVersionChain:
+    """
+    Protocol Version Chain — "We Never Drop".  (Medina)
+
+    Every governance protocol in the organism is versioned.
+    When a protocol changes:
+      1. The old version is preserved (full snapshot + PHX seal)
+      2. The delta (runtime change) is recorded in an AmendmentRecord
+      3. The new version is published as the current live version
+
+    No version is ever deleted.  The chain is append-only.
+    The governance system itself enforces this — there is no delete operation.
+
+    This implements the organism's core governance principle:
+    "What was decided stays decided.  What changes is recorded."  (Medina)
+
+    The version chain is the organism's institutional memory.
+    """
+
+    def __init__(self, sovereign_key: bytes) -> None:
+        self._key:        bytes = sovereign_key
+        self._versions:   dict[str, list[ProtocolVersion]]  = {}  # protocol → versions
+        self._amendments: list[AmendmentRecord]             = []
+        self._beat:       int   = 0
+        self._prev:       Optional[bytes] = None
+
+    def snapshot(
+        self,
+        protocol:      str,
+        state_dict:    dict,
+        delta:         str,
+        created_by:    str,
+    ) -> ProtocolVersion:
+        """
+        Take a versioned snapshot of a protocol state.  (Medina)
+
+        Call this whenever a governance protocol changes.
+        The snapshot captures the full state at this moment.
+        Previous snapshots are never deleted.
+
+        Parameters
+        ──────────
+        protocol   — protocol name ("PA", "Fleet", "ICX", etc.)
+        state_dict — full serialisable state of the protocol
+        delta      — what changed since last version (the runtime)
+        created_by — node_id authorising this change
+
+        Returns
+        ───────
+        ProtocolVersion (the new version record)
+        """
+        from phx_primitive import PHX as PHX_fn
+
+        versions    = self._versions.setdefault(protocol, [])
+        version_num = len(versions) + 1
+
+        content_str  = json.dumps(state_dict, sort_keys=True)
+        content_hash = hashlib.sha256(content_str.encode()).hexdigest()
+
+        event = (
+            protocol.encode() + str(version_num).encode() +
+            content_hash.encode() + delta.encode()
+        )
+        token = PHX_fn(event=event, key=self._key, history=self._prev, beat=self._beat)
+        self._prev  = token
+        self._beat += 1
+
+        pv = ProtocolVersion(
+            version_id    = str(uuid.uuid4()),
+            protocol      = protocol,
+            version_num   = version_num,
+            content_hash  = content_hash,
+            phx_seal      = token.hex(),
+            delta         = delta,
+            full_snapshot = state_dict,
+            created_ms    = int(time.time() * 1000),
+            created_by    = created_by,
+        )
+        versions.append(pv)
+
+        # If there's a previous version, create an amendment record
+        if len(versions) >= 2:
+            old = versions[-2]
+            amendment = AmendmentRecord(
+                amendment_id  = str(uuid.uuid4()),
+                protocol      = protocol,
+                old_version   = old.version_num,
+                new_version   = pv.version_num,
+                old_seal      = old.phx_seal,
+                new_seal      = pv.phx_seal,
+                delta         = delta,
+                amendment_phx = token.hex(),
+                created_ms    = int(time.time() * 1000),
+                authorised_by = created_by,
+            )
+            self._amendments.append(amendment)
+
+        return pv
+
+    def current_version(self, protocol: str) -> Optional[ProtocolVersion]:
+        """Return the current (latest) version of a protocol."""
+        versions = self._versions.get(protocol, [])
+        return versions[-1] if versions else None
+
+    def all_versions(self, protocol: str) -> list[ProtocolVersion]:
+        """Return ALL versions of a protocol — we never drop.  (Medina)"""
+        return list(self._versions.get(protocol, []))
+
+    def version_at(self, protocol: str, version_num: int) -> Optional[ProtocolVersion]:
+        """Return a specific version of a protocol by version number."""
+        for v in self._versions.get(protocol, []):
+            if v.version_num == version_num:
+                return v
+        return None
+
+    def amendments_for(self, protocol: str) -> list[AmendmentRecord]:
+        """Return all amendment records for a protocol."""
+        return [a for a in self._amendments if a.protocol == protocol]
+
+    def all_amendments(self) -> list[AmendmentRecord]:
+        """Return all amendment records across all protocols."""
+        return list(self._amendments)
+
+    def amendment_count(self) -> int:
+        return len(self._amendments)
+
+    def protocol_names(self) -> list[str]:
+        return sorted(self._versions.keys())
+
+    def summary(self) -> str:
+        protocol_lines = "  ".join(
+            f"{p}=v{len(vs)}" for p, vs in sorted(self._versions.items())
+        )
+        return (
+            f"ProtocolVersionChain  protocols={len(self._versions)}  "
+            f"amendments={len(self._amendments)}  "
+            f"({protocol_lines})  "
+            f"(Medina — we never drop)"
+        )
+
+    def export_all(self) -> dict:
+        """Export the complete version chain — every version of every protocol."""
+        return {
+            "protocols": {
+                p: [v.to_dict() for v in vs]
+                for p, vs in self._versions.items()
+            },
+            "amendments": [a.to_dict() for a in self._amendments],
+            "beat":       self._beat,
+            "medina":     True,
+            "never_drop": True,
+        }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # ORGANISM GOVERNANCE INSTANCE  (Medina)
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -1318,6 +1561,7 @@ class OrganismGovernance:
         self.council      = GovernanceCouncil(sovereign_key)
         self.audit        = PHXAuditLayer(sovereign_key)
         self.registry     = QFBRegistry(sovereign_key)
+        self.versions     = ProtocolVersionChain(sovereign_key)  # we never drop
 
     def found(
         self,
@@ -1350,6 +1594,13 @@ class OrganismGovernance:
             self.constitution.to_dict(),
             label="genesis",
         )
+        # Version snapshot — we never drop
+        self.versions.snapshot(
+            protocol   = "Constitution",
+            state_dict = self.constitution.to_dict(),
+            delta      = "genesis — organism founded",
+            created_by = sovereign_node,
+        )
         return self.constitution
 
     def summary(self) -> str:
@@ -1364,5 +1615,6 @@ class OrganismGovernance:
             f"  {self.council.summary()}",
             f"  {self.audit.summary()}",
             f"  {self.registry.summary()}",
+            f"  {self.versions.summary()}",
         ]
         return "\n".join(lines)

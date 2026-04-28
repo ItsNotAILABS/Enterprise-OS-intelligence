@@ -170,7 +170,131 @@ When the quantum substrate (QTM) is active, CPX scenes can be encoded as qubit s
 
 ---
 
-## SECTION VII — ARCHITECTURAL STATEMENT  (Medina)
+## SECTION VII — CPX AS A FULL RUNTIME: THE PAPER  (Medina)
+
+**Classification:** Enterprise Technical Paper — Official  
+**Status:** PERMANENT
+
+### What a renderer does vs what a runtime does
+
+A renderer is a function: `f(expression) → artifact`.  
+A runtime is a system: `loop(expressions) → live state + artifacts + events + decisions`.
+
+CPX started as a renderer.  CPX v2.0 is a full runtime.  The difference matters:
+
+| Capability | Renderer | **CPX Runtime** |
+|---|---|---|
+| Input | Single expression | Expression queue (continuous) |
+| Evaluation | Tokenise only | Full CPLVM live evaluation |
+| Output | Static artifact | Live scene + PHX chain + QFB + events |
+| State | Stateless | Persistent scene state + PHX history |
+| Time | One call | Heartbeat loop (873ms organism beat) |
+| Listeners | None | `on_scene(fn)` event dispatch |
+| Parallelism | None | Submit queue + background thread |
+| PHX | External | Built-in sovereign chain (auto-advancing) |
+
+### The CPXRuntime architecture
+
+```
+                    ┌─────────────────────────────────────┐
+Expression queue    │           CPXRuntime                │
+  ["Κκλ→Ελκ"]  ───▶│                                     │
+  ["Τρσ⊗Μτρν"] ───▶│  1. Dequeue expression              │
+                    │  2. CPLVM.eval() → semantic result  │
+                    │  3. build_scene() → CPXScene        │
+                    │  4. render(all formats) → artifacts │
+                    │  5. PHX_PARALLEL → PHXBundle seal   │
+                    │  6. QFB.from_cpl() → QFB package   │
+                    │  7. Dispatch to on_scene() listeners│
+                    │                                     │
+                    │  ⟳  873ms heartbeat loop            │
+                    │     → re-renders at each beat       │
+                    │     → PHX seal changes every beat   │
+                    └──────────────┬──────────────────────┘
+                                   │
+                    ┌──────────────▼──────────────────────┐
+                    │         Scene Package               │
+                    │  scene_id, qfb_id, phx_seal         │
+                    │  cpl_result (semantic value)        │
+                    │  renders: {html, svg, json, ascii}  │
+                    │  beat, runtime_beat                 │
+                    └─────────────────────────────────────┘
+```
+
+### What the CPXRuntime adds that no visual AI framework has
+
+**1. Semantic evaluation:**  
+Other visual runtimes (Three.js, Unity, Babylon.js, A-Frame) render geometry.  CPX runtime evaluates MEANING.  The `cpl_result` field in every scene package is the evaluated semantic value of the CPL expression — what the organism UNDERSTANDS about what it's rendering, not just what it renders.
+
+**2. Sovereign decision sealing:**  
+Every render is a PHX-sealed sovereign decision.  The organism's visual state is part of its tamper-evident decision ledger.  No other visual runtime integrates its output into a sovereign audit chain.
+
+**3. Organism heartbeat:**  
+The runtime runs at 873ms intervals — the organism heartbeat.  The PHX seal changes at every beat.  The same scene at beat 100 and beat 101 produces different PHX seals.  The visual state is time-indexed to the organism's cognitive clock, not wall-clock time.
+
+**4. Cross-substrate QFB packaging:**  
+Every rendered scene is QFB-packaged and deployable to any substrate: browser, ICP canister, EVM chain, Solana program, edge node, quantum substrate.  Other visual runtimes render to ONE substrate.  CPX renders to ALL substrates simultaneously.
+
+**5. CPL token vocabulary:**  
+The sacred geometry token set (Kuklos, Sphaira, Helix, Toros, the five Platonic solids, Merkaba, Metatron's Cube) is the native visual language of the organism.  This is not "arbitrary geometry" — each token has semantic weight in CPL, and that weight is visible in CPX.
+
+### CPXRuntime usage
+
+```python
+import os
+from cpx_renderer import CPXRuntime
+
+key = os.urandom(32)
+runtime = CPXRuntime(sovereign_key=key, formats=("html", "svg", "json"), slots=16)
+
+# Register a listener — called on every rendered scene
+runtime.on_scene(lambda pkg: print(f"Beat {pkg['beat']}: {pkg['scene_id'][:8]}"))
+
+# Submit expressions
+runtime.submit("Κκλ ⊗ Σφρ → Ελκ")
+runtime.submit("Τρσ ∧ Μτρν → Τκτ")
+
+# Synchronous: process all queued expressions
+packages = runtime.process_queue()
+
+# Or live: background heartbeat loop (context-manager safe)
+with CPXRuntime(sovereign_key=key) as rt:
+    rt.submit("Μτρν → Φρ")
+    import time; time.sleep(3)   # runs 3 heartbeat cycles
+    print(rt.summary())
+# CPXRuntime  beat=4  renders=4  running=False  phx=a3f1b2c9…  (Medina)
+```
+
+### CPX visual AI runtimes — market landscape
+
+Visual AI runtimes exist for:
+- **3D scene generation** (Three.js, Babylon.js) — geometry, no semantics, no chain
+- **Game engines** (Unity, Unreal) — physics simulation, no organism integration
+- **Data visualisation** (D3.js, Vega-Lite) — data → chart, no cognitive semantics
+- **Generative art** (Processing, p5.js) — aesthetic generation, no decision records
+
+**CPX is in none of these categories.**  CPX is a **cognitive projection runtime** — a visual AI system that renders MEANING, seals every render as a sovereign decision, and chains all renders into a tamper-evident ledger.  This category did not exist before CPX.  (Medina)
+
+The closest existing concept is a "live coding environment" (SuperCollider, TidalCycles) — but those are for audio, have no semantics, and have no sovereign chain.  CPX is to live coding what Motoko is to Solidity: built for AI organisms, not for humans typing code.
+
+### CPX as a marketable SDK
+
+CPX can be packaged as:
+
+| Package | Format | Audience |
+|---|---|---|
+| `medina-cpx` Python library | pip package | AI developers |
+| `medina-cpx` npm module | npm package | Web/Node developers |
+| `medina-cpx-server` | Docker image | DevOps / enterprise |
+| `cpx_wasm.wasm` | WebAssembly | Browser / edge |
+| Motoko CPX canister | ICP canister | Internet Computer developers |
+
+Each package exposes the same API: `submit(expression)` → `on_scene(callback)`.  
+The rendering engine is the same.  The PHX chain is the same.  Only the delivery mechanism changes.
+
+---
+
+## SECTION VIII — ARCHITECTURAL STATEMENT  (Medina)
 
 CPX makes this architectural statement: **cognition has a visual form**.
 
@@ -182,7 +306,7 @@ This is Scene Sovereignty.  The organism owns its visual output.  It is not styl
 
 ---
 
-## SECTION VIII — CPX USAGE
+## SECTION IX — CPX USAGE
 
 ```python
 from cpx_renderer import CPXRenderer
@@ -213,13 +337,14 @@ print(pkg["qfb_id"])     # UUID
 
 ---
 
-## SECTION IX — OFFICIAL CODENAME TABLE
+## SECTION X — OFFICIAL CODENAME TABLE
 
 | Code | Full Name | Type | Description |
 |---|---|---|---|
 | **CPX** | Cognitive Projection eXpression | Language | Sacred geometry scene renderer |
 | **CPX_SCENE** | CPX Scene | Artifact | A rendered scene graph |
 | **CPX_PKG** | CPX Scene Package | Artifact | PHX-sealed, QFB-packaged scene |
+| **CPXRuntime** | CPX Full Runtime | System | Live organism visual cognition engine |
 | **AL-012** | Scene Sovereignty | Law | Every CPX scene is PHX-sealed |
 | **AL-013** | Phi-Spiral Layout | Law | All CPX scenes use golden-angle layout |
 
@@ -227,7 +352,8 @@ print(pkg["qfb_id"])     # UUID
 
 ## AUTHORITY
 
-This charter is issued by Medina.  CPX is a permanent organism language.  The Scene Sovereignty laws (AL-012, AL-013) are permanent.  The phi-spiral layout formula is permanent.  The four output formats (HTML, SVG, JSON, ASCII) are permanent.  The scene package structure is permanent.
+This charter is issued by Medina.  CPX is a permanent organism language.  The Scene Sovereignty laws (AL-012, AL-013) are permanent.  The phi-spiral layout formula is permanent.  The four output formats (HTML, SVG, JSON, ASCII) are permanent.  The scene package structure is permanent.  The CPXRuntime is permanent.
 
-**CPX v1.0 · Official Charter · Enterprise Ready**  
-**Ring: Sovereign Ring · Author: Medina**
+**CPX v2.0 · Official Charter · Enterprise Ready**  
+**Ring: Sovereign Ring · Author: Medina**  
+**Amendment: Section VII (CPX as Full Runtime) added — we never drop**

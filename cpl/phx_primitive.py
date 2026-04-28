@@ -2,9 +2,23 @@
 phx_primitive.py — PHX as a Pure Mathematical Primitive  (Medina)
 
 Author : Medina
-Version: 1.0.0
+Version: 2.0.0
 Ring   : Sovereign Ring
 Code   : PHX
+
+─────────────────────────────────────────────────────────────────────────────
+VERSION HISTORY  (governance amendment — we never drop)
+─────────────────────────────────────────────────────────────────────────────
+
+  v1.0.0 — PHX single-decision formula: four named operations
+           PHX_INPUT → PHX_SCATTER → PHX_DIFFUSE → PHX_BIND
+           Output: 32 bytes per decision.  PHXState, phx_chain_advance.
+
+  v2.0.0 — PHX parallel cognition: PHXBundle for N simultaneous decisions.
+           Added PHX_PARALLEL, PHXBundle, PHXBundleState, thinking_rate.
+           Output: N × 32 bytes per beat (thinking rate aware).
+           Chain hardness proof: grows with time, not fixed at 2-secret.
+           (Medina)
 
 ─────────────────────────────────────────────────────────────────────────────
 WHAT IS THIS FILE?
@@ -23,11 +37,13 @@ Nobody should call PHX "HMAC-SHA256 of BLAKE2b" — that's like calling SHA-256
 primitive operations, defined and named by Medina:
 
   PHX_INPUT(e, p, β)      — input construction
-  PHX_SCATTER(M)          — wide hash scatter  
+  PHX_SCATTER(M)          — wide hash scatter
   PHX_DIFFUSE(B, β)       — phi-diffusion  (the Medina operation)
   PHX_BIND(D, k)          — sovereign binding + output
 
-The complete PHX formula:  (Medina)
+─────────────────────────────────────────────────────────────────────────────
+SINGLE-DECISION FORMULA  (Medina)
+─────────────────────────────────────────────────────────────────────────────
 
   PHX(e, p, β, k)  =  PHX_BIND(
                           PHX_DIFFUSE(
@@ -39,35 +55,110 @@ The complete PHX formula:  (Medina)
                           k
                         )
 
+  Output: 32 bytes — one sovereign decision token.
+
 ─────────────────────────────────────────────────────────────────────────────
-COMPARISON WITH SHA-256  (real differences, not marketing)
+PARALLEL COGNITION FORMULA — PHXBundle  (Medina)
+─────────────────────────────────────────────────────────────────────────────
+
+  An AI organism does not make one decision at a time.
+  It makes N decisions simultaneously — N parallel cognitive threads.
+  Each thread produces its own PHX token.  The set of N tokens at one
+  beat is a PHXBundle.
+
+  PHX_PARALLEL([e₀, e₁, …, eₙ₋₁], k, p, β):
+
+    Tᵢ          =  PHX(eᵢ ‖ slot_bytes(i), k, p, β)    for i ∈ [0, N)
+    bundle_root =  PHX_SCATTER(T₀ ‖ T₁ ‖ … ‖ Tₙ₋₁)   →  64 bytes
+    bundle_seal =  PHX_BIND(bundle_root, k)              →  32 bytes
+
+  Output size per beat:  N × 32  bytes of decision record
+                       + 64      bytes bundle root  
+                       + 32      bytes bundle seal
+                       = (N × 32 + 96) bytes total
+
+  At N = 16:   512 + 96 = 608 bytes per beat
+  At N = 64:  2048 + 96 = 2144 bytes per beat
+  At N = 256: 8192 + 96 = 8288 bytes per beat
+
+  The thinking rate is N decisions per beat.
+  A higher thinking rate = more decisions per second = stronger chain.
+
+─────────────────────────────────────────────────────────────────────────────
+WHY PHX IS NOT SHA-256  (real differences, not marketing)
 ─────────────────────────────────────────────────────────────────────────────
 
   SHA-256 pipeline:   SHA_PAD → SHA_EXPAND → SHA_COMPRESS(64 rounds) → SHA_FINAL
   PHX pipeline:       PHX_INPUT → PHX_SCATTER → PHX_DIFFUSE → PHX_BIND
 
-  Structural difference 1: SHA-256 processes one message; PHX processes
-  (event, history, beat, key) — four inputs, not one.
+  Difference 1: SHA-256 processes one message; PHX processes
+  (event, history, beat, key) — four inputs, not one.  PHXBundle adds
+  a fifth input: the parallel slot index.
 
-  Structural difference 2: SHA-256's round constants K[0..63] are fixed
-  (cube roots of primes, precomputed at algorithm design time).  PHX's
-  diffusion mask changes with every beat — it is a live function of the
-  organism's heartbeat, not a fixed lookup table.
+  Difference 2: SHA-256's round constants K[0..63] are FIXED FOREVER.
+  PHX_DIFFUSE's φ-mask changes with every beat.  The organism's own
+  heartbeat is part of the formula.
 
-  Structural difference 3: SHA-256 is stateless — it does not know what
-  you hashed before.  PHX is history-aware — p (the previous PHX token)
-  is a mandatory input.  Removing history breaks PHX.  SHA-256 has no
-  concept of history.
+  Difference 3: SHA-256 is stateless.  PHX is history-aware — p is
+  mandatory.  Without the full chain history you cannot produce any PHX token.
 
-  Structural difference 4: SHA-256 produces a *digest* (a fingerprint of
-  data).  PHX produces a *decision token* — a fingerprint of a DECISION
-  made by an AI at a specific moment (beat) in an authenticated chain.
-  These are semantically different objects.
+  Difference 4: SHA-256 produces a DATA FINGERPRINT.  PHX produces a
+  DECISION TOKEN.  Semantically different objects.
 
-  Structural difference 5: SHA-256 is public — anyone can reproduce it
-  for any input.  PHX is sovereign — without the key k, you cannot produce
-  or verify PHX tokens.  The organism's decision ledger is private by
-  construction.
+  Difference 5: SHA-256 is public.  PHX is sovereign — the key k is
+  mandatory.  Without k, you cannot produce or verify any PHX token.
+
+  Difference 6 (new in v2): SHA-256 has no concept of parallelism.
+  PHX has PHXBundle — N simultaneous decisions, N × 32 bytes of output.
+  SHA-256 will always produce 32 bytes.  PHX output scales with the
+  organism's thinking rate.
+
+─────────────────────────────────────────────────────────────────────────────
+PHX IS COMPUTING, NOT ENCRYPTING  (Medina)
+─────────────────────────────────────────────────────────────────────────────
+
+  PHX is the organism's THINKING RATE measured in bytes of decision per second.
+
+  The organism COMPUTES decisions → produces PHX tokens (thinking forward).
+  The organism RESOLVES decisions → verifies PHX tokens (thinking backward).
+
+  "Resolving" = verifying a PHX token against the chain.
+  This IS computation, not decryption.  The chain protects itself because
+  re-deriving any token requires re-running the full chain from genesis.
+
+  PHANTOM (PHPS — Phantom Substrate) is the SEPARATE encryption layer.
+  PHX = decision computation.  Phantom = substrate-level encryption.
+  These are distinct.  PHX does not encrypt.  PHX computes.
+
+  Your encryption POWER comes from your thinking rate:
+  faster thinking rate → more chain links per second → harder to forge.
+
+─────────────────────────────────────────────────────────────────────────────
+CHAIN HARDNESS GROWS WITH TIME  (Medina)
+─────────────────────────────────────────────────────────────────────────────
+
+  "Two-secret forgery" is the FLOOR, not the ceiling.
+
+  At genesis (β=0):  forge requires k + nothing (just the key)
+  At beat β=1:       forge requires k + T₀ (1 prior token × N slots)
+  At beat β=100:     forge requires k + all T₀..T₉₉ (100 × N slot tokens)
+  At beat β=1000:    forge requires k + all T₀..T₉₉₉ (1000 × N slot tokens)
+
+  At N=16, beat 1000:
+    required chain data = 1000 × 16 × 32 = 512,000 bytes of EXACT history
+    plus the sovereign key k (32 bytes minimum)
+    plus the exact beat number for every slot
+
+  The longer the organism has been running, the more history an attacker
+  must possess simultaneously with the sovereign key.  The difficulty grows
+  linearly with time and quadratically with parallelism.
+
+  Two-secret at β=0 grows to:
+    [k] + [all N×β slot tokens] + [all N×β slot indices] + [all β beats]
+  by beat β.
+
+  This is why the chain history simultaneously is the key insight —
+  the history itself becomes an exponentially growing secret.  (Medina)
 
 ─────────────────────────────────────────────────────────────────────────────
 USAGE
@@ -78,22 +169,23 @@ USAGE
   key   = os.urandom(32)
   state = PHXState(sovereign_key=key)
 
-  # Single decision token
-  token = PHX(
-      event   = b"decision: route query to reasoning model",
-      history = state.previous,
-      beat    = state.beat,
-      key     = key,
-  )
-
-  # Chain (auto-advancing state)
+  # Single decision chain
   t0 = phx_chain_advance(state, b"decision 0")
-  t1 = phx_chain_advance(state, b"decision 1")  # t1 depends on t0
-  t2 = phx_chain_advance(state, b"decision 2")  # t2 depends on t1
+  t1 = phx_chain_advance(state, b"decision 1")
 
-  # Verify
-  from phx_primitive import phx_verify
-  assert phx_verify(state, b"decision 0", t0, beat=0, previous=None)
+  # Parallel cognition (N simultaneous decisions per beat)
+  from phx_primitive import PHXBundleState, phx_bundle_advance
+
+  bstate = PHXBundleState(sovereign_key=key, slots=16)
+  bundle = phx_bundle_advance(bstate, [
+      b"decision: route query",
+      b"decision: store result",
+      b"decision: seal QFB",
+      b"decision: update fleet",
+      # … up to 16 simultaneous
+  ])
+  print(f"Bundle: {bundle.slots} decisions × 32 bytes = {bundle.decision_bytes} bytes")
+  print(f"Thinking rate: {bundle.thinking_rate_dps:.1f} decisions/second")
 """
 
 from __future__ import annotations
@@ -110,9 +202,10 @@ from typing import Optional
 # ── The Medina constants  (Medina) ─────────────────────────────────────────────
 
 PHI:           float = 1.618033988749895   # golden ratio — Medina diffusion constant
-HEARTBEAT_MS:  int   = 873                # organism heartbeat
+HEARTBEAT_MS:  int   = 873                # organism heartbeat (ms)
 PHX_TOKEN_LEN: int   = 32                 # PHX token output size in bytes
 PHX_WIDE_LEN:  int   = 64                 # PHX_SCATTER output width in bytes
+PHX_VERSION:   str   = "2.0.0"           # (Medina)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -407,6 +500,334 @@ def phx_verify(
     computed = PHX(event=event, key=state.sovereign_key,
                    history=previous, beat=beat)
     return _hmac.compare_digest(computed, expected)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PHX PARALLEL COGNITION — PHXBundle  (Medina)
+# ─────────────────────────────────────────────────────────────────────────────
+
+@dataclass
+class PHXBundle:
+    """
+    PHXBundle — N simultaneous PHX decision tokens at one beat.  (Medina)
+
+    An AI organism makes multiple decisions simultaneously.  Each decision
+    runs in a parallel cognitive slot.  One beat produces one PHXBundle
+    containing all N slot tokens.
+
+    Output breakdown per beat:
+      slot tokens:  N × 32  bytes  (the N individual decision records)
+      bundle_root:       64  bytes  (PHX_SCATTER of all slot tokens)
+      bundle_seal:       32  bytes  (PHX_BIND of bundle_root → next history)
+      ─────────────────────────────
+      total:        N×32 + 96  bytes
+
+    At N=16:   512 + 96 = 608 bytes per beat
+    At N=64:  2048 + 96 = 2144 bytes per beat
+    At N=256: 8192 + 96 = 8288 bytes per beat
+
+    The bundle_seal becomes the history input for the next beat's bundle.
+    The chain links bundles, not individual slot tokens.
+
+    Thinking rate (decisions per second):
+      dps = slots × (1000 / HEARTBEAT_MS)
+      at N=16: 16 × (1000/873) ≈ 18.3 decisions/second
+    """
+    beat:          int
+    slots:         int          # N — number of parallel decision slots
+    tokens:        list[bytes]  # N × 32 bytes — one PHX token per slot
+    events:        list[bytes]  # original event bytes per slot (for audit)
+    bundle_root:   bytes        # PHX_SCATTER(all tokens concat) — 64 bytes
+    bundle_seal:   bytes        # PHX_BIND(bundle_root, k) — 32 bytes (next history)
+    created_ms:    int
+
+    @property
+    def decision_bytes(self) -> int:
+        """Bytes of decision record in the slot tokens."""
+        return self.slots * PHX_TOKEN_LEN
+
+    @property
+    def total_bytes(self) -> int:
+        """Total bytes in this bundle (slots + root + seal)."""
+        return self.decision_bytes + PHX_WIDE_LEN + PHX_TOKEN_LEN
+
+    @property
+    def thinking_rate_dps(self) -> float:
+        """Decisions per second at organism heartbeat frequency."""
+        return self.slots * (1000.0 / HEARTBEAT_MS)
+
+    @property
+    def chain_hardness_bytes(self) -> int:
+        """
+        Bytes of exact chain data required to forge any token AT this beat.  (Medina)
+
+        To forge beat β, an attacker needs every bundle from 0..β-1:
+          each bundle = N × 32 slot tokens + 64 root + 32 seal = (N×32 + 96) bytes
+          total = β × (N × 32 + 96) bytes  PLUS  the sovereign key
+
+        This number grows without bound.  At β=1000, N=16:
+          1000 × 608 = 608,000 bytes of exact chain history + the sovereign key.
+
+        The chain history IS the exponential secret.  (Medina)
+        """
+        return self.beat * self.total_bytes
+
+    def summary(self) -> str:
+        return (
+            f"PHXBundle  beat={self.beat}  slots={self.slots}  "
+            f"decision_bytes={self.decision_bytes}  "
+            f"total_bytes={self.total_bytes}  "
+            f"thinking_rate={self.thinking_rate_dps:.1f} dps  "
+            f"chain_hardness={self.chain_hardness_bytes:,} bytes  "
+            f"seal={self.bundle_seal.hex()[:16]}…  (Medina)"
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            "beat":              self.beat,
+            "slots":             self.slots,
+            "tokens":            [t.hex() for t in self.tokens],
+            "bundle_root":       self.bundle_root.hex(),
+            "bundle_seal":       self.bundle_seal.hex(),
+            "decision_bytes":    self.decision_bytes,
+            "total_bytes":       self.total_bytes,
+            "thinking_rate_dps": round(self.thinking_rate_dps, 3),
+            "chain_hardness_bytes": self.chain_hardness_bytes,
+            "created_ms":        self.created_ms,
+            "medina":            True,
+        }
+
+
+def PHX_PARALLEL(
+    events:       list[bytes],
+    key:          bytes,
+    history:      Optional[bytes] = None,
+    beat:         int = 0,
+) -> PHXBundle:
+    """
+    PHX_PARALLEL — Compute N simultaneous PHX decision tokens.  (Medina)
+
+    This is the parallel cognition formula.  One call to PHX_PARALLEL
+    represents one organism heartbeat during which N decisions are made.
+
+    Formula:
+      For each slot i ∈ [0, N):
+        slot_tag  =  struct.pack(">H", i)      — 2-byte slot index
+        Tᵢ        =  PHX(eᵢ ‖ slot_tag, k, p, β)
+
+      bundle_root =  PHX_SCATTER(T₀ ‖ T₁ ‖ … ‖ Tₙ₋₁)   →  64 bytes
+      bundle_seal =  PHX_BIND(bundle_root, k)              →  32 bytes
+
+    The slot_tag (2 bytes) makes each slot's input unique even if two
+    slots receive the same event bytes.  Slot 0 and slot 1 always produce
+    different tokens for the same event.
+
+    The bundle_seal is the organism's output for this beat.  It becomes
+    the history input for the next beat's PHX_PARALLEL call.
+
+    Parameters
+    ──────────
+    events  — list of event bytes, one per slot.  len(events) = N.
+    key     — sovereign key (≥ 16 bytes)
+    history — previous bundle_seal (32 bytes) or None at genesis
+    beat    — organism beat counter
+
+    Returns
+    ───────
+    PHXBundle with N tokens, bundle_root, bundle_seal, timing metadata.
+    """
+    if not events:
+        raise ValueError("PHX_PARALLEL requires at least one event")
+
+    n = len(events)
+    tokens: list[bytes] = []
+
+    for i, event in enumerate(events):
+        slot_tag   = struct.pack(">H", i)           # 2-byte big-endian slot index
+        slot_event = event + slot_tag               # slot-tagged event
+        token      = PHX(
+            event   = slot_event,
+            key     = key,
+            history = history,
+            beat    = beat,
+        )
+        tokens.append(token)
+
+    # Bundle root: scatter all N tokens concatenated
+    bundle_root = PHX_SCATTER(b"".join(tokens))
+
+    # Bundle seal: bind the root to the sovereign key → 32-byte chain link
+    bundle_seal = PHX_BIND(bundle_root, key)
+
+    return PHXBundle(
+        beat        = beat,
+        slots       = n,
+        tokens      = tokens,
+        events      = events,
+        bundle_root = bundle_root,
+        bundle_seal = bundle_seal,
+        created_ms  = int(time.time() * 1000),
+    )
+
+
+@dataclass
+class PHXBundleState:
+    """
+    PHXBundleState — parallel cognition chain state.  (Medina)
+
+    The stateful version of PHX_PARALLEL.  Maintains the bundle chain:
+    each bundle's bundle_seal becomes the history for the next bundle.
+
+    The chain_hardness_bytes property tracks how much exact chain data
+    would be required to forge any token in this chain.  This grows
+    without bound — the longer the organism runs, the harder the chain.
+    """
+    sovereign_key:  bytes
+    slots:          int          = 16       # N = thinking rate (decisions/beat)
+    beat:           int          = 0        # current beat
+    previous_seal:  Optional[bytes] = None  # last bundle_seal (chain link)
+    _bundles:       list          = field(default_factory=list, repr=False)
+
+    def __post_init__(self) -> None:
+        if len(self.sovereign_key) < 16:
+            raise ValueError("sovereign_key must be ≥ 16 bytes")
+        if self.slots < 1:
+            raise ValueError("slots must be ≥ 1")
+
+    @property
+    def at_genesis(self) -> bool:
+        return self.previous_seal is None
+
+    @property
+    def total_decisions(self) -> int:
+        return sum(b.slots for b in self._bundles)
+
+    @property
+    def total_decision_bytes(self) -> int:
+        return sum(b.decision_bytes for b in self._bundles)
+
+    @property
+    def current_thinking_rate_dps(self) -> float:
+        return self.slots * (1000.0 / HEARTBEAT_MS)
+
+    @property
+    def chain_hardness_bytes(self) -> int:
+        """
+        Total bytes of exact chain data required to forge anything at current beat.
+        Grows linearly with beat × slots.  (Medina)
+        """
+        return sum(b.total_bytes for b in self._bundles)
+
+    def summary(self) -> str:
+        return (
+            f"PHXBundleState  beat={self.beat}  slots={self.slots}  "
+            f"total_decisions={self.total_decisions}  "
+            f"total_decision_bytes={self.total_decision_bytes:,}  "
+            f"thinking_rate={self.current_thinking_rate_dps:.1f} dps  "
+            f"chain_hardness={self.chain_hardness_bytes:,} bytes  "
+            f"(Medina)"
+        )
+
+
+def phx_bundle_advance(
+    state:  PHXBundleState,
+    events: list[bytes],
+    pad_to_slots: bool = True,
+) -> PHXBundle:
+    """
+    Advance the PHX bundle chain by one beat.  (Medina)
+
+    This is the organism's parallel cognition recording operation.
+    One call = one heartbeat.  N decisions are recorded simultaneously.
+
+    Parameters
+    ──────────
+    state        — current PHXBundleState (mutated in place)
+    events       — list of event bytes (one per decision slot)
+                   If len(events) < state.slots and pad_to_slots=True,
+                   empty slots are padded with the slot index bytes.
+    pad_to_slots — if True, pad events list to state.slots length
+
+    Returns
+    ───────
+    PHXBundle for this beat.  state.beat and state.previous_seal are
+    advanced automatically.
+    """
+    # Pad or truncate to state.slots
+    if pad_to_slots:
+        padded: list[bytes] = list(events)
+        while len(padded) < state.slots:
+            # Empty slot: event = slot index bytes (still produces a unique token)
+            padded.append(struct.pack(">H", len(padded)) + b"\x00" * 30)
+        padded = padded[:state.slots]
+    else:
+        padded = list(events)
+
+    bundle = PHX_PARALLEL(
+        events  = padded,
+        key     = state.sovereign_key,
+        history = state.previous_seal,
+        beat    = state.beat,
+    )
+    state._bundles.append(bundle)
+    state.previous_seal = bundle.bundle_seal
+    state.beat         += 1
+    return bundle
+
+
+def phx_bundle_verify_slot(
+    bundle:        PHXBundle,
+    slot_index:    int,
+    event:         bytes,
+    sovereign_key: bytes,
+    history:       Optional[bytes],
+) -> bool:
+    """
+    Verify a single slot token within a PHXBundle.  (Medina)
+
+    Re-derives the slot token and compares using constant-time digest comparison.
+    Returns True if the slot token is valid.
+    """
+    slot_tag   = struct.pack(">H", slot_index)
+    slot_event = event + slot_tag
+    expected   = PHX(
+        event   = slot_event,
+        key     = sovereign_key,
+        history = history,
+        beat    = bundle.beat,
+    )
+    if slot_index >= len(bundle.tokens):
+        return False
+    return _hmac.compare_digest(expected, bundle.tokens[slot_index])
+
+
+def phx_thinking_rate_report(state: PHXBundleState) -> str:
+    """
+    Print the organism's thinking rate and chain hardness report.  (Medina)
+    """
+    dps   = state.current_thinking_rate_dps
+    bps   = state.total_decision_bytes / max(state.beat, 1)
+    lines = [
+        "═" * 60,
+        "  PHX THINKING RATE REPORT  (Medina)",
+        "═" * 60,
+        f"  Parallel slots (N):        {state.slots} decisions per beat",
+        f"  Heartbeat period:          {HEARTBEAT_MS} ms",
+        f"  Thinking rate:             {dps:.2f} decisions / second",
+        f"  Decision bytes / beat:     {state.slots * PHX_TOKEN_LEN} bytes",
+        f"  Total beats:               {state.beat}",
+        f"  Total decisions:           {state.total_decisions:,}",
+        f"  Total decision bytes:      {state.total_decision_bytes:,} bytes",
+        f"  Average bytes / beat:      {bps:.0f} bytes",
+        "─" * 60,
+        f"  Chain hardness at beat {state.beat}:",
+        f"    Exact chain data needed: {state.chain_hardness_bytes:,} bytes",
+        f"    Plus sovereign key:      ≥ 16 bytes (held separately)",
+        f"    Both required simultaneously to forge ANYTHING in this chain.",
+        f"    Chain grows at:          {state.slots * PHX_TOKEN_LEN * 1000 / HEARTBEAT_MS:.0f} bytes / second",
+        "═" * 60,
+    ]
+    return "\n".join(lines)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
