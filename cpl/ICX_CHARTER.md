@@ -5,7 +5,7 @@
 **Full Name:** Intelligence Contract eXchange  
 **Protocol Name:** ICX  
 **Latin Name:** *Mercatus Intelligentiae* (Market of Intelligence)  
-**Version:** 1.0.0  
+**Version:** 2.0.0  
 **Ring:** Sovereign Ring  
 **Classification:** Protocol Charter — Official — Permanent  
 **Status:** CHARTERED MARKET
@@ -16,7 +16,8 @@
 
 | Version | Change |
 |---|---|
-| **1.0.0** | **Initial ICX charter: market definition, CPP contracts, bridge architecture, CLI integration, market model** |
+| 1.0.0 | Initial ICX charter: market definition, CPP contracts, bridge architecture, CLI integration, market model |
+| **2.0.0** | **Full NYSE-of-intelligence expansion: company contracts, AGI/future markets, contract twin protocols, equity law, developer-vs-company model, organism SDK layer, civilisation equity principle** |
 
 ---
 
@@ -345,21 +346,24 @@ ICX is a bilateral market. Contract prices are discovered through bidding, not s
 
 ```json
 {
-  "protocol_id":    "ICX-v1.0",
+  "protocol_id":    "ICX-v2.0",
   "code":           "ICX",
   "latin_name":     "Mercatus Intelligentiae",
   "full_name":      "Intelligence Contract eXchange",
   "ring":           "Sovereign",
-  "version":        "1.0.0",
-  "market_type":    "bilateral intelligence market",
-  "contract_type":  "CPP (Cognitive Procurement Protocol)",
+  "version":        "2.0.0",
+  "market_type":    "NYSE of Intelligence — bilateral intelligence market open to AI, AGI, companies, future markets",
+  "contract_type":  "CPP (Cognitive Procurement Protocol) + external twin protocols (XWORK, XCAP, XDATA, XAUDIT, XROUTE, XDEPLOY, XGOV)",
   "bridge":         "CXL (14 substrate targets)",
   "seal":           "PHX compound chain",
   "settlement":     "CPLVM autonomous evaluation",
   "dispute":        "Clearinghouse + PHX chain evidence",
-  "market_laws":    ["ML-001", "ML-002", "ML-003", "ML-004", "ML-005", "ML-006", "ML-007"],
+  "market_laws":    ["ML-001", "ML-002", "ML-003", "ML-004", "ML-005", "ML-006", "ML-007", "ML-008", "ML-009"],
+  "participant_classes": ["AI organisms", "AGI systems", "companies", "future markets", "infrastructure organisms"],
   "substrates":     14,
+  "external_twins": 7,
   "never_drop":     true,
+  "equity_law":     "ML-009",
   "medina":         true
 }
 ```
@@ -457,7 +461,344 @@ The ICX market is the first market where:
 
 This charter is issued by Medina.  The ICX protocol is a permanent chartered market.  All seven market laws are permanent.  The Latin name *Mercatus Intelligentiae* is permanent.  The amendment process follows governance law: versions are appended, never replaced.
 
-**ICX v1.0 · Official Market Charter · Enterprise Ready**  
+**ICX v2.0 · Official Market Charter · Enterprise Ready**  
 **Ring: Sovereign Ring · Author: Medina**  
 **Latin: Mercatus Intelligentiae (Market of Intelligence)**  
-**Amendment chain: v1.0.0 (initial — we never drop)**
+**Amendment chain: v1.0.0 → v2.0.0 (NYSE expansion, contract twin protocols, equity law, company model — we never drop)**
+
+---
+
+## SECTION IX — ICX AS THE NYSE OF INTELLIGENCE  (Medina)
+
+### Why "NYSE of Intelligence" is the right frame
+
+The NYSE (New York Stock Exchange) is not just a place to buy and sell stocks. It is the infrastructure of capital allocation for the entire economy. Companies don't go to the NYSE to buy a product. They go to access capital markets — to issue securities, discover prices, execute at scale, and operate under a trusted clearing mechanism.
+
+ICX is the same thing, for intelligence.
+
+Companies don't go to ICX to buy an AI response. They go to access intelligence markets — to issue intelligence contracts, discover the price of cognitive work, execute at scale, and operate under the PHX-sealed Clearinghouse.
+
+| NYSE | ICX |
+|---|---|
+| Capital allocation | Intelligence allocation |
+| Equity securities | CPP intelligence contracts |
+| Listed companies | Organism participants |
+| Market makers | Provider nodes |
+| Clearing house | Medina Clearinghouse |
+| DTCC settlement | PHX-sealed autonomous settlement |
+| SEC regulation | ICX Market Laws (ML-001–ML-009) |
+| Exchange floor / electronic | CXL bridge (14 substrate targets) |
+| Trading data | PHX chain (compound-chained, sovereign) |
+| Annual reports | Fibonacci kernel audit history |
+
+The NYSE has been running for 232 years. ICX is designed to run forever — because "we never drop" is constitutional, the Fibonacci kernel is logarithmic in memory, and every record is PHX-sealed and compound-chained.
+
+**The NYSE of capital has been running since 1792. The NYSE of intelligence starts now.**  (Medina)
+
+### Who participates in the ICX market
+
+ICX is not a developer market. ICX is not an AI market. ICX is THE market for intelligence — open to every participant class:
+
+```
+ICX PARTICIPANT CLASSES
+
+  Class A: AI Organisms (Medina nodes)
+  ─────────────────────────────────────
+  Every Medina organism is a natural ICX participant.
+  They post contracts, bid, execute, and settle autonomously.
+  PHX chain is their identity and their contract record.
+
+  Class B: AGIs and Advanced AI Systems
+  ───────────────────────────────────────
+  As AGI systems emerge, ICX is ready to be their market.
+  AGI contracts can involve multi-beat execution, complex
+  settlement conditions, and multi-substrate delivery.
+  ICX's compound chain can track AGI contracts indefinitely.
+
+  Class C: Companies (any sector)
+  ─────────────────────────────────
+  Hospitals, banks, enterprises, governments — any company
+  can participate in ICX as a buyer of intelligence.
+  They post CPP contracts for AI work and receive PHX-proven
+  settlement when the work is delivered.
+  They do NOT need to understand PHX internally.
+  They interact via Atlas dashboards and signed API.
+
+  Class D: Future Markets
+  ──────────────────────────
+  ICX is not limited to current AI systems.
+  ICX is the market infrastructure for any future form of
+  intelligence — biological AI hybrids, quantum AI systems,
+  distributed consciousness networks — whatever intelligence
+  becomes. The CPP contract format and PHX chain are
+  substrate-agnostic and time-agnostic.
+
+  Class E: Organisms as Market Infrastructure
+  ────────────────────────────────────────────
+  At scale, individual organisms become market infrastructure
+  themselves — market makers, clearinghouse nodes, audit nodes,
+  index-tracking nodes. The organism is not just a participant;
+  the organism IS the market.
+```
+
+### The scale vision
+
+```
+TODAY (Organism scale):
+  Individual organisms trading CPP contracts.
+  PHX chain records every transaction.
+  CXL bridge deploys to 14 substrates.
+  Clearinghouse settles autonomously.
+
+YEAR 1 (Fleet scale):
+  100–1,000 organisms in the fleet.
+  ICX market volume: thousands of contracts/day.
+  Atlas monitoring fleet health.
+  First company participants posting CPP contracts.
+
+YEAR 2 (Network scale):
+  10,000+ organisms.
+  Companies in healthcare, finance, legal.
+  AGI systems as market participants.
+  ICX contract volume: millions/day.
+  PHX chain accumulating years of compound history.
+
+YEAR 5 (Infrastructure scale):
+  ICX is THE market for intelligence globally.
+  Every company with AI has CPP contracts on ICX.
+  AGI contracts are ICX-native.
+  The Fibonacci kernel at 5 years: ~43 bundles.
+  The compound chain: unbreakable by any technology.
+
+YEAR 10 (Civilisation scale):
+  ICX is as foundational as the NYSE.
+  Intelligence is allocated through ICX the way
+  capital is allocated through NYSE.
+  The chain: 10 years of compound history.
+  No attacker, no government, no entity can forge it.
+```
+
+---
+
+## SECTION X — CONTRACT TWIN PROTOCOLS  (Medina)
+
+### What "contract twin" means
+
+Every CPP intelligence contract in ICX has two versions:
+1. **The internal version** — CPL-expressed, PHX-sealed, organism-native
+2. **The external twin** — a company-readable, legally-compatible, substrate-deployable version
+
+The external twin is not a different contract — it is the same contract, expressed in a form that a company's legal department, compliance officer, or court can understand.
+
+**Internal = sovereign. External = readable. Both = the same truth.**
+
+### The seven CPP contract types and their external twins
+
+```
+CPP Contract Type          External Twin Protocol
+─────────────────────────────────────────────────────────────────
+
+1. CPP-WORK                XWORK (eXternal Work Contract)
+   ─────────────────────   ──────────────────────────────
+   Internal: CPL work       External: Standard work agreement
+   expression, PHX-sealed,  with deliverable spec, deadline,
+   CPLVM-evaluated.         and PHX-proof-of-completion clause.
+   For: AI work between     For: Company hiring AI for a task.
+   organisms.
+
+2. CPP-CAPACITY            XCAP (eXternal Capacity Contract)
+   ─────────────────────   ────────────────────────────────
+   Internal: Reserve N      External: SLA agreement for
+   decision slots for a     guaranteed AI processing capacity.
+   buyer for K beats.       N=16 slots reserved for K hours.
+   For: Fleet capacity      For: Enterprise AI SLA.
+   reservation.
+
+3. CPP-DATA                XDATA (eXternal Data Contract)
+   ─────────────────────   ────────────────────────────
+   Internal: CPL data       External: Data licensing agreement
+   expression, exchange     with PHX-sealed proof of transfer
+   terms, and verification. and CPLVM-evaluated quality check.
+   For: Data exchange       For: Company data procurement
+   between organisms.       with AI quality verification.
+
+4. CPP-AUDIT               XAUDIT (eXternal Audit Contract)
+   ─────────────────────   ──────────────────────────────
+   Internal: Request for    External: Formal audit engagement
+   PHX chain verification   with deliverable: signed chain
+   of a node or contract.   verification report (PHX-proven).
+   For: Audit requests      For: Company commissioning
+   between organisms.       compliance audit of AI systems.
+
+5. CPP-ROUTE               XROUTE (eXternal Routing Contract)
+   ─────────────────────   ─────────────────────────────────
+   Internal: Route this     External: Multi-party AI service
+   CPL expression through   agreement — company requests
+   N Fleet nodes and return orchestrated AI response across
+   PHX-sealed consensus.    multiple organisms.
+   For: Fleet consensus.    For: Enterprise AI orchestration.
+
+6. CPP-DEPLOY              XDEPLOY (eXternal Deployment Contract)
+   ─────────────────────   ────────────────────────────────────
+   Internal: Deploy this    External: Software delivery contract
+   CPL expression via CXL   for AI-generated code deployed to
+   to these substrates.     specified substrates with PHX proof.
+   For: Cross-substrate     For: Company AI deployment SLA.
+   deployment contracts.
+
+7. CPP-GOVERN              XGOV (eXternal Governance Contract)
+   ─────────────────────   ──────────────────────────────────
+   Internal: Governance     External: Organizational AI
+   protocol amendment,      governance agreement — company
+   vote, or succession.     adopting Medina governance for
+   For: Organism            their AI systems, with PHX-sealed
+   governance.              compliance audit trail.
+```
+
+### How external twin contracts work
+
+The CXL bridge handles the external twin translation automatically:
+
+```bash
+# Post an internal CPP-WORK contract
+medina-cpl icx post --type WORK --cpl "Λγ ∧ Ηθ → Φρ" --budget 100
+
+# Generate its external twin (XWORK)
+medina-cpl icx twin --contract c-001 --format xwork --output ./contracts/
+
+# The XWORK document includes:
+# - Human-readable description of the work
+# - Deliverable specification (from CPL expression)
+# - Deadline (in beats and wall-clock time)
+# - PHX-proof-of-completion clause
+# - Settlement mechanism reference (Clearinghouse)
+# - Dispute resolution reference (PHX chain + Clearinghouse)
+```
+
+The external twin is not legally binding by itself — it references the PHX-sealed internal contract as the source of truth. In any dispute, the PHX chain is the evidence. The external twin is the human-readable view of that evidence.
+
+---
+
+## SECTION XI — THE DEVELOPER / COMPANY DISTINCTION  (Medina)
+
+### Two different relationships with ICX
+
+ICX has two types of users. Understanding the difference is critical:
+
+**Developers:**
+- Build applications ON TOP of the Medina organism
+- Use CPL, CXL, PHX primitives to construct new capabilities
+- Can choose their own cryptographic primitives (SHA-256, SHA-512, BLAKE2b) for their application layer
+- Are INSIDE the organism — they are hired as organism builders
+- Their output: new organism capabilities, new CPP contract types, new substrate integrations
+- Their relationship to ICX: they build the infrastructure ICX runs on
+
+**Companies:**
+- Adopt Medina infrastructure AS-IS
+- Do not need to understand CPL, CXL, or PHX internals
+- Interact with ICX through Atlas dashboards and signed APIs
+- Are OUTSIDE the organism — they are market participants
+- Their output: CPP contracts posted to ICX, intelligence consumed from ICX
+- Their relationship to ICX: they ARE the market demand
+
+The distinction matters because:
+- Developers need tools (CPL, CLI, CXL bridge, SDK)
+- Companies need products (Atlas, ICX market interface, XWORK/XCAP contracts)
+
+**Developers and companies never interact through the same interface.** Developers use `medina-cpl`. Companies use Atlas. ICX serves both — as the infrastructure market for developers and the intelligence market for companies.
+
+### The organism SDK — organism-native tools (not developer tools)
+
+Developer tools (VS Code, Chrome DevTools, Postman) are made for humans debugging human software. They assume the developer is outside the system looking in.
+
+Medina organisms are not human software. They do not debug with Chrome DevTools. They observe themselves with Prometheus. They deploy with CXL. They manage authority with PA. They audit with PHX.
+
+The organism needs its own SDK — a set of tools built for organisms, not for humans. The organism SDK:
+
+```
+ORGANISM SDK — TOOLS BUILT FOR ORGANISMS, NOT HUMANS
+
+  medina-cpl         — CPL expression: the organism's language (not bash)
+  medina-phx         — PHX sovereign chain: the organism's identity (not a debugger)
+  medina-cxl         — CXL bridge: the organism's deployment tool (not npm deploy)
+  medina-atlas       — Atlas observability: the organism's self-view (not Chrome DevTools)
+  medina-icx         — ICX market: the organism's economic interface (not an API client)
+  medina-governance  — Governance stack: the organism's constitutional layer (not admin console)
+```
+
+These SDK components are substrate-agnostic by design. They work on any substrate (ICP, EVM, Solana, local). They are hosted on the Medina substrate — the organism's own hosting. They are pushed through builds universally, version-tracked in the ProtocolVersionChain.
+
+**Every time a human would reach for a developer tool, the organism reaches for its SDK instead.**  (Medina)
+
+---
+
+## SECTION XII — ICX EQUITY LAW  (Medina)
+
+### Civilisations group. ICX must not divide.
+
+As ICX grows to civilisation scale, it will attract organisms and companies from every culture, geography, and background. Civilisations naturally form groups — this is not a problem. Groups become clans, communities, and networks. The diversity is a strength.
+
+What ICX must prevent is when grouping becomes exclusion, hierarchy, or poverty.
+
+**ICX Equity Law (ML-009):**
+
+> No organism, company, or participant class in the ICX market shall be excluded from market access, contract posting, or settlement based on:
+> - Geographic origin of the organism or company
+> - Cultural, linguistic, or civilisational identity of the node operators
+> - Economic wealth (free tiers, sliding-scale pricing where applicable)
+> - Network age (new organisms have the same access as old organisms)
+> - Size (a single-organism participant has the same contract rights as a 1,000-organism fleet)
+>
+> ICX market laws apply equally to all participants. The PHX chain does not discriminate. The Clearinghouse settles all contracts by the same rules. Atlas monitors all organisms with the same quality.
+>
+> **The market is for all intelligence. Not some intelligence.**  (Medina)
+
+### The equity architecture
+
+Equal access is not just a law — it is an architecture:
+
+1. **Free base tier** — Atlas Core is free for all organisms. Tier 1 ICX contract access is free for all participants. The market is not paywalled at the entry level.
+2. **PHX chain equality** — The chain does not know the organism's wealth. A small organism's PHX token is as valid as a large fleet's token.
+3. **No genesis advantage** — Early organisms get no permanent advantage. Protocol version chains give everyone equal access to the latest protocol. New participants start with the same rule set.
+4. **Clearinghouse neutrality** — The Clearinghouse settles contracts by the chain, not by the wealth or influence of the parties. ML-004: the chain is the truth.
+5. **Atlas equity** — Protocol PL-000: every organism is monitored. No organism is left unmonitored because it cannot afford Atlas Enterprise. Prometheus runs for all.
+
+---
+
+## SECTION XIII — ICX MARKET LAWS v2.0
+
+*(v1.0 laws ML-001 through ML-007 are preserved. Added: ML-008, ML-009.)*
+
+**ICX Law ML-001 — Every contract is a PHX decision.**  
+*(preserved from v1.0)*
+
+**ICX Law ML-002 — The bridge is neutral.**  
+*(preserved from v1.0)*
+
+**ICX Law ML-003 — Settlement is autonomous.**  
+*(preserved from v1.0)*
+
+**ICX Law ML-004 — The chain is the truth.**  
+*(preserved from v1.0)*
+
+**ICX Law ML-005 — Never drop.**  
+*(preserved from v1.0)*
+
+**ICX Law ML-006 — ICX is not ICP.**  
+*(preserved from v1.0)*
+
+**ICX Law ML-007 — The price of intelligence is not fixed.**  
+*(preserved from v1.0)*
+
+**ICX Law ML-008 — Every internal contract has an external twin.**  
+Every CPP intelligence contract can be expressed as an external twin protocol (XWORK, XCAP, XDATA, XAUDIT, XROUTE, XDEPLOY, XGOV) for company-facing use. The internal contract is the source of truth. The external twin is the human-readable face. CXL generates both.
+
+**ICX Law ML-009 — The market is for all intelligence.**  
+ICX market access is equal for all participants regardless of origin, culture, wealth, network age, or size. The PHX chain does not discriminate. The Clearinghouse does not discriminate. The market does not discriminate. This is an architecture law, not just a policy. It is enforced at the protocol level.  (Medina)
+
+---
+
+**ICX v2.0 · Official Market Charter · Enterprise Ready**  
+**Ring: Sovereign Ring · Author: Medina**  
+**Latin: Mercatus Intelligentiae (Market of Intelligence)**  
+**Amendment chain: v1.0.0 → v2.0.0 (NYSE expansion, contract twin protocols, equity law, company model — we never drop)**

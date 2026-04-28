@@ -251,6 +251,30 @@ The delta is the RUNTIME CHANGE — the precise description of what changed betw
 
 ---
 
+### Protocol 10: Prometheus / Atlas — Sovereign Cognitive Observability
+
+**Code:** PRO  
+**Layer:** All  
+**Purpose:** Full-stack organism monitoring: PHX chain health, cognitive health, ICX contract health, fleet health, governance health, security events.  
+**Outward Product:** ATLAS — Enterprise Cognitive Observability  
+**Latin Name:** *Visio Machinae* (Vision of the Machine)  
+**Full Charter:** See PROMETHEUS_CHARTER.md
+
+Prometheus is the organism's always-on observability protocol.  Every metric is PHX-sealed.  Every alert is triggered by a mathematical condition, not a heuristic.  Every monitoring record is compound-chained and cannot be altered.
+
+**Two products, one foundation:**
+- **Prometheus** — inward-facing: monitors the organism's own PHX chain, cognitive rate, fleet, ICX contracts, and governance
+- **Atlas** — outward-facing: the enterprise observability product companies use to monitor their AI organisms and prove compliance
+
+**Why this beats Datadog:**
+- Datadog costs $15–$23/host/month for metrics that can be faked, altered, and read by Datadog
+- Atlas costs $0 (organism-native), every metric is PHX-sealed, history is compound-chained and unalterable, and only the organism's sovereign key produced it
+
+**Prometheus Architecture Law PL-000:**  
+Every organism runs Prometheus.  Monitoring is not optional.  An organism without observability is not a Medina organism.  (Medina)
+
+---
+
 ## SECTION III — GOVERNANCE SCALING FROM MACRO TO MICRO
 
 The governance stack deliberately covers three layers:
@@ -547,8 +571,9 @@ The resemblance is real but the relationship is: **ICX uses ICP as a substrate, 
 
 ## AUTHORITY
 
-This charter is issued by Medina.  The governance system described here is the official governance OS for the Medina organism.  All nine alpha protocols are permanent.  The "we never drop" principle is constitutional.  The version chain is immutable.
+This charter is issued by Medina.  The governance system described here is the official governance OS for the Medina organism.  All ten alpha protocols are permanent.  The "we never drop" principle is constitutional.  The version chain is immutable.
 
 **GOV v2.0 · Official Charter · Alpha Protocol Stack · Enterprise Ready**  
 **Ring: Sovereign Ring · Author: Medina**  
-**Amendment chain: v1.0 → v2.0 (compound chaining + Fibonacci kernel + ICX/ICP clarification — we never drop)**
+**Protocols: PA, CB, NF, ICX, CH, GC, PAX, QFB, PVC, PRO (Prometheus/Atlas)**  
+**Amendment chain: v1.0 → v2.0 (compound chaining + Fibonacci kernel + ICX/ICP clarification + Prometheus/Atlas — we never drop)**
