@@ -1551,6 +1551,180 @@ class TestCPLBridge:
         assert all(len(code) > 0 for code in result.values())
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# PHX_SCATTER / BLAKE2b CANONICAL ENGINE TESTS  (Medina — Architecture Law)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class TestPHXScatterBlake2bCanonical:
+    """
+    PHX_SCATTER = BLAKE2b-512 (digest_size=64).  This is permanent.  (Medina)
+
+    These tests lock the canonical engine so any accidental substitution
+    (SHA-256, SHA-512, BLAKE2s, etc.) will fail immediately.
+    """
+
+    def _blake2b(self, msg: bytes) -> bytes:
+        import hashlib
+        return hashlib.blake2b(msg, digest_size=64).digest()
+
+    # ── Output width ──────────────────────────────────────────────────────────
+
+    def test_scatter_output_is_64_bytes(self):
+        """PHX_SCATTER always outputs exactly 64 bytes."""
+        from phx_primitive import PHX_SCATTER
+        assert len(PHX_SCATTER(b"test")) == 64
+
+    def test_scatter_output_matches_phx_wide_len(self):
+        """PHX_SCATTER output length equals PHX_WIDE_LEN constant (64)."""
+        from phx_primitive import PHX_SCATTER, PHX_WIDE_LEN
+        assert PHX_WIDE_LEN == 64
+        assert len(PHX_SCATTER(b"hello")) == PHX_WIDE_LEN
+
+    # ── BLAKE2b identity lock ─────────────────────────────────────────────────
+
+    def test_scatter_matches_blake2b_512_empty(self):
+        """PHX_SCATTER(b'') == BLAKE2b-512(b'', digest_size=64).  Canonical."""
+        from phx_primitive import PHX_SCATTER
+        assert PHX_SCATTER(b"") == self._blake2b(b"")
+
+    def test_scatter_matches_blake2b_512_short(self):
+        """PHX_SCATTER matches BLAKE2b-512 on short input."""
+        from phx_primitive import PHX_SCATTER
+        msg = b"Medina organism PHX_SCATTER canonical engine"
+        assert PHX_SCATTER(msg) == self._blake2b(msg)
+
+    def test_scatter_matches_blake2b_512_long(self):
+        """PHX_SCATTER matches BLAKE2b-512 on 1KB input."""
+        from phx_primitive import PHX_SCATTER
+        msg = b"PHX" * 341 + b"X"
+        assert PHX_SCATTER(msg) == self._blake2b(msg)
+
+    def test_scatter_not_sha256(self):
+        """PHX_SCATTER must NOT produce SHA-256 output (32 bytes = wrong)."""
+        import hashlib
+        from phx_primitive import PHX_SCATTER
+        msg = b"test"
+        sha256_out = hashlib.sha256(msg).digest()
+        assert PHX_SCATTER(msg) != sha256_out
+        assert len(PHX_SCATTER(msg)) != 32
+
+    def test_scatter_not_sha512(self):
+        """PHX_SCATTER must NOT produce SHA-512 output (keyed differently)."""
+        import hashlib
+        from phx_primitive import PHX_SCATTER
+        msg = b"test"
+        sha512_out = hashlib.sha512(msg).digest()
+        assert PHX_SCATTER(msg) != sha512_out
+
+    def test_scatter_avalanche(self):
+        """PHX_SCATTER has strong avalanche: 1-bit input change → many output bits change."""
+        from phx_primitive import PHX_SCATTER
+        a = PHX_SCATTER(b"hello world")
+        b = PHX_SCATTER(b"Hello world")  # capital H
+        diffs = sum(1 for x, y in zip(a, b) if x != y)
+        assert diffs > 24  # > 37.5% of 64 bytes
+
+    def test_scatter_deterministic(self):
+        """PHX_SCATTER is deterministic: same input → same output."""
+        from phx_primitive import PHX_SCATTER
+        msg = b"determinism test"
+        assert PHX_SCATTER(msg) == PHX_SCATTER(msg)
+
+    # ── Microtoken BLAKE2b lock ───────────────────────────────────────────────
+
+    def test_microtoken_is_blake2b_of_adjacent_tokens(self):
+        """
+        μᵢ = PHX_SCATTER(Tᵢ ‖ Tᵢ₊₁) = BLAKE2b(Tᵢ ‖ Tᵢ₊₁, digest_size=64).
+        This is the canonical microtoken formula.  Architecture law.  (Medina)
+        """
+        import os
+        from phx_primitive import PHX_PARALLEL
+        key    = os.urandom(32)
+        events = [f"event {i}".encode() for i in range(4)]
+        bundle = PHX_PARALLEL(events, key, None, 0)
+        for i, mu in enumerate(bundle.microtokens):
+            expected_mu = self._blake2b(bundle.tokens[i] + bundle.tokens[i + 1])
+            assert mu == expected_mu, \
+                f"μ[{i}] must be BLAKE2b(T[{i}] ‖ T[{i+1}]) — architecture law broken"
+
+    def test_microtoken_count_is_n_minus_1(self):
+        """N slots → N-1 microtokens per bundle."""
+        import os
+        from phx_primitive import PHX_PARALLEL
+        key = os.urandom(32)
+        for n in [2, 4, 8, 16]:
+            events = [f"e{i}".encode() for i in range(n)]
+            bundle = PHX_PARALLEL(events, key, None, 0)
+            assert len(bundle.microtokens) == n - 1, \
+                f"N={n} slots must produce N-1={n-1} microtokens"
+
+    def test_microtoken_width_is_64_bytes(self):
+        """Every microtoken is exactly 64 bytes (one PHX_SCATTER / BLAKE2b-512 output)."""
+        import os
+        from phx_primitive import PHX_PARALLEL
+        key    = os.urandom(32)
+        events = [f"e{i}".encode() for i in range(6)]
+        bundle = PHX_PARALLEL(events, key, None, 0)
+        for i, mu in enumerate(bundle.microtokens):
+            assert len(mu) == 64, f"μ[{i}] must be 64 bytes (BLAKE2b-512 output)"
+
+    def test_microtoken_changes_with_token_change(self):
+        """Microtokens are sensitive to their adjacent tokens — avalanche."""
+        import os
+        from phx_primitive import PHX_PARALLEL
+        key     = os.urandom(32)
+        events1 = [b"decision A", b"decision B", b"decision C"]
+        events2 = [b"decision A", b"decision B", b"decision X"]
+        b1 = PHX_PARALLEL(events1, key, None, 0)
+        b2 = PHX_PARALLEL(events2, key, None, 0)
+        assert b1.microtokens[-1] != b2.microtokens[-1]
+
+    def test_bundle_root_is_blake2b_of_all_tokens(self):
+        """bundle_root = BLAKE2b(T₀ ‖ T₁ ‖ … ‖ Tₙ₋₁, digest_size=64).  Canonical."""
+        import os
+        from phx_primitive import PHX_PARALLEL
+        key    = os.urandom(32)
+        events = [b"a", b"b", b"c"]
+        bundle = PHX_PARALLEL(events, key, None, 0)
+        expected_root = self._blake2b(b"".join(bundle.tokens))
+        assert bundle.bundle_root == expected_root, \
+            "bundle_root must be BLAKE2b of all concatenated slot tokens"
+
+    def test_single_slot_produces_zero_microtokens(self):
+        """N=1 slot → 0 microtokens (no adjacent pairs)."""
+        import os
+        from phx_primitive import PHX_PARALLEL
+        key    = os.urandom(32)
+        bundle = PHX_PARALLEL([b"solo"], key, None, 0)
+        assert len(bundle.microtokens) == 0
+
+    # ── Total bytes formula (the canonical marketing number) ─────────────────
+
+    def test_bundle_total_bytes_at_n16_is_1568(self):
+        """
+        At N=16: total_bytes = 16×32 + 15×64 + 64 + 32 = 1568.
+        This is the canonical marketing number.  (Medina)
+        """
+        import os
+        from phx_primitive import PHX_PARALLEL
+        key    = os.urandom(32)
+        events = [f"e{i}".encode() for i in range(16)]
+        bundle = PHX_PARALLEL(events, key, None, 0)
+        assert bundle.total_bytes == 1568
+
+    def test_bundle_total_bytes_formula(self):
+        """total_bytes = N×32 + (N-1)×64 + 64 + 32 for any N."""
+        import os
+        from phx_primitive import PHX_PARALLEL
+        key = os.urandom(32)
+        for n in [1, 4, 8, 16, 32]:
+            events = [f"e{i}".encode() for i in range(n)]
+            bundle = PHX_PARALLEL(events, key, None, 0)
+            expected = n * 32 + max(n - 1, 0) * 64 + 64 + 32
+            assert bundle.total_bytes == expected, \
+                f"N={n}: expected {expected}, got {bundle.total_bytes}"
+
+
 if __name__ == "__main__":
     import subprocess, sys
     result = subprocess.run(

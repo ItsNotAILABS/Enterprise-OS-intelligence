@@ -389,11 +389,85 @@ The Motoko CLI is an ICP canister interface to the same PHX operations available
 
 ---
 
+## SECTION VIII — CXL BRIDGE PROTOCOL
+
+*(New in v2.0.  The `icp` command is the CLI's bridge interface to ICX → ICP.)*
+
+### What is the CXL Bridge?
+
+CXL (Cross-substrate Language bridge) is the mechanism by which CPL expressions (ICX intelligence contracts) are translated into deployment-ready code for any substrate.  The CLI is the command interface to this bridge.
+
+```
+CPL expression (ICX contract)
+        │
+        ▼
+medina-cpl CLI  ──→  CXL bridge  ──→  deploy-ready code
+                                          │
+                              ├──→ Motoko (.mo)       via `icp` command
+                              ├──→ Solidity (.sol)    via `emit --target solidity`
+                              ├──→ Move (.move)       via `emit --target move`
+                              ├──→ Rust (.rs)         via `emit --target rust`
+                              ├──→ CosmWasm (.rs)     via `emit --target cosmwasm`
+                              ├──→ Cairo (.cairo)     via `emit --target cairo`
+                              ├──→ ink! (.rs)         via `emit --target ink`
+                              ├──→ Python (.py)       via `emit --target python`
+                              ├──→ TypeScript (.ts)   via `emit --target typescript`
+                              ├──→ Go (.go)           via `emit --target go`
+                              ├──→ Java (.java)       via `emit --target java`
+                              ├──→ Swift (.swift)     via `emit --target swift`
+                              ├──→ PHX chain          via `emit --target phx_chain`
+                              └──→ QFB block          via `emit --target qfb`
+```
+
+### CXL Bridge CLI Protocol
+
+The CXL bridge is exposed through the CLI's `emit`, `polyglot`, and `icp` commands:
+
+```bash
+# Single-substrate bridge
+medina-cpl emit --target motoko "Λγ ∧ Ηθ → Τκτ"
+
+# Multi-substrate bridge (all 14 targets simultaneously)
+medina-cpl polyglot "Λγ ∧ Ηθ → Τκτ" --output-dir ./deploy/
+
+# ICX-to-ICP bridge (the primary Medina → Internet Computer bridge)
+medina-cpl icp --contract "Λγ ∧ Ηθ → Τκτ" --canister-name AgentLogic
+
+# ICX-to-ICP + additional substrates
+medina-cpl icp --contract "Λγ ∧ Ηθ → Τκτ" --also-emit move solidity
+```
+
+### CXL Bridge Law
+
+**CXL-001 — The bridge is neutral.**  
+The CLI bridge emits to any of 14 targets equally.  The `icp` command does not make ICP special — it makes ICP *accessible*.  The bridge goes ICX → ICP, not the reverse.
+
+**CXL-002 — All bridge outputs are PHX-sealed.**  
+Every emit operation is recorded in the organism's PHX chain.  The CLI's chain commands (`chain advance`, `phx`, `bundle`) record every bridge operation as a sovereign decision token.
+
+**CXL-003 — ICX charter governs bridge contracts.**  
+When the CLI bridge is used to deploy an ICX contract (CPP expression), the ICX_CHARTER.md governs the contract lifecycle.  The CLI is the command interface; ICX is the market; the bridge connects them.
+
+### Relationship to ICX_CHARTER.md
+
+The CLI is the **command interface** to the ICX market.  ICX_CHARTER.md defines the **market** — what contracts are, how they are settled, what the laws are.  The CLI charter defines the **interface** — what commands exist, what they do, and how they interact with the bridge.
+
+```
+ICX_CHARTER.md → defines the market and laws
+CLI_CHARTER.md → defines the command interface
+medina_cli.mo  → deploys the interface on ICP
+phx_primitive  → seals every operation
+```
+
+See ICX_CHARTER.md (*Mercatus Intelligentiae*) for the full market specification.
+
+---
+
 ## AUTHORITY
 
-This charter is issued by Medina.  The medina-cpl CLI is a permanent chartered protocol.  All 13 commands are permanent.  All 6 protocol laws are permanent.  The Latin name *Cognitum ex Linea* is permanent.  The amendment process is permanent.
+This charter is issued by Medina.  The medina-cpl CLI is a permanent chartered protocol.  All 13 commands are permanent.  All 6 protocol laws are permanent.  All 3 CXL bridge laws are permanent.  The Latin name *Cognitum ex Linea* is permanent.  The amendment process is permanent.
 
 **CLI v2.0 · Official Protocol Charter · Enterprise Ready**  
 **Ring: Sovereign Ring · Author: Medina**  
 **Latin: Cognitum ex Linea (Knowledge from the Line)**  
-**Amendment chain: v1.0.0 → v2.0.0 (we never drop)**
+**Amendment chain: v1.0.0 → v2.0.0 (CXL bridge protocol added — we never drop)**

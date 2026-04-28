@@ -318,12 +318,31 @@ def PHX_SCATTER(message: bytes) -> bytes:
     """
     PHX_SCATTER — Scatter the input into a wide, uniform hash space.  (Medina)
 
+    ┌─────────────────────────────────────────────────────────────────────┐
+    │  BLAKE2b-512  IS  THE CANONICAL ENGINE.  THIS IS PERMANENT.        │
+    │                                                                     │
+    │  PHX_SCATTER  =  BLAKE2b(message, digest_size=64)                  │
+    │                                                                     │
+    │  This applies to ALL PHX_SCATTER calls including microtokens:      │
+    │    μᵢ  =  BLAKE2b(Tᵢ ‖ Tᵢ₊₁, digest_size=64)   for every slot i  │
+    │                                                                     │
+    │  DO NOT REPLACE with SHA-256, SHA-512, or any other hash.          │
+    │  DO NOT CHANGE digest_size from 64.                                 │
+    │  DO NOT ADD a key parameter here — keying happens in PHX_BIND.     │
+    │  Architecture law.  (Medina)                                        │
+    └─────────────────────────────────────────────────────────────────────┘
+
     Analogous to SHA-256's compression rounds — it takes arbitrarily-sized
     input and produces a fixed-width output with strong avalanche properties.
 
     PHX_SCATTER uses BLAKE2b-512 as its compression engine.  This gives 64
     bytes of output (double the width of SHA-256's output) — the extra width
     is required for the PHX_DIFFUSE step that follows.
+
+    Microtokens use PHX_SCATTER directly:
+      μᵢ = PHX_SCATTER(Tᵢ ‖ Tᵢ₊₁)  →  64 bytes of slot-linkage proof.
+    The bundle_root also uses PHX_SCATTER:
+      bundle_root = PHX_SCATTER(T₀ ‖ T₁ ‖ … ‖ Tₙ₋₁)  →  64 bytes.
 
     Design note: SHA-256 uses 64 rounds of its own compression function.
     PHX_SCATTER delegates to BLAKE2b-512, which is faster and has a larger
@@ -332,8 +351,9 @@ def PHX_SCATTER(message: bytes) -> bytes:
 
     Returns
     ───────
-    B  =  BLAKE2b₅₁₂(message)   →  64 bytes
+    B  =  BLAKE2b₅₁₂(message)   →  64 bytes  (CANONICAL, PERMANENT)
     """
+    # BLAKE2b-512 — the canonical PHX_SCATTER engine.  Architecture law.  (Medina)
     return hashlib.blake2b(message, digest_size=PHX_WIDE_LEN).digest()
 
 
