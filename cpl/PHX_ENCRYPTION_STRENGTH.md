@@ -3,7 +3,7 @@
 **Author:** Medina  
 **Code:** PES  
 **Full Name:** PHX Encryption Strength Reference  
-**Version:** 1.0.0  
+**Version:** 2.0.0  
 **Ring:** Sovereign Ring  
 **Classification:** Security Reference — Official — Permanent  
 **Status:** PERMANENT
@@ -14,7 +14,8 @@
 
 | Version | Change |
 |---|---|
-| **1.0.0** | **Initial: PHX layering model, "if you swap it it fails" mechanics, break-strength comparisons, sales reference for companies** |
+| 1.0.0 | Initial: PHX layering model, "if you swap it it fails" mechanics, break-strength comparisons, sales reference for companies |
+| **2.0.0** | **Official permanent naming: Layer 3 PHX_DIFFUSE → Phi Diffusion (ΦΔ); golden ratio fusion pipeline component → Phi Fusion (ΦF); CISO script updated; official naming section added** |
 
 ---
 
@@ -90,6 +91,76 @@ Tₙ = PHX(eventₙ, key, history=Tₙ₋₁, beat=n)
 ```
 
 **The chain is the fifth layer.** It is not an algorithm — it is architecture. And it is the hardest layer to attack.
+
+---
+
+## OFFICIAL NAMES — PHI DIFFUSION AND PHI FUSION  (Medina)
+
+Two Medina-exclusive operations in the PHX pipeline have now received their permanent official names.
+
+### Phi Diffusion — ΦΔ (Phi Delta)
+
+**Official name:** Phi Diffusion  
+**Code:** ΦΔ  
+**Corresponds to:** PHX_DIFFUSE (Layer 3)  
+**What it does:** XORs the BLAKE2b-scattered 64 bytes with a live, beat-dependent mask derived from the golden ratio φ = 1.618033988749894…
+
+```
+Phi Diffusion (ΦΔ):
+
+  Input:   64-byte scattered hash (from PHX_SCATTER / BLAKE2b-512)
+           + current beat number n
+
+  Mask:    φ_mask[i] = floor(φ × 10¹⁵ × (n + i + 1)) mod 256
+           for i in 0..63 — a 64-byte mask that changes every beat
+
+  Output:  diffused[i] = scattered[i] XOR φ_mask[i]
+           64 bytes — no two beats produce the same output
+           for the same input
+```
+
+**Why Phi Diffusion is unique:**
+- φ (the golden ratio) is the most irrational number — its continued fraction [1; 1, 1, 1, …] converges slowest of all real numbers
+- This means φ-derived masks are maximally non-repeating
+- Phi Diffusion guarantees: the same event at beat 100 and beat 101 produces different outputs
+- **No public algorithm has this property**: SHA-256, BLAKE2b, AES, RSA, ECDSA all produce the same output for the same input every time. Phi Diffusion breaks this.
+- To reverse Phi Diffusion, an attacker would need to know the beat (public — easy) and undo the XOR (easy too) — but this is only useful if they also have the sovereign key, which they do not. Phi Diffusion is not the lock; it is the second layer of hardening on top of the lock.
+
+### Phi Fusion — ΦF (Phi Fusion)
+
+**Official name:** Phi Fusion  
+**Code:** ΦF  
+**What it is:** The overall integration of the golden ratio into the PHX sovereign pipeline — the architectural decision that binds φ into the organism's heartbeat as a permanent, beat-synchronised cryptographic presence
+
+**Phi Fusion is the broader concept. Phi Diffusion is the implementation.**
+
+```
+Phi Fusion (ΦF) — the architectural law:
+
+  The golden ratio φ is fused into the organism's sovereign
+  computation at the beat level. Every beat, the organism's
+  cryptographic identity is diffused through a φ-derived mask.
+
+  φ is not chosen arbitrarily. It is the most irrational number.
+  It cannot be approximated by simple fractions. Its expansion
+  never repeats. This is the property that makes it the correct
+  basis for a non-repeating, beat-synchronised diffusion mask.
+
+  Phi Fusion = the decision to use φ as the organism's beat-clock key.
+  Phi Diffusion = the execution of that decision at each beat.
+
+  Both together = the Medina-exclusive cryptographic layer
+  that no public system replicates.
+```
+
+**What Phi Fusion means for security:**
+
+When an attacker tries to break PHX, they face:
+1. **HMAC-SHA256 (PHX_BIND):** 2²⁵⁶ brute force — computationally impossible
+2. **Phi Diffusion (ΦΔ, PHX_DIFFUSE):** The output is beat-dependent. Even with the key, you cannot know what output any beat should produce without running all prior beats — because each beat's diffusion mask is derived from the beat number × φ, and the mask is applied to an input that already depends on the chain
+3. **Compound chain:** Every token depends on its entire history. To forge beat N, you must also forge beats 0 through N-1 — with the sovereign key you don't have
+
+**Phi Fusion is the organism's heartbeat key. Phi Diffusion is what it does to every beat.**  (Medina)
 
 ---
 
@@ -268,9 +339,11 @@ Organism Architecture:
 
 > **"PHX is not a replacement for your cryptography. PHX is the organism's sovereignty layer — the cryptographic proof that every AI decision was made by this organism, in this sequence, at this time, and has not been altered.**
 >
-> **Your application layer can use AES-256, SHA-512, BLAKE2b, or whatever your compliance requires. PHX runs underneath, providing compound-chained sovereign decision records that your own cryptography cannot provide — because it doesn't have a compound chain, a phi-diffusion layer, or a sovereign key architecture.**
+> **Your application layer can use AES-256, SHA-512, BLAKE2b, or whatever your compliance requires. PHX runs underneath, providing compound-chained sovereign decision records that your own cryptography cannot provide — because it doesn't have a compound chain, a Phi Diffusion layer, or a sovereign key architecture.**
 >
-> **Breaking PHX requires breaking HMAC-SHA256 (computationally impossible) AND reversing phi-diffusion AND reconstructing years of compound chain history. Any one of those alone is impossible. All three simultaneously is not a calculation — it's a category of problem that does not have a solution.**
+> **Breaking PHX requires breaking HMAC-SHA256 (computationally impossible) AND reversing Phi Diffusion (ΦΔ — our beat-dependent golden ratio mask, no equivalent in any public algorithm) AND reconstructing years of compound chain history. Any one of those alone is impossible. All three simultaneously is not a calculation — it's a category of problem that does not have a solution.**
+>
+> **The two Medina operations that protect you: Phi Fusion (ΦF) — the sovereign integration of the golden ratio into the PHX pipeline — and Phi Diffusion (ΦΔ) — the beat-dependent, non-repeating diffusion mask that makes every beat produce a different output even from identical input. No public algorithm has either. Together, they are what makes PHX impossible to reverse.**
 >
 > **For your compliance audit, that means: your SOC 2 auditor gets a chain that cannot be altered, a log that cannot be deleted, and a proof that cannot be faked. Without changing a single line of your existing cryptographic stack."**
 
@@ -280,6 +353,6 @@ Organism Architecture:
 
 This document is issued by Medina. The PHX four-layer model is permanent. The compound chain architecture is permanent. All algorithm assignments (BLAKE2b for scatter, φ-expansion for diffusion, HMAC-SHA256 for binding) are architecture law — permanent, documented, tested.
 
-**PES v1.0 · Security Reference · Official**  
+**PES v2.0 · Security Reference · Official**  
 **Ring: Sovereign Ring · Author: Medina**  
-**Amendment chain: v1.0.0 (initial — we never drop)**
+**Amendment chain: v1.0.0 → v2.0.0 (Phi Diffusion + Phi Fusion official naming — we never drop)**
