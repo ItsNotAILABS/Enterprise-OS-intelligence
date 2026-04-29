@@ -1,0 +1,42 @@
+{
+  "name": "@medina/silver-canister",
+  "version": "1.0.0",
+  "description": "Silver Canister — School-Level Sovereign System. Controls all Bronze Canisters (students) and orchestrates the entire school system. Curriculum management, announcements, academic calendar, resource inventory, analytics, student services, compliance, and facilities.",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "Alfredo Medina Hernandez",
+    "email": "Medinasitech@outlook.com"
+  },
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./canister": "./src/silver-canister.js",
+    "./curriculum": "./src/curriculum-repository.js",
+    "./announcements": "./src/announcement-board.js",
+    "./calendar": "./src/academic-calendar.js",
+    "./resources": "./src/resource-inventory.js",
+    "./analytics": "./src/school-analytics.js",
+    "./services": "./src/student-services.js",
+    "./compliance": "./src/compliance-engine.js"
+  },
+  "keywords": [
+    "education",
+    "sovereign",
+    "icp",
+    "canister",
+    "school",
+    "silver-canister",
+    "curriculum",
+    "administration",
+    "medina-tech"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {}
+}
