@@ -1,0 +1,33 @@
+{
+  "name": "@medina/paralegal-ai",
+  "version": "0.1.0-alpha",
+  "description": "AI paralegal for legal professionals. Analyze contracts, flag risk clauses, draft redlines, compare documents, and get plain-language answers — all embedded, no subscription, no data leaves your machine.",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "Alfredo Medina Hernandez",
+    "email": "Medinasitech@outlook.com"
+  },
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "keywords": [
+    "ai",
+    "paralegal",
+    "legal",
+    "contract-analysis",
+    "risk",
+    "redline",
+    "no-api",
+    "medina-tech"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {}
+}

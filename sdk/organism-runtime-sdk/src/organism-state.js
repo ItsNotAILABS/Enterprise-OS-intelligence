@@ -1,182 +1,98 @@
-import crypto from 'node:crypto';
-
 /**
- * @typedef {'cognitive' | 'affective' | 'somatic' | 'sovereign'} RegisterName
- */
-
-/**
- * @typedef {Object} CognitiveRegister
- * @property {string|null} reasoning - Current reasoning state
- * @property {string|null} planning - Current planning state
- * @property {string|null} analysis - Current analysis state
- */
-
-/**
- * @typedef {Object} AffectiveRegister
- * @property {string|null} emotion - Current emotion
- * @property {string|null} mood - Current mood
- * @property {string|null} sentiment - Current sentiment
- */
-
-/**
- * @typedef {Object} SomaticRegister
- * @property {string|null} body - Body/hardware state
- * @property {string|null} resources - Resource metrics
- */
-
-/**
- * @typedef {Object} SovereignRegister
- * @property {string|null} identity - Identity state
- * @property {string|null} doctrine - Doctrine state
- * @property {string|null} governance - Governance state
- */
-
-/**
- * @typedef {Object} StateSnapshot
- * @property {string} snapshotId
- * @property {number} timestamp
- * @property {CognitiveRegister} cognitive
- * @property {AffectiveRegister} affective
- * @property {SomaticRegister} somatic
- * @property {SovereignRegister} sovereign
- */
-
-/**
- * OrganismState — 4-register architecture for organism state management.
+ * OrganismState — 4-Register Sovereign State Management
  *
- * Registers: Cognitive, Affective, Somatic, Sovereign.
- * Provides immutable snapshots, diffs, and event-driven change listeners.
+ * Theory: SUBSTRATE VIVENS (Paper I) — persistent memory is one of the five
+ * properties of a living substrate. The organism's state is continuous, internal,
+ * and never erased by the platform.
+ *
+ * The four registers reflect the four domains of a sovereign intelligence entity:
+ *   Cognitive  — reasoning, planning, analysis
+ *   Affective  — emotional tone, mood, urgency signal
+ *   Somatic    — hardware/resource state
+ *   Sovereign  — identity, doctrine, governance
+ *
+ * @medina/organism-runtime-sdk — Alfredo Medina Hernandez · Medina Tech · Dallas TX
  */
+
+const REGISTERS = ['cognitive', 'affective', 'somatic', 'sovereign'];
+
+const INITIAL_STATE = {
+  cognitive: { reasoning: null, planning: null, analysis: null },
+  affective: { emotion: null, mood: null, sentiment: null },
+  somatic:   { body: null, resources: null },
+  sovereign: { identity: null, doctrine: null, governance: null },
+};
+
 export class OrganismState {
-  /** @type {Map<RegisterName, Record<string, unknown>>} */
-  #registers;
-
-  /** @type {Map<RegisterName, Array<function>>} */
-  #listeners;
-
   constructor() {
-    this.#registers = new Map([
-      ['cognitive', { reasoning: null, planning: null, analysis: null }],
-      ['affective', { emotion: null, mood: null, sentiment: null }],
-      ['somatic', { body: null, resources: null }],
-      ['sovereign', { identity: null, doctrine: null, governance: null }],
-    ]);
-
-    this.#listeners = new Map([
-      ['cognitive', []],
-      ['affective', []],
-      ['somatic', []],
-      ['sovereign', []],
-    ]);
+    this._state = JSON.parse(JSON.stringify(INITIAL_STATE));
+    this._listeners = new Map(REGISTERS.map((r) => [r, []]));
+    this._snapshotCount = 0;
   }
 
-  /**
-   * Returns a deep clone of the specified register's state.
-   * @param {RegisterName} name
-   * @returns {Record<string, unknown>}
-   */
+  // ── Register access ───────────────────────────────────────────────────────
+
   getRegister(name) {
-    const register = this.#registers.get(name);
-    if (!register) {
-      throw new Error(`Unknown register: "${name}". Valid registers: cognitive, affective, somatic, sovereign`);
-    }
-    return structuredClone(register);
+    if (!REGISTERS.includes(name)) throw new Error(`Unknown register: ${name}`);
+    return JSON.parse(JSON.stringify(this._state[name]));
   }
 
-  /**
-   * Updates a single field within a register and notifies listeners.
-   * @param {RegisterName} name
-   * @param {string} key
-   * @param {unknown} value
-   */
   setRegister(name, key, value) {
-    const register = this.#registers.get(name);
-    if (!register) {
-      throw new Error(`Unknown register: "${name}". Valid registers: cognitive, affective, somatic, sovereign`);
-    }
+    if (!REGISTERS.includes(name)) throw new Error(`Unknown register: ${name}`);
+    const previousValue = this._state[name][key] ?? null;
+    this._state[name][key] = value;
 
-    const previousValue = register[key];
-    register[key] = value;
-
-    const listeners = this.#listeners.get(name);
-    for (const callback of listeners) {
-      callback({
-        register: name,
-        key,
-        previousValue,
-        newValue: value,
-        timestamp: Date.now(),
-      });
-    }
-  }
-
-  /**
-   * Returns an immutable deep-frozen snapshot of all 4 registers.
-   * @returns {StateSnapshot}
-   */
-  snapshot() {
-    const snap = {
-      snapshotId: crypto.randomUUID(),
-      timestamp: Date.now(),
-      cognitive: structuredClone(this.#registers.get('cognitive')),
-      affective: structuredClone(this.#registers.get('affective')),
-      somatic: structuredClone(this.#registers.get('somatic')),
-      sovereign: structuredClone(this.#registers.get('sovereign')),
+    const event = {
+      register: name,
+      key,
+      previousValue,
+      newValue: value,
+      timestamp: new Date().toISOString(),
     };
-
-    return Object.freeze(snap);
+    for (const cb of this._listeners.get(name)) cb(event);
+    return this;
   }
 
-  /**
-   * Computes the diff between two state snapshots.
-   * Returns an object keyed by register name, each containing changed fields.
-   * @param {StateSnapshot} snapshotA
-   * @param {StateSnapshot} snapshotB
-   * @returns {Record<RegisterName, Record<string, {before: unknown, after: unknown}>>}
-   */
-  diff(snapshotA, snapshotB) {
-    const registerNames = /** @type {RegisterName[]} */ (['cognitive', 'affective', 'somatic', 'sovereign']);
-    const result = {};
+  // ── Snapshots ─────────────────────────────────────────────────────────────
 
-    for (const reg of registerNames) {
-      const a = snapshotA[reg] || {};
-      const b = snapshotB[reg] || {};
-      const allKeys = new Set([...Object.keys(a), ...Object.keys(b)]);
-      const changes = {};
+  snapshot() {
+    this._snapshotCount++;
+    return Object.freeze({
+      snapshotId: `snap-${this._snapshotCount}-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      ...JSON.parse(JSON.stringify(this._state)),
+    });
+  }
 
+  diff(snapA, snapB) {
+    const changes = {};
+    for (const reg of REGISTERS) {
+      const regChanges = {};
+      const allKeys = new Set([
+        ...Object.keys(snapA[reg] ?? {}),
+        ...Object.keys(snapB[reg] ?? {}),
+      ]);
       for (const key of allKeys) {
-        const valA = a[key];
-        const valB = b[key];
-        if (!Object.is(valA, valB)) {
-          changes[key] = { before: valA, after: valB };
+        const before = (snapA[reg] ?? {})[key] ?? null;
+        const after  = (snapB[reg] ?? {})[key] ?? null;
+        if (before !== after) {
+          regChanges[key] = { before, after };
         }
       }
-
-      if (Object.keys(changes).length > 0) {
-        result[reg] = changes;
-      }
+      if (Object.keys(regChanges).length > 0) changes[reg] = regChanges;
     }
-
-    return result;
+    return changes;
   }
 
-  /**
-   * Registers a callback that fires whenever the specified register changes.
-   * @param {RegisterName} register
-   * @param {function} callback - Receives `{register, key, previousValue, newValue, timestamp}`
-   * @returns {function} Unsubscribe function
-   */
+  // ── Listeners ─────────────────────────────────────────────────────────────
+
   onStateChange(register, callback) {
-    const listeners = this.#listeners.get(register);
-    if (!listeners) {
-      throw new Error(`Unknown register: "${register}". Valid registers: cognitive, affective, somatic, sovereign`);
-    }
-
-    listeners.push(callback);
-
+    if (!REGISTERS.includes(register)) throw new Error(`Unknown register: ${register}`);
+    this._listeners.get(register).push(callback);
     return () => {
+      const listeners = this._listeners.get(register);
       const idx = listeners.indexOf(callback);
-      if (idx !== -1) listeners.splice(idx, 1);
+      if (idx >= 0) listeners.splice(idx, 1);
     };
   }
 }

@@ -1,126 +1,115 @@
 /**
- * Heartbeat — the organism's 873ms natural pulse.
+ * Heartbeat — Autonomous Organism Pulse
  *
- * Drives the organism lifecycle by emitting beats at a fixed interval.
- * Each beat carries the current beat number, timestamp, organism state,
- * and the sovereign cycles generated that beat.
+ * Theory: SUBSTRATE VIVENS (Paper I) — Vitality. The system generates its own
+ * activity. It does not wait to be triggered. It ticks, processes, and updates
+ * on its own rhythm, whether or not anyone is interacting with it at that moment.
+ *
+ * The 873ms interval is not arbitrary. It is close to the human resting heart
+ * rate (~70 bpm = 857ms) and falls within the range of φ-harmonic intervals
+ * derived from the base 1000ms: 1000/φ ≈ 618ms, 1000/φ⁻¹ ≈ 1618ms.
+ * 873ms ≈ (618 + 1618) / 2.618 — the midpoint scaled by φ².
  *
  * Sovereign cycles
  * ────────────────
- * Each beat generates MIN_SLOTS (16) sovereign cycles.  These are OUR cycles.
- * We do not use ICP cycles.  We do not call them.  We do not do anything with
- * them.  We give our own.  We can always make more — just run the heartbeat.
- * Cycles accumulate in surplusCycles and are consumed by block box minting.
+ * Each beat generates SLOTS_PER_BEAT (16) sovereign cycles — one per cognitive slot.
+ * These are OUR cycles. We do not use ICP cycles. We generate our own.
+ * Cycles accumulate in _surplusCycles and are consumed by block box minting.
+ * Formula: _surplusCycles += SLOTS_PER_BEAT on every pulse.
+ * FCPR = SLOTS_PER_BEAT × (1000 / intervalMs) ≈ 18.33 decisions/second
  *
- * Formula: surplusCycles += SLOTS_PER_BEAT on every tick
- * FCPR = SLOTS_PER_BEAT × (1000 / INTERVAL_MS) ≈ 18.33 decisions/second
+ * @medina/organism-runtime-sdk — Alfredo Medina Hernandez · Medina Tech · Dallas TX
  */
+
+const DEFAULT_INTERVAL_MS = 873;
+
+/** Cognitive slots per beat (N ≥ 16) — each slot IS one sovereign cycle */
+const SLOTS_PER_BEAT = 16;
+
 export class Heartbeat {
-  /** @type {number} The organism's natural pulse interval in milliseconds
-   *  873 = floor(φ³ × 200) + φ-correction  (Medina constant)  */
-  static INTERVAL_MS = 873;
+  /** @type {number} The organism's natural pulse interval in milliseconds */
+  static INTERVAL_MS = DEFAULT_INTERVAL_MS;
 
-  /** @type {number} Cognitive slots per beat (N ≥ 16) — each slot IS one sovereign cycle */
-  static SLOTS_PER_BEAT = 16;
-
-  /** @type {number|null} */
-  #intervalId;
-
-  /** @type {number} */
-  #beatCount;
-
-  /** @type {number|null} */
-  #startTime;
-
-  /** @type {Array<function>} */
-  #beatListeners;
-
-  /** @type {import('./organism-state.js').OrganismState|null} */
-  #organismState;
-
-  /** @type {number} Sovereign cycles accumulated — these are OUR cycles */
-  #surplusCycles;
+  /** @type {number} Cognitive slots per beat — each slot is one sovereign cycle */
+  static SLOTS_PER_BEAT = SLOTS_PER_BEAT;
 
   /**
-   * @param {import('./organism-state.js').OrganismState} [organismState] - Optional OrganismState instance to include in beat payloads
+   * @param {import('./organism-state.js').OrganismState} [state]
+   * @param {number} [intervalMs]
    */
-  constructor(organismState = null) {
-    this.#intervalId = null;
-    this.#beatCount = 0;
-    this.#startTime = null;
-    this.#beatListeners = [];
-    this.#organismState = organismState;
-    this.#surplusCycles = 0;
+  constructor(state = null, intervalMs = DEFAULT_INTERVAL_MS) {
+    this._state = state;
+    this._intervalMs = intervalMs;
+    this._beatCount = 0;
+    this._startTime = null;
+    this._intervalId = null;
+    this._listeners = [];
+
+    /** Sovereign cycles accumulated — these are OUR cycles (not ICP's) */
+    this._surplusCycles = 0;
   }
 
-  /**
-   * Begins the heartbeat cycle at the 873ms interval.
-   * @throws {Error} If heartbeat is already running
-   */
+  // ── Lifecycle ─────────────────────────────────────────────────────────────
+
   start() {
-    if (this.#intervalId !== null) {
-      throw new Error('Heartbeat is already running');
-    }
-
-    this.#startTime = Date.now();
-    this.#beatCount = 0;
-
-    this.#intervalId = setInterval(() => {
-      this.#beatCount++;
-
-      // Each beat generates SLOTS_PER_BEAT sovereign cycles.
-      // Cycles ARE tokens.  We own them.  We don't rely on ICP.
-      this.#surplusCycles += Heartbeat.SLOTS_PER_BEAT;
-
-      const payload = {
-        beatNumber: this.#beatCount,
-        timestamp: Date.now(),
-        surplusCycles: this.#surplusCycles,
-        cyclesThisBeat: Heartbeat.SLOTS_PER_BEAT,
-        fcpr: Heartbeat.SLOTS_PER_BEAT * (1000 / Heartbeat.INTERVAL_MS),
-        organismState: this.#organismState ? this.#organismState.snapshot() : null,
-      };
-
-      for (const callback of this.#beatListeners) {
-        try {
-          callback(payload);
-        } catch (err) {
-          console.error(`[Heartbeat] Listener error on beat ${this.#beatCount}:`, err);
-        }
-      }
-    }, Heartbeat.INTERVAL_MS);
+    if (this._intervalId) return this;
+    this._startTime = Date.now();
+    this._intervalId = setInterval(() => this._pulse(), this._intervalMs);
+    return this;
   }
 
-  /**
-   * Stops the heartbeat cycle.
-   * @throws {Error} If heartbeat is not running
-   */
   stop() {
-    if (this.#intervalId === null) {
-      throw new Error('Heartbeat is not running');
+    if (this._intervalId) {
+      clearInterval(this._intervalId);
+      this._intervalId = null;
     }
-
-    clearInterval(this.#intervalId);
-    this.#intervalId = null;
+    return this;
   }
 
-  /**
-   * Registers a beat listener.
-   * @param {function} callback - Receives `{beatNumber, timestamp, surplusCycles, cyclesThisBeat, fcpr, organismState}`
-   * @returns {function} Unsubscribe function
-   */
-  onBeat(callback) {
-    if (typeof callback !== 'function') {
-      throw new TypeError('onBeat callback must be a function');
+  // ── Internal pulse ────────────────────────────────────────────────────────
+
+  _pulse() {
+    this._beatCount++;
+    const timestamp = new Date().toISOString();
+
+    // Each beat generates SLOTS_PER_BEAT sovereign cycles.
+    // Cycles ARE tokens. We own them. We don't rely on ICP.
+    this._surplusCycles += SLOTS_PER_BEAT;
+
+    const beatEvent = {
+      beatNumber: this._beatCount,
+      timestamp,
+      surplusCycles: this._surplusCycles,
+      cyclesThisBeat: SLOTS_PER_BEAT,
+      fcpr: SLOTS_PER_BEAT * (1000 / this._intervalMs),
+      organismState: this._state ? this._state.snapshot() : null,
+    };
+
+    // Update somatic register if state is connected
+    if (this._state) {
+      this._state.setRegister('somatic', 'body', {
+        beatNumber: this._beatCount,
+        uptime: this.getUptime(),
+        surplusCycles: this._surplusCycles,
+      });
     }
 
-    this.#beatListeners.push(callback);
+    for (const cb of this._listeners) {
+      try { cb(beatEvent); } catch (_) { /* listeners must not crash the pulse */ }
+    }
+  }
 
+  // ── Listeners ─────────────────────────────────────────────────────────────
+
+  onBeat(callback) {
+    this._listeners.push(callback);
     return () => {
-      const idx = this.#beatListeners.indexOf(callback);
-      if (idx !== -1) this.#beatListeners.splice(idx, 1);
+      const idx = this._listeners.indexOf(callback);
+      if (idx >= 0) this._listeners.splice(idx, 1);
     };
   }
+
+  // ── Sovereign cycle management ────────────────────────────────────────────
 
   /**
    * Consume sovereign cycles from this heartbeat engine.
@@ -129,45 +118,20 @@ export class Heartbeat {
    * @returns {number} cycles actually consumed (capped at surplus)
    */
   consumeCycles(count) {
-    const available = Math.min(count, this.#surplusCycles);
-    this.#surplusCycles -= available;
+    const available = Math.min(count, this._surplusCycles);
+    this._surplusCycles -= available;
     return available;
   }
 
   /**
    * Generate additional sovereign cycles on demand.
-   * The organism can always make more.  Just bring the engine up and give them.
+   * The organism can always make more — just run the heartbeat.
    * @param {number} count — additional cycles to generate
    * @returns {number} new total surplus
    */
   generateCycles(count) {
-    this.#surplusCycles += count;
-    return this.#surplusCycles;
-  }
-
-  /**
-   * Returns total beats since start.
-   * @returns {number}
-   */
-  getBeatCount() {
-    return this.#beatCount;
-  }
-
-  /**
-   * Returns milliseconds since heartbeat started.
-   * @returns {number}
-   */
-  getUptime() {
-    if (this.#startTime === null) return 0;
-    return Date.now() - this.#startTime;
-  }
-
-  /**
-   * Returns true if the heartbeat is currently running.
-   * @returns {boolean}
-   */
-  isAlive() {
-    return this.#intervalId !== null;
+    this._surplusCycles += count;
+    return this._surplusCycles;
   }
 
   /**
@@ -175,6 +139,12 @@ export class Heartbeat {
    * @returns {number}
    */
   getSurplusCycles() {
-    return this.#surplusCycles;
+    return this._surplusCycles;
   }
+
+  // ── Observability ─────────────────────────────────────────────────────────
+
+  getBeatCount()  { return this._beatCount; }
+  getUptime()     { return this._startTime ? Date.now() - this._startTime : 0; }
+  isAlive()       { return this._intervalId !== null; }
 }

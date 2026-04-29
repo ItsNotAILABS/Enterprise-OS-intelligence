@@ -1,0 +1,224 @@
+name: "ORO SDK CI [E1–E15] — Engine Integrity Check"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Engine identity mapping (all 15 engines run — this CI validates all of them)
+#   E1  — Proposal Ingestor          TRACE GROUP
+#   E2  — Payload Parser             TRACE GROUP
+#   E3  — Target Resolver            TRACE GROUP
+#   E4  — Effect Path Builder        TRACE GROUP
+#   E5  — Runtime Truth Engine       VERIFY GROUP
+#   E6  — Risk Scorer                VERIFY GROUP
+#   E7  — Verification Plan Builder  VERIFY GROUP
+#   E8  — Reviewer Integration       VERIFY GROUP
+#   E9  — Governance Memory Engine   REMEMBER GROUP
+#   E10 — Post-Execution Watch       REMEMBER GROUP
+#   E11 — Agent Council              REMEMBER GROUP
+#   E12 — Public Summary Engine      REMEMBER GROUP
+#   E13 — Evidence Registry          TRACE GROUP (cross-cuts)
+#   E14 — Dispute/Correction Engine  VERIFY GROUP (cross-cuts)
+#   E15 — Render/Export Engine       REMEMBER GROUP (cross-cuts)
+#
+# This workflow runs on every push to sdk/ and validates:
+#   1. All 15 engine JS files are importable (no syntax errors, no broken exports)
+#   2. Both SDK editions (release + speedster) export correctly
+#   3. package.json exports map to real files
+#   4. Agent Council (ARCHON, VECTOR, LUMEN, FORGE) all load
+#   5. Types are complete and the PHI constant is present
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  push:
+    paths:
+      - 'sdk/**'
+  pull_request:
+    paths:
+      - 'sdk/**'
+  schedule:
+    # Runs every 4 hours — autonomous, always-on
+    # The organism watches without being asked. So does its CI.
+    # VIVIT · MEMINIT · GUBERNAT
+    - cron: '0 */4 * * *'
+  workflow_dispatch:  # manual trigger for on-demand runs
+
+permissions:
+  contents: read
+
+jobs:
+  oro-engine-ci:
+    name: "[E1–E15] ORO Engine Integrity Check"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "[E1] Ingest — Checkout repository"
+        uses: actions/checkout@v4
+
+      - name: "[E2] Parse — Setup Node.js runtime"
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: "[E1–E15] TRACE·VERIFY·REMEMBER — Validate all 15 engine imports"
+        working-directory: sdk/effecttrace-governance-organism
+        run: |
+          node --input-type=module << 'EOF'
+          // E1–E4, E13 — TRACE GROUP
+          const { ProposalIngestEngine }       = await import('./src/engines/e1-proposal-ingest.js');
+          const { PayloadParserEngine }        = await import('./src/engines/e2-payload-parser.js');
+          const { TargetResolverEngine }       = await import('./src/engines/e3-target-resolver.js');
+          const { EffectPathEngine }           = await import('./src/engines/e4-effect-path.js');
+          const { EvidenceRegistryEngine }     = await import('./src/engines/e13-evidence-registry.js');
+          // E5–E8, E14 — VERIFY GROUP
+          const { RuntimeTruthEngine }         = await import('./src/engines/e5-runtime-truth.js');
+          const { RiskClassifierEngine }       = await import('./src/engines/e6-risk-classifier.js');
+          const { VerificationPlanEngine }     = await import('./src/engines/e7-verification-plan.js');
+          const { ReviewerIntegrationEngine }  = await import('./src/engines/e8-reviewer-integration.js');
+          const { DisputeCorrectionEngine }    = await import('./src/engines/e14-dispute-correction.js');
+          // E9–E12, E15 — REMEMBER GROUP
+          const { GovernanceMemoryEngine }     = await import('./src/engines/e9-governance-memory.js');
+          const { PostExecutionWatchEngine }   = await import('./src/engines/e10-post-execution-watch.js');
+          const { AgentCouncilEngine }         = await import('./src/engines/e11-agent-council.js');
+          const { PublicSummaryEngine }        = await import('./src/engines/e12-public-summary.js');
+          const { RenderabilityExportEngine }  = await import('./src/engines/e15-render-export.js');
+
+          // Verify all 15 are constructable
+          const engines = [
+            ['E1',  ProposalIngestEngine],
+            ['E2',  PayloadParserEngine],
+            ['E3',  TargetResolverEngine],
+            ['E4',  EffectPathEngine],
+            ['E5',  RuntimeTruthEngine],
+            ['E6',  RiskClassifierEngine],
+            ['E7',  VerificationPlanEngine],
+            ['E8',  ReviewerIntegrationEngine],
+            ['E9',  GovernanceMemoryEngine],
+            ['E10', PostExecutionWatchEngine],
+            ['E11', AgentCouncilEngine],
+            ['E12', PublicSummaryEngine],
+            ['E13', EvidenceRegistryEngine],
+            ['E14', DisputeCorrectionEngine],
+            ['E15', RenderabilityExportEngine],
+          ];
+
+          let passed = 0;
+          for (const [name, Cls] of engines) {
+            try {
+              new Cls();
+              console.log(`  ✓  ${name} — ${Cls.name}`);
+              passed++;
+            } catch (e) {
+              console.error(`  ✗  ${name} — ${Cls.name}: ${e.message}`);
+              process.exit(1);
+            }
+          }
+          console.log(`\n  ${passed}/15 engines verified — TRACE·VERIFY·REMEMBER intact\n`);
+          EOF
+
+      - name: "[E11] Agent Council — Validate ARCHON, VECTOR, LUMEN, FORGE"
+        working-directory: sdk/effecttrace-governance-organism
+        run: |
+          node --input-type=module << 'EOF'
+          const { IntegrityAgent }       = await import('./src/agents/integrity.js');
+          const { ExecutionTraceAgent }  = await import('./src/agents/execution-trace.js');
+          const { ContextMapAgent }      = await import('./src/agents/context-map.js');
+          const { VerificationLabAgent } = await import('./src/agents/verification-lab.js');
+
+          const agents = [
+            ['ARCHON', IntegrityAgent],
+            ['VECTOR', ExecutionTraceAgent],
+            ['LUMEN',  ContextMapAgent],
+            ['FORGE',  VerificationLabAgent],
+          ];
+
+          for (const [codename, Cls] of agents) {
+            try {
+              new Cls();
+              console.log(`  ✓  ${codename} (${Cls.name})`);
+            } catch (e) {
+              console.error(`  ✗  ${codename}: ${e.message}`);
+              process.exit(1);
+            }
+          }
+          console.log(`\n  Agent Council [ARCHON·VECTOR·LUMEN·FORGE] verified\n`);
+          EOF
+
+      - name: "[E13] Evidence Registry — Validate type system and PHI constant"
+        working-directory: sdk/effecttrace-governance-organism
+        run: |
+          node --input-type=module << 'EOF'
+          const types = await import('./src/types.js');
+          const required = [
+            'createEffectTraceRecord', 'createProposalRecord', 'createSourceLink',
+            'createFinding', 'TRACE_STATUS', 'TRUTH_STATUS', 'RISK_LEVEL',
+            'TRACE', 'VERIFY', 'REMEMBER', 'THREE_WORDS', 'PHI',
+          ];
+          const missing = required.filter(k => !(k in types));
+          if (missing.length > 0) {
+            console.error(`  ✗  Missing type exports: ${missing.join(', ')}`);
+            process.exit(1);
+          }
+          if (typeof types.PHI !== 'number' || Math.abs(types.PHI - 1.6180339887) > 0.001) {
+            console.error(`  ✗  PHI constant incorrect: ${types.PHI}`);
+            process.exit(1);
+          }
+          console.log(`  ✓  PHI = ${types.PHI} (golden ratio verified)`);
+          console.log(`  ✓  ${required.length} type exports verified`);
+          console.log(`  ✓  TRACE='${types.TRACE}' VERIFY='${types.VERIFY}' REMEMBER='${types.REMEMBER}'\n`);
+          EOF
+
+      - name: "[E15] Render/Export — Validate release and speedster editions"
+        working-directory: sdk/effecttrace-governance-organism
+        run: |
+          node --input-type=module << 'EOF'
+          // Release edition
+          const release = await import('./src/release.js');
+          const releaseExports = ['OROGovernanceOrganism', 'bootstrapORORelease',
+                                  'ORO_ENGINE', 'POWERED_BY_ORO', 'PHI',
+                                  'ECOSYSTEM_CATALOG', 'SYSTEM_IDENTITY'];
+          for (const name of releaseExports) {
+            if (!(name in release)) {
+              console.error(`  ✗  Release edition missing: ${name}`);
+              process.exit(1);
+            }
+            console.log(`  ✓  Release.${name}`);
+          }
+
+          // Speedster edition
+          const speedster = await import('./src/speedster.js');
+          const speedsterExports = ['createSpeedsterOrganism', 'withDebug',
+                                    'buildEngineChain', 'DEBUG_EVENTS',
+                                    'SPEEDSTER_DEFAULTS', 'ECOSYSTEM',
+                                    'E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8',
+                                    'E9', 'E10', 'E11', 'E12', 'E13', 'E14', 'E15',
+                                    'ARCHON', 'VECTOR', 'LUMEN', 'FORGE'];
+          for (const name of speedsterExports) {
+            if (!(name in speedster)) {
+              console.error(`  ✗  Speedster edition missing: ${name}`);
+              process.exit(1);
+            }
+            console.log(`  ✓  Speedster.${name}`);
+          }
+
+          // Ecosystem catalog
+          const { ECOSYSTEM_CATALOG, SYSTEM_IDENTITY } = await import('./src/ecosystem-catalog.js');
+          if (ECOSYSTEM_CATALOG.engines.length !== 15) { process.exit(1); }
+          if (!SYSTEM_IDENTITY.latinName) { process.exit(1); }
+          console.log(`  ✓  Ecosystem catalog: ${ECOSYSTEM_CATALOG.engines.length} engines · ${ECOSYSTEM_CATALOG.papers.length} papers`);
+          console.log(`  ✓  Identity: ${SYSTEM_IDENTITY.latinName} — ${SYSTEM_IDENTITY.motto}`);
+
+          console.log(`\n  Release: ${releaseExports.length} · Speedster: ${speedsterExports.length} · Catalog: verified\n`);
+          EOF
+
+      - name: "[E15] Render/Export — Publish CI summary"
+        run: |
+          echo "### ORO SDK CI [E1–E15] — Engine Integrity Check" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Group | Engines | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|---------|--------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| TRACE | E1 E2 E3 E4 E13 | ✅ |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| VERIFY | E5 E6 E7 E8 E14 | ✅ |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| REMEMBER | E9 E10 E11 E12 E15 | ✅ |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Agent Council | ARCHON VECTOR LUMEN FORGE | ✅ |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| SDK Editions | Release · Speedster | ✅ |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Ecosystem Catalog | Gubernatio Viva | ✅ |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "*Gubernatio Viva — VIVIT · MEMINIT · GUBERNAT — Medina Tech · Chaos Lab*" >> "$GITHUB_STEP_SUMMARY"

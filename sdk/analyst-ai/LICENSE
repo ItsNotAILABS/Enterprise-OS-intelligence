@@ -1,0 +1,145 @@
+MEDINA PROPRIETARY LICENSE
+Version 1.0 — April 2026
+
+Copyright (c) 2026 Alfredo Medina Hernandez. All Rights Reserved.
+Medina Tech · Chaos Lab · Dallas, Texas
+Contact: Medinasitech@outlook.com
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+NOTICE OF PROPRIETARY RIGHTS
+
+This software, including all source code, documentation, architecture specifications,
+design patterns, algorithmic implementations, data structures, and related materials
+(collectively, "the Software"), is the exclusive proprietary property of
+Alfredo Medina Hernandez ("Author"). The Software embodies trade secrets and
+confidential intellectual property of the Author.
+
+ALL RIGHTS RESERVED. NO PART OF THIS SOFTWARE MAY BE REPRODUCED, DISTRIBUTED,
+TRANSMITTED, MODIFIED, ADAPTED, TRANSLATED, REVERSE ENGINEERED, DECOMPILED,
+DISASSEMBLED, OR USED TO CREATE DERIVATIVE WORKS WITHOUT THE EXPRESS PRIOR
+WRITTEN PERMISSION OF THE AUTHOR.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. GRANT OF LIMITED EVALUATION LICENSE
+
+Subject to the terms and conditions of this License, the Author grants you a
+limited, non-exclusive, non-transferable, non-sublicensable, revocable license to:
+
+  (a) Download and install the Software on devices you personally own or control;
+  (b) Use the Software solely for personal, non-commercial evaluation purposes;
+  (c) View the source code for the purpose of understanding the Software's function.
+
+This evaluation license does not grant any right to use the Software for commercial
+purposes, in production environments, or in any application that generates revenue,
+directly or indirectly.
+
+2. RESTRICTIONS
+
+You expressly may NOT, without prior written authorization from the Author:
+
+  (a) Use the Software or any portion thereof for commercial purposes of any kind,
+      including but not limited to: SaaS products, consulting deliverables, paid
+      services, embedded products, white-label applications, or internal business
+      tools used for commercial activity;
+
+  (b) Distribute, publish, sublicense, sell, rent, lease, lend, or otherwise
+      transfer the Software or any rights therein to any third party;
+
+  (c) Modify, adapt, translate, alter, or create derivative works based upon the
+      Software or any component thereof;
+
+  (d) Remove, alter, obscure, or circumvent any proprietary notices, copyright
+      notices, trademarks, or other markings contained in the Software;
+
+  (e) Reverse engineer, decompile, disassemble, or attempt to derive the source
+      code of any compiled or obfuscated portion of the Software;
+
+  (f) Use the Software to build, train, or fine-tune any machine learning model,
+      language model, or artificial intelligence system;
+
+  (g) Use the Software in any way that competes with, or is reasonably likely to
+      compete with, the Author's commercial products or services;
+
+  (h) Use the Software in critical infrastructure, medical devices, emergency
+      response systems, or any application where failure could result in injury,
+      death, or significant property damage, without explicit written authorization.
+
+3. INTELLECTUAL PROPERTY OWNERSHIP
+
+The Author retains all right, title, and interest in and to the Software, including
+all intellectual property rights. This License does not grant you any ownership
+interest in the Software. All architectural concepts, design patterns, algorithmic
+innovations, and implementations embodied in the Software are the sole intellectual
+property of the Author and constitute a portion of a larger body of work including:
+
+  — The Sovereign Intelligence Research series (Papers I–XIX and beyond)
+  — The MERIDIAN Sovereign OS architecture
+  — The VOXIS, CORDEX, CEREBEX, CYCLOVEX, CHRONO, NEXORIS, and SPINOR components
+  — The Native Novel Protocol architecture
+  — All associated trademarks, trade dress, and brand identifiers
+
+The names "Medina Tech," "Chaos Lab," "MERIDIAN," "VOXIS," "CEREBEX," "CORDEX,"
+"CYCLOVEX," "CHRONO," "NEXORIS," "SPINOR," "Bronze Canister," "Native Novel Protocol,"
+and related names are trademarks of the Author. All rights reserved.
+
+4. COMMERCIAL LICENSE
+
+For commercial use, enterprise deployment, OEM integration, white-label licensing,
+or any use beyond the evaluation license granted in Section 1, you must obtain a
+separate written commercial license agreement from the Author.
+
+Contact: Medinasitech@outlook.com
+Subject line: "Commercial License Inquiry — [SDK Name]"
+
+5. NO WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHOR BE
+LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+6. INDEMNIFICATION
+
+You agree to indemnify, defend, and hold harmless the Author from and against any
+claims, liabilities, damages, losses, and expenses arising out of your use of the
+Software in violation of this License.
+
+7. TERMINATION
+
+This License is effective until terminated. It terminates automatically, without
+notice, if you fail to comply with any provision of this License. Upon termination,
+you must destroy all copies of the Software in your possession.
+
+8. GOVERNING LAW
+
+This License shall be governed by and construed in accordance with the laws of the
+State of Texas, United States of America, without regard to its conflict of law
+provisions. Any dispute shall be resolved by binding arbitration in Dallas, Texas.
+
+9. SEVERABILITY
+
+If any provision of this License is held invalid or unenforceable, the remaining
+provisions shall continue in full force and effect.
+
+10. ENTIRE AGREEMENT
+
+This License constitutes the entire agreement between you and the Author concerning
+the Software and supersedes all prior negotiations, representations, and agreements.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+INTEGRITY VERIFICATION
+
+This Software is cryptographically signed. Verify authenticity before use.
+Tampered or unauthorized distributions void all license grants.
+
+SHA-256 checksums for all official release archives are published at:
+https://github.com/FreddyCreates/Enterprise-OS-intelligence/blob/main/releases/CHECKSUMS.sha256
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Alfredo Medina Hernandez · Medina Tech · Chaos Lab · Dallas, Texas
+© 2026 All Rights Reserved.

@@ -1,0 +1,65 @@
+name: "Mundator Cognitus [E13] — Document Verify Guard (PASS 2)"
+
+on:
+  push:
+    paths:
+      - 'papers/**'
+      - 'tools/doc-sanitizer.js'
+  pull_request:
+    paths:
+      - 'papers/**'
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Engine identity mapping
+#   E13 — Evidence Registry     : every claim must be source-linked or marked unknown
+#   E14 — Dispute/Correction    : allows corrections, disputed findings, version history
+#
+# This workflow is the GUARD (read-only, fails on problems).
+# The sovereign-intake.yml workflow is the INTAKE (auto-fixes, then guards).
+# ─────────────────────────────────────────────────────────────────────────────
+
+permissions:
+  contents: read   # read-only guard — this workflow never pushes
+
+jobs:
+  sanitize:
+    name: "[E13] Verify Guard — PASS 2 Only (strict read-only)"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "[E1] Ingest — Checkout branch"
+        uses: actions/checkout@v4
+
+      - name: "[E2] Parse — Setup Node.js runtime"
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: "[E13·E14] Evidence Registry + Dispute/Correction — Run Mundator Cognitus (PASS 2 — strict verify)"
+        run: node tools/doc-sanitizer.js papers/ --verify
+
+      - name: "[E13] Evidence Registry — Check for sensitive files accidentally staged"
+        run: |
+          echo "Checking for accidentally committed sensitive files..."
+          # NOTE: protocols/ and sdk/*/src/ are intentionally omitted from this list —
+          # the ORO protocol specifications ship as public research documents, and the
+          # SDK src/ directories are part of the published open-source packages.
+          FORBIDDEN=(
+            "nova.json"
+            "scripts/"
+            "extensions/"
+            "*_Register.csv"
+            "*_Manifest.json"
+          )
+          FOUND=0
+          for pattern in "${FORBIDDEN[@]}"; do
+            if git ls-files --error-unmatch "$pattern" 2>/dev/null; then
+              echo "::error::Sensitive file found in repo: $pattern"
+              FOUND=1
+            fi
+          done
+          if [ "$FOUND" -eq "0" ]; then
+            echo "No sensitive files detected. Repository is clean."
+          else
+            exit 1
+          fi

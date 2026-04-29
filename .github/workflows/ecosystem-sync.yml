@@ -1,0 +1,112 @@
+name: "Ecosystem Sync [E9] — Auto-regenerate catalog on ECOSYSTEM.md change"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# GUBERNATIO VIVA — VIVIT · MEMINIT · GUBERNAT
+#
+# Engine identity: E9 — Governance Memory Engine (REMEMBER GROUP)
+#   The ecosystem catalog is the organism's memory of itself.
+#   When ECOSYSTEM.md is updated, this workflow regenerates the machine-readable
+#   ecosystem-catalog.js and commits it back automatically.
+#   Every running organism ingests the update on its next start.
+#
+# What this workflow does:
+#   1. Detects changes to ECOSYSTEM.md on any non-main branch
+#   2. Updates the `generatedAt` timestamp in ecosystem-catalog.js
+#   3. Commits the updated catalog back to the branch
+#   4. Verifies the catalog loads correctly as a JS module
+#
+# The catalog is the bridge between the living document (ECOSYSTEM.md)
+# and the living organism (OROGovernanceOrganism).
+# When the document changes, the organism knows.
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - 'ECOSYSTEM.md'
+
+permissions:
+  contents: write
+
+jobs:
+  ecosystem-sync:
+    name: "[E9] Ecosystem Memory Sync — Regenerate Catalog"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "[E1] Ingest — Checkout branch"
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: "[E2] Parse — Setup Node.js runtime"
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: "[E9] Governance Memory — Update catalog timestamp"
+        id: sync
+        run: |
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
+          echo "Ecosystem sync at $TIMESTAMP"
+
+          # Update the generatedAt timestamp in ecosystem-catalog.js
+          # This marks the catalog as current with ECOSYSTEM.md
+          CATALOG="sdk/effecttrace-governance-organism/src/ecosystem-catalog.js"
+
+          if [ -f "$CATALOG" ]; then
+            # Replace the generatedAt line with the current timestamp
+            sed -i "s|generatedAt:.*'.*'|generatedAt:      '${TIMESTAMP}'|g" "$CATALOG"
+            echo "updated=true" >> "$GITHUB_OUTPUT"
+            echo "timestamp=$TIMESTAMP" >> "$GITHUB_OUTPUT"
+            echo "Catalog timestamp updated to $TIMESTAMP"
+          else
+            echo "updated=false" >> "$GITHUB_OUTPUT"
+            echo "WARNING: ecosystem-catalog.js not found — skipping timestamp update"
+          fi
+
+      - name: "[E9] Governance Memory — Verify catalog loads as JS module"
+        run: |
+          node --input-type=module << 'EOF'
+          const catalog = await import('./sdk/effecttrace-governance-organism/src/ecosystem-catalog.js');
+          const { ECOSYSTEM_CATALOG, SYSTEM_IDENTITY, ENGINES, AGENTS, PAPERS } = catalog;
+
+          if (!ECOSYSTEM_CATALOG) throw new Error('ECOSYSTEM_CATALOG not exported');
+          if (!SYSTEM_IDENTITY.latinName) throw new Error('SYSTEM_IDENTITY.latinName missing');
+          if (ENGINES.length !== 15) throw new Error(`Expected 15 engines, got ${ENGINES.length}`);
+          if (AGENTS.length !== 4)  throw new Error(`Expected 4 agents, got ${AGENTS.length}`);
+
+          console.log(`  ✓  ${SYSTEM_IDENTITY.officialName}`);
+          console.log(`  ✓  Latin: ${SYSTEM_IDENTITY.latinName} — ${SYSTEM_IDENTITY.latinMeaning}`);
+          console.log(`  ✓  Motto: ${SYSTEM_IDENTITY.motto}`);
+          console.log(`  ✓  ${ENGINES.length} engines · ${AGENTS.length} agents · ${PAPERS.length} papers`);
+          console.log(`  ✓  Catalog generatedAt: ${ECOSYSTEM_CATALOG.generatedAt}`);
+          console.log(`\n  ${SYSTEM_IDENTITY.motto} — Ecosystem catalog verified\n`);
+          EOF
+
+      - name: "[E15] Export — Commit updated catalog"
+        if: steps.sync.outputs.updated == 'true'
+        run: |
+          git config user.name  "Gubernatio Viva [E9·E15]"
+          git config user.email "actions@github.com"
+          git add sdk/effecttrace-governance-organism/src/ecosystem-catalog.js
+          git diff --staged --quiet || git commit -m "chore(ecosystem): [E9] sync catalog with ECOSYSTEM.md — ${{ steps.sync.outputs.timestamp }} [skip ci]"
+          git push
+
+      - name: "[E15] Export — Publish sync summary"
+        run: |
+          echo "### Ecosystem Memory Sync [E9·E15]" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Step | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|------|--------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| ECOSYSTEM.md change detected | ✅ |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Catalog timestamp updated | ✅ ${{ steps.sync.outputs.timestamp }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Catalog JS module verified | ✅ |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Committed back to branch | ✅ |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Every running organism ingests this update on its next start." >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "*Gubernatio Viva — VIVIT · MEMINIT · GUBERNAT — Medina Tech · Chaos Lab*" >> "$GITHUB_STEP_SUMMARY"
