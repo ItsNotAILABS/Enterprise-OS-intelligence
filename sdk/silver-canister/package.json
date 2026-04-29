@@ -1,7 +1,7 @@
 {
   "name": "@medina/silver-canister",
   "version": "2.0.0",
-  "description": "Silver Canister v2.0 — School-Level Sovereign System with REAL AI Intelligence. Uses CEREBEX for pattern analysis, NEXORIS for routing, COGNOVEX for quorum decisions. Connected to StudentAI via bidirectional sync. AI features: analyzeSchool(), identifyAtRiskStudents(), predictOutcomes(), recommendInterventions(), aiStaffingRecommendations(), aiResourceAllocation(), aiScheduleOptimization(). District integration for BISD-level operations.",
+  "description": "Silver Canister v2.0 — School-Level Sovereign System with REAL AI Intelligence. Uses CEREBEX for pattern analysis, NEXORIS for routing, COGNOVEX for quorum decisions. Connected to StudentAI via bidirectional sync. AI features: analyzeSchool(), identifyAtRiskStudents(), predictOutcomes(), recommendInterventions(), aiStaffingRecommendations(), aiResourceAllocation(), aiScheduleOptimization(). District integration for DISD (Dallas ISD) operations.",
   "license": "SEE LICENSE IN LICENSE",
   "author": {
     "name": "Alfredo Medina Hernandez",
@@ -36,7 +36,8 @@
     "nexoris",
     "cognovex",
     "meridian",
-    "bisd",
+    "disd",
+    "dallas-isd",
     "district"
   ],
   "repository": {

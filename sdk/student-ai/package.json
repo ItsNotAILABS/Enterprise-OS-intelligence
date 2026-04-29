@@ -26,7 +26,8 @@
     "bronze-canister",
     "silver-canister",
     "isd",
-    "bisd",
+    "disd",
+    "dallas-isd",
     "sovereign",
     "medina-tech"
   ],
