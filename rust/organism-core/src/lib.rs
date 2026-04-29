@@ -12,3 +12,4 @@ pub mod phi_math;
 pub mod crypto;
 pub mod wire;
 pub mod sovereign_cycle;
+pub mod ai_division;

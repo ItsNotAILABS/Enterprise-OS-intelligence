@@ -198,6 +198,20 @@ class CPLVM:
         if node.token.glyph in ("⟳Θ", "SVC_FCPR"):     return NumberValue(16.0 * 1000.0 / 873.0)
         if node.token.glyph in ("⟳✦", "SVC_SEAL"):     return NumberValue(1568.0)
 
+        # ── AI Division constants ────────────────────────────────────────────
+        # ⊕ (AID)          → 5.0   (five autonomous teams)
+        # ⊕E (AID_ENGINE)  → 873.0 (engine heartbeat ms)
+        # ⊕B (AID_BOX)     → 1.0   (bronze tier)
+        # ⊕F (AID_FIB)     → 46368.0 (Fibonacci level 5 capacity — institution)
+        # ⊕T (AID_TEAM)    → 16.0  (slots per team engine)
+        # ⊕M (AID_MINT)    → 0.0   (mint trigger)
+        if node.token.glyph in ("⬢",  "AID"):         return NumberValue(5.0)
+        if node.token.glyph in ("⬢E", "AID_ENGINE"):  return NumberValue(873.0)
+        if node.token.glyph in ("⬢B", "AID_BOX"):     return NumberValue(1.0)
+        if node.token.glyph in ("⬢F", "AID_FIB"):     return NumberValue(46368.0)
+        if node.token.glyph in ("⬢T", "AID_TEAM"):    return NumberValue(16.0)
+        if node.token.glyph in ("⬢M", "AID_MINT"):    return NumberValue(0.0)
+
         # ── Pythagorean number constants ──────────────────────────────────────
         # The Monad through Tetrad reduce to their sacred integer values.
         # The Tetractys = 1+2+3+4 = 10 (the perfect number of the Pythagoreans).

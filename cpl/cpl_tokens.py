@@ -404,6 +404,18 @@ OPERATORS: list[CPLToken] = [
     CPLToken("⟳F",  "SVC_FIB",     0x2093, 1, "ORGANISM",    None, None, "Fibonacci kernel compression"),
     CPLToken("⟳Θ",  "SVC_FCPR",    0x2094, 1, "ORGANISM",    None, None, "FCPR — decisions per second"),
     CPLToken("⟳✦",  "SVC_SEAL",    0x2095, 0, "ORGANISM",    None, None, "sovereign cycle seal / PHX-sealed beat"),
+
+    # ── AI DIVISION OPERATORS (0x20A0–0x20AF) ────────────────────────────────
+    #
+    # The AI Division — autonomous team management.
+    # Divisio Intelligentiae — The Division of Intelligence.
+
+    CPLToken("⬢",   "AID",         0x20A0, 0, "ORGANISM",    None, None, "AI division / autonomous team manager"),
+    CPLToken("⬢E",  "AID_ENGINE",  0x20A1, 0, "ORGANISM",    None, None, "cycle engine / autonomous cycle generator"),
+    CPLToken("⬢B",  "AID_BOX",     0x20A2, 1, "ORGANISM",    None, None, "bronze block box / self-minted QFB canister"),
+    CPLToken("⬢F",  "AID_FIB",     0x20A3, 1, "ORGANISM",    None, None, "Fibonacci scaler / φ-exponential growth"),
+    CPLToken("⬢T",  "AID_TEAM",    0x20A4, 1, "ORGANISM",    None, None, "AI team / autonomous team unit"),
+    CPLToken("⬢M",  "AID_MINT",    0x20A5, 1, "ORGANISM",    None, None, "mint / generate block box or token"),
 ]
 
 # ── Master token registry ──────────────────────────────────────────────────────
