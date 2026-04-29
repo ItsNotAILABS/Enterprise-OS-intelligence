@@ -32,33 +32,38 @@ ICP is a primary deployment substrate. MERIDIAN canisters run natively on the In
 
 ## Section II — The Three Asks
 
-### Ask I — Sovereign Intelligence Research Publication
+### Ask I — Sovereign Intelligence Research Institute
 
-**Fund the submission and archival of the Sovereign Intelligence Research corpus into peer-reviewed journals and permanent open-access archives.**
+**Establish Medina Tech as the permanent, ICP-affiliated research institute for sovereign intelligence.**
 
-The fifteen papers are written. The research is complete. What this ask funds:
+The fifteen papers are written. The architect is already submitting to arXiv. The research exists. What does not yet exist is the institutional recognition that turns a body of independent research into a chartered institute with standing in the academic and standards communities.
 
-- Journal submission fees and open-access publication charges for Papers I–XV
-- arXiv/Zenodo permanent archival with DOI assignment
-- Peer review coordination across AI ethics, distributed systems, and cognitive architecture venues
-- Conference presentation support (NeurIPS, ICML, ACL, IEEE, and distributed systems venues)
+This ask funds:
 
-**What ICP gets:** Peer-reviewed, citable research that formally establishes ICP as the substrate of a novel sovereign intelligence architecture. Every citation references ICP. Every paper's deployment examples run on ICP canisters.
+- Formal establishment of the Sovereign Intelligence Research Institute as a recognised research body affiliated with ICP
+- Research staff — dedicated researchers who extend the corpus beyond the architect's solo output into a multi-contributor, peer-reviewed programme
+- Standards body engagement — formal participation in IEEE, W3C, and ISO working groups on AI sovereignty, distributed intelligence, and on-chain compute standards, positioning ICP's architecture as the reference implementation
+- Annual Sovereign Intelligence symposium — a research conference hosted on ICP infrastructure, proceedings published on-chain, establishing ICP as the venue for this field
+- Research partnerships with universities — funded collaborative positions that bring academic researchers onto ICP to study sovereign intelligence, producing citable work that references ICP as substrate
 
-### Ask II — Full MERIDIAN Canister Infrastructure on ICP
+**What ICP gets:** An institutional research presence — not a paper submission, but a standing institute that continuously produces peer-reviewed work, participates in standards bodies, and positions ICP as the academic home of sovereign intelligence. Every output references ICP. Every researcher builds on ICP.
 
-**Fund the production deployment and certification of the complete MERIDIAN canister infrastructure on the Internet Computer.**
+### Ask II — MERIDIAN Enterprise Certification and Ecosystem Expansion
 
-The core architecture exists. The canisters run. What this ask funds:
+**Fund the certification, security audit, and ecosystem expansion of MERIDIAN as a production-grade enterprise platform on ICP.**
 
-- Production-grade canister certification and security audit
-- Cycle funding for sustained canister operation at scale
-- Cross-canister orchestration infrastructure (ICX market coordination across multiple canisters)
-- CXL bridge hardening for ICP ↔ EVM ↔ Solana cross-substrate contract settlement
-- SNS integration research — exploring decentralised governance of MERIDIAN organisms via ICP's Service Nervous System
-- Canister monitoring, health dashboards, and operational tooling
+The canisters run. The architecture is built. Medina Tech generates its own cycles. What does not yet exist is the third-party certification and ecosystem infrastructure that makes enterprise buyers say yes.
 
-**What ICP gets:** A production-grade, audited sovereign intelligence system running natively on ICP — not a demo, not a prototype, but enterprise-ready infrastructure that enterprises can deploy to today.
+This ask funds:
+
+- Independent security audit and formal verification — a third-party audit of the full MERIDIAN canister architecture by a recognised ICP security firm, producing a publishable certification report
+- Enterprise onboarding infrastructure — the tooling, documentation, and deployment automation that lets an enterprise spin up a MERIDIAN organism on ICP without Medina Tech hand-holding every deployment
+- ICX marketplace launch — the production deployment of the sovereign contract marketplace where organisations buy and sell intelligence as PHX-sealed contracts, with ICP as the settlement substrate
+- CXL bridge certification — formal verification of the cross-substrate bridge (ICP ↔ EVM ↔ Solana ↔ Cosmos), so enterprises deploying multi-chain can trust the bridge with production workloads
+- SNS governance integration — implementing decentralised governance of MERIDIAN organisms via ICP's Service Nervous System, so enterprise deployments can be community-governed when appropriate
+- Partner ecosystem development — funded integrations with existing ICP projects, DeFi protocols, and enterprise tools that expand MERIDIAN's reach across the ICP ecosystem
+
+**What ICP gets:** A certified, audited, enterprise-ready sovereign intelligence platform that enterprises can deploy to today — with a marketplace, cross-chain bridge, and governance integration that makes ICP the centre of a multi-substrate intelligence economy.
 
 ### Ask III — Bronze Canister Education Ecosystem Grant
 
@@ -161,8 +166,8 @@ The fifteen papers of the Sovereign Intelligence Research series form the theore
 
 This proposal asks ICP to fund three things:
 
-1. **Publication** of the research that already exists — so the academic record formally establishes ICP as the home of sovereign intelligence
-2. **Production infrastructure** for the canisters that already run — so enterprises can deploy today with certified, audited, production-grade tooling
+1. **A research institute** — not paper submissions, but a standing Sovereign Intelligence Research Institute that continuously produces peer-reviewed work, participates in standards bodies, and positions ICP as the academic home of sovereign intelligence
+2. **Enterprise certification and ecosystem expansion** — third-party security audit, ICX marketplace launch, CXL bridge certification, and SNS governance integration that makes MERIDIAN enterprise-ready and ICP the centre of a multi-substrate intelligence economy
 3. **Education** — 500 free Bronze Canisters for public school students in Dallas, with a curriculum, a research paper, and a national expansion framework
 
 The architecture is built. The research is written. The canisters run. This proposal funds the next phase: publication, production, and access.
