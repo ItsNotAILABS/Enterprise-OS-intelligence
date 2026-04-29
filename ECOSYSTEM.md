@@ -259,11 +259,12 @@ The Agent Council runs in parallel. All four fire simultaneously on each proposa
 
 | SDK | Package | Role |
 |-----|---------|------|
-| MERIDIAN Sovereign OS | `@medina/meridian-sovereign-os` | Enterprise OS substrate — CORDEX, CEREBEX, CYCLOVEX, NEXORIS, CHRONO, AURUM |
+| MERIDIAN Sovereign OS | `@medina/meridian-sovereign-os` | Enterprise OS substrate — CORDEX, CEREBEX, CYCLOVEX, NEXORIS, CHRONO, VOXIS, HDI, COGNOVEX, EduConfig, VetKeys, VoiceInterface |
+| Bronze Canister Platform | `@medina/bronze-canister` | Education platform — BronzeCanister, StudentIdentity, TeacherDashboard, EpistemicSubstrate, EducatioMachinae |
 | Sovereign Memory | `@medina/sovereign-memory-sdk` | Pheromone field + φ-compounding memory operations |
 | Intelligence Routing | `@medina/intelligence-routing-sdk` | NEXORIS routing layer — stigmergic command routing |
 | Organism Runtime | `@medina/organism-runtime-sdk` | Core organism lifecycle — heartbeat, synchronization, Fibonacci helix |
-| Enterprise Integration | `@medina/enterprise-integration-sdk` | 20+ enterprise connectors (Salesforce, SAP, Oracle, Jira, etc.) |
+| Enterprise Integration | `@medina/enterprise-integration-sdk` | 5 hardened SPINOR connectors (Salesforce, SAP, Oracle, Workday, ServiceNow) + 17 templates |
 | Document Absorption Engine | `@medina/document-absorption-engine` | Ingest and intelligence-annotate enterprise documents |
 | Paralegal AI | `@medina/paralegal-ai` | Domain AI — legal document intelligence |
 | Analyst AI | `@medina/analyst-ai` | Domain AI — financial and operational analysis |
@@ -394,13 +395,26 @@ MERIDIAN COGNITIVE GOVERNANCE RUNTIME
 │   ├── CYCLOVEX      — φᵗ capacity compounding
 │   ├── NEXORIS       — stigmergic pheromone routing field
 │   ├── CHRONO        — immutable hash-chained audit trail
-│   └── AURUM         — φ-substrate intelligence compounding
+│   ├── VOXIS         — sovereign compute unit (SL-0 doctrine, SPINOR deploy)
+│   ├── HDI           — natural language → pipeline interface
+│   ├── COGNOVEX      — quorum commitment dynamics (φ⁻⁴ threshold)
+│   ├── EduConfig     — Behavioral Laws L72–L79 for educational deployment
+│   ├── VetKeys       — substrate-level AES-256-GCM encryption (HKDF derived)
+│   └── VoiceInterface — multi-user classroom voice sessions
+│
+├── BRONZE CANISTER PLATFORM (sdk/bronze-canister/)
+│   ├── BronzeCanister    — student sovereign compute unit (voice-native, persistent)
+│   ├── StudentIdentity   — ICP Internet Identity provisioning (student-owned)
+│   ├── ClassroomOnboarding — batch student+canister provisioning
+│   ├── TeacherDashboard  — metadata-only activity view (sovereignty-safe)
+│   ├── EpistemicSubstrate — PROT-052 paper-as-grammar loading (SCC ≥ φ²)
+│   └── EducatioMachinae  — curriculum framework (5 project archetypes)
 │
 ├── SUPPORTING SDKs (sdk/)
 │   ├── sovereign-memory-sdk
 │   ├── intelligence-routing-sdk
 │   ├── organism-runtime-sdk
-│   ├── enterprise-integration-sdk  (20 connectors)
+│   ├── enterprise-integration-sdk  (5 hardened SPINOR connectors + 17 templates)
 │   ├── document-absorption-engine
 │   ├── paralegal-ai
 │   ├── analyst-ai
