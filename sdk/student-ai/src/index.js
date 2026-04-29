@@ -1,1968 +1,1634 @@
 /**
  * @medina/student-ai — src/index.js
  * ══════════════════════════════════════════════════════════════════════════════
- * DEEP-TECH EDUCATIONAL INTELLIGENCE SYSTEM
+ * STUDENT LIFE OPERATING SYSTEM
  * 
- * A powerful AI study companion powered by MERIDIAN intelligence engines:
- *   - CEREBEX: 40-category world model with φ⁻¹ learning coefficient
- *   - NEXORIS: Pheromone field routing with Kuramoto synchronization
- *   - COGNOVEX: Quorum commitment dynamics for Bloom's Taxonomy evaluation
+ * This is not a study tool. This is everything a student needs to manage their
+ * entire life — at school, at home, and planning for their future.
  *
- * Theory References:
- *   Paper VII  — QUAESTIO ET ACTIO (Query-as-Execute)
- *   Paper IX   — COHORS MENTIS (Autonomous Cognitive Units)
- *   Paper XIII — DE SUBSTRATO EPISTEMICO (Epistemic Substrate)
- *   Paper XX   — STIGMERGY (Intelligence Lives in the Field)
- *   Paper XXI  — QUORUM (Decisions Without Authority)
- *   Paper XXII — AURUM (φ as Structural Attractor)
+ * Built for REAL students with REAL needs:
+ *   - Elementary school kids who need help staying organized
+ *   - Middle schoolers juggling multiple classes for the first time
+ *   - High schoolers balancing academics, activities, and college prep
+ *   - Parents who want to stay informed and supportive
  *
- * This is not basic NLP. This is a living educational intelligence system that:
- *   - Maps subjects to analytical categories and builds a world model
- *   - Uses φ⁻¹ learning rate for optimal knowledge accumulation
- *   - Tracks which study paths work best via pheromone reinforcement
- *   - Evaluates understanding via Bloom's Taxonomy quorum consensus
- *   - Implements spaced repetition with golden-ratio intervals
- *   - Adapts difficulty based on mastery state
- *   - Detects weaknesses via free energy analysis
- *
+ * Version: 2.0.0
  * Author: Alfredo Medina Hernandez · Medina Tech · Dallas, Texas
  * ══════════════════════════════════════════════════════════════════════════════
  */
 
-import {
-  CEREBEX,
-  CATEGORIES,
-  NEXORIS,
-  PHI,
-  PHI_INV,
-  CognovexNetwork,
-  CHRONO,
-} from '../../meridian-sovereign-os/src/index.js';
-
 // ══════════════════════════════════════════════════════════════════════════════
-// CONSTANTS
+// THE STUDENT AI CLASS
 // ══════════════════════════════════════════════════════════════════════════════
 
-// Golden ratio constants for learning algorithms
-const GOLDEN_RATIO = PHI;          // φ ≈ 1.618
-const GOLDEN_RATIO_INV = PHI_INV;  // φ⁻¹ ≈ 0.618
-
-// Quorum threshold: φ⁻⁴ ≈ 0.146
-const QUORUM_THRESHOLD = Math.pow(PHI_INV, 4);
-
-// Bloom's Taxonomy cognitive domains (COGNOVEX units)
-const BLOOM_DOMAINS = [
-  'RECALL',         // Knowledge retrieval
-  'COMPREHENSION',  // Understanding meaning
-  'APPLICATION',    // Using knowledge in new situations
-  'ANALYSIS',       // Breaking down information
-  'SYNTHESIS',      // Combining elements into new patterns
-  'EVALUATION',     // Making judgments
-];
-
-// Educational subject categories (mapped to CEREBEX analytical categories)
-const SUBJECT_CATEGORY_MAP = {
-  // STEM
-  'mathematics':    ['FERMI_ESTIMATION', 'MENTAL_MODEL_PARETO', 'SCENARIO_PLANNING'],
-  'physics':        ['FERMI_ESTIMATION', 'FAILURE_MODE_ANALYSIS', 'MENTAL_MODEL_SECOND_ORDER'],
-  'chemistry':      ['FAILURE_MODE_ANALYSIS', 'SYNTHESIS', 'RISK_ASSESSMENT'],
-  'biology':        ['MENTAL_MODEL_SECOND_ORDER', 'FAILURE_MODE_ANALYSIS', 'SYNTHESIS'],
-  'computer_science': ['BUILD_MVP_SPEC', 'MENTAL_MODEL_OCCAMS_RAZOR', 'IT_WORKFLOW'],
-  // Business
-  'economics':      ['LTV_CAC', 'UNIT_ECONOMICS', 'TAM_SAM_SOM', 'REVENUE_PLANNING'],
-  'business':       ['SWOT', 'PORTERS_FIVE_FORCES', 'LEAN_CANVAS', 'MOAT_ANALYSIS'],
-  'marketing':      ['JTBD', 'TAM_SAM_SOM', 'CRM_UPDATE'],
-  'finance':        ['UNIT_ECONOMICS', 'LTV_CAC', 'FINANCIAL_CLOSE', 'RISK_ASSESSMENT'],
-  // Humanities
-  'history':        ['CHRONO_ANCHORING', 'MENTAL_MODEL_SECOND_ORDER', 'SOCRATIC_CHALLENGE'],
-  'philosophy':     ['SOCRATIC_CHALLENGE', 'STEELMANNING', 'MENTAL_MODEL_INVERSION'],
-  'literature':     ['SYNTHESIS', 'SOCRATIC_CHALLENGE', 'MENTAL_MODEL_CIRCLE_OF_COMPETENCE'],
-  'psychology':     ['FIVE_WHYS', 'MENTAL_MODEL_SECOND_ORDER', 'JTBD'],
-  // Strategy
-  'strategy':       ['EXECUTIVE_SYNTHESIS', 'OKR_BUILDER', 'SCENARIO_PLANNING'],
-  'general':        ['SYNTHESIS', 'SOCRATIC_CHALLENGE', 'FIVE_WHYS'],
-};
-
-// Mastery levels with thresholds
-const MASTERY_LEVELS = {
-  NOVICE:   { threshold: 0.00, label: 'Novice',   icon: '○' },
-  BRONZE:   { threshold: 0.25, label: 'Bronze',   icon: '🥉' },
-  SILVER:   { threshold: 0.50, label: 'Silver',   icon: '🥈' },
-  GOLD:     { threshold: 0.75, label: 'Gold',     icon: '🥇' },
-  PLATINUM: { threshold: 0.90, label: 'Platinum', icon: '💎' },
-};
-
-// Spaced repetition intervals (Leitner boxes with φ scaling)
-// Box 1: 1 day, Box 2: φ days, Box 3: φ² days, etc.
-const SR_INTERVALS = [
-  1,                        // Box 1: 1 day
-  GOLDEN_RATIO,             // Box 2: ~1.6 days
-  GOLDEN_RATIO ** 2,        // Box 3: ~2.6 days
-  GOLDEN_RATIO ** 3,        // Box 4: ~4.2 days
-  GOLDEN_RATIO ** 4,        // Box 5: ~6.9 days
-  GOLDEN_RATIO ** 5,        // Box 6: ~11.1 days
-  GOLDEN_RATIO ** 6,        // Box 7: ~18 days
-  GOLDEN_RATIO ** 7,        // Box 8: ~29 days
-];
-
-// Difficulty levels
-const DIFFICULTY_LEVELS = ['EASY', 'MEDIUM', 'HARD', 'EXPERT'];
-
-// Quiz types
-const QUIZ_TYPES = ['fill_blank', 'multiple_choice', 'matching', 'essay', 'concept_map'];
-
-// ══════════════════════════════════════════════════════════════════════════════
-// STOPWORDS
-// ══════════════════════════════════════════════════════════════════════════════
-
-const STOPWORDS = new Set([
-  'a', 'about', 'above', 'after', 'again', 'against', 'all', 'am', 'an', 'and',
-  'any', 'are', 'as', 'at', 'be', 'because', 'been', 'before', 'being', 'below',
-  'between', 'both', 'but', 'by', 'can', 'could', 'did', 'do', 'does', 'doing',
-  'down', 'during', 'each', 'few', 'for', 'from', 'further', 'get', 'got', 'had',
-  'has', 'have', 'having', 'he', 'her', 'here', 'hers', 'herself', 'him',
-  'himself', 'his', 'how', 'i', 'if', 'in', 'into', 'is', 'it', 'its', 'itself',
-  'just', 'let', 'may', 'me', 'might', 'more', 'most', 'must', 'my', 'myself',
-  'no', 'nor', 'not', 'now', 'of', 'off', 'on', 'once', 'only', 'or', 'other',
-  'our', 'ours', 'ourselves', 'out', 'over', 'own', 'per', 'quite', 's', 'same',
-  'shall', 'she', 'should', 'so', 'some', 'such', 't', 'than', 'that', 'the',
-  'their', 'theirs', 'them', 'themselves', 'then', 'there', 'these', 'they',
-  'this', 'those', 'through', 'to', 'too', 'under', 'until', 'up', 'upon', 'us',
-  'very', 'was', 'we', 'were', 'what', 'when', 'where', 'which', 'while', 'who',
-  'whom', 'why', 'will', 'with', 'would', 'you', 'your', 'yours', 'yourself',
-  'yourselves', 'also', 'even', 'still', 'well', 'much', 'many', 'often',
-  'called', 'however', 'became', 'began', 'become', 'made', 'new', 'like',
-]);
-
-// ══════════════════════════════════════════════════════════════════════════════
-// ENCOURAGEMENTS (adaptive based on performance)
-// ══════════════════════════════════════════════════════════════════════════════
-
-const ENCOURAGEMENTS = {
-  streak: [
-    '🔥 {streak} day streak! The pheromone trails are strong!',
-    '⚡ {streak} days of consistent learning — your neural pathways are strengthening!',
-    '🚀 {streak} day streak! You\'re in the φ-flow state!',
-  ],
-  mastery_up: [
-    '📈 Level up! You\'ve reached {level} mastery in {topic}!',
-    '🎯 Breakthrough! {topic} comprehension crystallized at {level}!',
-    '✨ Quorum achieved! Your understanding of {topic} has solidified!',
-  ],
-  correct: [
-    '✓ Excellent! Reinforcing that pathway...',
-    '✓ Perfect recall! Knowledge consolidated.',
-    '✓ Strong connection! φ-learning applied.',
-  ],
-  incorrect: [
-    '○ Not quite — this area needs more attention.',
-    '○ Knowledge gap detected. Adding to review queue.',
-    '○ Free energy increased — let\'s reduce uncertainty here.',
-  ],
-  general: [
-    'Keep going — you\'re building real understanding!',
-    'Great question. Curiosity is how you get ahead.',
-    'You\'re on the right track. Keep reviewing!',
-    'Solid question — that\'s how deep learning happens.',
-    'Keep it up — every question makes you sharper.',
-  ],
-};
-
-// ══════════════════════════════════════════════════════════════════════════════
-// TEXT UTILITIES
-// ══════════════════════════════════════════════════════════════════════════════
-
-function splitSentences(text) {
-  return text
-    .replace(/\n{2,}/g, '. ')
-    .replace(/\n/g, ' ')
-    .split(/(?<=[.!?])\s+/)
-    .map(s => s.trim())
-    .filter(s => s.length > 5);
-}
-
-function tokenize(text) {
-  return text.toLowerCase().match(/[a-z']+(?:'[a-z]+)*/g) || [];
-}
-
-function contentWords(tokens) {
-  return tokens.filter(w => w.length >= 3 && !STOPWORDS.has(w));
-}
-
-function syllables(word) {
-  word = word.toLowerCase().replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
-  word = word.replace(/^y/, '');
-  const m = word.match(/[aeiouy]{1,2}/g);
-  return m ? m.length : 1;
-}
-
-function totalSyllables(words) {
-  return words.reduce((n, w) => n + syllables(w), 0);
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// TF-IDF SCORING
-// ══════════════════════════════════════════════════════════════════════════════
-
-function termFrequency(tokens) {
-  const tf = new Map();
-  for (const t of tokens) tf.set(t, (tf.get(t) || 0) + 1);
-  return tf;
-}
-
-function inverseDocFrequency(sentenceTokens) {
-  const N = sentenceTokens.length;
-  const df = new Map();
-  for (const tokens of sentenceTokens) {
-    const seen = new Set(tokens);
-    for (const t of seen) df.set(t, (df.get(t) || 0) + 1);
-  }
-  const idf = new Map();
-  for (const [term, count] of df) {
-    idf.set(term, Math.log((N + 1) / (count + 1)) + 1);
-  }
-  return idf;
-}
-
-function scoreSentences(sentences) {
-  const tokenized = sentences.map(s => contentWords(tokenize(s)));
-  const idf = inverseDocFrequency(tokenized);
-  const globalTf = termFrequency(tokenized.flat());
-
-  return sentences.map((sentence, i) => {
-    const tokens = tokenized[i];
-    let score = 0;
-    const tf = termFrequency(tokens);
-    for (const [term, count] of tf) {
-      score += count * (idf.get(term) || 1) * Math.log((globalTf.get(term) || 1) + 1);
-    }
-    if (tokens.length > 0) score /= Math.sqrt(tokens.length);
-    return { sentence, score, tokens };
-  });
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// KEY TERM EXTRACTION
-// ══════════════════════════════════════════════════════════════════════════════
-
-function extractKeyTerms(text, maxTerms = 10) {
-  const tokens = contentWords(tokenize(text));
-  const tf = termFrequency(tokens);
-  const avg = tokens.length / Math.max(tf.size, 1);
-
-  return [...tf.entries()]
-    .filter(([, count]) => count >= Math.max(avg * 0.5, 2))
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, maxTerms)
-    .map(([term]) => term);
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// COSINE SIMILARITY
-// ══════════════════════════════════════════════════════════════════════════════
-
-function cosineSimilarity(a, b) {
-  const tfA = termFrequency(a);
-  const tfB = termFrequency(b);
-  const allTerms = new Set([...tfA.keys(), ...tfB.keys()]);
-
-  let dot = 0, magA = 0, magB = 0;
-  for (const t of allTerms) {
-    const va = tfA.get(t) || 0;
-    const vb = tfB.get(t) || 0;
-    dot += va * vb;
-    magA += va * va;
-    magB += vb * vb;
-  }
-  const denom = Math.sqrt(magA) * Math.sqrt(magB);
-  return denom === 0 ? 0 : dot / denom;
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// FLESCH-KINCAID
-// ══════════════════════════════════════════════════════════════════════════════
-
-function fleschKincaidGrade(words, sentences, syllableCount) {
-  if (sentences === 0 || words === 0) return 0;
-  return (
-    0.39 * (words / sentences) +
-    11.8 * (syllableCount / words) -
-    15.59
-  );
-}
-
-function readingLevelLabel(grade) {
-  if (grade <= 5) return 'Elementary (Grade 5 or below)';
-  if (grade <= 8) return 'Middle School (Grades 6–8)';
-  if (grade <= 12) return 'High School (Grades 9–12)';
-  if (grade <= 16) return 'College (Grades 13–16)';
-  return 'Graduate / Professional';
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// SIMPLIFICATION HELPER
-// ══════════════════════════════════════════════════════════════════════════════
-
-function simplify(sentence) {
-  let s = sentence;
-  s = s.replace(/\s*—\s*[^—]*?\s*—\s*/g, ' ');
-  s = s.replace(/\s*\([^)]*\)\s*/g, ' ');
-  if (s.includes(';')) {
-    s = s.split(';')[0].trim();
-    if (!s.endsWith('.')) s += '.';
-  }
-  if (s.length > 120) {
-    const conjMatch = s.match(/^(.{40,}?),\s*(?:and|but|which|where|while|enabling|freeing)\s/i);
-    if (conjMatch) {
-      s = conjMatch[1].trim();
-      if (!s.endsWith('.')) s += '.';
-    }
-  }
-  s = s.replace(/\s{2,}/g, ' ').trim();
-  return s;
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// CONCEPT GRAPH NODE
-// ══════════════════════════════════════════════════════════════════════════════
-
-class ConceptNode {
-  constructor(term) {
-    this.term = term;
-    this.connections = new Map(); // term -> strength
-    this.mastery = 0;
-    this.lastSeen = null;
-    this.exposureCount = 0;
-  }
-
-  connect(otherTerm, strength = 1) {
-    const current = this.connections.get(otherTerm) || 0;
-    this.connections.set(otherTerm, current + strength);
-  }
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// SPACED REPETITION CARD
-// ══════════════════════════════════════════════════════════════════════════════
-
-class SRCard {
-  constructor(front, back, concept) {
-    this.id = `card_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-    this.front = front;
-    this.back = back;
-    this.concept = concept;
-    this.box = 0;                // Leitner box index
-    this.dueDate = new Date();   // When card is due
-    this.lastReview = null;
-    this.correctStreak = 0;
-    this.totalReviews = 0;
-    this.correctReviews = 0;
-    this.recallProbability = 0.5; // Estimated probability of recall
-  }
-
-  recordAnswer(correct) {
-    this.lastReview = new Date();
-    this.totalReviews++;
-    
-    if (correct) {
-      this.correctReviews++;
-      this.correctStreak++;
-      // Advance to next box (max box 7)
-      this.box = Math.min(this.box + 1, SR_INTERVALS.length - 1);
-    } else {
-      this.correctStreak = 0;
-      // Fall back to box 0
-      this.box = Math.max(0, this.box - 2);
-    }
-
-    // Calculate next due date based on box interval
-    const intervalDays = SR_INTERVALS[this.box];
-    this.dueDate = new Date(Date.now() + intervalDays * 24 * 60 * 60 * 1000);
-
-    // Update recall probability (φ⁻¹ weighted EMA)
-    const outcome = correct ? 1 : 0;
-    this.recallProbability = this.recallProbability + GOLDEN_RATIO_INV * (outcome - this.recallProbability);
-  }
-
-  isDue() {
-    return new Date() >= this.dueDate;
-  }
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// STUDENTAI CLASS — DEEP-TECH EDUCATIONAL INTELLIGENCE
-// ══════════════════════════════════════════════════════════════════════════════
-
-/**
- * StudentAI — Powered by MERIDIAN Intelligence Engines
- *
- * A living educational intelligence system that:
- *   - Builds a world model of your knowledge state (CEREBEX)
- *   - Routes study suggestions via pheromone field (NEXORIS)
- *   - Evaluates comprehension via Bloom's Taxonomy quorum (COGNOVEX)
- *   - Implements spaced repetition with φ-intervals
- *   - Adapts difficulty based on mastery
- *   - Detects weaknesses via free energy analysis
- *
- * @example
- *   const ai = new StudentAI({ subject: 'physics' });
- *   const guide = ai.study(chapterText);
- *   const trajectory = ai.learningTrajectory();
- */
 export class StudentAI {
   /**
-   * @param {object} [options]
-   * @param {string} [options.subject='general'] - Subject area for category mapping
-   * @param {string} [options.studentId] - Optional student identifier for persistence
-   * @param {number} [options.difficultyLevel=1] - Starting difficulty (0-3)
+   * Create a new StudentAI instance for a student.
+   * 
+   * @param {object} options
+   * @param {string} options.studentId - Unique identifier for the student
+   * @param {string} options.studentName - Student's display name
+   * @param {number} options.grade - Current grade level (K=0, 1-12)
+   * @param {string} options.schoolId - School identifier
+   * @param {string} [options.timezone='America/Chicago'] - Student's timezone
    */
-  constructor(options = {}) {
-    const {
-      subject = 'general',
-      studentId = `student_${Date.now()}`,
-      difficultyLevel = 1,
-    } = options;
+  constructor({ studentId, studentName, grade, schoolId, timezone = 'America/Chicago' }) {
+    if (!studentId) throw new Error('StudentAI requires a studentId');
+    if (!studentName) throw new Error('StudentAI requires a studentName');
+    if (grade === undefined) throw new Error('StudentAI requires a grade level');
+    if (!schoolId) throw new Error('StudentAI requires a schoolId');
 
     this.studentId = studentId;
-    this.subject = subject;
-    this.difficultyLevel = Math.max(0, Math.min(3, difficultyLevel));
+    this.studentName = studentName;
+    this.grade = grade;
+    this.schoolId = schoolId;
+    this.timezone = timezone;
+    this.createdAt = new Date().toISOString();
 
-    // ── MERIDIAN Intelligence Engines ──
-    this._cerebex = new CEREBEX();
-    this._nexoris = new NEXORIS({ evaporationRate: 0.03, diffusionRate: 0.08 });
-    this._cognovex = new CognovexNetwork({
-      alpha: 0.4,   // Higher recruitment for faster learning feedback
-      beta: 0.03,   // Lower abandonment to retain knowledge state
-      gamma: 0.02,
-    });
+    // ═══════════════════════════════════════════════════════════════════════
+    // DATA STORES
+    // ═══════════════════════════════════════════════════════════════════════
 
-    // Initialize CHRONO for learning history
-    this._chrono = new CHRONO();
-    this._cerebex.setChrono(this._chrono);
-    this._nexoris.setChrono(this._chrono);
-    this._cognovex.setChrono(this._chrono).setNexoris(this._nexoris);
+    // Schedule & Classes
+    this._classes = new Map();          // classId → class info
+    this._schedule = [];                 // daily schedule with periods
+    this._bellSchedule = [];             // period start/end times
 
-    // Initialize Bloom's Taxonomy cognitive units
-    for (const domain of BLOOM_DOMAINS) {
-      this._cognovex.addUnit(`bloom_${domain.toLowerCase()}`, domain);
-    }
+    // Assignments & Homework
+    this._assignments = new Map();       // assignmentId → assignment
+    this._submissions = new Map();       // assignmentId → submission status
 
-    // ── Learning State ──
-    this._knowledgeGraph = new Map();      // term -> ConceptNode
-    this._topicMastery = new Map();        // topic -> mastery score
-    this._srCards = new Map();             // cardId -> SRCard
-    this._studySessions = [];              // Session history
-    this._answerHistory = [];              // Answer tracking
-    this._streak = { current: 0, longest: 0, lastDate: null };
-    this._totalStudyTime = 0;              // Minutes
-    this._questionsAnswered = 0;
-    this._correctAnswers = 0;
+    // Notes & Materials
+    this._notes = new Map();             // noteId → note content
+    this._syllabi = new Map();           // classId → syllabus
 
-    // ── Performance Metrics ──
-    this._learningVelocity = 0;            // Rate of mastery gain
-    this._retentionRate = 0.5;             // Estimated retention
-    this._weaknesses = [];                 // Areas with high free energy
+    // Grades & Progress
+    this._grades = new Map();            // classId → array of grades
+    this._gpa = { current: 0, cumulative: 0, history: [] };
 
-    // Log initialization
-    this._chrono.append({
-      type: 'STUDENT_AI_INIT',
-      studentId: this.studentId,
-      subject: this.subject,
-      difficultyLevel: this.difficultyLevel,
-      timestamp: new Date().toISOString(),
-    });
-  }
+    // Goals & Planning
+    this._goals = [];                    // semester/year goals
+    this._collegeList = [];              // colleges of interest
+    this._scholarships = [];             // scholarship tracking
+    this._extracurriculars = [];         // activities for college apps
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // CORE STUDY METHODS (Enhanced with MERIDIAN Intelligence)
-  // ══════════════════════════════════════════════════════════════════════════
+    // Study & Time Management
+    this._studySessions = [];            // logged study sessions
+    this._streaks = { current: 0, longest: 0, lastDate: null };
+    this._habits = new Map();            // habitId → habit tracking
 
-  /**
-   * Generate a comprehensive study guide with deep analysis.
-   * Maps content to analytical categories and builds knowledge graph.
-   *
-   * @param {string} text - Study material
-   * @param {object} [options]
-   * @param {string} [options.topic] - Optional topic name for tracking
-   * @returns {object} Deep study analysis
-   */
-  study(text, options = {}) {
-    const { topic = 'general_study' } = options;
-    const startTime = Date.now();
+    // Social & Collaboration
+    this._studyGroups = [];              // study group memberships
+    this._projectTeams = new Map();      // projectId → team members
+    this._tutoringSessions = [];         // tutoring appointments
 
-    const sentences = splitSentences(text);
-    const scored = scoreSentences(sentences);
-    const sorted = [...scored].sort((a, b) => b.score - a.score);
+    // School Life
+    this._announcements = [];            // school announcements
+    this._events = [];                   // school events
+    this._clubs = [];                    // club memberships
+    this._sports = [];                   // sports/activities
 
-    // ── CEREBEX: Route through world model ──
-    const cerebexRouting = this._cerebex.route(text.slice(0, 500));
-    const activatedCategories = cerebexRouting.activatedCategories;
-    const freeEnergy = cerebexRouting.freeEnergy;
-
-    // ── Build knowledge graph from content ──
-    const keyTerms = extractKeyTerms(text, 20);
-    this._buildKnowledgeGraphFromContent(keyTerms, sentences);
-
-    // ── NEXORIS: Reinforce successful study path ──
-    const studyPath = `STUDY:${this.subject}:${topic}`;
-    this._nexoris.reinforce(studyPath, 1.0);
-    this._nexoris.tick();
-
-    // ── COGNOVEX: Evaluate comprehension potential ──
-    for (const domain of BLOOM_DOMAINS) {
-      const unit = this._cognovex.unit(`bloom_${domain.toLowerCase()}`);
-      if (unit) {
-        const quality = this._estimateBloomLevel(text, domain);
-        unit.observe(topic, quality);
-      }
-    }
-    const quorumState = this._cognovex.tick();
-
-    // Summary: top sentences in original order
-    const topCount = Math.max(3, Math.ceil(sentences.length * 0.25));
-    const topSet = new Set(sorted.slice(0, topCount).map(s => s.sentence));
-    const summary = sentences.filter(s => topSet.has(s)).join(' ');
-
-    // Key points
-    const keyPoints = sorted.slice(0, Math.min(5, sorted.length)).map(s => s.sentence);
-
-    // Hard words
-    const allTokens = tokenize(text);
-    const hardWords = [...new Set(
-      allTokens.filter(w => w.length >= 8 && syllables(w) >= 3)
-    )].slice(0, 10);
-
-    // Sections
-    const sections = text
-      .split(/\n{2,}/)
-      .map(p => p.trim())
-      .filter(p => p.length > 20)
-      .map(p => {
-        const s = splitSentences(p);
-        return s[0] || p.slice(0, 80);
-      });
-
-    const stats = this.stats(text);
-
-    // Update topic mastery (φ⁻¹ learning)
-    const priorMastery = this._topicMastery.get(topic) || 0;
-    const studySignal = Math.min(1, 0.3 + (1 - freeEnergy) * 0.4);
-    const newMastery = priorMastery + GOLDEN_RATIO_INV * (studySignal - priorMastery);
-    this._topicMastery.set(topic, newMastery);
-
-    // Track session
-    const sessionDuration = (Date.now() - startTime) / 60000;
-    this._recordStudySession(topic, sessionDuration, 'study');
-
-    // Log to CHRONO
-    this._chrono.append({
-      type: 'STUDY_SESSION',
-      topic,
-      sentenceCount: sentences.length,
-      keyTermCount: keyTerms.length,
-      freeEnergy,
-      masteryDelta: newMastery - priorMastery,
-      activatedCategories: activatedCategories.slice(0, 5).map(c => c.category),
-    });
-
-    return {
-      summary,
-      keyPoints,
-      topics: keyTerms.slice(0, 8),
-      hardWords,
-      sections,
-      stats,
-      // Deep analysis additions
-      cerebexAnalysis: {
-        activatedCategories: activatedCategories.slice(0, 10),
-        freeEnergy: Math.round(freeEnergy * 1000) / 1000,
-        worldModelEntropy: this._cerebex._entropy(),
-        relevantFrameworks: activatedCategories.slice(0, 3).map(c => c.category),
-      },
-      knowledgeState: {
-        topicMastery: Math.round(newMastery * 100),
-        masteryLevel: this._getMasteryLevel(newMastery),
-        conceptsLearned: keyTerms.length,
-        graphNodes: this._knowledgeGraph.size,
-      },
-      bloomAnalysis: {
-        quorumState: quorumState.crystallized ? 'CRYSTALLIZED' : 'FORMING',
-        commitmentField: quorumState.commitmentField,
-        threshold: Math.round(quorumState.threshold * 100) / 100,
-      },
-      recommendations: this._generateStudyRecommendations(topic, freeEnergy),
+    // Transportation
+    this._transportation = {
+      type: null,                        // 'bus', 'car', 'walk', 'bike'
+      busRoute: null,
+      busStop: null,
+      pickupTime: null,
+      dropoffTime: null,
     };
+
+    // Parent Connection
+    this._parentAlerts = [];             // alerts sent to parents
+    this._progressReports = [];          // generated progress reports
+
+    // Wellness
+    this._wellnessCheckins = [];         // mental health check-ins
+    this._sleepLog = [];                 // sleep tracking
+
+    // Future Planning
+    this._collegeApps = new Map();       // collegeId → application status
+    this._testScores = [];               // SAT, ACT, AP scores
+    this._resume = null;                 // student resume data
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 📅 SCHEDULE & PLANNING
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Add a class to the student's schedule.
+   */
+  addClass({ classId, className, teacherName, teacherEmail, room, period, subject, days = ['M', 'T', 'W', 'TH', 'F'] }) {
+    this._classes.set(classId, {
+      classId,
+      className,
+      teacherName,
+      teacherEmail,
+      room,
+      period,
+      subject,
+      days,
+      addedAt: new Date().toISOString(),
+    });
+    return { added: true, classId, className };
   }
 
   /**
-   * Generate quiz questions with multiple types and adaptive difficulty.
-   *
-   * @param {string} text - Source material
-   * @param {number} [count=5] - Number of questions
-   * @param {object} [options]
-   * @param {string[]} [options.types] - Quiz types to include
-   * @param {boolean} [options.adaptive=true] - Adjust to difficulty level
-   * @returns {object[]} Quiz questions
+   * Get all classes.
    */
-  quiz(text, count = 5, options = {}) {
-    const {
-      types = ['fill_blank', 'multiple_choice', 'essay'],
-      adaptive = true,
-    } = options;
-
-    const sentences = splitSentences(text);
-    const scored = scoreSentences(sentences);
-    const sorted = [...scored].sort((a, b) => b.score - a.score);
-    const keyTerms = extractKeyTerms(text, 30);
-
-    const questions = [];
-    const used = new Set();
-
-    // Adjust question complexity based on difficulty
-    const targetDifficulty = adaptive ? this.difficultyLevel : 1;
-
-    for (const entry of sorted) {
-      if (questions.length >= count) break;
-      if (used.has(entry.sentence)) continue;
-
-      const sentenceTokens = tokenize(entry.sentence);
-      const target = keyTerms.find(t => sentenceTokens.includes(t) && t.length >= 4);
-
-      if (!target) continue;
-      used.add(entry.sentence);
-
-      // Rotate through question types
-      const typeIndex = questions.length % types.length;
-      const questionType = types[typeIndex];
-
-      const question = this._generateQuestion(
-        entry.sentence,
-        target,
-        questionType,
-        targetDifficulty,
-        keyTerms
-      );
-
-      if (question) {
-        questions.push(question);
-      }
-    }
-
-    // Fallback comprehension questions
-    if (questions.length < count) {
-      for (const entry of sorted) {
-        if (questions.length >= count) break;
-        if (used.has(entry.sentence)) continue;
-        used.add(entry.sentence);
-
-        questions.push({
-          type: 'essay',
-          question: `Explain the following in your own words: "${entry.sentence}"`,
-          hint: 'Focus on the key concepts and their relationships.',
-          answer: entry.sentence,
-          bloomLevel: 'COMPREHENSION',
-          difficulty: DIFFICULTY_LEVELS[targetDifficulty],
-          points: 3,
-        });
-      }
-    }
-
-    // Route through NEXORIS
-    this._nexoris.reinforce(`QUIZ:${this.subject}`, 0.8);
-    this._nexoris.tick();
-
-    return questions.slice(0, count);
+  getClasses() {
+    return [...this._classes.values()];
   }
 
   /**
-   * Generate smart flashcards with spaced repetition scheduling.
-   *
-   * @param {string} text - Source material
-   * @param {number} [count=5] - Number of cards
-   * @returns {object[]} Flashcards with SR metadata
+   * Set the bell schedule (period times).
    */
-  flashcards(text, count = 5) {
-    const sentences = splitSentences(text);
-    const keyTerms = extractKeyTerms(text, count * 2);
-    const cards = [];
-    const usedSentences = new Set();
-
-    for (const term of keyTerms) {
-      if (cards.length >= count) break;
-
-      let best = null;
-      let bestScore = -1;
-
-      for (const s of sentences) {
-        if (usedSentences.has(s)) continue;
-        const lower = s.toLowerCase();
-        if (!lower.includes(term)) continue;
-
-        const score = contentWords(tokenize(s)).length;
-        if (score > bestScore) {
-          bestScore = score;
-          best = s;
-        }
-      }
-
-      if (best) {
-        usedSentences.add(best);
-
-        // Create SRCard
-        const srCard = new SRCard(
-          `What is "${term}"?`,
-          best,
-          term
-        );
-        this._srCards.set(srCard.id, srCard);
-
-        // Update knowledge graph
-        this._ensureConceptNode(term);
-
-        cards.push({
-          id: srCard.id,
-          front: srCard.front,
-          back: srCard.back,
-          concept: term,
-          box: srCard.box,
-          dueDate: srCard.dueDate.toISOString(),
-          recallProbability: Math.round(srCard.recallProbability * 100),
-          intervalDays: SR_INTERVALS[srCard.box].toFixed(1),
-        });
-      }
-    }
-
-    // Pad with top-scored sentences if needed
-    if (cards.length < count) {
-      const scored = scoreSentences(sentences);
-      const sorted = [...scored].sort((a, b) => b.score - a.score);
-      for (const entry of sorted) {
-        if (cards.length >= count) break;
-        if (usedSentences.has(entry.sentence)) continue;
-        usedSentences.add(entry.sentence);
-
-        const terms = contentWords(tokenize(entry.sentence));
-        const concept = terms[0] || 'concept';
-
-        const srCard = new SRCard(
-          `Explain: ${concept}`,
-          entry.sentence,
-          concept
-        );
-        this._srCards.set(srCard.id, srCard);
-
-        cards.push({
-          id: srCard.id,
-          front: srCard.front,
-          back: srCard.back,
-          concept,
-          box: srCard.box,
-          dueDate: srCard.dueDate.toISOString(),
-          recallProbability: Math.round(srCard.recallProbability * 100),
-          intervalDays: SR_INTERVALS[srCard.box].toFixed(1),
-        });
-      }
-    }
-
-    // Reinforce flashcard study path
-    this._nexoris.reinforce(`FLASHCARDS:${this.subject}`, 0.9);
-    this._nexoris.tick();
-
-    return cards.slice(0, count);
+  setBellSchedule(schedule) {
+    // schedule: [{ period: 1, startTime: '8:00', endTime: '8:50' }, ...]
+    this._bellSchedule = schedule;
+    return { set: true, periods: schedule.length };
   }
 
   /**
-   * Answer a question using COGNOVEX-powered synthesis.
-   *
-   * @param {string} question - User's question
-   * @param {string} notes - Context notes
-   * @returns {object} Answer with cognitive analysis
+   * Get today's schedule with times and rooms.
    */
-  ask(question, notes) {
-    const qTokens = contentWords(tokenize(question));
-    const sentences = splitSentences(notes);
+  getTodaySchedule() {
+    const today = new Date();
+    const dayMap = ['SU', 'M', 'T', 'W', 'TH', 'F', 'SA'];
+    const todayDay = dayMap[today.getDay()];
 
-    if (sentences.length === 0 || qTokens.length === 0) {
+    const todayClasses = [...this._classes.values()]
+      .filter(c => c.days.includes(todayDay))
+      .sort((a, b) => a.period - b.period);
+
+    return todayClasses.map(c => {
+      const bell = this._bellSchedule.find(b => b.period === c.period);
       return {
-        answer: 'I couldn\'t find enough information in your notes to answer that.',
-        confidence: 0,
-        found: false,
-        encouragement: this._getEncouragement('general'),
-        cognitiveAnalysis: null,
+        period: c.period,
+        className: c.className,
+        teacherName: c.teacherName,
+        room: c.room,
+        startTime: bell?.startTime || 'TBD',
+        endTime: bell?.endTime || 'TBD',
       };
-    }
-
-    // Score sentences by similarity
-    const results = [];
-    for (const s of sentences) {
-      const sTokens = contentWords(tokenize(s));
-      const sim = cosineSimilarity(qTokens, sTokens);
-      results.push({ sentence: s, score: sim });
-    }
-    results.sort((a, b) => b.score - a.score);
-
-    const bestScore = results[0].score;
-    const topMatches = results.filter(r => r.score > 0.05).slice(0, 3);
-    const answer = topMatches.length > 0
-      ? topMatches.map(r => r.sentence).join(' ')
-      : results[0].sentence;
-
-    // ── COGNOVEX: Evaluate comprehension via Bloom's units ──
-    const bloomEvaluations = {};
-    for (const domain of BLOOM_DOMAINS) {
-      const unit = this._cognovex.unit(`bloom_${domain.toLowerCase()}`);
-      if (unit) {
-        const quality = this._evaluateBloomForQuestion(question, answer, domain);
-        unit.observe('question_answer', quality);
-        bloomEvaluations[domain] = Math.round(quality * 100);
-      }
-    }
-    const quorumState = this._cognovex.tick();
-
-    // Determine cognitive level of the question
-    const questionBloomLevel = this._classifyQuestionBloomLevel(question);
-
-    // Route through CEREBEX
-    const cerebexScore = this._cerebex.score(question);
-    const relevantCategories = cerebexScore.filter(c => c.score > 0.2).slice(0, 3);
-
-    const confidence = Math.min(Math.round(bestScore * 100), 100);
-    const found = bestScore > 0.1;
-
-    return {
-      answer,
-      confidence,
-      found,
-      encouragement: this._getEncouragement('general'),
-      cognitiveAnalysis: {
-        questionLevel: questionBloomLevel,
-        bloomEvaluations,
-        quorumState: quorumState.crystallized ? 'CRYSTALLIZED' : 'FORMING',
-        relevantCategories: relevantCategories.map(c => c.category),
-        synthesisQuality: Math.round((1 - this._cerebex._entropy() / 100) * 100),
-      },
-      matchedSentences: topMatches.length,
-    };
+    });
   }
 
   /**
-   * Generate enhanced outline with concept mapping.
-   *
-   * @param {string} text - Source material
-   * @returns {object} Structured outline with concept map
+   * Get what's happening this week.
    */
-  outline(text) {
-    const paragraphs = text
-      .split(/\n{2,}/)
-      .map(p => p.trim())
-      .filter(p => p.length > 10);
-
-    const firstLine = text.trim().split('\n')[0].trim();
-    const title = firstLine.length > 0 && firstLine.length < 120
-      ? firstLine.replace(/^#+\s*/, '')
-      : 'Untitled Document';
-
-    const sections = [];
-    const allConcepts = [];
-
-    for (const para of paragraphs) {
-      const sentences = splitSentences(para);
-      if (sentences.length === 0) continue;
-
-      const paraTerms = extractKeyTerms(para, 5);
-      allConcepts.push(...paraTerms);
-
-      const heading = paraTerms.length > 0
-        ? paraTerms.map(t => t.charAt(0).toUpperCase() + t.slice(1)).join(', ')
-        : sentences[0].slice(0, 60);
-
-      const points = sentences.map(s => s.trim());
-
-      sections.push({
-        heading,
-        points,
-        keyConcepts: paraTerms,
-        sentenceCount: sentences.length,
-      });
-    }
-
-    if (sections.length === 0) {
-      sections.push({
-        heading: 'Main Content',
-        points: splitSentences(text),
-        keyConcepts: extractKeyTerms(text, 5),
-        sentenceCount: splitSentences(text).length,
-      });
-    }
-
-    // Build concept connections
-    const uniqueConcepts = [...new Set(allConcepts)];
-    const conceptMap = this._buildConceptMap(uniqueConcepts, text);
-
-    return {
-      title,
-      sections,
-      conceptMap,
-      totalConcepts: uniqueConcepts.length,
-      totalSentences: sections.reduce((n, s) => n + s.sentenceCount, 0),
-    };
-  }
-
-  /**
-   * Multi-level simplification with difficulty adaptation.
-   *
-   * @param {string} text - Complex text
-   * @param {object} [options]
-   * @param {number} [options.targetLevel] - Target reading level (0-4)
-   * @returns {object} Simplified versions at multiple levels
-   */
-  explain(text, options = {}) {
-    const { targetLevel = 2 } = options;
-
-    const sentences = splitSentences(text);
-    const allWords = tokenize(text);
-    const syllableCount = totalSyllables(allWords);
-    const grade = fleschKincaidGrade(allWords.length, sentences.length, syllableCount);
-
-    // Find complex sentences
-    const complex = sentences
-      .map(s => {
-        const words = tokenize(s);
-        const avgSyl = words.length > 0 ? totalSyllables(words) / words.length : 0;
-        const avgLen = words.length > 0 ? words.reduce((n, w) => n + w.length, 0) / words.length : 0;
-        return { sentence: s, difficulty: avgSyl * 2 + avgLen, words };
-      })
-      .sort((a, b) => b.difficulty - a.difficulty);
-
-    // Generate multi-level simplifications
-    const levels = {
-      elementary: [],   // Grade 5
-      middle: [],       // Grade 8
-      high: [],         // Grade 12
-    };
-
-    for (const c of complex.slice(0, 5)) {
-      levels.elementary.push(this._simplifyToLevel(c.sentence, 0));
-      levels.middle.push(this._simplifyToLevel(c.sentence, 1));
-      levels.high.push(simplify(c.sentence));
-    }
-
-    const original = complex.slice(0, 5).map(c => c.sentence);
-
-    // CEREBEX analysis
-    const cerebexRouting = this._cerebex.score(text.slice(0, 300));
-
-    return {
-      original,
-      simplified: levels.high,
-      levels,
-      readingLevel: readingLevelLabel(grade),
-      gradeLevel: Math.round(grade * 10) / 10,
-      targetLevel: ['Elementary', 'Middle School', 'High School', 'College', 'Graduate'][targetLevel],
-      complexityMetrics: {
-        avgSyllablesPerWord: (syllableCount / allWords.length).toFixed(2),
-        avgWordsPerSentence: (allWords.length / sentences.length).toFixed(1),
-        hardWordCount: allWords.filter(w => syllables(w) >= 3).length,
-      },
-      relevantFrameworks: cerebexRouting.slice(0, 3).map(c => c.category),
-    };
-  }
-
-  /**
-   * Get text statistics.
-   */
-  stats(text) {
-    const words = tokenize(text);
-    const sentences = splitSentences(text);
-    const wordCount = words.length;
-    const sentenceCount = sentences.length;
-    const avgWordsPerSentence = sentenceCount > 0
-      ? Math.round((wordCount / sentenceCount) * 10) / 10
-      : 0;
-    const minutes = Math.ceil(wordCount / 200);
-    const readingTime = minutes <= 1 ? '~1 min' : `~${minutes} min`;
-
-    return {
-      words: wordCount,
-      sentences: sentenceCount,
-      readingTime,
-      avgWordsPerSentence,
-      uniqueTerms: new Set(contentWords(words)).size,
-      complexityScore: this._calculateComplexityScore(text),
-    };
-  }
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // ADVANCED LEARNING METHODS
-  // ══════════════════════════════════════════════════════════════════════════
-
-  /**
-   * Get CEREBEX world model view of learning trajectory.
-   */
-  learningTrajectory() {
-    const worldModel = this._cerebex.worldModel();
-    const subjectCategories = SUBJECT_CATEGORY_MAP[this.subject] || SUBJECT_CATEGORY_MAP.general;
-
-    // Filter to relevant categories for this subject
-    const relevantModel = worldModel.filter(
-      c => subjectCategories.includes(c.category) || c.score > 0.4
-    );
-
-    return {
-      studentId: this.studentId,
-      subject: this.subject,
-      worldModel: relevantModel.slice(0, 15),
-      totalEntropy: this._cerebex._entropy(),
-      queryCount: this._cerebex.queryCount,
-      learningCoefficient: `φ⁻¹ ≈ ${GOLDEN_RATIO_INV.toFixed(4)}`,
-      topStrengths: relevantModel.slice(0, 3).map(c => c.category),
-      focusAreas: relevantModel.filter(c => c.score < 0.4).slice(0, 3).map(c => c.category),
-      categoryMasteryDistribution: this._getCategoryMasteryDistribution(),
-    };
-  }
-
-  /**
-   * Get NEXORIS pheromone-gradient study recommendations.
-   */
-  recommendNextStudy() {
-    // Get pheromone field state
-    const fieldSnapshot = this._nexoris.fieldSnapshot();
-    const fieldEntries = Object.entries(fieldSnapshot);
-
-    // Sort by concentration
-    fieldEntries.sort((a, b) => b[1] - a[1]);
-
-    // Analyze study patterns
-    const studyPaths = fieldEntries.filter(([key]) => key.startsWith('STUDY:'));
-    const quizPaths = fieldEntries.filter(([key]) => key.startsWith('QUIZ:'));
-    const flashcardPaths = fieldEntries.filter(([key]) => key.startsWith('FLASHCARDS:'));
-
-    // Identify weak areas (low pheromone or high free energy)
-    const weakTopics = [...this._topicMastery.entries()]
-      .filter(([, mastery]) => mastery < 0.5)
-      .sort((a, b) => a[1] - b[1])
-      .slice(0, 5)
-      .map(([topic]) => topic);
-
-    // Cards due for review
-    const dueCards = this.spacedRepetitionDue();
-
-    // Generate recommendations
-    const recommendations = [];
-
-    if (dueCards.length > 0) {
-      recommendations.push({
-        action: 'REVIEW_FLASHCARDS',
-        priority: 'HIGH',
-        reason: `${dueCards.length} cards are due for spaced repetition review`,
-        details: dueCards.slice(0, 3).map(c => c.concept),
-      });
-    }
-
-    if (weakTopics.length > 0) {
-      recommendations.push({
-        action: 'STUDY_WEAK_TOPICS',
-        priority: 'MEDIUM',
-        reason: 'These topics have low mastery scores',
-        details: weakTopics,
-      });
-    }
-
-    // Recommend based on highest-reinforced paths
-    if (studyPaths.length > 0) {
-      const topStudyPath = studyPaths[0][0].split(':').slice(2).join(':') || 'general';
-      recommendations.push({
-        action: 'CONTINUE_STUDY',
-        priority: 'MEDIUM',
-        reason: 'Your most successful study path',
-        details: [topStudyPath],
-      });
-    }
-
-    // Recommend quiz if enough material studied
-    if (this._studySessions.length > 0 && quizPaths.length < studyPaths.length) {
-      recommendations.push({
-        action: 'TAKE_QUIZ',
-        priority: 'LOW',
-        reason: 'Test your knowledge to reinforce learning',
-        details: ['Practice retrieval to strengthen neural pathways'],
-      });
-    }
-
-    return {
-      recommendations,
-      pheromoneFieldStrength: fieldEntries.length,
-      orderParameter: this._nexoris.orderParameter,
-      synchronized: this._nexoris.synchronized,
-      studyPathStrength: studyPaths.slice(0, 5).map(([key, val]) => ({
-        path: key,
-        concentration: Math.round(val * 1000) / 1000,
-      })),
-    };
-  }
-
-  /**
-   * Get per-topic mastery report.
-   */
-  masteryReport() {
-    const topicEntries = [...this._topicMastery.entries()];
-    topicEntries.sort((a, b) => b[1] - a[1]);
-
-    const report = topicEntries.map(([topic, mastery]) => ({
-      topic,
-      mastery: Math.round(mastery * 100),
-      level: this._getMasteryLevel(mastery),
-      icon: this._getMasteryIcon(mastery),
-    }));
-
-    // Calculate overall mastery
-    const avgMastery = topicEntries.length > 0
-      ? topicEntries.reduce((sum, [, m]) => sum + m, 0) / topicEntries.length
-      : 0;
-
-    return {
-      topics: report,
-      overallMastery: Math.round(avgMastery * 100),
-      overallLevel: this._getMasteryLevel(avgMastery),
-      totalTopics: topicEntries.length,
-      platinumCount: report.filter(r => r.level === 'Platinum').length,
-      goldCount: report.filter(r => r.level === 'Gold').length,
-      silverCount: report.filter(r => r.level === 'Silver').length,
-      bronzeCount: report.filter(r => r.level === 'Bronze').length,
-      noviceCount: report.filter(r => r.level === 'Novice').length,
-    };
-  }
-
-  /**
-   * Get knowledge graph with concept connections.
-   */
-  knowledgeGraph() {
-    const nodes = [];
-    const edges = [];
-
-    for (const [term, node] of this._knowledgeGraph) {
-      nodes.push({
-        id: term,
-        mastery: Math.round(node.mastery * 100),
-        exposureCount: node.exposureCount,
-        connectionCount: node.connections.size,
-        lastSeen: node.lastSeen,
-      });
-
-      for (const [target, strength] of node.connections) {
-        edges.push({
-          source: term,
-          target,
-          strength: Math.round(strength * 100) / 100,
-        });
-      }
-    }
-
-    // Deduplicate edges (A→B and B→A become one bidirectional edge)
-    const edgeMap = new Map();
-    for (const edge of edges) {
-      const key = [edge.source, edge.target].sort().join('↔');
-      const existing = edgeMap.get(key);
-      if (existing) {
-        existing.strength = Math.max(existing.strength, edge.strength);
-        existing.bidirectional = true;
-      } else {
-        edgeMap.set(key, { ...edge, bidirectional: false });
-      }
-    }
-
-    return {
-      nodes,
-      edges: [...edgeMap.values()],
-      totalConcepts: nodes.length,
-      totalConnections: edgeMap.size,
-      averageConnectivity: nodes.length > 0
-        ? (edges.length / nodes.length).toFixed(2)
-        : 0,
-      mostConnected: nodes.sort((a, b) => b.connectionCount - a.connectionCount).slice(0, 5),
-    };
-  }
-
-  /**
-   * Get flashcards due for spaced repetition review.
-   */
-  spacedRepetitionDue() {
+  getWeekOverview() {
     const now = new Date();
-    const dueCards = [];
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - now.getDay());
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
 
-    for (const [, card] of this._srCards) {
-      if (card.isDue()) {
-        dueCards.push({
-          id: card.id,
-          front: card.front,
-          back: card.back,
-          concept: card.concept,
-          box: card.box,
-          overdueDays: Math.max(0, (now - card.dueDate) / (24 * 60 * 60 * 1000)),
-          recallProbability: Math.round(card.recallProbability * 100),
-          totalReviews: card.totalReviews,
-          correctRate: card.totalReviews > 0
-            ? Math.round((card.correctReviews / card.totalReviews) * 100)
-            : 0,
-        });
-      }
-    }
+    // Get assignments due this week
+    const assignmentsDue = [...this._assignments.values()].filter(a => {
+      const due = new Date(a.dueDate);
+      return due >= weekStart && due <= weekEnd;
+    });
 
-    // Sort by most overdue first
-    dueCards.sort((a, b) => b.overdueDays - a.overdueDays);
-
-    return dueCards;
-  }
-
-  /**
-   * Get current study streak status.
-   */
-  studyStreak() {
-    return {
-      current: this._streak.current,
-      longest: this._streak.longest,
-      lastStudyDate: this._streak.lastDate,
-      streakMultiplier: 1 + (this._streak.current * 0.1),
-      nextMilestone: this._getNextStreakMilestone(),
-      encouragement: this._streak.current > 0
-        ? this._getEncouragement('streak').replace('{streak}', this._streak.current)
-        : 'Start your streak by studying today!',
-    };
-  }
-
-  /**
-   * Get current adaptive difficulty settings.
-   */
-  adaptiveDifficulty() {
-    const correctRate = this._questionsAnswered > 0
-      ? this._correctAnswers / this._questionsAnswered
-      : 0.5;
-
-    // Suggest difficulty adjustment
-    let suggestion = 'MAINTAIN';
-    if (correctRate > 0.85 && this.difficultyLevel < 3) {
-      suggestion = 'INCREASE';
-    } else if (correctRate < 0.5 && this.difficultyLevel > 0) {
-      suggestion = 'DECREASE';
-    }
+    // Get events this week
+    const weekEvents = this._events.filter(e => {
+      const eventDate = new Date(e.date);
+      return eventDate >= weekStart && eventDate <= weekEnd;
+    });
 
     return {
-      currentLevel: this.difficultyLevel,
-      levelName: DIFFICULTY_LEVELS[this.difficultyLevel],
-      correctRate: Math.round(correctRate * 100),
-      questionsAnswered: this._questionsAnswered,
-      correctAnswers: this._correctAnswers,
-      suggestion,
-      allLevels: DIFFICULTY_LEVELS,
-    };
-  }
-
-  /**
-   * Analyze weaknesses using free energy analysis.
-   */
-  weaknessAnalysis() {
-    // Get CEREBEX free energy per category
-    const worldModel = this._cerebex.worldModel();
-    const weakCategories = worldModel
-      .filter(c => c.score < 0.4)
-      .slice(0, 10);
-
-    // Analyze topic mastery
-    const weakTopics = [...this._topicMastery.entries()]
-      .filter(([, mastery]) => mastery < 0.5)
-      .sort((a, b) => a[1] - b[1])
-      .slice(0, 5);
-
-    // Analyze flashcard performance
-    const weakCards = [];
-    for (const [, card] of this._srCards) {
-      if (card.recallProbability < 0.4 && card.totalReviews > 0) {
-        weakCards.push({
-          concept: card.concept,
-          recallProbability: Math.round(card.recallProbability * 100),
-          box: card.box,
-        });
-      }
-    }
-    weakCards.sort((a, b) => a.recallProbability - b.recallProbability);
-
-    // Calculate overall free energy
-    const overallFreeEnergy = worldModel.reduce(
-      (sum, c) => sum + (1 - c.score) ** 2,
-      0
-    ) / worldModel.length;
-
-    return {
-      overallFreeEnergy: Math.round(overallFreeEnergy * 1000) / 1000,
-      freeEnergyInterpretation: overallFreeEnergy > 0.5
-        ? 'High uncertainty — more study needed'
-        : overallFreeEnergy > 0.25
-          ? 'Moderate understanding — focus on weak areas'
-          : 'Strong grasp — maintain with review',
-      weakCategories: weakCategories.map(c => ({
-        category: c.category,
-        score: Math.round(c.score * 100),
-        gap: Math.round((0.5 - c.score) * 100),
+      weekOf: weekStart.toISOString().split('T')[0],
+      assignmentsDue: assignmentsDue.length,
+      assignments: assignmentsDue.map(a => ({
+        title: a.title,
+        className: this._classes.get(a.classId)?.className,
+        dueDate: a.dueDate,
+        priority: a.priority,
       })),
-      weakTopics: weakTopics.map(([topic, mastery]) => ({
-        topic,
-        mastery: Math.round(mastery * 100),
-        gap: Math.round((0.5 - mastery) * 100),
+      events: weekEvents,
+      testCount: assignmentsDue.filter(a => a.type === 'test' || a.type === 'exam').length,
+    };
+  }
+
+  /**
+   * Set transportation info.
+   */
+  setTransportation({ type, busRoute, busStop, pickupTime, dropoffTime }) {
+    this._transportation = { type, busRoute, busStop, pickupTime, dropoffTime };
+    return { set: true, type };
+  }
+
+  /**
+   * Get transportation info.
+   */
+  getTransportation() {
+    return { ...this._transportation };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 📝 ASSIGNMENTS & HOMEWORK
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Add a new assignment.
+   */
+  addAssignment({ classId, title, description, dueDate, type = 'homework', points = 100, priority = 'medium' }) {
+    const assignmentId = `ASGN-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+    
+    this._assignments.set(assignmentId, {
+      assignmentId,
+      classId,
+      title,
+      description,
+      dueDate,
+      type, // 'homework', 'project', 'test', 'quiz', 'essay', 'lab'
+      points,
+      priority, // 'low', 'medium', 'high', 'urgent'
+      status: 'pending', // 'pending', 'in_progress', 'completed', 'submitted', 'graded', 'late', 'missing'
+      createdAt: new Date().toISOString(),
+      completedAt: null,
+      submittedAt: null,
+      grade: null,
+    });
+
+    return { added: true, assignmentId, title, dueDate };
+  }
+
+  /**
+   * Get all assignments, optionally filtered.
+   */
+  getAssignments({ classId = null, status = null, upcoming = false } = {}) {
+    let assignments = [...this._assignments.values()];
+
+    if (classId) {
+      assignments = assignments.filter(a => a.classId === classId);
+    }
+
+    if (status) {
+      assignments = assignments.filter(a => a.status === status);
+    }
+
+    if (upcoming) {
+      const now = new Date();
+      assignments = assignments.filter(a => new Date(a.dueDate) >= now);
+    }
+
+    // Sort by due date
+    assignments.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+    return assignments;
+  }
+
+  /**
+   * Get what's due today.
+   */
+  getDueToday() {
+    const today = new Date().toISOString().split('T')[0];
+    return [...this._assignments.values()].filter(a => 
+      a.dueDate.split('T')[0] === today && a.status !== 'submitted' && a.status !== 'graded'
+    );
+  }
+
+  /**
+   * Get overdue assignments.
+   */
+  getOverdue() {
+    const now = new Date();
+    return [...this._assignments.values()].filter(a => 
+      new Date(a.dueDate) < now && a.status !== 'submitted' && a.status !== 'graded'
+    );
+  }
+
+  /**
+   * Mark assignment as in progress.
+   */
+  startAssignment(assignmentId) {
+    const assignment = this._assignments.get(assignmentId);
+    if (!assignment) return { error: 'Assignment not found' };
+
+    assignment.status = 'in_progress';
+    return { updated: true, assignmentId, status: 'in_progress' };
+  }
+
+  /**
+   * Mark assignment as completed.
+   */
+  completeAssignment(assignmentId) {
+    const assignment = this._assignments.get(assignmentId);
+    if (!assignment) return { error: 'Assignment not found' };
+
+    assignment.status = 'completed';
+    assignment.completedAt = new Date().toISOString();
+    return { updated: true, assignmentId, status: 'completed' };
+  }
+
+  /**
+   * Submit an assignment.
+   */
+  submitAssignment(assignmentId, { notes = '', attachments = [] } = {}) {
+    const assignment = this._assignments.get(assignmentId);
+    if (!assignment) return { error: 'Assignment not found' };
+
+    const now = new Date();
+    const dueDate = new Date(assignment.dueDate);
+    const isLate = now > dueDate;
+
+    assignment.status = isLate ? 'late' : 'submitted';
+    assignment.submittedAt = now.toISOString();
+
+    this._submissions.set(assignmentId, {
+      assignmentId,
+      submittedAt: assignment.submittedAt,
+      isLate,
+      notes,
+      attachments,
+    });
+
+    return { submitted: true, assignmentId, isLate, submittedAt: assignment.submittedAt };
+  }
+
+  /**
+   * Record a grade for an assignment.
+   */
+  recordGrade(assignmentId, { score, feedback = '' }) {
+    const assignment = this._assignments.get(assignmentId);
+    if (!assignment) return { error: 'Assignment not found' };
+
+    assignment.status = 'graded';
+    assignment.grade = { score, outOf: assignment.points, percentage: (score / assignment.points) * 100, feedback };
+
+    // Add to class grades
+    if (!this._grades.has(assignment.classId)) {
+      this._grades.set(assignment.classId, []);
+    }
+    this._grades.get(assignment.classId).push({
+      assignmentId,
+      title: assignment.title,
+      type: assignment.type,
+      score,
+      outOf: assignment.points,
+      percentage: assignment.grade.percentage,
+      gradedAt: new Date().toISOString(),
+    });
+
+    return { graded: true, assignmentId, score, outOf: assignment.points, percentage: assignment.grade.percentage };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 📚 NOTES & CLASS MATERIALS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Add notes for a class.
+   */
+  addNotes({ classId, title, content, date = new Date().toISOString(), tags = [] }) {
+    const noteId = `NOTE-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+
+    this._notes.set(noteId, {
+      noteId,
+      classId,
+      title,
+      content,
+      date,
+      tags,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    return { added: true, noteId, title };
+  }
+
+  /**
+   * Get notes for a class.
+   */
+  getNotes({ classId = null, search = null } = {}) {
+    let notes = [...this._notes.values()];
+
+    if (classId) {
+      notes = notes.filter(n => n.classId === classId);
+    }
+
+    if (search) {
+      const lower = search.toLowerCase();
+      notes = notes.filter(n => 
+        n.title.toLowerCase().includes(lower) || 
+        n.content.toLowerCase().includes(lower) ||
+        n.tags.some(t => t.toLowerCase().includes(lower))
+      );
+    }
+
+    return notes.sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
+
+  /**
+   * Update existing notes.
+   */
+  updateNotes(noteId, { title, content, tags }) {
+    const note = this._notes.get(noteId);
+    if (!note) return { error: 'Note not found' };
+
+    if (title) note.title = title;
+    if (content) note.content = content;
+    if (tags) note.tags = tags;
+    note.updatedAt = new Date().toISOString();
+
+    return { updated: true, noteId };
+  }
+
+  /**
+   * Save syllabus for a class.
+   */
+  saveSyllabus(classId, syllabusContent) {
+    this._syllabi.set(classId, {
+      classId,
+      content: syllabusContent,
+      savedAt: new Date().toISOString(),
+    });
+    return { saved: true, classId };
+  }
+
+  /**
+   * Get syllabus for a class.
+   */
+  getSyllabus(classId) {
+    return this._syllabi.get(classId) || null;
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 📊 GRADES & PROGRESS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Get grades for a class.
+   */
+  getClassGrades(classId) {
+    const grades = this._grades.get(classId) || [];
+    
+    if (grades.length === 0) {
+      return { classId, grades: [], average: null, letterGrade: null };
+    }
+
+    const totalPoints = grades.reduce((sum, g) => sum + g.score, 0);
+    const totalPossible = grades.reduce((sum, g) => sum + g.outOf, 0);
+    const average = (totalPoints / totalPossible) * 100;
+
+    return {
+      classId,
+      className: this._classes.get(classId)?.className,
+      grades,
+      average: Math.round(average * 100) / 100,
+      letterGrade: this._getLetterGrade(average),
+      totalAssignments: grades.length,
+    };
+  }
+
+  /**
+   * Get overall GPA.
+   */
+  calculateGPA() {
+    const classGrades = [...this._classes.keys()].map(classId => this.getClassGrades(classId));
+    const gradedClasses = classGrades.filter(c => c.average !== null);
+
+    if (gradedClasses.length === 0) {
+      return { gpa: null, classes: 0 };
+    }
+
+    const gradePoints = gradedClasses.map(c => this._getGradePoints(c.average));
+    const gpa = gradePoints.reduce((sum, gp) => sum + gp, 0) / gradePoints.length;
+
+    this._gpa.current = Math.round(gpa * 100) / 100;
+
+    return {
+      gpa: this._gpa.current,
+      classes: gradedClasses.length,
+      breakdown: gradedClasses.map(c => ({
+        className: c.className,
+        average: c.average,
+        letterGrade: c.letterGrade,
       })),
-      weakFlashcards: weakCards.slice(0, 5),
-      recommendations: this._generateWeaknessRecommendations(weakCategories, weakTopics, weakCards),
     };
   }
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // TRACKING METHODS
-  // ══════════════════════════════════════════════════════════════════════════
+  _getLetterGrade(percentage) {
+    if (percentage >= 97) return 'A+';
+    if (percentage >= 93) return 'A';
+    if (percentage >= 90) return 'A-';
+    if (percentage >= 87) return 'B+';
+    if (percentage >= 83) return 'B';
+    if (percentage >= 80) return 'B-';
+    if (percentage >= 77) return 'C+';
+    if (percentage >= 73) return 'C';
+    if (percentage >= 70) return 'C-';
+    if (percentage >= 67) return 'D+';
+    if (percentage >= 63) return 'D';
+    if (percentage >= 60) return 'D-';
+    return 'F';
+  }
+
+  _getGradePoints(percentage) {
+    if (percentage >= 93) return 4.0;
+    if (percentage >= 90) return 3.7;
+    if (percentage >= 87) return 3.3;
+    if (percentage >= 83) return 3.0;
+    if (percentage >= 80) return 2.7;
+    if (percentage >= 77) return 2.3;
+    if (percentage >= 73) return 2.0;
+    if (percentage >= 70) return 1.7;
+    if (percentage >= 67) return 1.3;
+    if (percentage >= 63) return 1.0;
+    if (percentage >= 60) return 0.7;
+    return 0.0;
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 🎯 GOALS & PLANNING
+  // ═══════════════════════════════════════════════════════════════════════════
 
   /**
-   * Record an answer (correct or incorrect) — feeds back into learning system.
-   *
-   * @param {boolean} correct - Whether the answer was correct
-   * @param {object} [context]
-   * @param {string} [context.cardId] - Flashcard ID if applicable
-   * @param {string} [context.topic] - Topic context
-   * @param {string} [context.bloomLevel] - Bloom's level
+   * Set a goal.
    */
-  recordAnswer(correct, context = {}) {
-    const { cardId, topic = 'general', bloomLevel = 'RECALL' } = context;
+  setGoal({ title, description, category, targetDate, milestones = [] }) {
+    const goalId = `GOAL-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
 
-    this._questionsAnswered++;
-    if (correct) this._correctAnswers++;
-
-    this._answerHistory.push({
-      timestamp: new Date().toISOString(),
-      correct,
-      topic,
-      bloomLevel,
+    this._goals.push({
+      goalId,
+      title,
+      description,
+      category, // 'academic', 'extracurricular', 'personal', 'college', 'career'
+      targetDate,
+      milestones: milestones.map((m, i) => ({ ...m, id: i, completed: false })),
+      status: 'active', // 'active', 'completed', 'abandoned'
+      progress: 0,
+      createdAt: new Date().toISOString(),
     });
 
-    // Update flashcard if applicable
-    if (cardId && this._srCards.has(cardId)) {
-      const card = this._srCards.get(cardId);
-      card.recordAnswer(correct);
-
-      // Update concept mastery in knowledge graph
-      const node = this._knowledgeGraph.get(card.concept);
-      if (node) {
-        const delta = correct ? 0.1 : -0.05;
-        node.mastery = Math.max(0, Math.min(1, node.mastery + delta));
-      }
-    }
-
-    // NEXORIS: Reinforce or weaken pathway
-    const pathKey = `ANSWER:${this.subject}:${topic}`;
-    this._nexoris.reinforce(pathKey, correct ? 1.0 : 0.2);
-
-    // COGNOVEX: Observe answer quality
-    const bloomUnit = this._cognovex.unit(`bloom_${bloomLevel.toLowerCase()}`);
-    if (bloomUnit) {
-      bloomUnit.observe(topic, correct ? 1.0 : 0.0);
-    }
-    this._cognovex.tick();
-
-    // Update topic mastery (φ⁻¹ learning)
-    const priorMastery = this._topicMastery.get(topic) || 0.5;
-    const signal = correct ? Math.min(1, priorMastery + 0.1) : Math.max(0, priorMastery - 0.05);
-    const newMastery = priorMastery + GOLDEN_RATIO_INV * (signal - priorMastery);
-    this._topicMastery.set(topic, newMastery);
-
-    // Adjust difficulty if needed
-    this._maybeAdjustDifficulty();
-
-    // Log to CHRONO
-    this._chrono.append({
-      type: 'ANSWER_RECORDED',
-      correct,
-      topic,
-      bloomLevel,
-      cardId,
-      newMastery: Math.round(newMastery * 100),
-    });
-
-    return {
-      recorded: true,
-      encouragement: this._getEncouragement(correct ? 'correct' : 'incorrect'),
-      masteryChange: correct ? '+' : '-',
-      newMastery: Math.round(newMastery * 100),
-    };
+    return { created: true, goalId, title };
   }
 
   /**
-   * Record a study session.
-   *
-   * @param {number} durationMinutes - Session duration
-   * @param {string} [topic='general'] - Topic studied
+   * Update goal progress.
    */
-  recordStudySession(durationMinutes, topic = 'general') {
-    this._recordStudySession(topic, durationMinutes, 'manual');
-    return {
-      recorded: true,
-      totalStudyTime: this._totalStudyTime,
-      streak: this._streak.current,
-    };
-  }
+  updateGoalProgress(goalId, { progress, completedMilestones = [] }) {
+    const goal = this._goals.find(g => g.goalId === goalId);
+    if (!goal) return { error: 'Goal not found' };
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // EXPORT METHODS
-  // ══════════════════════════════════════════════════════════════════════════
+    if (progress !== undefined) goal.progress = progress;
+    
+    for (const milestoneId of completedMilestones) {
+      const milestone = goal.milestones.find(m => m.id === milestoneId);
+      if (milestone) milestone.completed = true;
+    }
 
-  /**
-   * Export full learning state for persistence or analysis.
-   */
-  exportProgress() {
-    return {
-      version: '1.0.0',
-      exportedAt: new Date().toISOString(),
-      studentId: this.studentId,
-      subject: this.subject,
-      difficultyLevel: this.difficultyLevel,
+    if (progress >= 100) goal.status = 'completed';
 
-      // Statistics
-      stats: {
-        totalStudyTime: this._totalStudyTime,
-        questionsAnswered: this._questionsAnswered,
-        correctAnswers: this._correctAnswers,
-        correctRate: this._questionsAnswered > 0
-          ? Math.round((this._correctAnswers / this._questionsAnswered) * 100)
-          : 0,
-        studySessions: this._studySessions.length,
-      },
-
-      // Streak
-      streak: this._streak,
-
-      // Mastery
-      topicMastery: Object.fromEntries(this._topicMastery),
-      masteryReport: this.masteryReport(),
-
-      // Knowledge graph (serialized)
-      knowledgeGraph: {
-        nodes: [...this._knowledgeGraph.entries()].map(([term, node]) => ({
-          term,
-          mastery: node.mastery,
-          exposureCount: node.exposureCount,
-          connections: Object.fromEntries(node.connections),
-        })),
-      },
-
-      // Flashcards
-      flashcards: [...this._srCards.entries()].map(([id, card]) => ({
-        id,
-        front: card.front,
-        back: card.back,
-        concept: card.concept,
-        box: card.box,
-        dueDate: card.dueDate.toISOString(),
-        recallProbability: card.recallProbability,
-        totalReviews: card.totalReviews,
-        correctReviews: card.correctReviews,
-      })),
-
-      // CEREBEX world model
-      cerebexWorldModel: this._cerebex.worldModel(),
-
-      // NEXORIS pheromone field
-      nexorisPheromoneField: this._nexoris.fieldSnapshot(),
-
-      // COGNOVEX commitment state
-      cognovexState: this._cognovex.collectiveSelfReport(),
-
-      // Answer history (last 100)
-      recentAnswers: this._answerHistory.slice(-100),
-
-      // Learning analytics
-      analytics: {
-        learningVelocity: this._learningVelocity,
-        retentionRate: this._retentionRate,
-        weaknessAnalysis: this.weaknessAnalysis(),
-      },
-
-      // CHRONO log (last 50 entries)
-      chronoLog: this._chrono.all().slice(-50),
-    };
+    return { updated: true, goalId, progress: goal.progress };
   }
 
   /**
-   * Import previously exported progress.
-   *
-   * @param {object} data - Exported progress data
+   * Get all goals.
    */
-  importProgress(data) {
-    if (!data || data.version !== '1.0.0') {
-      throw new Error('Invalid or incompatible progress data');
+  getGoals({ category = null, status = 'active' } = {}) {
+    let goals = this._goals;
+
+    if (category) {
+      goals = goals.filter(g => g.category === category);
     }
 
-    this.studentId = data.studentId || this.studentId;
-    this.subject = data.subject || this.subject;
-    this.difficultyLevel = data.difficultyLevel ?? this.difficultyLevel;
-
-    // Restore stats
-    if (data.stats) {
-      this._totalStudyTime = data.stats.totalStudyTime || 0;
-      this._questionsAnswered = data.stats.questionsAnswered || 0;
-      this._correctAnswers = data.stats.correctAnswers || 0;
+    if (status) {
+      goals = goals.filter(g => g.status === status);
     }
 
-    // Restore streak
-    if (data.streak) {
-      this._streak = data.streak;
-    }
-
-    // Restore topic mastery
-    if (data.topicMastery) {
-      this._topicMastery = new Map(Object.entries(data.topicMastery));
-    }
-
-    // Restore knowledge graph
-    if (data.knowledgeGraph?.nodes) {
-      for (const nodeData of data.knowledgeGraph.nodes) {
-        const node = new ConceptNode(nodeData.term);
-        node.mastery = nodeData.mastery || 0;
-        node.exposureCount = nodeData.exposureCount || 0;
-        node.connections = new Map(Object.entries(nodeData.connections || {}));
-        this._knowledgeGraph.set(nodeData.term, node);
-      }
-    }
-
-    // Restore flashcards
-    if (data.flashcards) {
-      for (const cardData of data.flashcards) {
-        const card = new SRCard(cardData.front, cardData.back, cardData.concept);
-        card.id = cardData.id;
-        card.box = cardData.box || 0;
-        card.dueDate = new Date(cardData.dueDate || Date.now());
-        card.recallProbability = cardData.recallProbability ?? 0.5;
-        card.totalReviews = cardData.totalReviews || 0;
-        card.correctReviews = cardData.correctReviews || 0;
-        this._srCards.set(card.id, card);
-      }
-    }
-
-    // Log import
-    this._chrono.append({
-      type: 'PROGRESS_IMPORTED',
-      studentId: this.studentId,
-      importedTopics: this._topicMastery.size,
-      importedCards: this._srCards.size,
-    });
-
-    return { imported: true, topicsRestored: this._topicMastery.size, cardsRestored: this._srCards.size };
+    return goals;
   }
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // PRIVATE HELPER METHODS
-  // ══════════════════════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ⏰ STUDY & TIME MANAGEMENT
+  // ═══════════════════════════════════════════════════════════════════════════
 
-  _buildKnowledgeGraphFromContent(keyTerms, sentences) {
-    // Ensure nodes exist
-    for (const term of keyTerms) {
-      this._ensureConceptNode(term);
-    }
+  /**
+   * Start a study session.
+   */
+  startStudySession({ subject, classId = null, goal = '' }) {
+    const sessionId = `STUDY-${Date.now()}`;
 
-    // Build connections based on co-occurrence in sentences
-    for (const sentence of sentences) {
-      const sentenceTerms = keyTerms.filter(t => sentence.toLowerCase().includes(t));
-      for (let i = 0; i < sentenceTerms.length; i++) {
-        for (let j = i + 1; j < sentenceTerms.length; j++) {
-          const nodeA = this._knowledgeGraph.get(sentenceTerms[i]);
-          const nodeB = this._knowledgeGraph.get(sentenceTerms[j]);
-          if (nodeA && nodeB) {
-            nodeA.connect(sentenceTerms[j], 0.5);
-            nodeB.connect(sentenceTerms[i], 0.5);
-          }
-        }
-      }
-    }
-
-    // Update exposure
-    for (const term of keyTerms) {
-      const node = this._knowledgeGraph.get(term);
-      if (node) {
-        node.exposureCount++;
-        node.lastSeen = new Date();
-        // Small mastery boost for exposure
-        node.mastery = Math.min(1, node.mastery + 0.05);
-      }
-    }
-  }
-
-  _ensureConceptNode(term) {
-    if (!this._knowledgeGraph.has(term)) {
-      this._knowledgeGraph.set(term, new ConceptNode(term));
-    }
-    return this._knowledgeGraph.get(term);
-  }
-
-  _getMasteryLevel(mastery) {
-    if (mastery >= MASTERY_LEVELS.PLATINUM.threshold) return 'Platinum';
-    if (mastery >= MASTERY_LEVELS.GOLD.threshold) return 'Gold';
-    if (mastery >= MASTERY_LEVELS.SILVER.threshold) return 'Silver';
-    if (mastery >= MASTERY_LEVELS.BRONZE.threshold) return 'Bronze';
-    return 'Novice';
-  }
-
-  _getMasteryIcon(mastery) {
-    if (mastery >= MASTERY_LEVELS.PLATINUM.threshold) return MASTERY_LEVELS.PLATINUM.icon;
-    if (mastery >= MASTERY_LEVELS.GOLD.threshold) return MASTERY_LEVELS.GOLD.icon;
-    if (mastery >= MASTERY_LEVELS.SILVER.threshold) return MASTERY_LEVELS.SILVER.icon;
-    if (mastery >= MASTERY_LEVELS.BRONZE.threshold) return MASTERY_LEVELS.BRONZE.icon;
-    return MASTERY_LEVELS.NOVICE.icon;
-  }
-
-  _estimateBloomLevel(text, domain) {
-    const lower = text.toLowerCase();
-    const signals = {
-      RECALL: ['define', 'list', 'name', 'state', 'identify', 'recall'],
-      COMPREHENSION: ['explain', 'describe', 'summarize', 'interpret', 'paraphrase'],
-      APPLICATION: ['apply', 'demonstrate', 'use', 'solve', 'implement'],
-      ANALYSIS: ['analyze', 'compare', 'contrast', 'differentiate', 'examine'],
-      SYNTHESIS: ['create', 'design', 'compose', 'construct', 'develop'],
-      EVALUATION: ['evaluate', 'judge', 'critique', 'justify', 'assess'],
+    const session = {
+      sessionId,
+      subject,
+      classId,
+      goal,
+      startTime: new Date().toISOString(),
+      endTime: null,
+      duration: null,
+      breaks: [],
+      notes: '',
+      productivity: null,
     };
 
-    const domainSignals = signals[domain] || [];
-    let score = 0.3; // Base score
+    this._studySessions.push(session);
 
-    for (const signal of domainSignals) {
-      if (lower.includes(signal)) {
-        score += 0.15;
-      }
-    }
-
-    return Math.min(1, score);
+    return { started: true, sessionId, startTime: session.startTime };
   }
 
-  _evaluateBloomForQuestion(question, answer, domain) {
-    const qLower = question.toLowerCase();
-    const aLower = answer.toLowerCase();
+  /**
+   * Take a break during study session.
+   */
+  takeBreak(sessionId) {
+    const session = this._studySessions.find(s => s.sessionId === sessionId);
+    if (!session) return { error: 'Session not found' };
 
-    // Simple heuristic based on question complexity and answer completeness
-    let score = 0.4;
-
-    // Question complexity
-    const questionWords = tokenize(question).length;
-    if (questionWords > 10) score += 0.1;
-
-    // Answer relevance (term overlap)
-    const qTerms = contentWords(tokenize(question));
-    const aTerms = contentWords(tokenize(answer));
-    const overlap = qTerms.filter(t => aTerms.includes(t)).length;
-    if (overlap > 0) score += Math.min(0.3, overlap * 0.1);
-
-    return Math.min(1, score);
-  }
-
-  _classifyQuestionBloomLevel(question) {
-    const lower = question.toLowerCase();
-
-    if (/^(what is|define|name|list|identify|state)\b/.test(lower)) return 'RECALL';
-    if (/^(explain|describe|summarize|interpret)\b/.test(lower)) return 'COMPREHENSION';
-    if (/^(how would|apply|demonstrate|use|solve)\b/.test(lower)) return 'APPLICATION';
-    if (/^(why|analyze|compare|contrast|examine)\b/.test(lower)) return 'ANALYSIS';
-    if (/^(create|design|develop|propose)\b/.test(lower)) return 'SYNTHESIS';
-    if (/^(evaluate|judge|justify|assess)\b/.test(lower)) return 'EVALUATION';
-
-    return 'COMPREHENSION'; // Default
-  }
-
-  _generateQuestion(sentence, target, type, difficulty, keyTerms) {
-    switch (type) {
-      case 'fill_blank': {
-        const blanked = sentence.replace(
-          new RegExp(`\\b${target}\\b`, 'gi'),
-          '________'
-        );
-        return {
-          type: 'fill_blank',
-          question: blanked,
-          hint: `Starts with "${target[0].toUpperCase()}", ${target.length} letters`,
-          answer: target,
-          bloomLevel: 'RECALL',
-          difficulty: DIFFICULTY_LEVELS[difficulty],
-          points: 1,
-        };
-      }
-
-      case 'multiple_choice': {
-        // Generate distractors from other key terms
-        const distractors = keyTerms
-          .filter(t => t !== target && t.length >= 3)
-          .slice(0, 3);
-
-        if (distractors.length < 3) {
-          // Fall back to fill blank if not enough distractors
-          return this._generateQuestion(sentence, target, 'fill_blank', difficulty, keyTerms);
-        }
-
-        const options = [target, ...distractors].sort(() => Math.random() - 0.5);
-        const blanked = sentence.replace(
-          new RegExp(`\\b${target}\\b`, 'gi'),
-          '________'
-        );
-
-        return {
-          type: 'multiple_choice',
-          question: blanked,
-          options,
-          answer: target,
-          hint: `Think about what fits contextually`,
-          bloomLevel: 'COMPREHENSION',
-          difficulty: DIFFICULTY_LEVELS[difficulty],
-          points: 2,
-        };
-      }
-
-      case 'essay': {
-        return {
-          type: 'essay',
-          question: `Explain the concept of "${target}" in your own words, using the following context: "${sentence}"`,
-          hint: 'Consider the key relationships and implications.',
-          answer: sentence,
-          bloomLevel: 'SYNTHESIS',
-          difficulty: DIFFICULTY_LEVELS[difficulty],
-          points: 5,
-        };
-      }
-
-      case 'matching': {
-        // For matching, we'd need multiple terms - simplified here
-        return this._generateQuestion(sentence, target, 'multiple_choice', difficulty, keyTerms);
-      }
-
-      case 'concept_map': {
-        const related = keyTerms.filter(t => t !== target).slice(0, 3);
-        return {
-          type: 'concept_map',
-          question: `Draw connections between "${target}" and these related concepts: ${related.join(', ')}`,
-          concepts: [target, ...related],
-          context: sentence,
-          hint: 'Think about how these ideas relate to each other.',
-          bloomLevel: 'ANALYSIS',
-          difficulty: DIFFICULTY_LEVELS[difficulty],
-          points: 4,
-        };
-      }
-
-      default:
-        return this._generateQuestion(sentence, target, 'fill_blank', difficulty, keyTerms);
-    }
-  }
-
-  _simplifyToLevel(sentence, level) {
-    let s = simplify(sentence);
-
-    if (level === 0) {
-      // Elementary: break into very short pieces
-      const words = tokenize(s);
-      if (words.length > 12) {
-        s = words.slice(0, 12).join(' ') + '...';
-      }
-      // Replace complex words with simpler alternatives (simplified heuristic)
-      s = s.replace(/\b(\w{10,})\b/g, (match) => {
-        const simpler = match.slice(0, 6) + '...';
-        return simpler;
-      });
-    }
-
-    return s;
-  }
-
-  _buildConceptMap(concepts, text) {
-    const map = {
-      nodes: concepts.map(c => ({ id: c, label: c })),
-      edges: [],
-    };
-
-    // Find co-occurrences
-    const sentences = splitSentences(text);
-    for (const sentence of sentences) {
-      const lower = sentence.toLowerCase();
-      const present = concepts.filter(c => lower.includes(c));
-
-      for (let i = 0; i < present.length; i++) {
-        for (let j = i + 1; j < present.length; j++) {
-          map.edges.push({
-            source: present[i],
-            target: present[j],
-            context: sentence.slice(0, 50),
-          });
-        }
-      }
-    }
-
-    return map;
-  }
-
-  _recordStudySession(topic, durationMinutes, sessionType) {
-    this._studySessions.push({
-      timestamp: new Date().toISOString(),
-      topic,
-      duration: durationMinutes,
-      type: sessionType,
+    session.breaks.push({
+      startTime: new Date().toISOString(),
+      endTime: null,
     });
 
-    this._totalStudyTime += durationMinutes;
+    return { breakStarted: true, sessionId };
+  }
+
+  /**
+   * End break.
+   */
+  endBreak(sessionId) {
+    const session = this._studySessions.find(s => s.sessionId === sessionId);
+    if (!session) return { error: 'Session not found' };
+
+    const currentBreak = session.breaks.find(b => b.endTime === null);
+    if (currentBreak) {
+      currentBreak.endTime = new Date().toISOString();
+    }
+
+    return { breakEnded: true, sessionId };
+  }
+
+  /**
+   * End a study session.
+   */
+  endStudySession(sessionId, { notes = '', productivity = 3 } = {}) {
+    const session = this._studySessions.find(s => s.sessionId === sessionId);
+    if (!session) return { error: 'Session not found' };
+
+    session.endTime = new Date().toISOString();
+    session.notes = notes;
+    session.productivity = productivity; // 1-5 scale
+
+    // Calculate duration (minus breaks)
+    const totalMs = new Date(session.endTime) - new Date(session.startTime);
+    const breakMs = session.breaks.reduce((sum, b) => {
+      if (b.endTime) {
+        return sum + (new Date(b.endTime) - new Date(b.startTime));
+      }
+      return sum;
+    }, 0);
+
+    session.duration = Math.round((totalMs - breakMs) / 60000); // minutes
 
     // Update streak
-    const today = new Date().toDateString();
-    if (this._streak.lastDate !== today) {
-      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toDateString();
-      if (this._streak.lastDate === yesterday) {
-        this._streak.current++;
-      } else {
-        this._streak.current = 1;
-      }
-      this._streak.lastDate = today;
-      this._streak.longest = Math.max(this._streak.longest, this._streak.current);
-    }
+    this._updateStreak();
 
-    // Calculate learning velocity
-    const recentSessions = this._studySessions.slice(-10);
-    if (recentSessions.length >= 2) {
-      const firstTime = new Date(recentSessions[0].timestamp).getTime();
-      const lastTime = new Date(recentSessions[recentSessions.length - 1].timestamp).getTime();
-      const daysDiff = (lastTime - firstTime) / (24 * 60 * 60 * 1000) || 1;
-      this._learningVelocity = recentSessions.length / daysDiff;
-    }
+    return { 
+      ended: true, 
+      sessionId, 
+      duration: session.duration,
+      productivity,
+    };
   }
 
-  _generateStudyRecommendations(topic, freeEnergy) {
-    const recommendations = [];
+  /**
+   * Get study statistics.
+   */
+  getStudyStats({ period = 'week' } = {}) {
+    const now = new Date();
+    let startDate = new Date(now);
 
-    if (freeEnergy > 0.5) {
-      recommendations.push({
-        type: 'REVIEW',
-        message: 'High uncertainty detected. Consider re-reading key sections.',
-        priority: 'HIGH',
-      });
+    if (period === 'week') {
+      startDate.setDate(now.getDate() - 7);
+    } else if (period === 'month') {
+      startDate.setMonth(now.getMonth() - 1);
+    } else if (period === 'semester') {
+      startDate.setMonth(now.getMonth() - 4);
     }
 
-    if (this._srCards.size > 0) {
-      const dueCount = this.spacedRepetitionDue().length;
-      if (dueCount > 0) {
-        recommendations.push({
-          type: 'FLASHCARD_REVIEW',
-          message: `${dueCount} flashcards due for review.`,
-          priority: dueCount > 5 ? 'HIGH' : 'MEDIUM',
-        });
+    const sessions = this._studySessions.filter(s => 
+      s.endTime && new Date(s.startTime) >= startDate
+    );
+
+    const totalMinutes = sessions.reduce((sum, s) => sum + (s.duration || 0), 0);
+    const avgProductivity = sessions.length > 0
+      ? sessions.reduce((sum, s) => sum + (s.productivity || 3), 0) / sessions.length
+      : 0;
+
+    // Group by subject
+    const bySubject = {};
+    for (const session of sessions) {
+      if (!bySubject[session.subject]) {
+        bySubject[session.subject] = { minutes: 0, sessions: 0 };
       }
+      bySubject[session.subject].minutes += session.duration || 0;
+      bySubject[session.subject].sessions += 1;
     }
 
-    recommendations.push({
-      type: 'QUIZ',
-      message: 'Test your understanding with a quiz.',
-      priority: 'LOW',
+    return {
+      period,
+      totalSessions: sessions.length,
+      totalMinutes,
+      totalHours: Math.round(totalMinutes / 60 * 10) / 10,
+      avgProductivity: Math.round(avgProductivity * 10) / 10,
+      bySubject,
+      streak: this._streaks,
+    };
+  }
+
+  _updateStreak() {
+    const today = new Date().toISOString().split('T')[0];
+    
+    if (this._streaks.lastDate === today) {
+      return; // Already studied today
+    }
+
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+    if (this._streaks.lastDate === yesterdayStr) {
+      this._streaks.current += 1;
+    } else {
+      this._streaks.current = 1;
+    }
+
+    if (this._streaks.current > this._streaks.longest) {
+      this._streaks.longest = this._streaks.current;
+    }
+
+    this._streaks.lastDate = today;
+  }
+
+  /**
+   * Get current streak.
+   */
+  getStreak() {
+    return { ...this._streaks };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 👥 COLLABORATION & STUDY GROUPS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Create a study group.
+   */
+  createStudyGroup({ name, subject, classId = null, members = [] }) {
+    const groupId = `GROUP-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+
+    this._studyGroups.push({
+      groupId,
+      name,
+      subject,
+      classId,
+      members: [...members, this.studentId],
+      createdBy: this.studentId,
+      createdAt: new Date().toISOString(),
+      meetings: [],
+      sharedNotes: [],
     });
 
-    return recommendations;
+    return { created: true, groupId, name };
   }
 
-  _generateWeaknessRecommendations(weakCategories, weakTopics, weakCards) {
-    const recs = [];
+  /**
+   * Schedule a study group meeting.
+   */
+  scheduleGroupMeeting(groupId, { date, time, location, agenda }) {
+    const group = this._studyGroups.find(g => g.groupId === groupId);
+    if (!group) return { error: 'Study group not found' };
 
-    if (weakCategories.length > 0) {
-      recs.push({
-        type: 'CATEGORY_FOCUS',
-        message: `Focus on these analytical areas: ${weakCategories.slice(0, 3).map(c => c.category).join(', ')}`,
+    const meetingId = `MTG-${Date.now()}`;
+    group.meetings.push({
+      meetingId,
+      date,
+      time,
+      location,
+      agenda,
+      attendees: [],
+      status: 'scheduled',
+    });
+
+    return { scheduled: true, meetingId, date, time };
+  }
+
+  /**
+   * Get study groups.
+   */
+  getStudyGroups() {
+    return this._studyGroups;
+  }
+
+  /**
+   * Create a project team.
+   */
+  createProjectTeam(assignmentId, { teamName, members = [] }) {
+    this._projectTeams.set(assignmentId, {
+      assignmentId,
+      teamName,
+      members: [...members, this.studentId],
+      tasks: [],
+      createdAt: new Date().toISOString(),
+    });
+
+    return { created: true, assignmentId, teamName };
+  }
+
+  /**
+   * Add task to project.
+   */
+  addProjectTask(assignmentId, { task, assignedTo, dueDate }) {
+    const team = this._projectTeams.get(assignmentId);
+    if (!team) return { error: 'Project team not found' };
+
+    const taskId = `TASK-${Date.now()}`;
+    team.tasks.push({
+      taskId,
+      task,
+      assignedTo,
+      dueDate,
+      status: 'pending',
+      completedAt: null,
+    });
+
+    return { added: true, taskId, task };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 🏫 SCHOOL LIFE
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Add school announcement.
+   */
+  addAnnouncement({ title, content, category, date = new Date().toISOString(), important = false }) {
+    const announcementId = `ANN-${Date.now()}`;
+
+    this._announcements.push({
+      announcementId,
+      title,
+      content,
+      category, // 'general', 'academic', 'sports', 'clubs', 'emergency'
+      date,
+      important,
+      read: false,
+    });
+
+    return { added: true, announcementId };
+  }
+
+  /**
+   * Get announcements.
+   */
+  getAnnouncements({ unreadOnly = false, category = null } = {}) {
+    let announcements = this._announcements;
+
+    if (unreadOnly) {
+      announcements = announcements.filter(a => !a.read);
+    }
+
+    if (category) {
+      announcements = announcements.filter(a => a.category === category);
+    }
+
+    return announcements.sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
+
+  /**
+   * Add school event.
+   */
+  addEvent({ title, date, time, location, category, description = '' }) {
+    const eventId = `EVT-${Date.now()}`;
+
+    this._events.push({
+      eventId,
+      title,
+      date,
+      time,
+      location,
+      category, // 'sports', 'dance', 'concert', 'meeting', 'deadline', 'holiday'
+      description,
+      attending: false,
+    });
+
+    return { added: true, eventId };
+  }
+
+  /**
+   * Get upcoming events.
+   */
+  getUpcomingEvents({ days = 30 } = {}) {
+    const now = new Date();
+    const endDate = new Date(now);
+    endDate.setDate(now.getDate() + days);
+
+    return this._events
+      .filter(e => {
+        const eventDate = new Date(e.date);
+        return eventDate >= now && eventDate <= endDate;
+      })
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+  }
+
+  /**
+   * Join a club.
+   */
+  joinClub({ clubName, meetingDay, meetingTime, advisor, room }) {
+    const clubId = `CLUB-${Date.now()}`;
+
+    this._clubs.push({
+      clubId,
+      clubName,
+      meetingDay,
+      meetingTime,
+      advisor,
+      room,
+      joinedAt: new Date().toISOString(),
+      role: 'member',
+      hoursLogged: 0,
+    });
+
+    return { joined: true, clubId, clubName };
+  }
+
+  /**
+   * Log club hours.
+   */
+  logClubHours(clubId, hours, activity) {
+    const club = this._clubs.find(c => c.clubId === clubId);
+    if (!club) return { error: 'Club not found' };
+
+    club.hoursLogged += hours;
+
+    return { logged: true, clubId, hours, totalHours: club.hoursLogged };
+  }
+
+  /**
+   * Get club memberships.
+   */
+  getClubs() {
+    return this._clubs;
+  }
+
+  /**
+   * Add sport/activity.
+   */
+  addSport({ sportName, season, coach, practiceSchedule }) {
+    const sportId = `SPORT-${Date.now()}`;
+
+    this._sports.push({
+      sportId,
+      sportName,
+      season,
+      coach,
+      practiceSchedule, // [{ day: 'M', time: '3:30 PM' }, ...]
+      games: [],
+      stats: {},
+      joinedAt: new Date().toISOString(),
+    });
+
+    return { added: true, sportId, sportName };
+  }
+
+  /**
+   * Get sports/activities.
+   */
+  getSports() {
+    return this._sports;
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 👨‍👩‍👧 PARENT CONNECTION
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Generate progress report for parents.
+   */
+  generateProgressReport() {
+    const gpa = this.calculateGPA();
+    const overdue = this.getOverdue();
+    const dueThisWeek = this.getWeekOverview();
+    const studyStats = this.getStudyStats({ period: 'week' });
+
+    const report = {
+      studentName: this.studentName,
+      grade: this.grade,
+      generatedAt: new Date().toISOString(),
+      
+      academics: {
+        currentGPA: gpa.gpa,
+        classBreakdown: gpa.breakdown,
+      },
+      
+      assignments: {
+        overdueCount: overdue.length,
+        overdueList: overdue.map(a => ({ title: a.title, dueDate: a.dueDate })),
+        dueThisWeek: dueThisWeek.assignmentsDue,
+        upcomingTests: dueThisWeek.testCount,
+      },
+      
+      effort: {
+        studyHoursThisWeek: studyStats.totalHours,
+        studySessions: studyStats.totalSessions,
+        currentStreak: this._streaks.current,
+        avgProductivity: studyStats.avgProductivity,
+      },
+      
+      activities: {
+        clubs: this._clubs.map(c => c.clubName),
+        sports: this._sports.map(s => s.sportName),
+        totalExtracurricularHours: this._clubs.reduce((sum, c) => sum + c.hoursLogged, 0),
+      },
+    };
+
+    this._progressReports.push(report);
+
+    return report;
+  }
+
+  /**
+   * Get alerts for parents.
+   */
+  getParentAlerts() {
+    const alerts = [];
+
+    // Check for overdue assignments
+    const overdue = this.getOverdue();
+    if (overdue.length > 0) {
+      alerts.push({
+        type: 'overdue',
+        severity: 'high',
+        message: `${overdue.length} overdue assignment(s)`,
+        details: overdue.map(a => a.title),
       });
     }
 
-    if (weakTopics.length > 0) {
-      recs.push({
-        type: 'TOPIC_REVIEW',
-        message: `Review these topics: ${weakTopics.slice(0, 3).map(t => t.topic).join(', ')}`,
+    // Check for low grades
+    const classGrades = [...this._classes.keys()].map(classId => this.getClassGrades(classId));
+    const lowGrades = classGrades.filter(c => c.average !== null && c.average < 70);
+    if (lowGrades.length > 0) {
+      alerts.push({
+        type: 'low_grade',
+        severity: 'high',
+        message: `Low grade(s) in ${lowGrades.length} class(es)`,
+        details: lowGrades.map(c => `${c.className}: ${c.average}%`),
       });
     }
 
-    if (weakCards.length > 0) {
-      recs.push({
-        type: 'FLASHCARD_DRILL',
-        message: `Drill these concepts: ${weakCards.slice(0, 3).map(c => c.concept).join(', ')}`,
+    // Check for upcoming tests
+    const thisWeek = this.getWeekOverview();
+    if (thisWeek.testCount > 0) {
+      const tests = thisWeek.assignments.filter(a => a.priority === 'high' || a.type === 'test');
+      alerts.push({
+        type: 'upcoming_test',
+        severity: 'medium',
+        message: `${thisWeek.testCount} test(s) this week`,
+        details: tests.map(t => `${t.title} - ${t.dueDate}`),
       });
     }
 
-    return recs;
-  }
-
-  _getCategoryMasteryDistribution() {
-    const worldModel = this._cerebex.worldModel();
-    const distribution = { high: 0, medium: 0, low: 0 };
-
-    for (const { score } of worldModel) {
-      if (score >= 0.6) distribution.high++;
-      else if (score >= 0.3) distribution.medium++;
-      else distribution.low++;
+    // Check streak
+    if (this._streaks.current >= 7) {
+      alerts.push({
+        type: 'achievement',
+        severity: 'positive',
+        message: `🔥 ${this._streaks.current} day study streak!`,
+        details: [],
+      });
     }
 
-    return distribution;
+    return alerts;
   }
 
-  _getNextStreakMilestone() {
-    const milestones = [7, 14, 30, 60, 100, 365];
-    for (const m of milestones) {
-      if (this._streak.current < m) {
-        return { target: m, daysAway: m - this._streak.current };
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 🆘 HELP & SUPPORT
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Request tutoring.
+   */
+  requestTutoring({ subject, topic, preferredTimes = [], urgency = 'normal' }) {
+    const requestId = `TUTOR-${Date.now()}`;
+
+    this._tutoringSessions.push({
+      requestId,
+      subject,
+      topic,
+      preferredTimes,
+      urgency, // 'normal', 'urgent', 'before_test'
+      status: 'requested',
+      tutor: null,
+      scheduledTime: null,
+      createdAt: new Date().toISOString(),
+    });
+
+    return { requested: true, requestId, subject, topic };
+  }
+
+  /**
+   * Get tutoring sessions.
+   */
+  getTutoringSessions() {
+    return this._tutoringSessions;
+  }
+
+  /**
+   * Mental health check-in.
+   */
+  wellnessCheckin({ mood, stressLevel, sleepHours, notes = '' }) {
+    const checkinId = `WELL-${Date.now()}`;
+
+    this._wellnessCheckins.push({
+      checkinId,
+      date: new Date().toISOString(),
+      mood, // 1-5 scale
+      stressLevel, // 1-5 scale
+      sleepHours,
+      notes,
+    });
+
+    // Generate recommendations based on check-in
+    const recommendations = [];
+    
+    if (stressLevel >= 4) {
+      recommendations.push('Consider talking to a counselor');
+      recommendations.push('Try a short break or walk');
+    }
+    
+    if (sleepHours < 7) {
+      recommendations.push('Try to get more sleep tonight');
+    }
+    
+    if (mood <= 2) {
+      recommendations.push('Reach out to a friend or trusted adult');
+    }
+
+    return { 
+      recorded: true, 
+      checkinId, 
+      recommendations,
+    };
+  }
+
+  /**
+   * Get wellness history.
+   */
+  getWellnessHistory({ days = 7 } = {}) {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    return this._wellnessCheckins.filter(c => 
+      new Date(c.date) >= startDate
+    );
+  }
+
+  /**
+   * Log sleep.
+   */
+  logSleep({ date, bedtime, wakeTime, quality }) {
+    const sleepId = `SLEEP-${Date.now()}`;
+
+    // Calculate hours
+    const bed = new Date(`${date}T${bedtime}`);
+    const wake = new Date(`${date}T${wakeTime}`);
+    if (wake < bed) wake.setDate(wake.getDate() + 1);
+    const hours = (wake - bed) / (1000 * 60 * 60);
+
+    this._sleepLog.push({
+      sleepId,
+      date,
+      bedtime,
+      wakeTime,
+      hours: Math.round(hours * 10) / 10,
+      quality, // 1-5
+    });
+
+    return { logged: true, sleepId, hours: Math.round(hours * 10) / 10 };
+  }
+
+  /**
+   * Get sleep stats.
+   */
+  getSleepStats({ days = 7 } = {}) {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    const recentSleep = this._sleepLog.filter(s => 
+      new Date(s.date) >= startDate
+    );
+
+    if (recentSleep.length === 0) {
+      return { avgHours: null, avgQuality: null, entries: 0 };
+    }
+
+    const avgHours = recentSleep.reduce((sum, s) => sum + s.hours, 0) / recentSleep.length;
+    const avgQuality = recentSleep.reduce((sum, s) => sum + s.quality, 0) / recentSleep.length;
+
+    return {
+      avgHours: Math.round(avgHours * 10) / 10,
+      avgQuality: Math.round(avgQuality * 10) / 10,
+      entries: recentSleep.length,
+      recentSleep,
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 💼 FUTURE PLANNING (College & Career)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Add college to list.
+   */
+  addCollege({ collegeName, location, type, deadline, requirements = [], notes = '' }) {
+    const collegeId = `COL-${Date.now()}`;
+
+    this._collegeList.push({
+      collegeId,
+      collegeName,
+      location,
+      type, // 'reach', 'match', 'safety'
+      deadline,
+      requirements,
+      notes,
+      status: 'researching', // 'researching', 'applying', 'applied', 'accepted', 'rejected', 'waitlisted', 'enrolled'
+      addedAt: new Date().toISOString(),
+    });
+
+    return { added: true, collegeId, collegeName };
+  }
+
+  /**
+   * Update college application status.
+   */
+  updateCollegeStatus(collegeId, status) {
+    const college = this._collegeList.find(c => c.collegeId === collegeId);
+    if (!college) return { error: 'College not found' };
+
+    college.status = status;
+    return { updated: true, collegeId, status };
+  }
+
+  /**
+   * Get college list.
+   */
+  getCollegeList() {
+    return this._collegeList;
+  }
+
+  /**
+   * Add scholarship.
+   */
+  addScholarship({ name, amount, deadline, requirements, link = '' }) {
+    const scholarshipId = `SCHOL-${Date.now()}`;
+
+    this._scholarships.push({
+      scholarshipId,
+      name,
+      amount,
+      deadline,
+      requirements,
+      link,
+      status: 'researching', // 'researching', 'applying', 'applied', 'awarded', 'denied'
+      addedAt: new Date().toISOString(),
+    });
+
+    return { added: true, scholarshipId, name };
+  }
+
+  /**
+   * Get scholarships.
+   */
+  getScholarships() {
+    return this._scholarships.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+  }
+
+  /**
+   * Add test score.
+   */
+  addTestScore({ testName, date, score, percentile = null, sections = {} }) {
+    const scoreId = `SCORE-${Date.now()}`;
+
+    this._testScores.push({
+      scoreId,
+      testName, // 'SAT', 'ACT', 'PSAT', 'AP Biology', etc.
+      date,
+      score,
+      percentile,
+      sections,
+    });
+
+    return { added: true, scoreId, testName, score };
+  }
+
+  /**
+   * Get test scores.
+   */
+  getTestScores() {
+    return this._testScores;
+  }
+
+  /**
+   * Add extracurricular activity (for college apps).
+   */
+  addExtracurricular({ activity, organization, role, startDate, endDate = null, hoursPerWeek, weeksPerYear, description }) {
+    const activityId = `ECA-${Date.now()}`;
+
+    this._extracurriculars.push({
+      activityId,
+      activity,
+      organization,
+      role,
+      startDate,
+      endDate,
+      hoursPerWeek,
+      weeksPerYear,
+      description,
+      totalHours: hoursPerWeek * weeksPerYear * (endDate ? 
+        Math.ceil((new Date(endDate) - new Date(startDate)) / (365 * 24 * 60 * 60 * 1000)) : 1
+      ),
+    });
+
+    return { added: true, activityId, activity };
+  }
+
+  /**
+   * Get extracurriculars.
+   */
+  getExtracurriculars() {
+    return this._extracurriculars;
+  }
+
+  /**
+   * Build resume.
+   */
+  buildResume() {
+    const gpa = this.calculateGPA();
+
+    this._resume = {
+      name: this.studentName,
+      grade: this.grade,
+      generatedAt: new Date().toISOString(),
+      
+      academics: {
+        gpa: gpa.gpa,
+        relevantCourses: [...this._classes.values()].map(c => c.className),
+      },
+      
+      testScores: this._testScores.map(t => ({
+        test: t.testName,
+        score: t.score,
+        date: t.date,
+      })),
+      
+      extracurriculars: this._extracurriculars.map(e => ({
+        activity: e.activity,
+        organization: e.organization,
+        role: e.role,
+        dates: `${e.startDate} - ${e.endDate || 'Present'}`,
+        description: e.description,
+      })),
+      
+      clubsAndActivities: [
+        ...this._clubs.map(c => ({
+          name: c.clubName,
+          role: c.role,
+          hours: c.hoursLogged,
+        })),
+        ...this._sports.map(s => ({
+          name: s.sportName,
+          season: s.season,
+        })),
+      ],
+    };
+
+    return this._resume;
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 📤 EXPORT & IMPORT
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Export all student data.
+   */
+  exportData() {
+    return {
+      studentInfo: {
+        studentId: this.studentId,
+        studentName: this.studentName,
+        grade: this.grade,
+        schoolId: this.schoolId,
+        timezone: this.timezone,
+        createdAt: this.createdAt,
+      },
+      classes: [...this._classes.values()],
+      bellSchedule: this._bellSchedule,
+      assignments: [...this._assignments.values()],
+      notes: [...this._notes.values()],
+      grades: Object.fromEntries(this._grades),
+      gpa: this._gpa,
+      goals: this._goals,
+      studySessions: this._studySessions,
+      streaks: this._streaks,
+      studyGroups: this._studyGroups,
+      announcements: this._announcements,
+      events: this._events,
+      clubs: this._clubs,
+      sports: this._sports,
+      transportation: this._transportation,
+      wellnessCheckins: this._wellnessCheckins,
+      sleepLog: this._sleepLog,
+      tutoringSessions: this._tutoringSessions,
+      collegeList: this._collegeList,
+      scholarships: this._scholarships,
+      testScores: this._testScores,
+      extracurriculars: this._extracurriculars,
+      resume: this._resume,
+      exportedAt: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Import student data.
+   */
+  importData(data) {
+    if (data.classes) this._classes = new Map(data.classes.map(c => [c.classId, c]));
+    if (data.bellSchedule) this._bellSchedule = data.bellSchedule;
+    if (data.assignments) this._assignments = new Map(data.assignments.map(a => [a.assignmentId, a]));
+    if (data.notes) this._notes = new Map(data.notes.map(n => [n.noteId, n]));
+    if (data.grades) this._grades = new Map(Object.entries(data.grades));
+    if (data.gpa) this._gpa = data.gpa;
+    if (data.goals) this._goals = data.goals;
+    if (data.studySessions) this._studySessions = data.studySessions;
+    if (data.streaks) this._streaks = data.streaks;
+    if (data.studyGroups) this._studyGroups = data.studyGroups;
+    if (data.announcements) this._announcements = data.announcements;
+    if (data.events) this._events = data.events;
+    if (data.clubs) this._clubs = data.clubs;
+    if (data.sports) this._sports = data.sports;
+    if (data.transportation) this._transportation = data.transportation;
+    if (data.wellnessCheckins) this._wellnessCheckins = data.wellnessCheckins;
+    if (data.sleepLog) this._sleepLog = data.sleepLog;
+    if (data.tutoringSessions) this._tutoringSessions = data.tutoringSessions;
+    if (data.collegeList) this._collegeList = data.collegeList;
+    if (data.scholarships) this._scholarships = data.scholarships;
+    if (data.testScores) this._testScores = data.testScores;
+    if (data.extracurriculars) this._extracurriculars = data.extracurriculars;
+    if (data.resume) this._resume = data.resume;
+
+    return { imported: true };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 🏠 DAILY DASHBOARD
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Get everything a student needs to see when they wake up.
+   */
+  getMorningBriefing() {
+    const today = getTodaySchedule();
+    const dueToday = this.getDueToday();
+    const overdue = this.getOverdue();
+    const studyStats = this.getStudyStats({ period: 'week' });
+    const unreadAnnouncements = this.getAnnouncements({ unreadOnly: true });
+    const upcomingEvents = this.getUpcomingEvents({ days: 3 });
+    const sleepStats = this.getSleepStats({ days: 7 });
+
+    return {
+      greeting: this._getGreeting(),
+      date: new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
+      
+      todaySchedule: today,
+      transportation: this._transportation.type ? {
+        type: this._transportation.type,
+        time: this._transportation.pickupTime,
+        details: this._transportation.busRoute ? `Bus ${this._transportation.busRoute}` : null,
+      } : null,
+      
+      assignments: {
+        dueToday: dueToday.length,
+        overdue: overdue.length,
+        dueTodayList: dueToday.map(a => a.title),
+      },
+      
+      streak: this._streaks.current,
+      studyHoursThisWeek: studyStats.totalHours,
+      
+      announcements: unreadAnnouncements.slice(0, 3),
+      upcomingEvents: upcomingEvents.slice(0, 3),
+      
+      wellness: {
+        avgSleep: sleepStats.avgHours,
+        recommendation: sleepStats.avgHours && sleepStats.avgHours < 7 
+          ? 'Try to get more sleep!' 
+          : 'Great sleep habits!',
+      },
+    };
+  }
+
+  _getGreeting() {
+    const hour = new Date().getHours();
+    const name = this.studentName.split(' ')[0];
+    
+    if (hour < 12) return `Good morning, ${name}! ☀️`;
+    if (hour < 17) return `Good afternoon, ${name}! 📚`;
+    return `Good evening, ${name}! 🌙`;
+  }
+
+  /**
+   * Get what to focus on tonight (homework planning).
+   */
+  getEveningPlan() {
+    const dueToday = this.getDueToday();
+    const dueTomorrow = [...this._assignments.values()].filter(a => {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      return a.dueDate.split('T')[0] === tomorrow.toISOString().split('T')[0] &&
+        a.status !== 'submitted' && a.status !== 'graded';
+    });
+    const overdue = this.getOverdue();
+    const weekOverview = this.getWeekOverview();
+
+    // Prioritize: overdue > due today > tests this week > due tomorrow
+    const priorityList = [];
+
+    for (const a of overdue) {
+      priorityList.push({ ...a, urgency: 'OVERDUE', priority: 1 });
+    }
+
+    for (const a of dueToday) {
+      if (!priorityList.find(p => p.assignmentId === a.assignmentId)) {
+        priorityList.push({ ...a, urgency: 'DUE TODAY', priority: 2 });
       }
     }
-    return { target: this._streak.current + 100, daysAway: 100 };
-  }
 
-  _maybeAdjustDifficulty() {
-    // Auto-adjust difficulty based on recent performance
-    const recentAnswers = this._answerHistory.slice(-20);
-    if (recentAnswers.length < 10) return;
-
-    const correctRate = recentAnswers.filter(a => a.correct).length / recentAnswers.length;
-
-    if (correctRate > 0.9 && this.difficultyLevel < 3) {
-      this.difficultyLevel++;
-      this._chrono.append({
-        type: 'DIFFICULTY_ADJUSTED',
-        newLevel: this.difficultyLevel,
-        reason: 'High performance',
-      });
-    } else if (correctRate < 0.4 && this.difficultyLevel > 0) {
-      this.difficultyLevel--;
-      this._chrono.append({
-        type: 'DIFFICULTY_ADJUSTED',
-        newLevel: this.difficultyLevel,
-        reason: 'Low performance',
-      });
+    const testsThisWeek = weekOverview.assignments.filter(a => a.type === 'test' || a.type === 'exam');
+    for (const a of testsThisWeek) {
+      const full = this._assignments.get(a.assignmentId);
+      if (full && !priorityList.find(p => p.assignmentId === full.assignmentId)) {
+        priorityList.push({ ...full, urgency: 'TEST THIS WEEK', priority: 3 });
+      }
     }
+
+    for (const a of dueTomorrow) {
+      if (!priorityList.find(p => p.assignmentId === a.assignmentId)) {
+        priorityList.push({ ...a, urgency: 'DUE TOMORROW', priority: 4 });
+      }
+    }
+
+    priorityList.sort((a, b) => a.priority - b.priority);
+
+    return {
+      date: new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
+      totalItems: priorityList.length,
+      priorityList: priorityList.slice(0, 10).map(p => ({
+        title: p.title,
+        className: this._classes.get(p.classId)?.className,
+        urgency: p.urgency,
+        dueDate: p.dueDate,
+        type: p.type,
+      })),
+      estimatedTime: this._estimateStudyTime(priorityList.slice(0, 10)),
+      recommendation: priorityList.length > 5 
+        ? 'Heavy workload tonight - start early and take breaks!'
+        : priorityList.length > 0
+          ? 'Manageable workload - you got this!'
+          : 'All caught up! Consider reviewing for upcoming tests.',
+    };
   }
 
-  _getEncouragement(type) {
-    const pool = ENCOURAGEMENTS[type] || ENCOURAGEMENTS.general;
-    return pool[Math.floor(Math.random() * pool.length)];
-  }
+  _estimateStudyTime(assignments) {
+    // Rough estimates by type
+    const estimates = {
+      homework: 30,
+      quiz: 20,
+      test: 60,
+      exam: 90,
+      essay: 60,
+      project: 90,
+      lab: 45,
+      reading: 30,
+    };
 
-  _calculateComplexityScore(text) {
-    const sentences = splitSentences(text);
-    const words = tokenize(text);
-    const syllableCount = totalSyllables(words);
+    const totalMinutes = assignments.reduce((sum, a) => {
+      return sum + (estimates[a.type] || 30);
+    }, 0);
 
-    const avgSyllables = words.length > 0 ? syllableCount / words.length : 0;
-    const avgSentenceLength = sentences.length > 0 ? words.length / sentences.length : 0;
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
 
-    // Normalized complexity score (0-100)
-    return Math.min(100, Math.round((avgSyllables * 20 + avgSentenceLength * 2)));
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+    return `${minutes}m`;
   }
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════════════
 // EXPORTS
-// ══════════════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════════════
 
-export {
-  GOLDEN_RATIO as PHI,
-  GOLDEN_RATIO_INV as PHI_INV,
-  BLOOM_DOMAINS,
-  MASTERY_LEVELS,
-  DIFFICULTY_LEVELS,
-  QUIZ_TYPES,
-  SR_INTERVALS,
-};
+export default StudentAI;
