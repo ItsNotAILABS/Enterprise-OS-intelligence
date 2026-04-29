@@ -28,6 +28,7 @@ import { CYCLOVEX } from './cyclovex.js';
 import { VOXIS }    from './voxis.js';
 import { HDI }      from './hdi.js';
 import { CognovexUnit, CognovexNetwork } from './cognovex.js';
+import { VetKeys } from './vetkeys.js';
 import { BehavioralLaws, EduConfig } from './edu-config.js';
 
 export { CHRONO };
@@ -38,6 +39,7 @@ export { CYCLOVEX };
 export { VOXIS };
 export { HDI };
 export { CognovexUnit, CognovexNetwork };
+export { VetKeys };
 export { BehavioralLaws, EduConfig };
 
 // ---------------------------------------------------------------------------
@@ -55,13 +57,15 @@ export { BehavioralLaws, EduConfig };
  * @param {number} [options.baseCapacity]     - CYCLOVEX C₀
  * @param {number} [options.couplingStrength] - NEXORIS Kuramoto K
  * @param {number} [options.cognovexUnits]    - Number of COGNOVEX units to spawn (max 8)
- * @returns {{ chrono, nexoris, cerebex, cordex, cyclovex, voxis, hdi, cognovex }}
+ * @param {string} [options.keyDerivationDomain] - VetKeys derivation domain
+ * @returns {{ chrono, nexoris, cerebex, cordex, cyclovex, voxis, hdi, cognovex, vetkeys }}
  */
 export function bootstrapMeridian({
   agentId           = 'MERIDIAN_HDI',
   baseCapacity      = 10,
   couplingStrength  = 2.0,
   cognovexUnits     = 4,
+  keyDerivationDomain = 'MERIDIAN_SOVEREIGN',
 } = {}) {
   // ── 1. CHRONO — foundation, everything logs to it ────────────────────────
   const chrono = new CHRONO();
@@ -95,7 +99,11 @@ export function bootstrapMeridian({
     cognovex.addUnit(`cvx-${i}`, domains[i]);
   }
 
-  // ── 8. HDI — natural language → pipeline interface ───────────────────────
+  // ── 8. VETKEYS — substrate-level encryption (Paper VIII) ────────────────
+  const vetkeys = new VetKeys({ canisterId: agentId, keyDerivationDomain });
+  vetkeys.setChrono(chrono);
+
+  // ── 9. HDI — natural language → pipeline interface ───────────────────────
   const hdi = new HDI({ cerebex, nexoris, chrono, cognovex }, agentId);
 
   // Bootstrap record in CHRONO
@@ -105,8 +113,9 @@ export function bootstrapMeridian({
     baseCapacity,
     couplingStrength,
     cognovexUnits,
+    keyDerivationDomain,
     timestamp: new Date().toISOString(),
   });
 
-  return { chrono, nexoris, cerebex, cordex, cyclovex, voxis, hdi, cognovex };
+  return { chrono, nexoris, cerebex, cordex, cyclovex, voxis, hdi, cognovex, vetkeys };
 }
