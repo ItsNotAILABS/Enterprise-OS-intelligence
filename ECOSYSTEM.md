@@ -255,20 +255,26 @@ The Agent Council runs in parallel. All four fire simultaneously on each proposa
 **Directory layout:**
 `sdk/effecttrace-governance-organism/src/` — `index.js` · `release.js` · `speedster.js` · `production.js` · `organism.js` · `types.js` · `engines/` (E1–E15) · `agents/` (ARCHON–FORGE) · `adapters/`
 
-### 7.2 Supporting SDKs
+### 7.2 Education Platform SDKs
 
-| SDK | Package | Role |
-|-----|---------|------|
-| MERIDIAN Sovereign OS | `@medina/meridian-sovereign-os` | Enterprise OS substrate — CORDEX, CEREBEX, CYCLOVEX, NEXORIS, CHRONO, VOXIS, HDI, COGNOVEX, EduConfig, VetKeys, VoiceInterface |
-| Bronze Canister Platform | `@medina/bronze-canister` | Education platform — BronzeCanister, StudentIdentity, StudentMemory, TeacherDashboard, ISDDeployment |
-| Sovereign Memory | `@medina/sovereign-memory-sdk` | Pheromone field + φ-compounding memory operations |
-| Intelligence Routing | `@medina/intelligence-routing-sdk` | NEXORIS routing layer — stigmergic command routing |
-| Organism Runtime | `@medina/organism-runtime-sdk` | Core organism lifecycle — heartbeat, synchronization, Fibonacci helix |
-| Enterprise Integration | `@medina/enterprise-integration-sdk` | 5 hardened SPINOR connectors (Salesforce, SAP, Oracle, Workday, ServiceNow) + 17 templates |
-| Document Absorption Engine | `@medina/document-absorption-engine` | Ingest and intelligence-annotate enterprise documents |
-| Paralegal AI | `@medina/paralegal-ai` | Domain AI — legal document intelligence |
-| Analyst AI | `@medina/analyst-ai` | Domain AI — financial and operational analysis |
-| Student AI | `@medina/student-ai` | Domain AI — adaptive learning intelligence |
+| SDK | Package | Version | Role |
+|-----|---------|---------|------|
+| **Silver Canister** | `@medina/silver-canister` | 1.0.0 | **School-level sovereign system** — Classroom orchestration, curriculum repository, announcement board, academic calendar, resource inventory, school analytics, student services, compliance engine. Controls multiple Bronze Canisters. |
+| **Bronze Canister** | `@medina/bronze-canister` | 1.0.0 | **Student-level sovereign canister** — Individual student compute unit with CHRONO portfolio, CEREBEX learning trajectory, voice interface, behavioral laws L72-L79 |
+| **Student AI** | `@medina/student-ai` | 1.0.0 | **Deep-tech learning intelligence** — CEREBEX/NEXORIS/COGNOVEX integration, Bloom's Taxonomy quorum, spaced repetition, adaptive difficulty, knowledge graphs, mastery levels |
+
+### 7.3 Supporting SDKs
+
+| SDK | Package | Version | Role |
+|-----|---------|---------|------|
+| MERIDIAN Sovereign OS | `@medina/meridian-sovereign-os` | 1.0.0 | Enterprise OS substrate — CORDEX, CEREBEX, CYCLOVEX, NEXORIS, CHRONO, VOXIS, HDI, COGNOVEX, EduConfig, VetKeys, VoiceInterface |
+| Sovereign Memory | `@medina/sovereign-memory-sdk` | 0.1.0-alpha | Pheromone field + φ-compounding memory operations |
+| Intelligence Routing | `@medina/intelligence-routing-sdk` | 0.1.0-alpha | NEXORIS routing layer — stigmergic command routing |
+| Organism Runtime | `@medina/organism-runtime-sdk` | 0.1.0-alpha | Core organism lifecycle — heartbeat, synchronization, Fibonacci helix |
+| Enterprise Integration | `@medina/enterprise-integration-sdk` | 0.1.0-alpha | 5 hardened SPINOR connectors (Salesforce, SAP, Oracle, Workday, ServiceNow) + 17 templates |
+| Document Absorption Engine | `@medina/document-absorption-engine` | 0.1.0-alpha | Ingest and intelligence-annotate enterprise documents |
+| Paralegal AI | `@medina/paralegal-ai` | 0.1.0-alpha | Domain AI — legal document intelligence |
+| Analyst AI | `@medina/analyst-ai` | 0.1.0-alpha | Domain AI — financial and operational analysis |
 
 ---
 
@@ -403,13 +409,32 @@ MERIDIAN COGNITIVE GOVERNANCE RUNTIME
 │   ├── VetKeys       — substrate-level AES-256-GCM encryption (HKDF derived)
 │   └── VoiceInterface — multi-user classroom voice sessions
 │
-├── BRONZE CANISTER PLATFORM (sdk/bronze-canister/)
+├── SILVER CANISTER PLATFORM v1.0.0 (sdk/silver-canister/) — SCHOOL LEVEL
+│   ├── SilverCanister       — school sovereign system (orchestrates Bronze Canisters)
+│   ├── CurriculumRepository — lesson plans, standards, pacing, version control
+│   ├── AnnouncementBoard    — news, emergency alerts, parent hooks, newsletters
+│   ├── AcademicCalendar     — grading periods, holidays, events, testing windows
+│   ├── ResourceInventory    — textbooks, devices, supplies, budgets, maintenance
+│   ├── SchoolAnalytics      — privacy-preserving anonymized metrics, gap analysis
+│   ├── StudentServices      — referrals, IEP/504, interventions, wellness
+│   └── ComplianceEngine     — FERPA, state reporting, graduation tracking, audit
+│
+├── BRONZE CANISTER PLATFORM v1.0.0 (sdk/bronze-canister/) — STUDENT LEVEL
 │   ├── BronzeCanister    — student sovereign compute unit (voice-native, persistent)
 │   ├── StudentIdentity   — ICP Internet Identity provisioning (student-owned)
 │   ├── StudentMemory     — persistent memory vault with TF-IDF search
 │   ├── TeacherDashboard  — metadata-only activity view (sovereignty-safe)
-│   ├── ISDDeployment     — district deployment orchestrator (pilot → scale)
-│   └── StudentAI         — embedded study tools (study, quiz, flashcards, ask, outline, explain)
+│   └── ISDDeployment     — district deployment orchestrator (pilot → scale)
+│
+├── STUDENT AI v1.0.0 (sdk/student-ai/) — DEEP-TECH LEARNING INTELLIGENCE
+│   ├── CEREBEX integration — 40-category learning trajectory with φ⁻¹ learning
+│   ├── NEXORIS integration — pheromone field study path optimization
+│   ├── COGNOVEX integration — Bloom's Taxonomy quorum (RECALL → EVALUATION)
+│   ├── Spaced Repetition   — Leitner boxes with φ-scaled intervals
+│   ├── Adaptive Difficulty — EASY → MEDIUM → HARD → EXPERT auto-adjust
+│   ├── Knowledge Graphs    — concept nodes with connection tracking
+│   ├── Mastery Levels      — Novice → Bronze → Silver → Gold → Platinum
+│   └── Weakness Detection  — free energy analysis identifies gaps
 │
 ├── SUPPORTING SDKs (sdk/)
 │   ├── sovereign-memory-sdk
@@ -418,8 +443,7 @@ MERIDIAN COGNITIVE GOVERNANCE RUNTIME
 │   ├── enterprise-integration-sdk  (5 hardened SPINOR connectors + 17 templates)
 │   ├── document-absorption-engine
 │   ├── paralegal-ai
-│   ├── analyst-ai
-│   └── student-ai
+│   └── analyst-ai
 │
 ├── DOCUMENT INTELLIGENCE PIPELINE (tools/)
 │   ├── Mundator Cognitus (doc-sanitizer.js)

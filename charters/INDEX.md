@@ -43,5 +43,13 @@ All charters are prior art as of April 2026.
 
 ---
 
+## Silver Canister School System Charter
+
+| Charter | What it governs |
+|:---|:---|
+| [**SILVER CANISTER CHARTER**](SILVER-CANISTER-CHARTER.md) | School-level sovereign system — curriculum repository, announcement board, academic calendar, resource inventory, school analytics, student services, compliance engine. Controls Bronze Canisters. |
+
+---
+
 *Enterprise OS Intelligence · Medina Tech · Chaos Lab · Dallas, Texas · April 2026*  
 *TRACE · VERIFY · REMEMBER*

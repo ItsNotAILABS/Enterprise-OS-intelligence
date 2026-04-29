@@ -1,7 +1,7 @@
 {
   "name": "@medina/bronze-canister",
-  "version": "0.1.0-alpha",
-  "description": "Bronze Canister Education Platform — sovereign ICP canisters for public school students. Persistent memory, voice-native build interface, behavioral safety laws, teacher dashboard, ISD deployment.",
+  "version": "1.0.0",
+  "description": "Bronze Canister Education Platform — sovereign ICP canisters for individual students. Persistent memory, voice-native build interface, behavioral safety laws L72-L79, CHRONO portfolio, CEREBEX learning trajectory. Orchestrated by Silver Canister school systems.",
   "license": "SEE LICENSE IN LICENSE",
   "author": {
     "name": "Alfredo Medina Hernandez",
