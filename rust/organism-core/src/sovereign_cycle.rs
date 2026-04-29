@@ -12,7 +12,7 @@
 //
 // No external compute purchased.  No cycles requested.  The organism beats.
 
-use crate::phi_math::{self, PHI, PHI_INV, HEARTBEAT_MS};
+use crate::phi_math::{self, PHI_INV, HEARTBEAT_MS};
 
 /// Heartbeat frequency in Hz.
 pub const HEARTBEAT_HZ: f64 = 1000.0 / HEARTBEAT_MS as f64;
