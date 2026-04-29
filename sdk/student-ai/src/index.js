@@ -1,24 +1,41 @@
 /**
- * @medina/student-ai — src/index.js
+ * @medina/student-ai — v3.0.0
  * ══════════════════════════════════════════════════════════════════════════════
- * STUDENT LIFE OPERATING SYSTEM
+ * STUDENT LIFE OPERATING SYSTEM — POWERED BY MERIDIAN INTELLIGENCE
  * 
- * This is not a study tool. This is everything a student needs to manage their
- * entire life — at school, at home, and planning for their future.
+ * This is not just a planner. This is an INTELLIGENT operating system for a 
+ * student's entire life — powered by MERIDIAN's AI engines.
  *
- * Built for REAL students with REAL needs:
- *   - Elementary school kids who need help staying organized
- *   - Middle schoolers juggling multiple classes for the first time
- *   - High schoolers balancing academics, activities, and college prep
- *   - Parents who want to stay informed and supportive
+ * MERIDIAN Integration:
+ *   - CHRONO: Every action is logged. Full audit trail. Portfolio ready.
+ *   - CEREBEX: AI categorizes, predicts, and models the student's world
+ *   - NEXORIS: Routes requests to the right handler (tutoring, counselor, parent)
+ *   - COGNOVEX: Quorum decisions (is this student at risk? escalate?)
+ *   - HDI: Natural language interface ("Help me study for my test")
  *
- * Version: 2.0.0
+ * Connected To:
+ *   - BronzeCanister: StudentAI is the BRAIN inside the student's canister
+ *   - SilverCanister: School pushes schedules, students pull assignments
+ *
+ * Version: 3.0.0
  * Author: Alfredo Medina Hernandez · Medina Tech · Dallas, Texas
  * ══════════════════════════════════════════════════════════════════════════════
  */
 
+import {
+  CHRONO,
+  CEREBEX,
+  CATEGORIES,
+  NEXORIS,
+  PHI,
+  PHI_INV,
+  CognovexNetwork,
+  HDI,
+  bootstrapMeridian,
+} from '../../meridian-sovereign-os/src/index.js';
+
 // ══════════════════════════════════════════════════════════════════════════════
-// THE STUDENT AI CLASS
+// THE STUDENT AI CLASS — v3.0.0 WITH MERIDIAN INTELLIGENCE
 // ══════════════════════════════════════════════════════════════════════════════
 
 export class StudentAI {
@@ -31,8 +48,9 @@ export class StudentAI {
    * @param {number} options.grade - Current grade level (K=0, 1-12)
    * @param {string} options.schoolId - School identifier
    * @param {string} [options.timezone='America/Chicago'] - Student's timezone
+   * @param {object} [options.silverCanister] - Reference to school's SilverCanister
    */
-  constructor({ studentId, studentName, grade, schoolId, timezone = 'America/Chicago' }) {
+  constructor({ studentId, studentName, grade, schoolId, timezone = 'America/Chicago', silverCanister = null }) {
     if (!studentId) throw new Error('StudentAI requires a studentId');
     if (!studentName) throw new Error('StudentAI requires a studentName');
     if (grade === undefined) throw new Error('StudentAI requires a grade level');
@@ -44,114 +62,468 @@ export class StudentAI {
     this.schoolId = schoolId;
     this.timezone = timezone;
     this.createdAt = new Date().toISOString();
+    this._silverCanister = silverCanister;
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // MERIDIAN INTELLIGENCE ENGINES
+    // ═══════════════════════════════════════════════════════════════════════
+    
+    const meridian = bootstrapMeridian({
+      agentId: `STUDENT_${studentId}`,
+      cognovexUnits: 4, // ACADEMIC, WELLNESS, SOCIAL, COLLEGE domains
+    });
+
+    this._chrono = meridian.chrono;      // Immutable audit trail
+    this._cerebex = meridian.cerebex;    // World model & categorization
+    this._nexoris = meridian.nexoris;    // Routing & pheromone field
+    this._cognovex = meridian.cognovex;  // Quorum decisions
+    this._hdi = meridian.hdi;            // Natural language interface
+    this._voxis = meridian.voxis;        // Sovereign compute
+
+    // Configure COGNOVEX units for student domains
+    this._cognovex.addUnit('cvx-academic', 'ACADEMIC');
+    this._cognovex.addUnit('cvx-wellness', 'WELLNESS');
+    this._cognovex.addUnit('cvx-social', 'SOCIAL');
+    this._cognovex.addUnit('cvx-college', 'COLLEGE_PREP');
+
+    // Log creation
+    this._log('STUDENT_CREATED', {
+      studentId,
+      studentName,
+      grade,
+      schoolId,
+      timezone,
+    });
 
     // ═══════════════════════════════════════════════════════════════════════
     // DATA STORES
     // ═══════════════════════════════════════════════════════════════════════
 
     // Schedule & Classes
-    this._classes = new Map();          // classId → class info
-    this._schedule = [];                 // daily schedule with periods
-    this._bellSchedule = [];             // period start/end times
+    this._classes = new Map();
+    this._schedule = [];
+    this._bellSchedule = [];
 
     // Assignments & Homework
-    this._assignments = new Map();       // assignmentId → assignment
-    this._submissions = new Map();       // assignmentId → submission status
+    this._assignments = new Map();
+    this._submissions = new Map();
 
     // Notes & Materials
-    this._notes = new Map();             // noteId → note content
-    this._syllabi = new Map();           // classId → syllabus
+    this._notes = new Map();
+    this._syllabi = new Map();
 
     // Grades & Progress
-    this._grades = new Map();            // classId → array of grades
+    this._grades = new Map();
     this._gpa = { current: 0, cumulative: 0, history: [] };
 
     // Goals & Planning
-    this._goals = [];                    // semester/year goals
-    this._collegeList = [];              // colleges of interest
-    this._scholarships = [];             // scholarship tracking
-    this._extracurriculars = [];         // activities for college apps
+    this._goals = [];
+    this._collegeList = [];
+    this._scholarships = [];
+    this._extracurriculars = [];
 
     // Study & Time Management
-    this._studySessions = [];            // logged study sessions
+    this._studySessions = [];
     this._streaks = { current: 0, longest: 0, lastDate: null };
-    this._habits = new Map();            // habitId → habit tracking
 
     // Social & Collaboration
-    this._studyGroups = [];              // study group memberships
-    this._projectTeams = new Map();      // projectId → team members
-    this._tutoringSessions = [];         // tutoring appointments
+    this._studyGroups = [];
+    this._projectTeams = new Map();
+    this._tutoringSessions = [];
 
     // School Life
-    this._announcements = [];            // school announcements
-    this._events = [];                   // school events
-    this._clubs = [];                    // club memberships
-    this._sports = [];                   // sports/activities
+    this._announcements = [];
+    this._events = [];
+    this._clubs = [];
+    this._sports = [];
 
     // Transportation
-    this._transportation = {
-      type: null,                        // 'bus', 'car', 'walk', 'bike'
-      busRoute: null,
-      busStop: null,
-      pickupTime: null,
-      dropoffTime: null,
-    };
+    this._transportation = { type: null, busRoute: null, busStop: null, pickupTime: null, dropoffTime: null };
 
     // Parent Connection
-    this._parentAlerts = [];             // alerts sent to parents
-    this._progressReports = [];          // generated progress reports
+    this._parentAlerts = [];
+    this._progressReports = [];
 
     // Wellness
-    this._wellnessCheckins = [];         // mental health check-ins
-    this._sleepLog = [];                 // sleep tracking
+    this._wellnessCheckins = [];
+    this._sleepLog = [];
 
     // Future Planning
-    this._collegeApps = new Map();       // collegeId → application status
-    this._testScores = [];               // SAT, ACT, AP scores
-    this._resume = null;                 // student resume data
+    this._collegeApps = new Map();
+    this._testScores = [];
+    this._resume = null;
+
+    // AI Analysis Cache
+    this._aiInsights = {
+      riskLevel: 'normal',      // COGNOVEX assessment
+      predictedGrades: {},       // CEREBEX predictions
+      recommendedActions: [],    // NEXORIS routing
+      lastAnalysis: null,
+    };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 🧠 MERIDIAN INTELLIGENCE METHODS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Log an action to CHRONO (immutable audit trail).
+   * Every student action is tracked for portfolio, parent review, and compliance.
+   */
+  _log(type, data) {
+    this._chrono.append({
+      type,
+      studentId: this.studentId,
+      timestamp: new Date().toISOString(),
+      ...data,
+    });
+  }
+
+  /**
+   * Categorize something using CEREBEX (AI world model).
+   * @param {string} text - Text to categorize
+   * @param {string} context - Context hint (e.g., 'assignment', 'goal', 'event')
+   */
+  _categorize(text, context = 'general') {
+    const result = this._cerebex.categorize(text, context);
+    return result;
+  }
+
+  /**
+   * Route a request using NEXORIS (pheromone field routing).
+   * Determines where a request should go: tutoring, counselor, parent, etc.
+   */
+  _route(request) {
+    // NEXORIS pheromone routing - finds the best handler
+    const signal = this._nexoris.emit(request.type, request.data);
+    return signal;
+  }
+
+  /**
+   * Make a decision using COGNOVEX (quorum consensus).
+   * For important decisions like "is this student at risk?"
+   */
+  _decide(question, evidence) {
+    const decision = this._cognovex.propose(question, evidence);
+    this._log('COGNOVEX_DECISION', { question, evidence, decision });
+    return decision;
+  }
+
+  /**
+   * Talk to the student AI using natural language (HDI interface).
+   * @param {string} input - What the student says
+   * @returns {object} Response with action taken
+   */
+  async speak(input) {
+    this._log('STUDENT_SPOKE', { input });
+
+    // CEREBEX categorizes the intent
+    const intent = this._categorize(input, 'student_request');
+
+    // Route to the right handler
+    const handlers = {
+      'homework': () => this._handleHomeworkHelp(input),
+      'schedule': () => this._handleScheduleQuery(input),
+      'grade': () => this._handleGradeQuery(input),
+      'study': () => this._handleStudyRequest(input),
+      'wellness': () => this._handleWellnessQuery(input),
+      'college': () => this._handleCollegeQuery(input),
+      'social': () => this._handleSocialQuery(input),
+      'general': () => this._handleGeneralQuery(input),
+    };
+
+    const handler = handlers[intent.primaryCategory] || handlers['general'];
+    const response = await handler();
+
+    this._log('AI_RESPONSE', { input, intent, response });
+    return response;
+  }
+
+  // AI Request Handlers
+  async _handleHomeworkHelp(input) {
+    const dueToday = this.getDueToday();
+    const overdue = this.getOverdue();
+    return {
+      type: 'homework_help',
+      message: `I see you have ${dueToday.length} items due today and ${overdue.length} overdue. Let me help you prioritize.`,
+      dueToday,
+      overdue,
+      suggestedAction: overdue.length > 0 ? 'Start with overdue items' : 'Work on today\'s assignments',
+    };
+  }
+
+  async _handleScheduleQuery(input) {
+    const schedule = this.getTodaySchedule();
+    return {
+      type: 'schedule',
+      message: `Here's your schedule for today:`,
+      schedule,
+    };
+  }
+
+  async _handleGradeQuery(input) {
+    const gpa = this.calculateGPA();
+    return {
+      type: 'grades',
+      message: `Your current GPA is ${gpa.gpa}`,
+      gpa,
+      breakdown: gpa.breakdown,
+    };
+  }
+
+  async _handleStudyRequest(input) {
+    const session = this.startStudySession({ subject: 'general', goal: input });
+    return {
+      type: 'study_session',
+      message: 'Study session started! I\'ll help you stay focused.',
+      session,
+    };
+  }
+
+  async _handleWellnessQuery(input) {
+    const history = this.getWellnessHistory({ days: 7 });
+    return {
+      type: 'wellness',
+      message: 'How are you feeling today?',
+      recentCheckins: history,
+    };
+  }
+
+  async _handleCollegeQuery(input) {
+    const colleges = this.getCollegeList();
+    const scholarships = this.getScholarships();
+    return {
+      type: 'college',
+      message: `You're tracking ${colleges.length} colleges and ${scholarships.length} scholarships.`,
+      colleges,
+      scholarships,
+    };
+  }
+
+  async _handleSocialQuery(input) {
+    const groups = this.getStudyGroups();
+    return {
+      type: 'social',
+      message: `You're in ${groups.length} study groups.`,
+      studyGroups: groups,
+    };
+  }
+
+  async _handleGeneralQuery(input) {
+    const briefing = this.getMorningBriefing();
+    return {
+      type: 'general',
+      message: briefing.greeting,
+      briefing,
+    };
+  }
+
+  /**
+   * AI Analysis: Analyze the student's current state.
+   * Uses CEREBEX for predictions, COGNOVEX for risk assessment.
+   */
+  analyzeStudent() {
+    this._log('AI_ANALYSIS_START', {});
+
+    // Gather evidence
+    const overdue = this.getOverdue();
+    const gpaData = this.calculateGPA();
+    const studyStats = this.getStudyStats({ period: 'week' });
+    const wellnessData = this.getWellnessHistory({ days: 7 });
+    const sleepData = this.getSleepStats({ days: 7 });
+
+    // CEREBEX: Predict grades based on study patterns
+    const predictions = this._cerebex.categorize(JSON.stringify({
+      currentGPA: gpaData.gpa,
+      studyHours: studyStats.totalHours,
+      overdueCount: overdue.length,
+    }), 'grade_prediction');
+
+    // COGNOVEX: Risk assessment quorum
+    const evidence = {
+      overdueCount: overdue.length,
+      gpa: gpaData.gpa,
+      studyHoursWeek: studyStats.totalHours,
+      avgSleep: sleepData.avgHours,
+      avgWellness: wellnessData.length > 0 
+        ? wellnessData.reduce((s, w) => s + w.mood, 0) / wellnessData.length 
+        : 3,
+      streak: this._streaks.current,
+    };
+
+    const riskDecision = this._decide('Is this student at academic risk?', evidence);
+
+    // NEXORIS: Route recommendations based on risk
+    const recommendations = [];
+    
+    if (overdue.length > 3) {
+      recommendations.push({
+        action: 'REQUEST_TUTORING',
+        priority: 'high',
+        reason: `${overdue.length} overdue assignments`,
+      });
+      this._route({ type: 'TUTORING_NEEDED', data: { studentId: this.studentId, overdue } });
+    }
+
+    if (gpaData.gpa !== null && gpaData.gpa < 2.0) {
+      recommendations.push({
+        action: 'PARENT_ALERT',
+        priority: 'high',
+        reason: `GPA below 2.0 (${gpaData.gpa})`,
+      });
+      this._route({ type: 'PARENT_ALERT', data: { studentId: this.studentId, gpa: gpaData.gpa } });
+    }
+
+    if (sleepData.avgHours && sleepData.avgHours < 6) {
+      recommendations.push({
+        action: 'WELLNESS_CHECK',
+        priority: 'medium',
+        reason: `Averaging ${sleepData.avgHours} hours of sleep`,
+      });
+      this._route({ type: 'WELLNESS_CHECK', data: { studentId: this.studentId, avgSleep: sleepData.avgHours } });
+    }
+
+    if (studyStats.totalHours < 5 && overdue.length > 0) {
+      recommendations.push({
+        action: 'STUDY_INTERVENTION',
+        priority: 'medium',
+        reason: `Only ${studyStats.totalHours} study hours this week with overdue work`,
+      });
+    }
+
+    // Update AI insights cache
+    this._aiInsights = {
+      riskLevel: riskDecision.risk || 'normal',
+      predictedGrades: predictions,
+      recommendedActions: recommendations,
+      lastAnalysis: new Date().toISOString(),
+    };
+
+    this._log('AI_ANALYSIS_COMPLETE', { insights: this._aiInsights });
+
+    return this._aiInsights;
+  }
+
+  /**
+   * Get AI insights about this student.
+   */
+  getAIInsights() {
+    if (!this._aiInsights.lastAnalysis || 
+        Date.now() - new Date(this._aiInsights.lastAnalysis).getTime() > 24 * 60 * 60 * 1000) {
+      // Re-analyze if stale (>24h)
+      this.analyzeStudent();
+    }
+    return { ...this._aiInsights };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 🔗 SCHOOL CONNECTION (SilverCanister Integration)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Connect to a school's SilverCanister.
+   */
+  connectToSchool(silverCanister) {
+    this._silverCanister = silverCanister;
+    this._log('SCHOOL_CONNECTED', { schoolId: silverCanister.schoolId });
+  }
+
+  /**
+   * Sync schedule from school.
+   */
+  syncScheduleFromSchool() {
+    if (!this._silverCanister) {
+      return { error: 'Not connected to school' };
+    }
+
+    // Pull student's schedule from SilverCanister
+    const schoolData = this._silverCanister.getStudentSchedule?.(this.studentId);
+    if (schoolData) {
+      if (schoolData.classes) {
+        for (const cls of schoolData.classes) {
+          this.addClass(cls);
+        }
+      }
+      if (schoolData.bellSchedule) {
+        this.setBellSchedule(schoolData.bellSchedule);
+      }
+    }
+
+    this._log('SCHEDULE_SYNCED', { source: 'school' });
+    return { synced: true };
+  }
+
+  /**
+   * Sync announcements from school.
+   */
+  syncAnnouncementsFromSchool() {
+    if (!this._silverCanister) {
+      return { error: 'Not connected to school' };
+    }
+
+    const announcements = this._silverCanister.getAnnouncements?.({ unreadOnly: true });
+    if (announcements) {
+      for (const ann of announcements) {
+        this.addAnnouncement(ann);
+      }
+    }
+
+    this._log('ANNOUNCEMENTS_SYNCED', { count: announcements?.length || 0 });
+    return { synced: true, count: announcements?.length || 0 };
+  }
+
+  /**
+   * Push analytics to school (anonymized).
+   * Called by SilverCanister to gather metrics.
+   */
+  getAnonymizedMetrics() {
+    const studyStats = this.getStudyStats({ period: 'week' });
+    const gpa = this.calculateGPA();
+
+    return {
+      studentId: this.studentId, // School can see student ID
+      grade: this.grade,
+      // Anonymized metrics - no personal content
+      studyHoursWeek: studyStats.totalHours,
+      studySessions: studyStats.totalSessions,
+      avgProductivity: studyStats.avgProductivity,
+      gpa: gpa.gpa,
+      overdueCount: this.getOverdue().length,
+      streak: this._streaks.current,
+      wellnessAvg: this._getAvgWellness(),
+      // NO content - just metrics
+    };
+  }
+
+  _getAvgWellness() {
+    const recent = this.getWellnessHistory({ days: 7 });
+    if (recent.length === 0) return null;
+    return Math.round(recent.reduce((s, w) => s + w.mood, 0) / recent.length * 10) / 10;
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
   // 📅 SCHEDULE & PLANNING
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /**
-   * Add a class to the student's schedule.
-   */
   addClass({ classId, className, teacherName, teacherEmail, room, period, subject, days = ['M', 'T', 'W', 'TH', 'F'] }) {
     this._classes.set(classId, {
-      classId,
-      className,
-      teacherName,
-      teacherEmail,
-      room,
-      period,
-      subject,
-      days,
+      classId, className, teacherName, teacherEmail, room, period, subject, days,
       addedAt: new Date().toISOString(),
     });
+    this._log('CLASS_ADDED', { classId, className, subject });
     return { added: true, classId, className };
   }
 
-  /**
-   * Get all classes.
-   */
   getClasses() {
     return [...this._classes.values()];
   }
 
-  /**
-   * Set the bell schedule (period times).
-   */
   setBellSchedule(schedule) {
-    // schedule: [{ period: 1, startTime: '8:00', endTime: '8:50' }, ...]
     this._bellSchedule = schedule;
+    this._log('BELL_SCHEDULE_SET', { periods: schedule.length });
     return { set: true, periods: schedule.length };
   }
 
-  /**
-   * Get today's schedule with times and rooms.
-   */
   getTodaySchedule() {
     const today = new Date();
     const dayMap = ['SU', 'M', 'T', 'W', 'TH', 'F', 'SA'];
@@ -174,9 +546,6 @@ export class StudentAI {
     });
   }
 
-  /**
-   * Get what's happening this week.
-   */
   getWeekOverview() {
     const now = new Date();
     const weekStart = new Date(now);
@@ -184,13 +553,11 @@ export class StudentAI {
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekStart.getDate() + 6);
 
-    // Get assignments due this week
     const assignmentsDue = [...this._assignments.values()].filter(a => {
       const due = new Date(a.dueDate);
       return due >= weekStart && due <= weekEnd;
     });
 
-    // Get events this week
     const weekEvents = this._events.filter(e => {
       const eventDate = new Date(e.date);
       return eventDate >= weekStart && eventDate <= weekEnd;
@@ -204,23 +571,19 @@ export class StudentAI {
         className: this._classes.get(a.classId)?.className,
         dueDate: a.dueDate,
         priority: a.priority,
+        type: a.type,
       })),
       events: weekEvents,
       testCount: assignmentsDue.filter(a => a.type === 'test' || a.type === 'exam').length,
     };
   }
 
-  /**
-   * Set transportation info.
-   */
   setTransportation({ type, busRoute, busStop, pickupTime, dropoffTime }) {
     this._transportation = { type, busRoute, busStop, pickupTime, dropoffTime };
+    this._log('TRANSPORTATION_SET', { type });
     return { set: true, type };
   }
 
-  /**
-   * Get transportation info.
-   */
   getTransportation() {
     return { ...this._transportation };
   }
@@ -229,59 +592,40 @@ export class StudentAI {
   // 📝 ASSIGNMENTS & HOMEWORK
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /**
-   * Add a new assignment.
-   */
   addAssignment({ classId, title, description, dueDate, type = 'homework', points = 100, priority = 'medium' }) {
     const assignmentId = `ASGN-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
     
+    // CEREBEX categorizes the assignment
+    const aiCategory = this._categorize(`${title} ${description || ''}`, 'assignment');
+    
     this._assignments.set(assignmentId, {
-      assignmentId,
-      classId,
-      title,
-      description,
-      dueDate,
-      type, // 'homework', 'project', 'test', 'quiz', 'essay', 'lab'
-      points,
-      priority, // 'low', 'medium', 'high', 'urgent'
-      status: 'pending', // 'pending', 'in_progress', 'completed', 'submitted', 'graded', 'late', 'missing'
+      assignmentId, classId, title, description, dueDate, type, points, priority,
+      status: 'pending',
       createdAt: new Date().toISOString(),
       completedAt: null,
       submittedAt: null,
       grade: null,
+      aiCategory: aiCategory.primaryCategory,
+      aiDifficulty: aiCategory.difficulty || 'medium',
     });
 
+    this._log('ASSIGNMENT_ADDED', { assignmentId, title, dueDate, type, aiCategory: aiCategory.primaryCategory });
     return { added: true, assignmentId, title, dueDate };
   }
 
-  /**
-   * Get all assignments, optionally filtered.
-   */
   getAssignments({ classId = null, status = null, upcoming = false } = {}) {
     let assignments = [...this._assignments.values()];
 
-    if (classId) {
-      assignments = assignments.filter(a => a.classId === classId);
-    }
-
-    if (status) {
-      assignments = assignments.filter(a => a.status === status);
-    }
-
+    if (classId) assignments = assignments.filter(a => a.classId === classId);
+    if (status) assignments = assignments.filter(a => a.status === status);
     if (upcoming) {
       const now = new Date();
       assignments = assignments.filter(a => new Date(a.dueDate) >= now);
     }
 
-    // Sort by due date
-    assignments.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-
-    return assignments;
+    return assignments.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
   }
 
-  /**
-   * Get what's due today.
-   */
   getDueToday() {
     const today = new Date().toISOString().split('T')[0];
     return [...this._assignments.values()].filter(a => 
@@ -289,9 +633,6 @@ export class StudentAI {
     );
   }
 
-  /**
-   * Get overdue assignments.
-   */
   getOverdue() {
     const now = new Date();
     return [...this._assignments.values()].filter(a => 
@@ -299,32 +640,25 @@ export class StudentAI {
     );
   }
 
-  /**
-   * Mark assignment as in progress.
-   */
   startAssignment(assignmentId) {
     const assignment = this._assignments.get(assignmentId);
     if (!assignment) return { error: 'Assignment not found' };
 
     assignment.status = 'in_progress';
+    this._log('ASSIGNMENT_STARTED', { assignmentId, title: assignment.title });
     return { updated: true, assignmentId, status: 'in_progress' };
   }
 
-  /**
-   * Mark assignment as completed.
-   */
   completeAssignment(assignmentId) {
     const assignment = this._assignments.get(assignmentId);
     if (!assignment) return { error: 'Assignment not found' };
 
     assignment.status = 'completed';
     assignment.completedAt = new Date().toISOString();
+    this._log('ASSIGNMENT_COMPLETED', { assignmentId, title: assignment.title });
     return { updated: true, assignmentId, status: 'completed' };
   }
 
-  /**
-   * Submit an assignment.
-   */
   submitAssignment(assignmentId, { notes = '', attachments = [] } = {}) {
     const assignment = this._assignments.get(assignmentId);
     if (!assignment) return { error: 'Assignment not found' };
@@ -344,20 +678,29 @@ export class StudentAI {
       attachments,
     });
 
+    this._log('ASSIGNMENT_SUBMITTED', { 
+      assignmentId, 
+      title: assignment.title, 
+      isLate,
+      onTime: !isLate,
+    });
+
+    // NEXORIS: Route late submission alerts
+    if (isLate) {
+      this._route({ type: 'LATE_SUBMISSION', data: { studentId: this.studentId, assignmentId, title: assignment.title } });
+    }
+
     return { submitted: true, assignmentId, isLate, submittedAt: assignment.submittedAt };
   }
 
-  /**
-   * Record a grade for an assignment.
-   */
   recordGrade(assignmentId, { score, feedback = '' }) {
     const assignment = this._assignments.get(assignmentId);
     if (!assignment) return { error: 'Assignment not found' };
 
     assignment.status = 'graded';
-    assignment.grade = { score, outOf: assignment.points, percentage: (score / assignment.points) * 100, feedback };
+    const percentage = (score / assignment.points) * 100;
+    assignment.grade = { score, outOf: assignment.points, percentage, feedback };
 
-    // Add to class grades
     if (!this._grades.has(assignment.classId)) {
       this._grades.set(assignment.classId, []);
     }
@@ -367,62 +710,85 @@ export class StudentAI {
       type: assignment.type,
       score,
       outOf: assignment.points,
-      percentage: assignment.grade.percentage,
+      percentage,
       gradedAt: new Date().toISOString(),
     });
 
-    return { graded: true, assignmentId, score, outOf: assignment.points, percentage: assignment.grade.percentage };
+    this._log('GRADE_RECORDED', { 
+      assignmentId, 
+      title: assignment.title, 
+      score, 
+      percentage,
+    });
+
+    // COGNOVEX: Evaluate if grade needs escalation
+    if (percentage < 60) {
+      const decision = this._decide('Should we alert parent about low grade?', {
+        assignment: assignment.title,
+        score,
+        percentage,
+        type: assignment.type,
+      });
+      
+      if (decision.escalate) {
+        this._route({ type: 'LOW_GRADE_ALERT', data: { 
+          studentId: this.studentId, 
+          assignment: assignment.title, 
+          score, 
+          percentage,
+        }});
+        this._parentAlerts.push({
+          type: 'low_grade',
+          assignment: assignment.title,
+          score,
+          percentage,
+          date: new Date().toISOString(),
+        });
+      }
+    }
+
+    return { graded: true, assignmentId, score, outOf: assignment.points, percentage };
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
   // 📚 NOTES & CLASS MATERIALS
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /**
-   * Add notes for a class.
-   */
   addNotes({ classId, title, content, date = new Date().toISOString(), tags = [] }) {
     const noteId = `NOTE-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
 
+    // CEREBEX categorizes the notes for smart retrieval
+    const aiCategory = this._categorize(`${title} ${content}`, 'notes');
+
     this._notes.set(noteId, {
-      noteId,
-      classId,
-      title,
-      content,
-      date,
-      tags,
+      noteId, classId, title, content, date, tags,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      aiTopics: aiCategory.topics || [],
     });
 
+    this._log('NOTES_ADDED', { noteId, classId, title });
     return { added: true, noteId, title };
   }
 
-  /**
-   * Get notes for a class.
-   */
   getNotes({ classId = null, search = null } = {}) {
     let notes = [...this._notes.values()];
 
-    if (classId) {
-      notes = notes.filter(n => n.classId === classId);
-    }
+    if (classId) notes = notes.filter(n => n.classId === classId);
 
     if (search) {
       const lower = search.toLowerCase();
       notes = notes.filter(n => 
         n.title.toLowerCase().includes(lower) || 
         n.content.toLowerCase().includes(lower) ||
-        n.tags.some(t => t.toLowerCase().includes(lower))
+        n.tags.some(t => t.toLowerCase().includes(lower)) ||
+        n.aiTopics?.some(t => t.toLowerCase().includes(lower))
       );
     }
 
     return notes.sort((a, b) => new Date(b.date) - new Date(a.date));
   }
 
-  /**
-   * Update existing notes.
-   */
   updateNotes(noteId, { title, content, tags }) {
     const note = this._notes.get(noteId);
     if (!note) return { error: 'Note not found' };
@@ -432,24 +798,20 @@ export class StudentAI {
     if (tags) note.tags = tags;
     note.updatedAt = new Date().toISOString();
 
+    this._log('NOTES_UPDATED', { noteId });
     return { updated: true, noteId };
   }
 
-  /**
-   * Save syllabus for a class.
-   */
   saveSyllabus(classId, syllabusContent) {
     this._syllabi.set(classId, {
       classId,
       content: syllabusContent,
       savedAt: new Date().toISOString(),
     });
+    this._log('SYLLABUS_SAVED', { classId });
     return { saved: true, classId };
   }
 
-  /**
-   * Get syllabus for a class.
-   */
   getSyllabus(classId) {
     return this._syllabi.get(classId) || null;
   }
@@ -458,9 +820,6 @@ export class StudentAI {
   // 📊 GRADES & PROGRESS
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /**
-   * Get grades for a class.
-   */
   getClassGrades(classId) {
     const grades = this._grades.get(classId) || [];
     
@@ -482,9 +841,6 @@ export class StudentAI {
     };
   }
 
-  /**
-   * Get overall GPA.
-   */
   calculateGPA() {
     const classGrades = [...this._classes.keys()].map(classId => this.getClassGrades(classId));
     const gradedClasses = classGrades.filter(c => c.average !== null);
@@ -544,30 +900,23 @@ export class StudentAI {
   // 🎯 GOALS & PLANNING
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /**
-   * Set a goal.
-   */
   setGoal({ title, description, category, targetDate, milestones = [] }) {
     const goalId = `GOAL-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
 
     this._goals.push({
-      goalId,
-      title,
-      description,
-      category, // 'academic', 'extracurricular', 'personal', 'college', 'career'
+      goalId, title, description,
+      category,
       targetDate,
       milestones: milestones.map((m, i) => ({ ...m, id: i, completed: false })),
-      status: 'active', // 'active', 'completed', 'abandoned'
+      status: 'active',
       progress: 0,
       createdAt: new Date().toISOString(),
     });
 
+    this._log('GOAL_SET', { goalId, title, category, targetDate });
     return { created: true, goalId, title };
   }
 
-  /**
-   * Update goal progress.
-   */
   updateGoalProgress(goalId, { progress, completedMilestones = [] }) {
     const goal = this._goals.find(g => g.goalId === goalId);
     if (!goal) return { error: 'Goal not found' };
@@ -579,25 +928,18 @@ export class StudentAI {
       if (milestone) milestone.completed = true;
     }
 
-    if (progress >= 100) goal.status = 'completed';
+    if (progress >= 100) {
+      goal.status = 'completed';
+      this._log('GOAL_COMPLETED', { goalId, title: goal.title });
+    }
 
     return { updated: true, goalId, progress: goal.progress };
   }
 
-  /**
-   * Get all goals.
-   */
   getGoals({ category = null, status = 'active' } = {}) {
     let goals = this._goals;
-
-    if (category) {
-      goals = goals.filter(g => g.category === category);
-    }
-
-    if (status) {
-      goals = goals.filter(g => g.status === status);
-    }
-
+    if (category) goals = goals.filter(g => g.category === category);
+    if (status) goals = goals.filter(g => g.status === status);
     return goals;
   }
 
@@ -605,17 +947,11 @@ export class StudentAI {
   // ⏰ STUDY & TIME MANAGEMENT
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /**
-   * Start a study session.
-   */
   startStudySession({ subject, classId = null, goal = '' }) {
     const sessionId = `STUDY-${Date.now()}`;
 
     const session = {
-      sessionId,
-      subject,
-      classId,
-      goal,
+      sessionId, subject, classId, goal,
       startTime: new Date().toISOString(),
       endTime: null,
       duration: null,
@@ -625,87 +961,58 @@ export class StudentAI {
     };
 
     this._studySessions.push(session);
+    this._log('STUDY_SESSION_STARTED', { sessionId, subject, goal });
 
     return { started: true, sessionId, startTime: session.startTime };
   }
 
-  /**
-   * Take a break during study session.
-   */
   takeBreak(sessionId) {
     const session = this._studySessions.find(s => s.sessionId === sessionId);
     if (!session) return { error: 'Session not found' };
 
-    session.breaks.push({
-      startTime: new Date().toISOString(),
-      endTime: null,
-    });
-
+    session.breaks.push({ startTime: new Date().toISOString(), endTime: null });
     return { breakStarted: true, sessionId };
   }
 
-  /**
-   * End break.
-   */
   endBreak(sessionId) {
     const session = this._studySessions.find(s => s.sessionId === sessionId);
     if (!session) return { error: 'Session not found' };
 
     const currentBreak = session.breaks.find(b => b.endTime === null);
-    if (currentBreak) {
-      currentBreak.endTime = new Date().toISOString();
-    }
+    if (currentBreak) currentBreak.endTime = new Date().toISOString();
 
     return { breakEnded: true, sessionId };
   }
 
-  /**
-   * End a study session.
-   */
   endStudySession(sessionId, { notes = '', productivity = 3 } = {}) {
     const session = this._studySessions.find(s => s.sessionId === sessionId);
     if (!session) return { error: 'Session not found' };
 
     session.endTime = new Date().toISOString();
     session.notes = notes;
-    session.productivity = productivity; // 1-5 scale
+    session.productivity = productivity;
 
-    // Calculate duration (minus breaks)
     const totalMs = new Date(session.endTime) - new Date(session.startTime);
     const breakMs = session.breaks.reduce((sum, b) => {
-      if (b.endTime) {
-        return sum + (new Date(b.endTime) - new Date(b.startTime));
-      }
+      if (b.endTime) return sum + (new Date(b.endTime) - new Date(b.startTime));
       return sum;
     }, 0);
 
-    session.duration = Math.round((totalMs - breakMs) / 60000); // minutes
+    session.duration = Math.round((totalMs - breakMs) / 60000);
 
-    // Update streak
     this._updateStreak();
+    this._log('STUDY_SESSION_ENDED', { sessionId, duration: session.duration, productivity });
 
-    return { 
-      ended: true, 
-      sessionId, 
-      duration: session.duration,
-      productivity,
-    };
+    return { ended: true, sessionId, duration: session.duration, productivity };
   }
 
-  /**
-   * Get study statistics.
-   */
   getStudyStats({ period = 'week' } = {}) {
     const now = new Date();
     let startDate = new Date(now);
 
-    if (period === 'week') {
-      startDate.setDate(now.getDate() - 7);
-    } else if (period === 'month') {
-      startDate.setMonth(now.getMonth() - 1);
-    } else if (period === 'semester') {
-      startDate.setMonth(now.getMonth() - 4);
-    }
+    if (period === 'week') startDate.setDate(now.getDate() - 7);
+    else if (period === 'month') startDate.setMonth(now.getMonth() - 1);
+    else if (period === 'semester') startDate.setMonth(now.getMonth() - 4);
 
     const sessions = this._studySessions.filter(s => 
       s.endTime && new Date(s.startTime) >= startDate
@@ -716,12 +1023,9 @@ export class StudentAI {
       ? sessions.reduce((sum, s) => sum + (s.productivity || 3), 0) / sessions.length
       : 0;
 
-    // Group by subject
     const bySubject = {};
     for (const session of sessions) {
-      if (!bySubject[session.subject]) {
-        bySubject[session.subject] = { minutes: 0, sessions: 0 };
-      }
+      if (!bySubject[session.subject]) bySubject[session.subject] = { minutes: 0, sessions: 0 };
       bySubject[session.subject].minutes += session.duration || 0;
       bySubject[session.subject].sessions += 1;
     }
@@ -740,9 +1044,7 @@ export class StudentAI {
   _updateStreak() {
     const today = new Date().toISOString().split('T')[0];
     
-    if (this._streaks.lastDate === today) {
-      return; // Already studied today
-    }
+    if (this._streaks.lastDate === today) return;
 
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
@@ -759,11 +1061,13 @@ export class StudentAI {
     }
 
     this._streaks.lastDate = today;
+    
+    // Log streak milestone
+    if (this._streaks.current % 7 === 0) {
+      this._log('STREAK_MILESTONE', { days: this._streaks.current });
+    }
   }
 
-  /**
-   * Get current streak.
-   */
   getStreak() {
     return { ...this._streaks };
   }
@@ -772,17 +1076,11 @@ export class StudentAI {
   // 👥 COLLABORATION & STUDY GROUPS
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /**
-   * Create a study group.
-   */
   createStudyGroup({ name, subject, classId = null, members = [] }) {
     const groupId = `GROUP-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
 
     this._studyGroups.push({
-      groupId,
-      name,
-      subject,
-      classId,
+      groupId, name, subject, classId,
       members: [...members, this.studentId],
       createdBy: this.studentId,
       createdAt: new Date().toISOString(),
@@ -790,69 +1088,53 @@ export class StudentAI {
       sharedNotes: [],
     });
 
+    this._log('STUDY_GROUP_CREATED', { groupId, name, subject });
     return { created: true, groupId, name };
   }
 
-  /**
-   * Schedule a study group meeting.
-   */
   scheduleGroupMeeting(groupId, { date, time, location, agenda }) {
     const group = this._studyGroups.find(g => g.groupId === groupId);
     if (!group) return { error: 'Study group not found' };
 
     const meetingId = `MTG-${Date.now()}`;
     group.meetings.push({
-      meetingId,
-      date,
-      time,
-      location,
-      agenda,
+      meetingId, date, time, location, agenda,
       attendees: [],
       status: 'scheduled',
     });
 
+    this._log('GROUP_MEETING_SCHEDULED', { groupId, meetingId, date });
     return { scheduled: true, meetingId, date, time };
   }
 
-  /**
-   * Get study groups.
-   */
   getStudyGroups() {
     return this._studyGroups;
   }
 
-  /**
-   * Create a project team.
-   */
   createProjectTeam(assignmentId, { teamName, members = [] }) {
     this._projectTeams.set(assignmentId, {
-      assignmentId,
-      teamName,
+      assignmentId, teamName,
       members: [...members, this.studentId],
       tasks: [],
       createdAt: new Date().toISOString(),
     });
 
+    this._log('PROJECT_TEAM_CREATED', { assignmentId, teamName });
     return { created: true, assignmentId, teamName };
   }
 
-  /**
-   * Add task to project.
-   */
   addProjectTask(assignmentId, { task, assignedTo, dueDate }) {
     const team = this._projectTeams.get(assignmentId);
     if (!team) return { error: 'Project team not found' };
 
     const taskId = `TASK-${Date.now()}`;
     team.tasks.push({
-      taskId,
-      task,
-      assignedTo,
-      dueDate,
+      taskId, task, assignedTo, dueDate,
       status: 'pending',
       completedAt: null,
     });
 
+    this._log('PROJECT_TASK_ADDED', { assignmentId, taskId, task });
     return { added: true, taskId, task };
   }
 
@@ -860,65 +1142,45 @@ export class StudentAI {
   // 🏫 SCHOOL LIFE
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /**
-   * Add school announcement.
-   */
   addAnnouncement({ title, content, category, date = new Date().toISOString(), important = false }) {
     const announcementId = `ANN-${Date.now()}`;
 
     this._announcements.push({
-      announcementId,
-      title,
-      content,
-      category, // 'general', 'academic', 'sports', 'clubs', 'emergency'
-      date,
-      important,
+      announcementId, title, content, category, date, important,
       read: false,
     });
 
+    this._log('ANNOUNCEMENT_RECEIVED', { announcementId, title, important });
     return { added: true, announcementId };
   }
 
-  /**
-   * Get announcements.
-   */
   getAnnouncements({ unreadOnly = false, category = null } = {}) {
     let announcements = this._announcements;
 
-    if (unreadOnly) {
-      announcements = announcements.filter(a => !a.read);
-    }
-
-    if (category) {
-      announcements = announcements.filter(a => a.category === category);
-    }
+    if (unreadOnly) announcements = announcements.filter(a => !a.read);
+    if (category) announcements = announcements.filter(a => a.category === category);
 
     return announcements.sort((a, b) => new Date(b.date) - new Date(a.date));
   }
 
-  /**
-   * Add school event.
-   */
+  markAnnouncementRead(announcementId) {
+    const ann = this._announcements.find(a => a.announcementId === announcementId);
+    if (ann) ann.read = true;
+    return { marked: true };
+  }
+
   addEvent({ title, date, time, location, category, description = '' }) {
     const eventId = `EVT-${Date.now()}`;
 
     this._events.push({
-      eventId,
-      title,
-      date,
-      time,
-      location,
-      category, // 'sports', 'dance', 'concert', 'meeting', 'deadline', 'holiday'
-      description,
+      eventId, title, date, time, location, category, description,
       attending: false,
     });
 
+    this._log('EVENT_ADDED', { eventId, title, date });
     return { added: true, eventId };
   }
 
-  /**
-   * Get upcoming events.
-   */
   getUpcomingEvents({ days = 30 } = {}) {
     const now = new Date();
     const endDate = new Date(now);
@@ -932,69 +1194,48 @@ export class StudentAI {
       .sort((a, b) => new Date(a.date) - new Date(b.date));
   }
 
-  /**
-   * Join a club.
-   */
   joinClub({ clubName, meetingDay, meetingTime, advisor, room }) {
     const clubId = `CLUB-${Date.now()}`;
 
     this._clubs.push({
-      clubId,
-      clubName,
-      meetingDay,
-      meetingTime,
-      advisor,
-      room,
+      clubId, clubName, meetingDay, meetingTime, advisor, room,
       joinedAt: new Date().toISOString(),
       role: 'member',
       hoursLogged: 0,
     });
 
+    this._log('CLUB_JOINED', { clubId, clubName });
     return { joined: true, clubId, clubName };
   }
 
-  /**
-   * Log club hours.
-   */
   logClubHours(clubId, hours, activity) {
     const club = this._clubs.find(c => c.clubId === clubId);
     if (!club) return { error: 'Club not found' };
 
     club.hoursLogged += hours;
+    this._log('CLUB_HOURS_LOGGED', { clubId, hours, totalHours: club.hoursLogged });
 
     return { logged: true, clubId, hours, totalHours: club.hoursLogged };
   }
 
-  /**
-   * Get club memberships.
-   */
   getClubs() {
     return this._clubs;
   }
 
-  /**
-   * Add sport/activity.
-   */
   addSport({ sportName, season, coach, practiceSchedule }) {
     const sportId = `SPORT-${Date.now()}`;
 
     this._sports.push({
-      sportId,
-      sportName,
-      season,
-      coach,
-      practiceSchedule, // [{ day: 'M', time: '3:30 PM' }, ...]
+      sportId, sportName, season, coach, practiceSchedule,
       games: [],
       stats: {},
       joinedAt: new Date().toISOString(),
     });
 
+    this._log('SPORT_ADDED', { sportId, sportName, season });
     return { added: true, sportId, sportName };
   }
 
-  /**
-   * Get sports/activities.
-   */
   getSports() {
     return this._sports;
   }
@@ -1003,14 +1244,12 @@ export class StudentAI {
   // 👨‍👩‍👧 PARENT CONNECTION
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /**
-   * Generate progress report for parents.
-   */
   generateProgressReport() {
     const gpa = this.calculateGPA();
     const overdue = this.getOverdue();
     const dueThisWeek = this.getWeekOverview();
     const studyStats = this.getStudyStats({ period: 'week' });
+    const aiInsights = this.getAIInsights();
 
     const report = {
       studentName: this.studentName,
@@ -1041,20 +1280,23 @@ export class StudentAI {
         sports: this._sports.map(s => s.sportName),
         totalExtracurricularHours: this._clubs.reduce((sum, c) => sum + c.hoursLogged, 0),
       },
+
+      // AI-powered insights for parents
+      aiInsights: {
+        riskLevel: aiInsights.riskLevel,
+        recommendations: aiInsights.recommendedActions,
+      },
     };
 
     this._progressReports.push(report);
+    this._log('PROGRESS_REPORT_GENERATED', { reportDate: report.generatedAt });
 
     return report;
   }
 
-  /**
-   * Get alerts for parents.
-   */
   getParentAlerts() {
     const alerts = [];
 
-    // Check for overdue assignments
     const overdue = this.getOverdue();
     if (overdue.length > 0) {
       alerts.push({
@@ -1065,7 +1307,6 @@ export class StudentAI {
       });
     }
 
-    // Check for low grades
     const classGrades = [...this._classes.keys()].map(classId => this.getClassGrades(classId));
     const lowGrades = classGrades.filter(c => c.average !== null && c.average < 70);
     if (lowGrades.length > 0) {
@@ -1077,25 +1318,33 @@ export class StudentAI {
       });
     }
 
-    // Check for upcoming tests
     const thisWeek = this.getWeekOverview();
     if (thisWeek.testCount > 0) {
-      const tests = thisWeek.assignments.filter(a => a.priority === 'high' || a.type === 'test');
       alerts.push({
         type: 'upcoming_test',
         severity: 'medium',
         message: `${thisWeek.testCount} test(s) this week`,
-        details: tests.map(t => `${t.title} - ${t.dueDate}`),
+        details: thisWeek.assignments.filter(a => a.type === 'test' || a.type === 'exam').map(t => t.title),
       });
     }
 
-    // Check streak
     if (this._streaks.current >= 7) {
       alerts.push({
         type: 'achievement',
         severity: 'positive',
         message: `🔥 ${this._streaks.current} day study streak!`,
         details: [],
+      });
+    }
+
+    // Include AI-generated alerts
+    const aiInsights = this.getAIInsights();
+    if (aiInsights.riskLevel !== 'normal') {
+      alerts.push({
+        type: 'ai_concern',
+        severity: aiInsights.riskLevel === 'high' ? 'high' : 'medium',
+        message: `AI detected ${aiInsights.riskLevel} risk level`,
+        details: aiInsights.recommendedActions.map(r => r.reason),
       });
     }
 
@@ -1106,55 +1355,70 @@ export class StudentAI {
   // 🆘 HELP & SUPPORT
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /**
-   * Request tutoring.
-   */
   requestTutoring({ subject, topic, preferredTimes = [], urgency = 'normal' }) {
     const requestId = `TUTOR-${Date.now()}`;
 
     this._tutoringSessions.push({
-      requestId,
-      subject,
-      topic,
-      preferredTimes,
-      urgency, // 'normal', 'urgent', 'before_test'
+      requestId, subject, topic, preferredTimes, urgency,
       status: 'requested',
       tutor: null,
       scheduledTime: null,
       createdAt: new Date().toISOString(),
     });
 
+    this._log('TUTORING_REQUESTED', { requestId, subject, topic, urgency });
+
+    // NEXORIS: Route tutoring request to school
+    this._route({ type: 'TUTORING_REQUEST', data: { 
+      studentId: this.studentId, 
+      requestId, 
+      subject, 
+      topic, 
+      urgency,
+    }});
+
     return { requested: true, requestId, subject, topic };
   }
 
-  /**
-   * Get tutoring sessions.
-   */
   getTutoringSessions() {
     return this._tutoringSessions;
   }
 
-  /**
-   * Mental health check-in.
-   */
   wellnessCheckin({ mood, stressLevel, sleepHours, notes = '' }) {
     const checkinId = `WELL-${Date.now()}`;
 
     this._wellnessCheckins.push({
       checkinId,
       date: new Date().toISOString(),
-      mood, // 1-5 scale
-      stressLevel, // 1-5 scale
+      mood,
+      stressLevel,
       sleepHours,
       notes,
     });
 
-    // Generate recommendations based on check-in
+    this._log('WELLNESS_CHECKIN', { checkinId, mood, stressLevel, sleepHours });
+
+    // COGNOVEX: Evaluate if wellness concern needs escalation
+    const decision = this._decide('Should we flag a wellness concern?', {
+      mood,
+      stressLevel,
+      sleepHours,
+      recentTrend: this._getWellnessTrend(),
+    });
+
     const recommendations = [];
     
     if (stressLevel >= 4) {
       recommendations.push('Consider talking to a counselor');
       recommendations.push('Try a short break or walk');
+      
+      if (decision.escalate) {
+        this._route({ type: 'WELLNESS_CONCERN', data: { 
+          studentId: this.studentId, 
+          stressLevel, 
+          mood,
+        }});
+      }
     }
     
     if (sleepHours < 7) {
@@ -1163,61 +1427,61 @@ export class StudentAI {
     
     if (mood <= 2) {
       recommendations.push('Reach out to a friend or trusted adult');
+      
+      if (decision.escalate) {
+        this._route({ type: 'WELLNESS_CONCERN', data: { 
+          studentId: this.studentId, 
+          mood,
+          type: 'low_mood',
+        }});
+      }
     }
 
-    return { 
-      recorded: true, 
-      checkinId, 
-      recommendations,
-    };
+    return { recorded: true, checkinId, recommendations };
   }
 
-  /**
-   * Get wellness history.
-   */
+  _getWellnessTrend() {
+    const recent = this.getWellnessHistory({ days: 7 });
+    if (recent.length < 3) return 'insufficient_data';
+    
+    const avgMood = recent.reduce((s, w) => s + w.mood, 0) / recent.length;
+    const avgStress = recent.reduce((s, w) => s + w.stressLevel, 0) / recent.length;
+    
+    if (avgMood < 2.5 || avgStress > 3.5) return 'concerning';
+    if (avgMood > 3.5 && avgStress < 2.5) return 'positive';
+    return 'neutral';
+  }
+
   getWellnessHistory({ days = 7 } = {}) {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
-    return this._wellnessCheckins.filter(c => 
-      new Date(c.date) >= startDate
-    );
+    return this._wellnessCheckins.filter(c => new Date(c.date) >= startDate);
   }
 
-  /**
-   * Log sleep.
-   */
   logSleep({ date, bedtime, wakeTime, quality }) {
     const sleepId = `SLEEP-${Date.now()}`;
 
-    // Calculate hours
     const bed = new Date(`${date}T${bedtime}`);
     const wake = new Date(`${date}T${wakeTime}`);
     if (wake < bed) wake.setDate(wake.getDate() + 1);
     const hours = (wake - bed) / (1000 * 60 * 60);
 
     this._sleepLog.push({
-      sleepId,
-      date,
-      bedtime,
-      wakeTime,
+      sleepId, date, bedtime, wakeTime,
       hours: Math.round(hours * 10) / 10,
-      quality, // 1-5
+      quality,
     });
 
+    this._log('SLEEP_LOGGED', { sleepId, hours: Math.round(hours * 10) / 10, quality });
     return { logged: true, sleepId, hours: Math.round(hours * 10) / 10 };
   }
 
-  /**
-   * Get sleep stats.
-   */
   getSleepStats({ days = 7 } = {}) {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
-    const recentSleep = this._sleepLog.filter(s => 
-      new Date(s.date) >= startDate
-    );
+    const recentSleep = this._sleepLog.filter(s => new Date(s.date) >= startDate);
 
     if (recentSleep.length === 0) {
       return { avgHours: null, avgQuality: null, entries: 0 };
@@ -1238,131 +1502,83 @@ export class StudentAI {
   // 💼 FUTURE PLANNING (College & Career)
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /**
-   * Add college to list.
-   */
   addCollege({ collegeName, location, type, deadline, requirements = [], notes = '' }) {
     const collegeId = `COL-${Date.now()}`;
 
     this._collegeList.push({
-      collegeId,
-      collegeName,
-      location,
-      type, // 'reach', 'match', 'safety'
-      deadline,
-      requirements,
-      notes,
-      status: 'researching', // 'researching', 'applying', 'applied', 'accepted', 'rejected', 'waitlisted', 'enrolled'
+      collegeId, collegeName, location, type, deadline, requirements, notes,
+      status: 'researching',
       addedAt: new Date().toISOString(),
     });
 
+    this._log('COLLEGE_ADDED', { collegeId, collegeName, type });
     return { added: true, collegeId, collegeName };
   }
 
-  /**
-   * Update college application status.
-   */
   updateCollegeStatus(collegeId, status) {
     const college = this._collegeList.find(c => c.collegeId === collegeId);
     if (!college) return { error: 'College not found' };
 
     college.status = status;
+    this._log('COLLEGE_STATUS_UPDATED', { collegeId, collegeName: college.collegeName, status });
     return { updated: true, collegeId, status };
   }
 
-  /**
-   * Get college list.
-   */
   getCollegeList() {
     return this._collegeList;
   }
 
-  /**
-   * Add scholarship.
-   */
   addScholarship({ name, amount, deadline, requirements, link = '' }) {
     const scholarshipId = `SCHOL-${Date.now()}`;
 
     this._scholarships.push({
-      scholarshipId,
-      name,
-      amount,
-      deadline,
-      requirements,
-      link,
-      status: 'researching', // 'researching', 'applying', 'applied', 'awarded', 'denied'
+      scholarshipId, name, amount, deadline, requirements, link,
+      status: 'researching',
       addedAt: new Date().toISOString(),
     });
 
+    this._log('SCHOLARSHIP_ADDED', { scholarshipId, name, amount });
     return { added: true, scholarshipId, name };
   }
 
-  /**
-   * Get scholarships.
-   */
   getScholarships() {
     return this._scholarships.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
   }
 
-  /**
-   * Add test score.
-   */
   addTestScore({ testName, date, score, percentile = null, sections = {} }) {
     const scoreId = `SCORE-${Date.now()}`;
 
     this._testScores.push({
-      scoreId,
-      testName, // 'SAT', 'ACT', 'PSAT', 'AP Biology', etc.
-      date,
-      score,
-      percentile,
-      sections,
+      scoreId, testName, date, score, percentile, sections,
     });
 
+    this._log('TEST_SCORE_ADDED', { scoreId, testName, score });
     return { added: true, scoreId, testName, score };
   }
 
-  /**
-   * Get test scores.
-   */
   getTestScores() {
     return this._testScores;
   }
 
-  /**
-   * Add extracurricular activity (for college apps).
-   */
   addExtracurricular({ activity, organization, role, startDate, endDate = null, hoursPerWeek, weeksPerYear, description }) {
     const activityId = `ECA-${Date.now()}`;
 
     this._extracurriculars.push({
-      activityId,
-      activity,
-      organization,
-      role,
-      startDate,
-      endDate,
-      hoursPerWeek,
-      weeksPerYear,
-      description,
+      activityId, activity, organization, role, startDate, endDate,
+      hoursPerWeek, weeksPerYear, description,
       totalHours: hoursPerWeek * weeksPerYear * (endDate ? 
         Math.ceil((new Date(endDate) - new Date(startDate)) / (365 * 24 * 60 * 60 * 1000)) : 1
       ),
     });
 
+    this._log('EXTRACURRICULAR_ADDED', { activityId, activity, organization });
     return { added: true, activityId, activity };
   }
 
-  /**
-   * Get extracurriculars.
-   */
   getExtracurriculars() {
     return this._extracurriculars;
   }
 
-  /**
-   * Build resume.
-   */
   buildResume() {
     const gpa = this.calculateGPA();
 
@@ -1391,18 +1607,12 @@ export class StudentAI {
       })),
       
       clubsAndActivities: [
-        ...this._clubs.map(c => ({
-          name: c.clubName,
-          role: c.role,
-          hours: c.hoursLogged,
-        })),
-        ...this._sports.map(s => ({
-          name: s.sportName,
-          season: s.season,
-        })),
+        ...this._clubs.map(c => ({ name: c.clubName, role: c.role, hours: c.hoursLogged })),
+        ...this._sports.map(s => ({ name: s.sportName, season: s.season })),
       ],
     };
 
+    this._log('RESUME_BUILT', {});
     return this._resume;
   }
 
@@ -1410,11 +1620,8 @@ export class StudentAI {
   // 📤 EXPORT & IMPORT
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /**
-   * Export all student data.
-   */
   exportData() {
-    return {
+    const data = {
       studentInfo: {
         studentId: this.studentId,
         studentName: this.studentName,
@@ -1446,13 +1653,16 @@ export class StudentAI {
       testScores: this._testScores,
       extracurriculars: this._extracurriculars,
       resume: this._resume,
+      aiInsights: this._aiInsights,
+      // CHRONO audit trail (portfolio)
+      auditTrail: this._chrono.export(),
       exportedAt: new Date().toISOString(),
     };
+
+    this._log('DATA_EXPORTED', {});
+    return data;
   }
 
-  /**
-   * Import student data.
-   */
   importData(data) {
     if (data.classes) this._classes = new Map(data.classes.map(c => [c.classId, c]));
     if (data.bellSchedule) this._bellSchedule = data.bellSchedule;
@@ -1477,25 +1687,82 @@ export class StudentAI {
     if (data.testScores) this._testScores = data.testScores;
     if (data.extracurriculars) this._extracurriculars = data.extracurriculars;
     if (data.resume) this._resume = data.resume;
+    if (data.aiInsights) this._aiInsights = data.aiInsights;
 
+    this._log('DATA_IMPORTED', {});
     return { imported: true };
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // 🏠 DAILY DASHBOARD
+  // 📋 PORTFOLIO (CHRONO-based)
   // ═══════════════════════════════════════════════════════════════════════════
 
   /**
-   * Get everything a student needs to see when they wake up.
+   * Get the student's portfolio from CHRONO audit trail.
+   * This is a verifiable record of all the student's work and achievements.
    */
+  getPortfolio() {
+    const trail = this._chrono.export();
+    
+    // Filter and format for portfolio
+    const portfolioEntries = trail.entries
+      .filter(e => [
+        'ASSIGNMENT_SUBMITTED', 'GRADE_RECORDED', 'GOAL_COMPLETED', 
+        'STUDY_SESSION_ENDED', 'STREAK_MILESTONE', 'CLUB_HOURS_LOGGED',
+        'TEST_SCORE_ADDED', 'EXTRACURRICULAR_ADDED', 'RESUME_BUILT',
+      ].includes(e.type))
+      .map(e => ({
+        type: e.type,
+        timestamp: e.timestamp,
+        details: this._formatPortfolioEntry(e),
+      }));
+
+    return {
+      studentName: this.studentName,
+      grade: this.grade,
+      entries: portfolioEntries,
+      totalEntries: portfolioEntries.length,
+      verifiable: true, // CHRONO provides immutable audit trail
+      generatedAt: new Date().toISOString(),
+    };
+  }
+
+  _formatPortfolioEntry(entry) {
+    switch (entry.type) {
+      case 'ASSIGNMENT_SUBMITTED':
+        return { title: entry.title, onTime: entry.onTime };
+      case 'GRADE_RECORDED':
+        return { title: entry.title, score: entry.score, percentage: entry.percentage };
+      case 'GOAL_COMPLETED':
+        return { title: entry.title };
+      case 'STUDY_SESSION_ENDED':
+        return { duration: entry.duration, productivity: entry.productivity };
+      case 'STREAK_MILESTONE':
+        return { days: entry.days };
+      case 'CLUB_HOURS_LOGGED':
+        return { clubId: entry.clubId, hours: entry.hours, totalHours: entry.totalHours };
+      case 'TEST_SCORE_ADDED':
+        return { testName: entry.testName, score: entry.score };
+      default:
+        return {};
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 🏠 DAILY DASHBOARDS
+  // ═══════════════════════════════════════════════════════════════════════════
+
   getMorningBriefing() {
-    const today = getTodaySchedule();
+    const today = this.getTodaySchedule();
     const dueToday = this.getDueToday();
     const overdue = this.getOverdue();
     const studyStats = this.getStudyStats({ period: 'week' });
     const unreadAnnouncements = this.getAnnouncements({ unreadOnly: true });
     const upcomingEvents = this.getUpcomingEvents({ days: 3 });
     const sleepStats = this.getSleepStats({ days: 7 });
+    const aiInsights = this.getAIInsights();
+
+    this._log('MORNING_BRIEFING_VIEWED', {});
 
     return {
       greeting: this._getGreeting(),
@@ -1526,6 +1793,11 @@ export class StudentAI {
           ? 'Try to get more sleep!' 
           : 'Great sleep habits!',
       },
+
+      // AI insights
+      aiTip: aiInsights.recommendedActions.length > 0 
+        ? aiInsights.recommendedActions[0].reason 
+        : 'Keep up the great work!',
     };
   }
 
@@ -1538,9 +1810,6 @@ export class StudentAI {
     return `Good evening, ${name}! 🌙`;
   }
 
-  /**
-   * Get what to focus on tonight (homework planning).
-   */
   getEveningPlan() {
     const dueToday = this.getDueToday();
     const dueTomorrow = [...this._assignments.values()].filter(a => {
@@ -1552,7 +1821,6 @@ export class StudentAI {
     const overdue = this.getOverdue();
     const weekOverview = this.getWeekOverview();
 
-    // Prioritize: overdue > due today > tests this week > due tomorrow
     const priorityList = [];
 
     for (const a of overdue) {
@@ -1567,7 +1835,7 @@ export class StudentAI {
 
     const testsThisWeek = weekOverview.assignments.filter(a => a.type === 'test' || a.type === 'exam');
     for (const a of testsThisWeek) {
-      const full = this._assignments.get(a.assignmentId);
+      const full = [...this._assignments.values()].find(x => x.title === a.title);
       if (full && !priorityList.find(p => p.assignmentId === full.assignmentId)) {
         priorityList.push({ ...full, urgency: 'TEST THIS WEEK', priority: 3 });
       }
@@ -1581,6 +1849,8 @@ export class StudentAI {
 
     priorityList.sort((a, b) => a.priority - b.priority);
 
+    this._log('EVENING_PLAN_VIEWED', {});
+
     return {
       date: new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
       totalItems: priorityList.length,
@@ -1590,6 +1860,7 @@ export class StudentAI {
         urgency: p.urgency,
         dueDate: p.dueDate,
         type: p.type,
+        aiDifficulty: p.aiDifficulty,
       })),
       estimatedTime: this._estimateStudyTime(priorityList.slice(0, 10)),
       recommendation: priorityList.length > 5 
@@ -1601,16 +1872,9 @@ export class StudentAI {
   }
 
   _estimateStudyTime(assignments) {
-    // Rough estimates by type
     const estimates = {
-      homework: 30,
-      quiz: 20,
-      test: 60,
-      exam: 90,
-      essay: 60,
-      project: 90,
-      lab: 45,
-      reading: 30,
+      homework: 30, quiz: 20, test: 60, exam: 90,
+      essay: 60, project: 90, lab: 45, reading: 30,
     };
 
     const totalMinutes = assignments.reduce((sum, a) => {
@@ -1620,10 +1884,7 @@ export class StudentAI {
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
 
-    if (hours > 0) {
-      return `${hours}h ${minutes}m`;
-    }
-    return `${minutes}m`;
+    return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
   }
 }
 
