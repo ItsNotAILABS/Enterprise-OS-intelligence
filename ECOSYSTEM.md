@@ -260,7 +260,7 @@ The Agent Council runs in parallel. All four fire simultaneously on each proposa
 | SDK | Package | Role |
 |-----|---------|------|
 | MERIDIAN Sovereign OS | `@medina/meridian-sovereign-os` | Enterprise OS substrate — CORDEX, CEREBEX, CYCLOVEX, NEXORIS, CHRONO, VOXIS, HDI, COGNOVEX, EduConfig, VetKeys, VoiceInterface |
-| Bronze Canister Platform | `@medina/bronze-canister` | Education platform — BronzeCanister, StudentIdentity, TeacherDashboard, EpistemicSubstrate, EducatioMachinae |
+| Bronze Canister Platform | `@medina/bronze-canister` | Education platform — BronzeCanister, StudentIdentity, StudentMemory, TeacherDashboard, ISDDeployment |
 | Sovereign Memory | `@medina/sovereign-memory-sdk` | Pheromone field + φ-compounding memory operations |
 | Intelligence Routing | `@medina/intelligence-routing-sdk` | NEXORIS routing layer — stigmergic command routing |
 | Organism Runtime | `@medina/organism-runtime-sdk` | Core organism lifecycle — heartbeat, synchronization, Fibonacci helix |
@@ -378,7 +378,8 @@ MERIDIAN COGNITIVE GOVERNANCE RUNTIME
 │
 ├── GOVERNANCE (charters/ + protocols/)
 │   ├── 9 Charters    — MASTER, ORO, EFFECTTRACE, ENGINE, AGENT-COUNCIL,
-│   │                   CANISTER, MEMORY-FIELD, OPERATOR, MERIDIAN
+│   │                   CANISTER, MEMORY-FIELD, OPERATOR, MERIDIAN,
+│   │                   BRONZE-CANISTER
 │   └── 5 Protocols   — I CONSEQUENCE, II TRUTH-LADDER, III RISK-SCORING,
 │                       IV MEMORY-FIELD, V AGENT-COUNCIL
 │
@@ -405,10 +406,10 @@ MERIDIAN COGNITIVE GOVERNANCE RUNTIME
 ├── BRONZE CANISTER PLATFORM (sdk/bronze-canister/)
 │   ├── BronzeCanister    — student sovereign compute unit (voice-native, persistent)
 │   ├── StudentIdentity   — ICP Internet Identity provisioning (student-owned)
-│   ├── ClassroomOnboarding — batch student+canister provisioning
+│   ├── StudentMemory     — persistent memory vault with TF-IDF search
 │   ├── TeacherDashboard  — metadata-only activity view (sovereignty-safe)
-│   ├── EpistemicSubstrate — PROT-052 paper-as-grammar loading (SCC ≥ φ²)
-│   └── EducatioMachinae  — curriculum framework (5 project archetypes)
+│   ├── ISDDeployment     — district deployment orchestrator (pilot → scale)
+│   └── StudentAI         — embedded study tools (study, quiz, flashcards, ask, outline, explain)
 │
 ├── SUPPORTING SDKs (sdk/)
 │   ├── sovereign-memory-sdk
