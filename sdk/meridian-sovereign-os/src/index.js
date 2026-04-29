@@ -30,6 +30,7 @@ import { HDI }      from './hdi.js';
 import { CognovexUnit, CognovexNetwork } from './cognovex.js';
 import { VetKeys } from './vetkeys.js';
 import { BehavioralLaws, EduConfig } from './edu-config.js';
+import { VoiceSession, ClassroomVoiceManager, VoiceTranscriber } from './voice-interface.js';
 
 export { CHRONO };
 export { NEXORIS, PHI, PHI_INV };
@@ -41,6 +42,7 @@ export { HDI };
 export { CognovexUnit, CognovexNetwork };
 export { VetKeys };
 export { BehavioralLaws, EduConfig };
+export { VoiceSession, ClassroomVoiceManager, VoiceTranscriber };
 
 // ---------------------------------------------------------------------------
 // bootstrapMeridian — one call to bring the organism online
