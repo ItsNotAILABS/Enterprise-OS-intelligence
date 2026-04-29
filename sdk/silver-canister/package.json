@@ -1,7 +1,7 @@
 {
   "name": "@medina/silver-canister",
-  "version": "1.0.0",
-  "description": "Silver Canister — School-Level Sovereign System. Controls all Bronze Canisters (students) and orchestrates the entire school system. Curriculum management, announcements, academic calendar, resource inventory, analytics, student services, compliance, and facilities.",
+  "version": "2.0.0",
+  "description": "Silver Canister v2.0 — School-Level Sovereign System with REAL AI Intelligence. Uses CEREBEX for pattern analysis, NEXORIS for routing, COGNOVEX for quorum decisions. Connected to StudentAI via bidirectional sync. AI features: analyzeSchool(), identifyAtRiskStudents(), predictOutcomes(), recommendInterventions(), aiStaffingRecommendations(), aiResourceAllocation(), aiScheduleOptimization(). District integration for BISD-level operations.",
   "license": "SEE LICENSE IN LICENSE",
   "author": {
     "name": "Alfredo Medina Hernandez",
@@ -29,7 +29,15 @@
     "silver-canister",
     "curriculum",
     "administration",
-    "medina-tech"
+    "medina-tech",
+    "ai",
+    "intelligence",
+    "cerebex",
+    "nexoris",
+    "cognovex",
+    "meridian",
+    "bisd",
+    "district"
   ],
   "repository": {
     "type": "git",
