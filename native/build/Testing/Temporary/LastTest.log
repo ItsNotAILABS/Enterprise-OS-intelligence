@@ -1,0 +1,64 @@
+Start testing: Apr 27 04:22 UTC
+----------------------------------------------------------
+1/1 Testing: organism_kernel_smoke
+1/1 Test: organism_kernel_smoke
+Command: "/home/runner/work/Enterprise-OS-intelligence/Enterprise-OS-intelligence/native/build/organism_kernel_demo"
+Directory: /home/runner/work/Enterprise-OS-intelligence/Enterprise-OS-intelligence/native/build
+"organism_kernel_smoke" start time: Apr 27 04:22 UTC
+Output:
+----------------------------------------------------------
+═══ Organism Kernel Executor — Demo ═══
+
+Loaded 3 kernels
+
+── phi-score kernel ──────────────────────────────────────
+  execId  : krn-1-1070679748
+  success : true
+  output  : {"score":2.002796}
+  duration: 29 µs
+  budget% : 0.0029%
+
+── fibonacci kernel (n=12) ───────────────────────────────
+  execId  : krn-2-1070679788
+  success : true
+  output  : {"fib":[0,1,1,2,3,5,8,13,21,34,55,89]}
+  duration: 2 µs
+  budget% : 0.0002%
+
+── kuramoto kernel ───────────────────────────────────────
+  execId  : krn-3-1070679794
+  success : true
+  output  : {"order_parameter":0.883587,"phases":[1.698809,2.357208,2.388792,3.090841]}
+  duration: 3 µs
+  budget% : 0.0003%
+
+── Scheduling phi-score for beat 1 ───────────────────────
+  scheduleId: krn-4-1070679801
+  Kernels executed on beat 1: 1
+
+── Phi coordinates (indices 0–4) ─────────────────────────
+  [0] θ=0 φ=0 ρ=1 ring=1 beat=0
+  [1] θ=2.39996 φ=1.48326 ρ=1.41421 ring=1 beat=1
+  [2] θ=4.79993 φ=2.96652 ρ=1.73205 ring=1 beat=3
+  [3] θ=7.19989 φ=4.44978 ρ=2 ring=2 beat=4
+  [4] θ=9.59985 φ=5.93304 ρ=2.23607 ring=2 beat=6
+
+── Execution log (last 10) ───────────────────────────────
+  [1070679737] LOAD kernel=phi-score
+  [1070679740] LOAD kernel=fibonacci
+  [1070679741] LOAD kernel=kuramoto
+  [1070679782] OK kernel=phi-score krn-1-1070679748
+  [1070679791] OK kernel=fibonacci krn-2-1070679788
+  [1070679799] OK kernel=kuramoto krn-3-1070679794
+  [1070679808] OK kernel=phi-score krn-5-1070679806
+
+═══ Demo complete ═══
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"organism_kernel_smoke" end time: Apr 27 04:22 UTC
+"organism_kernel_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Apr 27 04:22 UTC

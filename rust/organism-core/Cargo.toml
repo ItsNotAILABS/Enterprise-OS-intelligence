@@ -1,0 +1,37 @@
+[package]
+name        = "organism-core"
+version     = "1.0.0"
+edition     = "2021"
+description = "Sovereign organism core — phi-math, AES-256-GCM encryption, Ed25519 signing, organism wire protocol"
+license     = "MIT"
+
+[dependencies]
+# AES-256-GCM authenticated encryption
+aes-gcm        = "0.10"
+# Ed25519 signatures
+ed25519-dalek  = { version = "2", features = ["rand_core"] }
+# BLAKE3 fast hashing (replaces SHA-256 where latency matters)
+blake3         = "1"
+# Cryptographically-secure random bytes
+rand           = "0.8"
+# Base64 encoding for key/ciphertext serialisation
+base64         = "0.22"
+# SHA-2 for HKDF-based key derivation
+sha2           = "0.10"
+# HKDF key derivation
+hkdf           = "0.12"
+# Serialisation
+serde          = { version = "1", features = ["derive"] }
+serde_json     = "1"
+# Hex encoding
+hex            = "0.4"
+# UUID generation
+uuid           = { version = "1", features = ["v4"] }
+
+[dev-dependencies]
+# For property-based tests
+quickcheck     = "1"
+
+[[bin]]
+name = "organism-demo"
+path = "src/main.rs"
