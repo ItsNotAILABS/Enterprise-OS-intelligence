@@ -392,6 +392,18 @@ OPERATORS: list[CPLToken] = [
     CPLToken("🜄",   "WATER_AL",    0x207C, 0, "ALCHEMY",     None, None, "alchemical water / aqua / downward form"),
     CPLToken("🜃",   "EARTH_EL",    0x207D, 0, "ALCHEMY",     None, None, "alchemical earth / terra / fixed ground"),
     CPLToken("🜂",   "AIR_AL",      0x207E, 0, "ALCHEMY",     None, None, "alchemical air / aer / expansive spirit"),
+
+    # ── SOVEREIGN CYCLE OPERATORS (0x2090–0x209F) ────────────────────────────
+    #
+    # The Sovereign Cycle — the organism's self-generated heartbeat.
+    # Circulus Imperatus — The Commanded Circle.
+
+    CPLToken("⟲",   "SVC",         0x2090, 0, "ORGANISM",    None, None, "sovereign cycle / self-generated heartbeat"),
+    CPLToken("⟳φ",  "SVC_PHI",     0x2091, 0, "ORGANISM",    None, None, "phi-derived cycle period (873ms)"),
+    CPLToken("⟳κ",  "SVC_KURAMOTO",0x2092, 0, "ORGANISM",    None, None, "Kuramoto synchronisation order R"),
+    CPLToken("⟳F",  "SVC_FIB",     0x2093, 1, "ORGANISM",    None, None, "Fibonacci kernel compression"),
+    CPLToken("⟳Θ",  "SVC_FCPR",    0x2094, 1, "ORGANISM",    None, None, "FCPR — decisions per second"),
+    CPLToken("⟳✦",  "SVC_SEAL",    0x2095, 0, "ORGANISM",    None, None, "sovereign cycle seal / PHX-sealed beat"),
 ]
 
 # ── Master token registry ──────────────────────────────────────────────────────

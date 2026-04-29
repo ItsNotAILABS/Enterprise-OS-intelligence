@@ -503,6 +503,95 @@ shared(install) actor class MedinaAgent(sovereign_key_blob : Blob) {
     })
   };
 
+  // ── Command 7: sovereign_cycle_status ─────────────────────────────────────
+
+  /**
+   * sovereign_cycle_status — Sovereign Cycle status query.  (Medina)
+   *
+   * Returns the full Sovereign Cycle status: beat, FCPR, record size,
+   * chain growth, synchronisation state.  The organism generates its
+   * own cycles — no external compute purchased.
+   *
+   * This is a QUERY call — it does not advance any chain state.
+   */
+  public query func sovereign_cycle_status(slots : Nat64) : async {
+    code                : Text;
+    name                : Text;
+    version             : Text;
+    ring                : Text;
+    beat                : Nat64;
+    slots               : Nat64;
+    heartbeat_ms        : Nat64;
+    fcpr_dps            : Float;
+    record_bytes_per_beat : Nat64;
+    chain_growth_bps    : Float;
+    cycle_cost_usd      : Float;
+    external_dependency : Text;
+    medina              : Bool;
+  } {
+    let n64   = slots;
+    let dps   = Float.fromInt(Int.fromNat(Nat64.toNat(n64))) * (1000.0 / Float.fromInt(Int.fromNat(Nat64.toNat(HEARTBEAT_MS))));
+
+    let bytes_per_beat = n64 * PHX_TOKEN_LEN
+                       + (if (n64 > 0) n64 - 1 else 0) * PHX_WIDE_LEN
+                       + PHX_WIDE_LEN + PHX_TOKEN_LEN;
+    let chain_growth = Float.fromInt(Int.fromNat(Nat64.toNat(bytes_per_beat)))
+                       * (1000.0 / Float.fromInt(Int.fromNat(Nat64.toNat(HEARTBEAT_MS))));
+
+    {
+      code                = "SVC";
+      name                = "Sovereign Cycle";
+      version             = "1.0.0";
+      ring                = "Sovereign";
+      beat                = chain_beat;
+      slots               = n64;
+      heartbeat_ms        = HEARTBEAT_MS;
+      fcpr_dps            = dps;
+      record_bytes_per_beat = bytes_per_beat;
+      chain_growth_bps    = chain_growth;
+      cycle_cost_usd      = 0.000001;
+      external_dependency = "None";
+      medina              = true;
+    }
+  };
+
+  // ── Command 8: sovereign_cycle_tick ────────────────────────────────────────
+
+  /**
+   * sovereign_cycle_tick — Execute one sovereign cycle on-chain.  (Medina)
+   *
+   * Advances the PHX chain by one beat with the given event.
+   * This is the on-chain heartbeat — the organism beats on ICP.
+   *
+   * Returns the beat number and PHX seal.
+   */
+  public shared(_msg) func sovereign_cycle_tick(event : Text) : async {
+    beat     : Nat64;
+    phx_seal : PHXToken;
+    medina   : Bool;
+  } {
+    let key_bytes   = Blob.toArray(sovereign_key_blob);
+    let event_bytes = Blob.toArray(Text.encodeUtf8(event));
+    let seal_bytes  = _phx(event_bytes, key_bytes, chain_history, chain_beat);
+
+    let current_beat = chain_beat;
+    chain_history := seal_bytes;
+    chain_beat    := chain_beat + 1;
+    chain_log     := Array.append(chain_log, [{
+      beat      = current_beat;
+      event     = event;
+      phx_seal  = Blob.fromArray(seal_bytes);
+      timestamp = Time.now() / 1_000_000;
+    }]);
+
+    {
+      beat     = current_beat;
+      phx_seal = Blob.fromArray(seal_bytes);
+      medina   = true;
+    }
+  };
+
+
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

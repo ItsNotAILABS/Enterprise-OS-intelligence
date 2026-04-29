@@ -186,6 +186,18 @@ class CPLVM:
         # ── Organism constants ────────────────────────────────────────────────
         if node.token.glyph in ("⟳", "HEARTBEAT"): return NumberValue(873.0)
 
+        # ── Sovereign Cycle constants ────────────────────────────────────────
+        # ⟲ (SVC)         → 873.0  (heartbeat period ms)
+        # ⟳φ (SVC_PHI)    → 1.618… (phi — the cycle's derivation constant)
+        # ⟳κ (SVC_KURAMOTO)→ 0.618… (sync threshold = 1/φ)
+        # ⟳Θ (SVC_FCPR)   → 18.33… (FCPR at N=16: 16 × 1000/873)
+        # ⟳✦ (SVC_SEAL)   → 1568.0 (record bytes per beat at N=16)
+        if node.token.glyph in ("⟲",  "SVC"):          return NumberValue(873.0)
+        if node.token.glyph in ("⟳φ", "SVC_PHI"):      return NumberValue(1.618033988749895)
+        if node.token.glyph in ("⟳κ", "SVC_KURAMOTO"): return NumberValue(0.618033988749895)
+        if node.token.glyph in ("⟳Θ", "SVC_FCPR"):     return NumberValue(16.0 * 1000.0 / 873.0)
+        if node.token.glyph in ("⟳✦", "SVC_SEAL"):     return NumberValue(1568.0)
+
         # ── Pythagorean number constants ──────────────────────────────────────
         # The Monad through Tetrad reduce to their sacred integer values.
         # The Tetractys = 1+2+3+4 = 10 (the perfect number of the Pythagoreans).
