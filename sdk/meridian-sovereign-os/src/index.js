@@ -28,6 +28,7 @@ import { CYCLOVEX } from './cyclovex.js';
 import { VOXIS }    from './voxis.js';
 import { HDI }      from './hdi.js';
 import { CognovexUnit, CognovexNetwork } from './cognovex.js';
+import { BehavioralLaws, EduConfig } from './edu-config.js';
 
 export { CHRONO };
 export { NEXORIS, PHI, PHI_INV };
@@ -37,6 +38,7 @@ export { CYCLOVEX };
 export { VOXIS };
 export { HDI };
 export { CognovexUnit, CognovexNetwork };
+export { BehavioralLaws, EduConfig };
 
 // ---------------------------------------------------------------------------
 // bootstrapMeridian — one call to bring the organism online
