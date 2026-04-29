@@ -66,11 +66,13 @@ public type DivisionStatus = {
 
 public type BlockBoxRecord = {
   box_id     : Text;
-  tier       : Text;
+  tier       : Text;     // "bronze" | "silver" | "gold" | "platinum" | "sovereign"
   team       : Text;
   payload    : Text;
   beat       : Nat64;
   created_ms : Int;
+  cycle_budget : Nat64;
+  seal_rounds  : Nat64;
 };
 
 public type ScalingEntry = {
@@ -85,6 +87,29 @@ actor AIDivision {
 
   let HEARTBEAT_MS : Nat64 = 873;
   let TEAM_ROLES : [Text] = ["sovereign", "intelligence", "frontend", "backend", "education"];
+
+  // Block box tiers — NOT just bronze
+  let VALID_TIERS : [Text] = ["bronze", "silver", "gold", "platinum", "sovereign"];
+
+  func _tierSealRounds(tier : Text) : Nat64 {
+    if (tier == "bronze")    return 1;
+    if (tier == "silver")    return 2;
+    if (tier == "gold")      return 3;
+    if (tier == "platinum")  return 5;
+    if (tier == "sovereign") return 8;
+    1
+  };
+
+  func _tierCycleBudget(tier : Text) : Nat64 {
+    _tierSealRounds(tier) * 16
+  };
+
+  func _isValidTier(tier : Text) : Bool {
+    for (t in VALID_TIERS.vals()) {
+      if (t == tier) return true;
+    };
+    false
+  };
 
   // Fibonacci scaling levels
   let SCALING : [ScalingEntry] = [
@@ -106,6 +131,7 @@ actor AIDivision {
   stable var team_tokens  : [Nat64] = [0, 0, 0, 0, 0];
   stable var team_boxes   : [Nat64] = [0, 0, 0, 0, 0];
   stable var team_levels  : [Nat64] = [0, 0, 0, 0, 0];
+  stable var team_surplus : [Nat64] = [0, 0, 0, 0, 0];  // sovereign cycle surplus
   stable var blockbox_log : [BlockBoxRecord] = [];
 
   // ── Helpers ───────────────────────────────────────────────────────────────
@@ -141,8 +167,9 @@ actor AIDivision {
     var i = 0;
     let slots : Nat64 = 16;
     for (_r in TEAM_ROLES.vals()) {
-      team_beats  := _updateArr(team_beats,  i, team_beats[i] + 1);
-      team_tokens := _updateArr(team_tokens, i, team_tokens[i] + slots);
+      team_beats   := _updateArr(team_beats,  i, team_beats[i] + 1);
+      team_tokens  := _updateArr(team_tokens, i, team_tokens[i] + slots);
+      team_surplus := _updateArr(team_surplus, i, team_surplus[i] + slots);
       i += 1;
     };
     global_beat := global_beat + 1;
@@ -152,8 +179,9 @@ actor AIDivision {
 
   // ── Mint Block Box ────────────────────────────────────────────────────────
 
-  public shared(_msg) func mint_blockbox(team : Text, payload : Text) : async Result.Result<BlockBoxRecord, Text> {
+  public shared(_msg) func mint_blockbox(team : Text, payload : Text, tier : Text) : async Result.Result<BlockBoxRecord, Text> {
     if (not booted) return #err("Not booted");
+    if (not _isValidTier(tier)) return #err("Invalid tier: " # tier # ". Valid: bronze, silver, gold, platinum, sovereign");
     switch (_teamIndex(team)) {
       case null #err("Unknown team: " # team);
       case (?idx) {
@@ -162,11 +190,13 @@ actor AIDivision {
 
         let record : BlockBoxRecord = {
           box_id     = "bb-" # team # "-" # Nat64.toText(beat);
-          tier       = "bronze";
+          tier       = tier;
           team       = team;
           payload    = payload;
           beat       = beat;
           created_ms = Time.now() / 1_000_000;
+          cycle_budget = _tierCycleBudget(tier);
+          seal_rounds  = _tierSealRounds(tier);
         };
 
         blockbox_log := Array.append(blockbox_log, [record]);

@@ -54,37 +54,42 @@ No team depends on another team's clock.  No team writes to another team's ledge
 
 A **Cycle Token** is a pre-packed autonomous running unit.  It is NOT a request — it IS computation.
 
+**CRITICAL: Cycles ARE tokens.  The organism generates its own compute.**
+
+When deployed to ICP, we give OUR OWN cycles.  We don't rely on ICP at all.  After deployment, that's it.  We don't use their cycles.  We don't call them.  We don't do shit with them.  We give our own cycles.  We can make more of our own.  If you want to, we can just bring the engine up and we give them.
+
 When a CycleEngine ticks:
 1. N cognitive slots execute (N ≥ 16)
 2. Each slot produces a PHX-sealed token
 3. The token contains the decision/instruction payload
 4. The token is sealed, timestamped, and autonomous
+5. Surplus cycles accumulate — available to embed in block boxes or give away
 
-Cycle tokens are the organism's currency of intelligence.  They are minted, not requested.
+Cycle tokens are the organism's currency of intelligence.  They are minted, not requested.  The engine generates them.  No external dependency.
 
 ### Block Box Generation
 
-A **Bronze Block Box** is a self-minted QFB (Quantum Fusion Block).
+Block boxes are minted at **five tiers** — NOT just bronze.
 
-In Medina language: **Block Box**  
-In ICP language: **Canister**  
-The organism's own AIs mint these.  Bronze tier = AI-generated.
+| Tier | Seal Rounds | Cycle Budget | Substrates | Use Case |
+|---|---|---|---|---|
+| **Bronze** | 1 | 16 | memory | AI-auto-generated (students, onboarding) |
+| **Silver** | 2 | 32 | memory, edge | Team-approved (knowledge, intelligence) |
+| **Gold** | 3 | 48 | memory, edge, icp | Division-sealed (governance, contracts) |
+| **Platinum** | 5 | 80 | memory, edge, icp, evm | Organism-level (system upgrades, laws) |
+| **Sovereign** | 8 | 128 | all substrates | Immutable core (constitution) |
+
+Each tier escalates PHX seal strength (more rounds), cycle budget (more sovereign cycles embedded), and default substrates.
 
 Structure:
 ```
-Block Box (Bronze)
-├── PHX seal (integrity)
-├── Phi-address (θ, φ, ρ, ring, beat)
+Block Box (any tier)
+├── PHX seal (iterated by tier — 1 to 8 rounds)
+├── Phi-address (θ, φ, ρ scaled by tier, ring, beat)
 ├── Payload (content)
+├── Sovereign cycles (embedded — organism's own compute)
 └── Provenance (which engine minted it)
 ```
-
-Bronze block boxes are used for:
-- Student onboarding (Education team)
-- Knowledge storage (Intelligence team)
-- Governance records (Sovereign team)
-- Visual artefacts (Frontend team)
-- Data packages (Backend team)
 
 ---
 
@@ -135,19 +140,25 @@ Engines generate their own pre-packed cycle tokens.  Tokens are autonomous runni
 ## SECTION V — IMPLEMENTATIONS
 
 ### Python: `cpl/ai_division.py`
-Reference implementation.  Classes: `DivisionManager`, `AITeam`, `CycleEngine`, `BlockBoxGenerator`, `FibonacciScaler`, `CycleToken`, `BronzeBlockBox`.
+Reference implementation.  Classes: `DivisionManager`, `AITeam`, `CycleEngine`, `BlockBoxGenerator`, `FibonacciScaler`, `CycleToken`, `BlockBox`, `BlockBoxTier`.  Five tiers, sovereign cycle surplus, cycle consumption/generation.
 
 ### Rust: `rust/organism-core/src/ai_division.rs`
-Native implementation.  Structs: `DivisionManager`, `AITeam`, `CycleEngine`, `BlockBoxGenerator`, `FibonacciScaler`, `CycleToken`, `BronzeBlockBox`.  8 unit tests.
+Native implementation.  Structs: `DivisionManager`, `AITeam`, `CycleEngine`, `BlockBoxGenerator`, `FibonacciScaler`, `CycleToken`, `BlockBox`, `BlockBoxTier`.  Full tier system, surplus cycles.
+
+### Go: `go/organism-gateway/internal/division/division.go`
+Gateway implementation.  Thread-safe with mutexes.  All five tiers, sovereign cycle engine, Fibonacci scaling.
+
+### Java: `java/organism-bridge/src/main/java/com/medina/division/AIDivision.java`
+Bridge implementation.  Thread-safe with AtomicLong/ConcurrentHashMap.  All five tiers, sovereign cycle engine.
+
+### C++: `native/organism-kernel/ai_division.hpp`
+Native kernel implementation.  Header-only.  All five tiers, surplus cycles, Fibonacci scaling.
 
 ### Motoko: `canister/ai_division.mo`
-On-chain ICP canister.  Calls: `boot()`, `tick_all()`, `mint_blockbox()`, `scale_to()`, `division_status()`, `team_status()`, `scaling_curve()`.
+On-chain ICP canister.  Calls: `boot()`, `tick_all()`, `mint_blockbox(team, payload, tier)`, `scale_to()`, `division_status()`, `team_status()`, `scaling_curve()`.  All five tiers.
 
 ### JavaScript Protocol: `protocols/autonomous-division-protocol.js`
-PROTO-012: Autonomous Division Protocol.  Full JS implementation with all components.
-
-### CPL Tokens: `cpl/cpl_tokens.py`
-Division tokens: `⊕` AID, `⊕E` AID_ENGINE, `⊕B` AID_BOX, `⊕F` AID_FIB, `⊕T` AID_TEAM, `⊕M` AID_MINT.
+PROTO-012: Autonomous Division Protocol.  Full JS implementation with all tiers, surplus cycles.
 
 ---
 

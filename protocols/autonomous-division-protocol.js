@@ -4,10 +4,20 @@
  * The organism's AI Division coordination protocol.
  *
  * Manages autonomous AI teams that generate their own cycles, mint their own
- * block boxes (bronze canisters), and scale on Fibonacci growth curves.
+ * block boxes at FIVE tiers (bronze/silver/gold/platinum/sovereign), and
+ * scale on Fibonacci growth curves.
  *
- * Each team has its own heartbeat.  Each engine its own PHX chain.
- * No team depends on another team's clock.  Fibonacci scaling to 50,000.
+ * CRITICAL: Cycles ARE tokens.  The organism generates its own compute.
+ * When deployed to ICP, we give OUR OWN cycles.  Zero ICP dependency.
+ * We don't use their cycles.  We don't call them.  We give our own.
+ * We can make more — just bring the engine up and give them.
+ *
+ * Block boxes are NOT just bronze.  Five tiers:
+ *   Bronze    — AI-auto-generated (students, onboarding)
+ *   Silver    — team-approved (knowledge, intelligence)
+ *   Gold      — division-sealed (governance, contracts)
+ *   Platinum  — organism-level (system upgrades)
+ *   Sovereign — immutable core (constitution)
  *
  * Engines wired: DivisionManager + CycleEngine + BlockBoxGenerator + FibonacciScaler
  * Ring: Sovereign Ring | Organism placement: Organism core / division layer
@@ -77,7 +87,21 @@ function phiHash(input) {
   return Math.abs(h).toString(16).padStart(16, '0');
 }
 
+// ── Block Box Tiers ───────────────────────────────────────────────────────────
+
+const BLOCK_BOX_TIERS = ['bronze', 'silver', 'gold', 'platinum', 'sovereign'];
+
+const TIER_PROPERTIES = {
+  bronze:    { sealRounds: 1, cycleBudget: 16 },
+  silver:    { sealRounds: 2, cycleBudget: 32 },
+  gold:      { sealRounds: 3, cycleBudget: 48 },
+  platinum:  { sealRounds: 5, cycleBudget: 80 },
+  sovereign: { sealRounds: 8, cycleBudget: 128 },
+};
+
 // ── Cycle Engine ──────────────────────────────────────────────────────────────
+// Cycles ARE tokens.  The organism generates its own compute.
+// Zero ICP dependency.  We give our own cycles.  We can make more.
 
 class CycleEngine {
   constructor(engineId, teamRole, slots = MIN_SLOTS) {
@@ -86,6 +110,7 @@ class CycleEngine {
     this.slots = Math.max(slots, 1);
     this.beat = 0;
     this.totalTokens = 0;
+    this.surplusCycles = 0;
   }
 
   tick() {
@@ -102,8 +127,20 @@ class CycleEngine {
       });
     }
     this.totalTokens += this.slots;
+    this.surplusCycles += this.slots;
     this.beat++;
     return tokens;
+  }
+
+  consumeCycles(count) {
+    const available = Math.min(count, this.surplusCycles);
+    this.surplusCycles -= available;
+    return available;
+  }
+
+  generateCycles(count) {
+    this.surplusCycles += count;
+    return this.surplusCycles;
   }
 
   fcpr() {
@@ -117,6 +154,7 @@ class CycleEngine {
       beat: this.beat,
       slots: this.slots,
       totalTokens: this.totalTokens,
+      surplusCycles: this.surplusCycles,
       fcprDps: Math.round(this.fcpr() * 1e4) / 1e4,
     };
   }
@@ -129,10 +167,14 @@ class BlockBoxGenerator {
     this.generatorId = generatorId;
     this.teamRole = teamRole;
     this.totalMinted = 0;
+    this.mintedByTier = {};
+    for (const t of BLOCK_BOX_TIERS) this.mintedByTier[t] = 0;
     this.beat = 0;
   }
 
-  mint(payloadStr, label = '') {
+  mint(payloadStr, tier = 'bronze', label = '') {
+    if (!TIER_PROPERTIES[tier]) throw new Error(`Unknown tier: ${tier}`);
+    const props = TIER_PROPERTIES[tier];
     const hash = phiHash(payloadStr);
     const goldenAngle = 2.399963229728653;
     const theta = this.beat * goldenAngle;
@@ -140,16 +182,19 @@ class BlockBoxGenerator {
 
     const box = {
       boxId: `${this.generatorId}-${this.beat}`,
-      tier: 'bronze',
+      tier,
       phxHash: hash,
       phiAddr: { theta, phi: theta / PHI, rho, ring: 'Sovereign', beat: this.beat },
       label,
       mintedBy: this.generatorId,
       teamRole: this.teamRole,
+      cycleBudget: props.cycleBudget,
+      sealRounds: props.sealRounds,
       createdMs: Date.now(),
     };
 
     this.totalMinted++;
+    this.mintedByTier[tier]++;
     this.beat++;
     return box;
   }
@@ -159,6 +204,7 @@ class BlockBoxGenerator {
       generatorId: this.generatorId,
       teamRole: this.teamRole,
       totalMinted: this.totalMinted,
+      mintedByTier: { ...this.mintedByTier },
       beat: this.beat,
     };
   }
@@ -189,8 +235,8 @@ class AITeam {
     return tokens;
   }
 
-  mintBlockbox(payload, label = '') {
-    return this.generator.mint(payload, label);
+  mintBlockbox(payload, tier = 'bronze', label = '') {
+    return this.generator.mint(payload, tier, label);
   }
 
   scale(level) {
@@ -308,6 +354,8 @@ module.exports = {
   HEARTBEAT_HZ,
   MIN_SLOTS,
   TEAM_ROLES,
+  BLOCK_BOX_TIERS,
+  TIER_PROPERTIES,
   SCALING_LEVELS,
   fibonacci,
   FibonacciScaler,

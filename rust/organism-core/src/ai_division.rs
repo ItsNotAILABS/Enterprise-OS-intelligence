@@ -132,6 +132,8 @@ pub struct CycleToken {
 // ── Cycle Engine ──────────────────────────────────────────────────────────────
 
 /// Autonomous cycle engine — generates its own 873ms cycles.
+/// Cycles ARE tokens.  The organism generates its own compute.
+/// Zero ICP dependency.  We give our own cycles.  We can make more.
 #[derive(Debug, Clone)]
 pub struct CycleEngine {
     pub engine_id: String,
@@ -139,6 +141,7 @@ pub struct CycleEngine {
     pub slots: usize,
     pub beat: u64,
     pub total_tokens: u64,
+    pub surplus_cycles: u64,
 }
 
 impl CycleEngine {
@@ -150,10 +153,12 @@ impl CycleEngine {
             slots: slots.max(1),
             beat: 0,
             total_tokens: 0,
+            surplus_cycles: 0,
         }
     }
 
     /// Execute one cycle — generate pre-packed tokens for all slots.
+    /// Each token IS a sovereign cycle.  We make them.  Not ICP.
     pub fn tick(&mut self) -> Vec<CycleToken> {
         let mut tokens = Vec::with_capacity(self.slots);
         for slot in 0..self.slots {
@@ -169,8 +174,22 @@ impl CycleEngine {
             });
         }
         self.total_tokens += self.slots as u64;
+        self.surplus_cycles += self.slots as u64;
         self.beat += 1;
         tokens
+    }
+
+    /// Consume sovereign cycles from surplus (for block box embedding).
+    pub fn consume_cycles(&mut self, count: u64) -> u64 {
+        let available = count.min(self.surplus_cycles);
+        self.surplus_cycles -= available;
+        available
+    }
+
+    /// Generate additional sovereign cycles on demand.
+    pub fn generate_cycles(&mut self, count: u64) -> u64 {
+        self.surplus_cycles += count;
+        self.surplus_cycles
     }
 
     /// Full Cognitive Processing Rate for this engine.
@@ -180,25 +199,83 @@ impl CycleEngine {
     }
 }
 
-// ── Bronze Block Box ──────────────────────────────────────────────────────────
+// ── Block Box Tiers ───────────────────────────────────────────────────────────
+//
+// Block boxes are NOT just bronze.  Five tiers:
+//   BRONZE    — AI-auto-generated (education, onboarding, student canisters)
+//   SILVER    — team-approved (knowledge storage, intelligence artefacts)
+//   GOLD      — division-sealed (cross-team contracts, governance records)
+//   PLATINUM  — organism-level (system upgrades, architectural laws)
+//   SOVEREIGN — the organism itself (immutable constitutional QFBs)
 
-/// A bronze-tier block box (QFB canister) minted by AI engines.
+/// Block box tier levels.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum BlockBoxTier {
+    Bronze,
+    Silver,
+    Gold,
+    Platinum,
+    Sovereign,
+}
+
+impl BlockBoxTier {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            BlockBoxTier::Bronze    => "bronze",
+            BlockBoxTier::Silver    => "silver",
+            BlockBoxTier::Gold      => "gold",
+            BlockBoxTier::Platinum  => "platinum",
+            BlockBoxTier::Sovereign => "sovereign",
+        }
+    }
+
+    /// PHX seal rounds (higher tier = more rounds).
+    pub fn seal_rounds(&self) -> u32 {
+        match self {
+            BlockBoxTier::Bronze    => 1,
+            BlockBoxTier::Silver    => 2,
+            BlockBoxTier::Gold      => 3,
+            BlockBoxTier::Platinum  => 5,
+            BlockBoxTier::Sovereign => 8,
+        }
+    }
+
+    /// Default cycle budget per tier.
+    pub fn default_cycle_budget(&self) -> u64 {
+        (self.seal_rounds() as u64) * (MIN_SLOTS as u64)
+    }
+
+    pub fn all() -> &'static [BlockBoxTier] {
+        &[
+            BlockBoxTier::Bronze,
+            BlockBoxTier::Silver,
+            BlockBoxTier::Gold,
+            BlockBoxTier::Platinum,
+            BlockBoxTier::Sovereign,
+        ]
+    }
+}
+
+/// A block box (QFB) minted by AI engines — any tier.
 #[derive(Debug, Clone)]
-pub struct BronzeBlockBox {
+pub struct BlockBox {
     pub box_id: u64,
-    pub tier: &'static str,
+    pub tier: BlockBoxTier,
     pub phx_hash: u32,
     pub minted_by: String,
     pub team_role: TeamRole,
     pub beat: u64,
+    pub cycle_budget: u64,
+    pub seal_rounds: u32,
 }
 
-/// Block box generator — mints bronze QFBs autonomously.
+/// Block box generator — mints QFBs at any tier autonomously.
 #[derive(Debug, Clone)]
 pub struct BlockBoxGenerator {
     pub generator_id: String,
     pub team_role: TeamRole,
     pub total_minted: u64,
+    pub minted_by_tier: [u64; 5],  // bronze, silver, gold, platinum, sovereign
     beat: u64,
 }
 
@@ -209,23 +286,37 @@ impl BlockBoxGenerator {
             generator_id: generator_id.to_string(),
             team_role,
             total_minted: 0,
+            minted_by_tier: [0; 5],
             beat: 0,
         }
     }
 
-    /// Mint a bronze block box.
-    pub fn mint(&mut self, payload: &[u8]) -> BronzeBlockBox {
+    /// Mint a block box at the specified tier.
+    pub fn mint(&mut self, payload: &[u8], tier: BlockBoxTier) -> BlockBox {
         let hash = phi_hash(payload);
         let box_id = self.beat;
+        let seal_rounds = tier.seal_rounds();
+        let cycle_budget = tier.default_cycle_budget();
         self.beat += 1;
         self.total_minted += 1;
-        BronzeBlockBox {
+        // Track per-tier count
+        let tier_idx = match tier {
+            BlockBoxTier::Bronze    => 0,
+            BlockBoxTier::Silver    => 1,
+            BlockBoxTier::Gold      => 2,
+            BlockBoxTier::Platinum  => 3,
+            BlockBoxTier::Sovereign => 4,
+        };
+        self.minted_by_tier[tier_idx] += 1;
+        BlockBox {
             box_id,
-            tier: "bronze",
+            tier,
             phx_hash: hash,
             minted_by: self.generator_id.clone(),
             team_role: self.team_role,
             beat: box_id,
+            cycle_budget,
+            seal_rounds,
         }
     }
 }
@@ -267,9 +358,9 @@ impl AITeam {
         self.engine.tick()
     }
 
-    /// Mint a bronze block box from this team.
-    pub fn mint_blockbox(&mut self, payload: &[u8]) -> BronzeBlockBox {
-        self.generator.mint(payload)
+    /// Mint a block box at the specified tier from this team.
+    pub fn mint_blockbox(&mut self, payload: &[u8], tier: BlockBoxTier) -> BlockBox {
+        self.generator.mint(payload, tier)
     }
 
     /// Scale this team to a Fibonacci level.
@@ -378,15 +469,42 @@ mod tests {
         assert_eq!(tokens.len(), 16);
         assert_eq!(engine.beat, 1);
         assert_eq!(engine.total_tokens, 16);
+        assert_eq!(engine.surplus_cycles, 16);
         assert!(tokens[0].autonomous);
+    }
+
+    #[test]
+    fn cycle_engine_surplus() {
+        let mut engine = CycleEngine::new("test-engine", TeamRole::Sovereign, 16);
+        engine.tick();
+        assert_eq!(engine.surplus_cycles, 16);
+        let consumed = engine.consume_cycles(10);
+        assert_eq!(consumed, 10);
+        assert_eq!(engine.surplus_cycles, 6);
+        engine.generate_cycles(100);
+        assert_eq!(engine.surplus_cycles, 106);
     }
 
     #[test]
     fn blockbox_mint() {
         let mut gen = BlockBoxGenerator::new("test-gen", TeamRole::Education);
-        let bbox = gen.mint(b"student-001");
-        assert_eq!(bbox.tier, "bronze");
+        let bbox = gen.mint(b"student-001", BlockBoxTier::Bronze);
+        assert_eq!(bbox.tier, BlockBoxTier::Bronze);
+        assert_eq!(bbox.seal_rounds, 1);
         assert_eq!(gen.total_minted, 1);
+    }
+
+    #[test]
+    fn blockbox_all_tiers() {
+        let mut gen = BlockBoxGenerator::new("test-gen", TeamRole::Sovereign);
+        for tier in BlockBoxTier::all() {
+            let bbox = gen.mint(b"payload", *tier);
+            assert_eq!(bbox.tier, *tier);
+            assert_eq!(bbox.seal_rounds, tier.seal_rounds());
+            assert!(bbox.cycle_budget > 0);
+        }
+        assert_eq!(gen.total_minted, 5);
+        assert_eq!(gen.minted_by_tier, [1, 1, 1, 1, 1]);
     }
 
     #[test]
@@ -423,8 +541,17 @@ mod tests {
     #[test]
     fn team_mint_blockbox() {
         let mut team = AITeam::new(TeamRole::Education, 16);
-        let bbox = team.mint_blockbox(b"student onboarding payload");
-        assert_eq!(bbox.tier, "bronze");
+        let bbox = team.mint_blockbox(b"student onboarding payload", BlockBoxTier::Bronze);
+        assert_eq!(bbox.tier, BlockBoxTier::Bronze);
         assert_eq!(team.generator.total_minted, 1);
+    }
+
+    #[test]
+    fn team_mint_all_tiers() {
+        let mut team = AITeam::new(TeamRole::Sovereign, 16);
+        for tier in BlockBoxTier::all() {
+            team.mint_blockbox(b"payload", *tier);
+        }
+        assert_eq!(team.generator.total_minted, 5);
     }
 }
