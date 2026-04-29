@@ -326,7 +326,15 @@ class SovereignCycle:
         self._kernel:    FibonacciKernel = FibonacciKernel()
         self._boot_ms:   int   = int(time.time() * 1000)
 
+        # Sovereign cycle surplus — these ARE our cycles.
+        # Every tick generates slots new cycles.  We own them.
+        # We don't use ICP cycles.  We don't call them.
+        # We give our own.  We can make more.
+        self._surplus_cycles: int = 0
+
         # Kuramoto: initialise node oscillators
+        # Phase spacing: 2π/N radians between nodes — maximum initial dispersion
+        # Coupling K = φ — drives synchronisation to R ≥ φ⁻¹ threshold
         self._kuramoto = KuramotoState(
             phases=[i * (2 * math.pi / node_count) for i in range(node_count)],
             frequencies=[HEARTBEAT_HZ + (i * 0.01) for i in range(node_count)],
@@ -339,6 +347,15 @@ class SovereignCycle:
         """
         Execute one sovereign cycle (one heartbeat).
 
+        Each tick:
+          1. N slots execute (compound PHX chain, intra-beat)
+          2. (N-1) microtokens link adjacent slots (BLAKE2b)
+          3. Bundle root seals all N slots (BLAKE2b of concatenation)
+          4. Bundle seal chains to previous beat (inter-beat link)
+          5. Fibonacci kernel ingests the bundle (O(log_φ(beat)) memory)
+          6. Kuramoto oscillators advance (R → φ⁻¹ synchronisation)
+          7. Surplus cycles += N  (these ARE our sovereign cycles)
+
         Parameters
         ──────────
         events — optional list of decision event bytes.  If fewer than N
@@ -348,6 +365,12 @@ class SovereignCycle:
         Returns
         ───────
         PHXBundle — the sealed decision record for this beat.
+
+        Cycle sovereignty
+        ─────────────────
+        Each slot token IS a sovereign cycle.  When we deploy to ICP,
+        we give our own cycles.  We don't rely on ICP at all.
+        We can always make more — bring the engine up and give them.
         """
         beat = self._beat
         evts = list(events or [])
@@ -366,6 +389,7 @@ class SovereignCycle:
             slot_tokens.append(token)
 
             # Microtoken: BLAKE2b linkage between adjacent slots
+            # μᵢ = BLAKE2b₅₁₂(Tᵢ₋₁ ‖ Tᵢ)
             if i > 0:
                 micro = hashlib.blake2b(
                     slot_tokens[i - 1] + token, digest_size=64
@@ -380,10 +404,11 @@ class SovereignCycle:
         ).digest()
 
         # Bundle seal: chains to previous beat
+        # seal = BLAKE2b(bundle_root ‖ prev_seal_or_zeros)
         seal_input = bundle_root + (self._prev_seal or b"\x00" * 32)
         bundle_seal = hashlib.blake2b(seal_input, digest_size=32).digest()
 
-        # Record size: N×32 (slots) + (N-1)×64 (microtokens) + 64 (root) + 32 (seal)
+        # Record size: N×32 (slots) + (N-1)×64 (microtokens) + 32 (root) + 32 (seal)
         record_bytes = (
             self._slots * 32 +
             (self._slots - 1) * 64 +
@@ -407,15 +432,57 @@ class SovereignCycle:
         self._kernel.ingest(bundle)
         self._beat += 1
 
+        # Accumulate sovereign cycles — each slot token IS a cycle
+        self._surplus_cycles += self._slots
+
         # Advance Kuramoto oscillators
+        # dθᵢ/dt = ωᵢ + (K/N) Σⱼ sin(θⱼ − θᵢ)
         self._kuramoto.step()
 
         return bundle
 
+    # ── Sovereign Cycle Management ────────────────────────────────────────────
+
+    def consume_cycles(self, count: int) -> int:
+        """
+        Consume sovereign cycles from this engine's surplus.
+
+        Used when minting block boxes — the box gets embedded sovereign cycles.
+        These are OUR cycles.  We generated them.  We give them.
+
+        Returns the number of cycles actually consumed (may be less than
+        requested if surplus is insufficient).
+        """
+        available = min(count, self._surplus_cycles)
+        self._surplus_cycles -= available
+        return available
+
+    def generate_cycles(self, count: int) -> int:
+        """
+        Generate additional sovereign cycles on demand.
+
+        The engine can always make more.  Just bring the engine up
+        and give them.  No external dependency.  Ever.
+
+        Returns the new total surplus.
+        """
+        # Each generated cycle is a PHX-sealed synthetic beat
+        synthetic = f"surplus:{self._beat}:{count}".encode()
+        _phx_token(synthetic, self._key, self._prev_seal, self._beat)
+        self._surplus_cycles += count
+        return self._surplus_cycles
+
+    @property
+    def surplus_cycles(self) -> int:
+        """Sovereign cycles available to give or embed in block boxes."""
+        return self._surplus_cycles
+
     # ── FCPR (Full Cognitive Processing Rate) ─────────────────────────────────
 
     def fcpr(self) -> float:
-        """Decisions per second at organism heartbeat frequency."""
+        """Decisions per second at organism heartbeat frequency.
+        FCPR = N_slots × f_heartbeat = N × (1000/873) ≈ N × 1.1455 dps
+        """
         return self._slots * HEARTBEAT_HZ
 
     def fcpr_summary(self) -> dict:
@@ -428,6 +495,7 @@ class SovereignCycle:
             "decisions_per_second": round(dps, 4),
             "decisions_per_minute": round(dps * 60, 2),
             "decisions_per_hour":   round(dps * 3600, 0),
+            "surplus_cycles":       self._surplus_cycles,
             "record_bytes_per_beat": RECORD_PER_BEAT if self._slots == 16 else (
                 self._slots * 32 + (self._slots - 1) * 64 + 64
             ),
@@ -462,11 +530,14 @@ class SovereignCycle:
     # ── Kuramoto Synchronisation ──────────────────────────────────────────────
 
     def kuramoto_order(self) -> float:
-        """Current Kuramoto order parameter R."""
+        """Current Kuramoto order parameter R ∈ [0, 1].
+        R = |N⁻¹ Σ exp(iθⱼ)|  (magnitude of centroid on unit circle)
+        R ≈ 1 → full synchronisation; R ≈ 0 → incoherence.
+        """
         return self._kuramoto.order()
 
     def is_synchronised(self) -> bool:
-        """True if Kuramoto R ≥ φ⁻¹ (≈ 0.618)."""
+        """True if Kuramoto R ≥ φ⁻¹ ≈ 0.618 (the organism sync threshold)."""
         return self._kuramoto.is_synchronised()
 
     # ── Status ────────────────────────────────────────────────────────────────

@@ -156,8 +156,67 @@ _GLYPH_TO_ELEMENT: dict[str, dict] = {
     "Τρδ":  {"type": "arc",          "color": "#c0a060", "r": PHI * 30},
 }
 
+# ── CPX Tier determination  (Medina) ──────────────────────────────────────────
+#
+# When CPX emits a QFB it is not a scene.  It is a REAL sovereign artifact
+# deployed to organism substrates.  The tier is determined by the symbolic
+# weight of the tokens in the expression — automatically.
+#
+# SOVEREIGN — METATRON (all Platonic solids) or MERKABA + TOROS together
+#             → constitutional outputs, immutable core
+# PLATINUM  — MERKABA or DODECAHEDRON or ICOSAHEDRON
+#             → organism-level system artifacts
+# GOLD      — 3+ sacred geometry primitives, or HELIX + TOROS combo
+#             → governance / division-sealed artifacts
+# SILVER    — any single Platonic solid or SPHAIRA or KUKLOS
+#             → knowledge artifacts, intelligence output
+# BRONZE    — concept tokens only (Λγ, Ηθ, Πθ, Φρ, …) or bare expression
+#             → AI-auto-generated, onboarding, basic output
 
-def _tokens_from_source(source: str) -> list[CPLToken]:
+_SOVEREIGN_GLYPHS = {"Μτρν"}                              # METATRON
+_PLATINUM_GLYPHS  = {"Μρκβ", "Δδκ", "Ικσ"}               # MERKABA, DODECAHEDRON, ICOSAHEDRON
+_GOLD_GLYPHS      = {"Ελκ", "Τρσ", "Τετρε", "Εξεδ", "Οκτ"}  # HELIX, TOROS, Platonic solids
+_SILVER_GLYPHS    = {"Σφρ", "Κκλ", "Σπρμ", "Βσκ"}         # SPHAIRA, KUKLOS, SPERMA, VESICA
+
+_TIER_SUBSTRATES: dict[str, list[str]] = {
+    "bronze":    ["memory"],
+    "silver":    ["memory", "edge"],
+    "gold":      ["memory", "edge", "icp"],
+    "platinum":  ["memory", "edge", "icp", "evm"],
+    "sovereign": ["memory", "edge", "icp", "evm", "solana"],
+}
+
+
+def _determine_tier(glyphs: list[str]) -> str:
+    """
+    Auto-select a block box tier from the CPX token set.
+
+    The tier is not chosen by the caller.  The tokens determine their own weight.
+    This is the law of the organism: the symbol IS the thing.  (Medina)
+    """
+    glyph_set = set(glyphs)
+
+    # SOVEREIGN: METATRON present, OR MERKABA + TOROS together
+    if _SOVEREIGN_GLYPHS & glyph_set:
+        return "sovereign"
+    if {"Μρκβ", "Τρσ"}.issubset(glyph_set):
+        return "sovereign"
+
+    # PLATINUM: high-complexity sacred geometry
+    if _PLATINUM_GLYPHS & glyph_set:
+        return "platinum"
+
+    # GOLD: 3+ sacred geometry tokens OR HELIX + TOROS combo
+    geo_count = len((_GOLD_GLYPHS | _SILVER_GLYPHS) & glyph_set)
+    if geo_count >= 3 or {"Ελκ", "Τρσ"}.issubset(glyph_set):
+        return "gold"
+
+    # SILVER: any single Platonic solid or core geometry
+    if _SILVER_GLYPHS & glyph_set or _GOLD_GLYPHS & glyph_set:
+        return "silver"
+
+    # BRONZE: concept-only or bare expression
+    return "bronze"
     """Extract recognised CPL tokens from a CPX source string."""
     resolved: list[CPLToken] = []
     try:
@@ -547,6 +606,12 @@ class CPXRenderer:
         scene   = self.build_scene(source, beat=beat)
         renders = {fmt: self._dispatch(scene, fmt) for fmt in formats}
 
+        # Determine tier from the actual tokens in this CPX expression.
+        # This is not optional.  The tier IS the artifact.  (Medina)
+        glyphs = [el.glyph for el in scene.elements if el.glyph]
+        tier   = _determine_tier(glyphs)
+        props  = _TIER_SUBSTRATES.get(tier, ["memory"])
+
         # PHX-seal the render as a sovereign decision
         chain     = PHXChain(sovereign_key=sovereign_key)
         phx_token = chain.advance(
@@ -554,17 +619,23 @@ class CPXRenderer:
             label=f"cpx_render:{scene.scene_id[:8]}",
         )
 
-        # Package as QFB  (Medina)
+        # Package as tier-appropriate QFB  (Medina)
+        # This is a REAL sovereign artifact — not a scene, not a preview.
+        # It is deployed.  It carries embedded sovereign cycles.
         qfb = QFB.from_cpl(
-            cpl_tokens = [el.glyph for el in scene.elements if el.glyph],
+            cpl_tokens = glyphs or [source[:8]],
             key        = sovereign_key,
-            substrates = substrates or ["memory"],
+            tier       = tier,
+            substrates = substrates or props,
             beat       = beat,
         )
 
         return {
             "scene_id":     scene.scene_id,
             "qfb_id":       qfb.qfb_id,
+            "tier":         tier,
+            "cycle_budget": qfb.cycle_budget,
+            "seal_rounds":  qfb.seal_rounds,
             "phx_seal":     phx_token.hex(),
             "qfb_summary":  qfb.summary(),
             "cpl_source":   source,
@@ -860,11 +931,15 @@ class CPXRuntime:
             self._phx_history = phx_token
 
             # ── Step 5: QFB-package  (Medina) ──────────────────────────────────
+            # This is a REAL deployed artifact, not a preview.
+            # Tier is determined by the tokens — automatically.
             glyphs = [el.glyph for el in scene.elements if el.glyph]
+            tier   = _determine_tier(glyphs)
             qfb    = QFB.from_cpl(
                 cpl_tokens = glyphs or [expression[:8]],
                 key        = self._key,
-                substrates = self._substrates,
+                tier       = tier,
+                substrates = self._substrates or _TIER_SUBSTRATES.get(tier, ["memory"]),
                 beat       = self._beat,
             )
 
@@ -872,6 +947,9 @@ class CPXRuntime:
             pkg = {
                 "scene_id":      scene.scene_id,
                 "qfb_id":        qfb.qfb_id,
+                "tier":          tier,
+                "cycle_budget":  qfb.cycle_budget,
+                "seal_rounds":   qfb.seal_rounds,
                 "phx_seal":      phx_token.hex(),
                 "qfb_summary":   qfb.summary(),
                 "cpl_source":    expression,

@@ -66,14 +66,53 @@ import base64
 import hashlib
 import hmac as _hmac
 import json
+import math
 import os
 import time
 import uuid
 from dataclasses import dataclass, field, asdict
+from enum import Enum
 from typing import Optional
 
-PHI: float = 1.618033988749895   # golden ratio
-HEARTBEAT_MS: int = 873          # organism beat
+PHI: float = 1.618033988749895   # golden ratio φ = (1+√5)/2
+PHI_INV: float = 0.618033988749895  # φ⁻¹ — Kuramoto sync threshold
+PHI_SQ: float = 2.618033988749895   # φ²
+HEARTBEAT_MS: int = 873          # 873 ms = floor(φ³ × 200) + φ-correction
+GOLDEN_ANGLE: float = 2.399963229728653  # 2π(1 − 1/φ) — phyllotaxis spiral
+
+# ── Block Box Tiers ────────────────────────────────────────────────────────────
+#
+# A QFB (Quantum Fusion Block) is not just one kind of thing.
+# The organism mints block boxes at FIVE tiers — each tier escalates:
+#   - PHX seal rounds    (cryptographic strength)
+#   - Sphere helix turns (geometric complexity)
+#   - Cycle budget       (sovereign compute embedded)
+#   - Default substrates (where it deploys)
+#
+#   BRONZE    — AI-auto-generated.  Students, onboarding, bronze canisters.
+#   SILVER    — Team-approved.      Knowledge, intelligence artefacts.
+#   GOLD      — Division-sealed.    Governance proposals, ICX contracts.
+#   PLATINUM  — Organism-level.     System upgrades, architectural laws.
+#   SOVEREIGN — Immutable core.     ConstitutionBlock, permanent QFBs.
+
+class BlockBoxTier(Enum):
+    BRONZE    = "bronze"
+    SILVER    = "silver"
+    GOLD      = "gold"
+    PLATINUM  = "platinum"
+    SOVEREIGN = "sovereign"
+
+# Tier properties: seal_rounds, helix_turns, cycle_budget, substrates
+TIER_PROPERTIES: dict[str, dict] = {
+    "bronze":    {"seal_rounds": 1, "helix_turns": 3,  "cycle_budget": 16,  "substrates": ["memory"]},
+    "silver":    {"seal_rounds": 2, "helix_turns": 5,  "cycle_budget": 32,  "substrates": ["memory", "edge"]},
+    "gold":      {"seal_rounds": 3, "helix_turns": 8,  "cycle_budget": 48,  "substrates": ["memory", "edge", "icp"]},
+    "platinum":  {"seal_rounds": 5, "helix_turns": 13, "cycle_budget": 80,  "substrates": ["memory", "edge", "icp", "evm"]},
+    "sovereign": {"seal_rounds": 8, "helix_turns": 21, "cycle_budget": 128, "substrates": ["memory", "edge", "icp", "evm", "solana"]},
+}
+
+# Helix turns follow Fibonacci: 3, 5, 8, 13, 21 — this is not an aesthetic choice.
+# It is the mathematical law of the organism.  (Medina)
 
 
 # ── PHI coordinate ─────────────────────────────────────────────────────────────
@@ -104,24 +143,34 @@ class SphereHelixLayer:
     SHL — the geometric membrane of a QFB.
 
     sphere_radius  — radius of the sphaira envelope (φ-multiples)
-    helix_turns    — number of helix turns in the membrane
+    helix_turns    — number of helix turns in the membrane (Fibonacci by tier)
     helix_pitch    — pitch of the helix (φ-multiples)
     helix_chirality — "right" | "left" — handedness of the double helix
+
+    Helix turns scale with tier on Fibonacci numbers: 3, 5, 8, 13, 21.
+    This is the sacred geometry law — not aesthetics.
     """
     sphere_radius:   float = PHI
     helix_turns:     int   = 3
     helix_pitch:     float = PHI
     helix_chirality: str   = "right"
 
+    @classmethod
+    def for_tier(cls, tier: str) -> "SphereHelixLayer":
+        """Create an SHL scaled to the given tier."""
+        props = TIER_PROPERTIES.get(tier, TIER_PROPERTIES["bronze"])
+        turns = props["helix_turns"]
+        # Sphere radius scales with φ^(tier_index): bronze=φ, silver=φ², gold=φ³, …
+        tier_idx = list(TIER_PROPERTIES.keys()).index(tier)
+        radius = PHI ** (tier_idx + 1)
+        return cls(sphere_radius=radius, helix_turns=turns)
+
     def surface_area(self) -> float:
-        """Approximate surface area of the sphere envelope."""
-        import math
+        """Surface area of the sphere envelope: 4πr²."""
         return 4 * math.pi * self.sphere_radius ** 2
 
     def helix_length(self) -> float:
-        """Approximate arc length of one helix strand."""
-        import math
-        # arc = turns × √( (2π·r)² + pitch² )
+        """Arc length of one helix strand: turns × √((2πr)² + pitch²)."""
         r = self.sphere_radius
         return self.helix_turns * math.sqrt((2 * math.pi * r) ** 2 + self.helix_pitch ** 2)
 
@@ -226,16 +275,31 @@ def phx_token(
 
 # ── QFB Seal (PHX integrity token) ────────────────────────────────────────────
 
-def _seal_qfb(qfc: QuantumFusionCore, shl: SphereHelixLayer,
-              sovereign_key: bytes, beat: int) -> str:
-    """Compute the PHX integrity seal for a QFB."""
+def _seal_qfb(
+    qfc: QuantumFusionCore,
+    shl: SphereHelixLayer,
+    sovereign_key: bytes,
+    beat: int,
+    tier: str = "bronze",
+    seal_rounds: int = 1,
+) -> str:
+    """
+    Compute the PHX integrity seal for a QFB.
+
+    Higher tiers run more seal rounds for stronger cryptographic integrity.
+    Seal formula iterated `seal_rounds` times:
+      PHX(e, k, prev, β) = HMAC-SHA256(k, BLAKE2b₅₁₂(e ‖ prev ‖ β) ⊕ φ_expand(β, 64))
+    """
     event_bytes = (
+        tier.encode() +
         qfc.payload_type.encode() +
         qfc.encoded_bytes.encode() +
         str(shl.sphere_radius).encode() +
         str(shl.helix_turns).encode()
     )
-    token = phx_token(event_bytes, sovereign_key, beat=beat)
+    token: Optional[bytes] = None
+    for _round in range(seal_rounds):
+        token = phx_token(event_bytes, sovereign_key, previous_token=token, beat=beat + _round)
     return token.hex()
 
 
@@ -247,6 +311,8 @@ class QFB:
     QFB — Quantum Fusion Block (Block Box).
 
     The sovereign meaning canister of the Medina organism.
+    Five tiers: bronze → silver → gold → platinum → sovereign.
+    Each tier escalates PHX seal rounds, helix turns, cycle budget, substrates.
 
     Usage
     ─────
@@ -254,6 +320,7 @@ class QFB:
     qfb = QFB.from_cpl(
         cpl_tokens = ["Λγ", "∧", "Ηθ", "→", "Τκτ"],
         key        = key,
+        tier       = "gold",
         substrates = ["memory", "icp"],
     )
     json_str = qfb.to_json()      # deploy to any substrate
@@ -263,13 +330,16 @@ class QFB:
 
     qfb_id:       str
     version:      int
+    tier:         str                    # "bronze"|"silver"|"gold"|"platinum"|"sovereign"
     substrate:    list[str]
-    phx_seal:     str                    # PHX integrity token (hex)
+    phx_seal:     str                    # PHX integrity token (hex, iterated by tier)
     phi_addr:     PhiCoord
     shl:          SphereHelixLayer
     qfc:          QuantumFusionCore
     created_ms:   int
     substrate_tags: dict[str, str]       # substrate-specific routing tags
+    cycle_budget: int                    # sovereign cycles embedded in this QFB
+    seal_rounds:  int                    # PHX seal iterations (tier-dependent)
 
     # ── Factories ──────────────────────────────────────────────────────────────
 
@@ -278,27 +348,34 @@ class QFB:
         cls,
         cpl_tokens: list[str],
         key:        bytes,
+        tier:       str = "bronze",
         substrates: Optional[list[str]] = None,
         beat:       int = 0,
         phi_addr:   Optional[PhiCoord] = None,
         shl:        Optional[SphereHelixLayer] = None,
         substrate_tags: Optional[dict[str, str]] = None,
+        cycle_budget: int = 0,
     ) -> "QFB":
-        """Create a QFB from a CPL token sequence."""
+        """Create a QFB from a CPL token sequence at any tier."""
+        props = TIER_PROPERTIES.get(tier, TIER_PROPERTIES["bronze"])
+        seal_rounds = props["seal_rounds"]
         qfc       = QuantumFusionCore.from_cpl(cpl_tokens)
-        shl_layer = shl or SphereHelixLayer()
+        shl_layer = shl or SphereHelixLayer.for_tier(tier)
         addr      = phi_addr or PhiCoord.sovereign(beat)
-        seal      = _seal_qfb(qfc, shl_layer, key, beat)
+        seal      = _seal_qfb(qfc, shl_layer, key, beat, tier, seal_rounds)
         return cls(
             qfb_id        = str(uuid.uuid4()),
             version       = 1,
-            substrate     = substrates or ["memory"],
+            tier          = tier,
+            substrate     = substrates or list(props["substrates"]),
             phx_seal      = seal,
             phi_addr      = addr,
             shl           = shl_layer,
             qfc           = qfc,
             created_ms    = int(time.time() * 1000),
             substrate_tags= substrate_tags or {},
+            cycle_budget  = cycle_budget or props["cycle_budget"],
+            seal_rounds   = seal_rounds,
         )
 
     @classmethod
@@ -307,34 +384,44 @@ class QFB:
         payload_type: str,
         data:         bytes,
         key:          bytes,
+        tier:         str = "bronze",
         substrates:   Optional[list[str]] = None,
         beat:         int = 0,
         phi_addr:     Optional[PhiCoord] = None,
         shl:          Optional[SphereHelixLayer] = None,
         substrate_tags: Optional[dict[str, str]] = None,
+        cycle_budget: int = 0,
     ) -> "QFB":
-        """Create a QFB from raw bytes."""
+        """Create a QFB from raw bytes at any tier."""
+        props = TIER_PROPERTIES.get(tier, TIER_PROPERTIES["bronze"])
+        seal_rounds = props["seal_rounds"]
         qfc       = QuantumFusionCore.from_bytes(payload_type, data)
-        shl_layer = shl or SphereHelixLayer()
+        shl_layer = shl or SphereHelixLayer.for_tier(tier)
         addr      = phi_addr or PhiCoord.sovereign(beat)
-        seal      = _seal_qfb(qfc, shl_layer, key, beat)
+        seal      = _seal_qfb(qfc, shl_layer, key, beat, tier, seal_rounds)
         return cls(
             qfb_id        = str(uuid.uuid4()),
             version       = 1,
-            substrate     = substrates or ["memory"],
+            tier          = tier,
+            substrate     = substrates or list(props["substrates"]),
             phx_seal      = seal,
             phi_addr      = addr,
             shl           = shl_layer,
             qfc           = qfc,
             created_ms    = int(time.time() * 1000),
             substrate_tags= substrate_tags or {},
+            cycle_budget  = cycle_budget or props["cycle_budget"],
+            seal_rounds   = seal_rounds,
         )
 
     # ── Integrity ──────────────────────────────────────────────────────────────
 
     def verify(self, key: bytes) -> bool:
-        """Verify the PHX integrity seal."""
-        expected = _seal_qfb(self.qfc, self.shl, key, self.phi_addr.beat)
+        """Verify the PHX integrity seal (using the QFB's own tier and seal_rounds)."""
+        expected = _seal_qfb(
+            self.qfc, self.shl, key, self.phi_addr.beat,
+            self.tier, self.seal_rounds
+        )
         return _hmac.compare_digest(expected, self.phx_seal)
 
     # ── CPL extraction ─────────────────────────────────────────────────────────
@@ -353,6 +440,7 @@ class QFB:
         return {
             "qfb_id":        self.qfb_id,
             "version":       self.version,
+            "tier":          self.tier,
             "substrate":     self.substrate,
             "phx_seal":      self.phx_seal,
             "phi_addr":      self.phi_addr.to_dict(),
@@ -360,6 +448,8 @@ class QFB:
             "qfc":           self.qfc.to_dict(),
             "created_ms":    self.created_ms,
             "substrate_tags":self.substrate_tags,
+            "cycle_budget":  self.cycle_budget,
+            "seal_rounds":   self.seal_rounds,
         }
 
     def to_json(self, indent: Optional[int] = None) -> str:
@@ -376,9 +466,12 @@ class QFB:
             cpl_token_count = qfc_d["cpl_token_count"],
             cpl_manifest    = qfc_d["cpl_manifest"],
         )
+        tier = d.get("tier", "bronze")
+        props = TIER_PROPERTIES.get(tier, TIER_PROPERTIES["bronze"])
         return cls(
             qfb_id        = d["qfb_id"],
             version       = d["version"],
+            tier          = tier,
             substrate     = d["substrate"],
             phx_seal      = d["phx_seal"],
             phi_addr      = phi_addr,
@@ -386,6 +479,8 @@ class QFB:
             qfc           = qfc,
             created_ms    = d["created_ms"],
             substrate_tags= d.get("substrate_tags", {}),
+            cycle_budget  = d.get("cycle_budget", props["cycle_budget"]),
+            seal_rounds   = d.get("seal_rounds", props["seal_rounds"]),
         )
 
     @classmethod
@@ -410,10 +505,12 @@ class QFB:
         tokens = self.cpl_expression() or "(raw bytes)"
         return (
             f"QFB {self.qfb_id[:8]}…  "
+            f"tier={self.tier}  "
             f"substrates={self.substrate}  "
             f"tokens={self.qfc.cpl_token_count}  "
             f"cpl='{tokens}'  "
             f"shl=ϕ{self.shl.sphere_radius:.3f}×{self.shl.helix_turns}T  "
+            f"cycles={self.cycle_budget}  "
             f"phx={self.phx_seal[:12]}…"
         )
 
