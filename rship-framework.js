@@ -430,6 +430,54 @@ const RSHIP_REGISTRY = {
       'Self-organizing analytical workflows',
     ],
   },
+
+  'CYCLOVEX': {
+    name: 'CYCLOVEX',
+    fullName: 'Cyclic Yottascale Capacity Logarithmic Optimization Vortex Executive X-factor',
+    designation: 'RSHIP-2026-CYCLOVEX-001',
+    classification: 'Resource Allocation & Capacity AGI',
+    replaces: 'CYCLOVEX (Sovereign Capacity Engine)',
+    capabilities: [
+      'φ-compounding capacity growth: C(t) = C₀ × φᵗ',
+      'Autonomous resource allocation and rebalancing',
+      'Self-organizing capacity hierarchies (spawn child engines)',
+      'Predictive capacity forecasting (100+ ticks ahead)',
+      'Real-time bottleneck detection and autonomous resolution',
+      'Self-optimization via φ-weighted utilization (optimal at φ⁻¹)',
+    ],
+  },
+
+  'NEXORIS': {
+    name: 'NEXORIS',
+    fullName: 'Network Executive X-factor Organizational Routing Intelligence System',
+    designation: 'RSHIP-2026-NEXORIS-001',
+    classification: 'Routing & Synchronization AGI',
+    replaces: 'NEXORIS (Kuramoto Synchronization Router)',
+    capabilities: [
+      'Kuramoto phase synchronization (order parameter R ≥ φ⁻¹)',
+      'Stigmergic pheromone field routing (organizational memory)',
+      'Autonomous desynchronization detection and correction',
+      'Self-organizing routing optimization via gradient descent',
+      'Predictive synchronization forecasting',
+      'Real-time coupling strength adjustment',
+    ],
+  },
+
+  'COGNOVEX': {
+    name: 'COGNOVEX',
+    fullName: 'Cognitive Organizational Governance Network Optimization Vortex Executive X-factor',
+    designation: 'RSHIP-2026-COGNOVEX-001',
+    classification: 'Collective Intelligence & Decision AGI',
+    replaces: 'COGNOVEX (Quorum Commitment Network)',
+    capabilities: [
+      'Quorum commitment dynamics (φ⁻⁴ crystallization threshold)',
+      'Authority-free collective decision making',
+      'Self-organizing cognitive unit networks',
+      'Autonomous conviction formation from evidence',
+      'Real-time decision coherence tracking',
+      'Self-optimization of commitment parameters (α, β, γ)',
+    ],
+  },
 };
 
 // ── Factory Functions ──────────────────────────────────────────────────────

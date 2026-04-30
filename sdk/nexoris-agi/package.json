@@ -1,0 +1,26 @@
+{
+  "name": "@medina/nexoris-agi",
+  "version": "1.0.0",
+  "description": "NEXORIS AGI — Routing & Synchronization Intelligence with Kuramoto sync and stigmergic pheromone fields",
+  "main": "nexoris-agi.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "nexoris",
+    "agi",
+    "routing",
+    "synchronization",
+    "kuramoto",
+    "stigmergy",
+    "pheromone-field",
+    "coordination"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/nexoris-agi"
+  }
+}

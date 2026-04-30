@@ -1,0 +1,26 @@
+{
+  "name": "@medina/cyclovex-agi",
+  "version": "1.0.0",
+  "description": "CYCLOVEX AGI — Sovereign Capacity & Resource Intelligence with φ-compounding growth",
+  "main": "cyclovex-agi.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "cyclovex",
+    "agi",
+    "capacity",
+    "resource-allocation",
+    "phi-compounding",
+    "autonomous-optimization",
+    "bottleneck-detection",
+    "hierarchy"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/cyclovex-agi"
+  }
+}
