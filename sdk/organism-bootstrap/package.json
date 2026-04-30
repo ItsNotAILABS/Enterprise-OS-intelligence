@@ -1,0 +1,23 @@
+{
+  "name": "@medina/organism-bootstrap",
+  "version": "1.0.0",
+  "description": "ICP deployment helpers for self-bootstrapping intelligence organisms",
+  "main": "src/index.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "icp",
+    "internet-computer",
+    "bootstrap",
+    "deployment",
+    "motoko",
+    "canister"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/organism-bootstrap"
+  }
+}

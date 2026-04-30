@@ -325,7 +325,7 @@ SAP · Oracle · Salesforce · Workday · ServiceNow · NetSuite · HubSpot · Q
 
 ## Core Intelligence SDKs
 
-Two foundational SDKs that embody the self-bootstrapping intelligence architecture.
+Six foundational SDKs that embody the self-bootstrapping intelligence architecture.
 
 ### `@medina/medina-heart` — The Biological Heart
 
@@ -379,14 +379,14 @@ publish({
 // Install from YOUR registry
 const sdk = install('@medina/medina-heart');
 
-// List all packages (13 core SDKs pre-registered)
+// List all packages (16 core SDKs pre-registered)
 const packages = list();
 ```
 
 **Pre-Registered SDKs:**
 - All 7 intelligence protocols (Neural, Emergence, Memory, Adaptive, Scalability, etc.)
-- Core SDKs (medina-heart, medina-registry, organism-ai)
-- Domain AI tools (paralegal-ai, analyst-ai, student-ai)
+- 6 core SDKs (medina-heart, medina-registry, organism-ai, medina-queries, protocol-composer, organism-bootstrap)
+- 3 domain AI tools (paralegal-ai, analyst-ai, student-ai)
 
 **Features:**
 - No external dependencies or central authority
@@ -395,6 +395,167 @@ const packages = list();
 - Complete offline operation
 
 [**View SDK →**](sdk/medina-registry/)
+
+---
+
+### `@medina/organism-ai` — Multi-Model AI Orchestration
+
+**Route tasks to 40+ AI models using φ-weighted scoring.**
+
+```js
+import { createOrchestrator, TaskType, Priority } from '@medina/organism-ai';
+
+// Create orchestrator — immediately active with 40 models
+const orchestrator = createOrchestrator();
+
+// Route a coding task
+const result = orchestrator.route({
+  type: TaskType.CODING,
+  priority: Priority.HIGH,
+  payload: 'Write a Fibonacci function',
+});
+
+console.log(result);
+// {
+//   modelId: 'deepseek-coder',
+//   score: 14.56,
+//   alternatives: ['gpt-4o', 'claude-3.5-sonnet', 'deepseek-v3']
+// }
+
+// Record outcomes for adaptive reputation tracking (φ-EMA)
+orchestrator.recordOutcome('deepseek-coder', true, 1234);
+```
+
+**Features:**
+- 40 AI model families (GPT, Claude, Gemini, Llama, Mistral, DeepSeek, Qwen, Phi, etc.)
+- φ-weighted scoring and cascade fallback
+- Adaptive reputation tracking via φ-EMA
+- 873ms heartbeat for automatic rebalancing
+- Self-bootstrapping (immediately routing)
+
+[**View SDK →**](sdk/organism-ai/)
+
+---
+
+### `@medina/medina-queries` — Intelligence Data Queries
+
+**φ-weighted querying, filtering, and aggregation for intelligence modules.**
+
+```js
+import { query, createQueryEngine, timeSeries } from '@medina/medina-queries';
+
+// Query builder with φ-weighted fuzzy matching
+const results = query(protocols)
+  .fuzzyMatch('name', 'neural', 0.6)
+  .orderByPhi('reputation')
+  .limit(10)
+  .execute();
+
+// Multi-source intelligence search
+const engine = createQueryEngine();
+engine.registerProtocol('neural-sync', neuralProtocol);
+engine.registerModule('memory', memoryModule);
+
+const searchResults = engine.search('synchronization');
+
+// Time-series φ-EMA
+const smoothed = timeSeries(heartbeats)
+  .phiEMA('rate', 0.618)
+  .getData();
+```
+
+**Features:**
+- φ-weighted fuzzy matching and relevance scoring
+- Time-series φ-EMA and moving averages
+- Multi-source intelligence search (protocols, modules, agents, memories)
+- Query builder with method chaining
+- Aggregation with φ-weighted statistics
+
+[**View SDK →**](sdk/medina-queries/)
+
+---
+
+### `@medina/protocol-composer` — Protocol Composition
+
+**Compose multiple intelligence protocols with φ-weighted synchronization.**
+
+```js
+import { createComposer } from '@medina/protocol-composer';
+
+// Create composer — immediately active
+const composer = createComposer();
+
+// Register protocols with dependencies
+composer
+  .registerProtocol('neural-sync', neuralProtocol, [])
+  .registerProtocol('memory', memoryProtocol, ['neural-sync'])
+  .registerProtocol('decision', decisionProtocol, ['memory', 'neural-sync']);
+
+// Execute in dependency order
+const results = composer.executeAll({ input: 'data' });
+
+// Composition patterns
+composer.chain(['input', 'process', 'output']);
+composer.parallel(['analyzer-a', 'analyzer-b', 'analyzer-c']);
+composer.fanOut('source', ['branch-1', 'branch-2', 'branch-3']);
+composer.fanIn(['input-a', 'input-b'], 'aggregator');
+
+// Phase synchronization
+const sync = composer.syncPhase('neural-sync', 'memory');
+console.log(sync);  // 0.8234 (φ-weighted)
+```
+
+**Features:**
+- Dependency-aware execution with topological sorting
+- φ-weighted phase synchronization between protocols
+- Composition patterns (chain, parallel, fan-out, fan-in)
+- 873ms heartbeat for coordination
+- Self-bootstrapping (immediately executing)
+
+[**View SDK →**](sdk/protocol-composer/)
+
+---
+
+### `@medina/organism-bootstrap` — ICP Deployment
+
+**Bootstrap intelligence organisms on the Internet Computer.**
+
+```js
+import { createBootstrap } from '@medina/organism-bootstrap';
+
+// Create bootstrap helper
+const bootstrap = createBootstrap({ network: 'ic' });
+
+// Register modules
+bootstrap
+  .registerModule('neural-sync', neuralSyncModule)
+  .registerModule('memory', memoryModule);
+
+// Generate deployment package
+const package = bootstrap.getDeploymentPackage();
+
+// Write Motoko wrappers, dfx.json, and deployment script
+fs.writeFileSync('src/neural_sync.mo', package.wrappers['neural_sync.mo']);
+fs.writeFileSync('dfx.json', package.dfxJson);
+fs.writeFileSync('deploy.sh', package.deployScript);
+
+// Deploy: ./deploy.sh
+```
+
+**Generated Motoko includes:**
+- Self-bootstrapping 873ms heartbeat (Timer.recurringTimer)
+- Stable state variables (persist across upgrades)
+- Query and update methods
+- Automatic lifecycle management
+
+**Features:**
+- Automatic Motoko wrapper generation
+- ICP deployment automation
+- Stable state management with φ-weighted serialization
+- Deployment validation
+- Multi-canister orchestration
+
+[**View SDK →**](sdk/organism-bootstrap/)
 
 ---
 
