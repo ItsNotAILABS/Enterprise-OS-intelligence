@@ -1,0 +1,28 @@
+{
+  "name": "@medina/profectus-agi",
+  "version": "1.0.0",
+  "description": "PROFECTUS AGI — Workforce & Career Intelligence with 4-register state, autonomous heartbeat, and φ-learning",
+  "main": "profectus-agi.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "profectus",
+    "agi",
+    "workforce",
+    "career",
+    "talent",
+    "hr",
+    "organism-runtime",
+    "phi-learning",
+    "retention",
+    "capacity"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/profectus-agi"
+  }
+}

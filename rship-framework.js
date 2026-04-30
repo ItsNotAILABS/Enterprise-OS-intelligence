@@ -478,6 +478,24 @@ const RSHIP_REGISTRY = {
       'Self-optimization of commitment parameters (α, β, γ)',
     ],
   },
+
+  'PROFECTUS': {
+    name: 'PROFECTUS',
+    fullName: 'Progressive Organizational Flow Executive Career Talent Unified Synergy',
+    designation: 'RSHIP-2026-PROFECTUS-001',
+    classification: 'Workforce Management & Career Advancement AGI',
+    replaces: 'Organism Runtime SDK (OrganismState + Heartbeat + KernelExecutor engines)',
+    capabilities: [
+      '4-register career state management (cognitive, affective, somatic, sovereign)',
+      'Autonomous workforce flow with heartbeat-driven capacity (873ms cycles)',
+      'φ-accelerated skill development: level += φ⁻¹ × hours × (1 + experience/100)',
+      'Career trajectory forecasting with φ-compounding growth',
+      'Retention risk prediction with φ⁻¹ critical threshold',
+      'Autonomous retention intervention (career acceleration, engagement, workload)',
+      'Self-organizing talent hierarchies and team synchronization',
+      'Workforce capacity optimization (target utilization: φ⁻¹ ≈ 0.618)',
+    ],
+  },
 };
 
 // ── Factory Functions ──────────────────────────────────────────────────────
