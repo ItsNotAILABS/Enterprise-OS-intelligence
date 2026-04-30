@@ -1,0 +1,25 @@
+{
+  "name": "@medina/worker-ai",
+  "version": "1.0.0",
+  "description": "WORKER AI — Task-executing AI agents. Queues, multimodal, scalable, useful.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "keywords": [
+    "worker",
+    "task",
+    "queue",
+    "multimodal",
+    "scalable",
+    "ai",
+    "medina"
+  ],
+  "dependencies": {
+    "@medina/birth-ai": "^1.0.0",
+    "@medina/medina-heart": "^1.0.0"
+  }
+}

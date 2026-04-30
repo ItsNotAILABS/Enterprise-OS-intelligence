@@ -1,0 +1,24 @@
+{
+  "name": "@medina/builder-ai",
+  "version": "1.0.0",
+  "description": "BUILDER AI — The SDK that builds other SDKs. Give it instructions, it generates code.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "keywords": [
+    "builder",
+    "generator",
+    "sdk",
+    "code-generation",
+    "ai",
+    "medina"
+  ],
+  "dependencies": {
+    "@medina/birth-ai": "^1.0.0",
+    "@medina/medina-heart": "^1.0.0"
+  }
+}
