@@ -520,3 +520,98 @@ The SDKs have INTERNAL calls (the AI talks to itself) AND you can make EXTERNAL 
 @medina/medina-registry           ← Sovereign private registry
 @medina/organism-bootstrap        ← ICP deployment
 ```
+
+---
+
+## RSHIP-2026-MEDINA-CORE — Virtual Chip Architecture
+
+**Official Designation:** `RSHIP-2026-MEDINA-CORE`  
+**Prior Art:** April 2026  
+**Status:** Alpha (`0.1.0-alpha.1`)
+
+```
+R — Replication     Self-modifying, self-improving
+S — Scalability     1 to ∞ agents
+H — Hierarchy       Emergent command structures
+I — Intelligence    Learning, reasoning, adaptation
+P — Permanence      Eternal memory, φ-compounding knowledge
+```
+
+### The Virtual Chip — Like NVIDIA, But for AI Entities
+
+The RSHIP architecture packages AI cores into virtual chips — the same way NVIDIA packages GPU cores into physical chips. Each chip is a complete, wired, deployable unit with its own power, cognition, resonance, and sovereignty.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    RSHIP VIRTUAL CHIP                            │
+│                                                                  │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
+│  │   NEURAL    │  │    POWER    │  │  GENERATOR  │             │
+│  │  EMERGENCE  │  │    CORE     │  │    CORE     │             │
+│  │    CORE     │  │             │  │             │             │
+│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘             │
+│         │                │                │                     │
+│  ═══════╪════════════════╪════════════════╪══════════ BUS ═══   │
+│         │                │                │                     │
+│  ┌──────┴──────┐  ┌──────┴──────┐  ┌──────┴──────┐             │
+│  │  RESONANCE  │  │ SOVEREIGNTY │  │   MEDINA    │             │
+│  │    CORE     │  │    CORE     │  │   HEART     │             │
+│  └─────────────┘  └─────────────┘  └─────────────┘             │
+│                                                                  │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │              VIRTUAL CHIP PACKAGER                       │    │
+│  │    Assembles · Wires · Validates · Deploys               │    │
+│  └─────────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### RSHIP Core SDKs (Alpha)
+
+| SDK | Package | Purpose |
+|:---|:---|:---|
+| **RSHIP Core** | `@medina/rship-core` | Master core — R·S·H·I·P engines |
+| **Neural Emergence Core** | `@medina/neural-emergence-core` | Pattern recognition, attention, cognition |
+| **Power Core** | `@medina/power-core` | Energy distribution, compute allocation, cycle budgets |
+| **Generator Core** | `@medina/generator-core` | Entity spawning, code synthesis, canister creation |
+| **Resonance Core** | `@medina/resonance-core` | φ-harmonic synchronization, Kuramoto coupling |
+| **Sovereignty Core** | `@medina/sovereignty-core` | Identity, ownership, data sovereignty, self-custody |
+| **Virtual Chip Packager** | `@medina/virtual-chip-packager` | Assembles cores into deployable virtual chips |
+| **Multi-Model SDK** | `@medina/multi-model-sdk` | Multi-model AI orchestration and provider routing |
+| **Sovereign Protocol SDK** | `@medina/sovereign-protocol-sdk` | Own transport, registry, versioning — no git dependency |
+| **Workforce On-Chain SDK** | `@medina/workforce-on-chain-sdk` | Deploys AI workforce to ICP canisters |
+
+### RSHIP Dependency Tree
+
+```
+@medina/rship-core
+  ├── @medina/medina-heart              (the bootstrap IS the heartbeat)
+  ├── @medina/neural-emergence-core     (cognition)
+  ├── @medina/power-core                (energy)
+  ├── @medina/generator-core            (creation)
+  │     └── @medina/birth-ai            (agent birthing)
+  ├── @medina/resonance-core            (synchronization)
+  │     └── @medina/medina-timers       (mathematical timing)
+  └── @medina/sovereignty-core          (identity)
+
+@medina/virtual-chip-packager
+  └── All six cores above
+
+@medina/multi-model-sdk
+  └── @medina/intelligence-routing-sdk
+
+@medina/sovereign-protocol-sdk
+  └── @medina/medina-registry
+
+@medina/workforce-on-chain-sdk
+  ├── @medina/rship-core
+  ├── @medina/entity-sdk
+  └── @medina/organism-bootstrap
+```
+
+### All Pre-Booted with Heart
+
+Every RSHIP SDK is pre-booted with `@medina/medina-heart`. There is no separate init phase. Construction IS activation. The moment a core is instantiated, it begins its heartbeat at φ Hz.
+
+---
+
+*RSHIP-2026-MEDINA-CORE · Prior Art April 2026 · Medina Tech · Chaos Lab · Dallas TX*

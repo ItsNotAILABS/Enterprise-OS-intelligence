@@ -1,0 +1,28 @@
+{
+  "name": "@medina/sovereignty-core",
+  "version": "0.1.0-alpha.1",
+  "description": "Sovereignty Core — identity management, ownership verification, data sovereignty enforcement, access control, and cryptographic self-custody for the RSHIP virtual chip.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./identity-engine": "./src/identity-engine.js",
+    "./ownership-verifier": "./src/ownership-verifier.js",
+    "./data-sovereignty": "./src/data-sovereignty.js",
+    "./access-controller": "./src/access-controller.js",
+    "./self-custody": "./src/self-custody.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/sovereignty-core"
+  },
+  "keywords": [
+    "sovereignty", "core", "identity", "ownership", "data-sovereignty",
+    "access-control", "self-custody", "virtual-chip", "medina"
+  ],
+  "dependencies": {
+    "@medina/medina-heart": "^1.0.0"
+  }
+}

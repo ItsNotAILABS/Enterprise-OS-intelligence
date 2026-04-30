@@ -1,0 +1,33 @@
+{
+  "name": "@medina/workforce-on-chain-sdk",
+  "version": "0.1.0-alpha.1",
+  "description": "Workforce On-Chain SDK — deploys the internal AI workforce to ICP canisters. Pre-booted with medina-heart. Each AI entity births alive on-chain with φ-heartbeat, sovereign memory, and task assignment.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./deployer": "./src/canister-deployer.js",
+    "./workforce-manager": "./src/workforce-manager.js",
+    "./entity-lifecycle": "./src/entity-lifecycle.js",
+    "./task-dispatcher": "./src/task-dispatcher.js",
+    "./heartbeat-monitor": "./src/heartbeat-monitor.js",
+    "./upgrade-controller": "./src/upgrade-controller.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/workforce-on-chain-sdk"
+  },
+  "keywords": [
+    "workforce", "on-chain", "icp", "canister", "ai-entity",
+    "deployment", "heartbeat", "sovereign", "medina"
+  ],
+  "dependencies": {
+    "@medina/medina-heart": "^1.0.0",
+    "@medina/birth-ai": "^1.0.0",
+    "@medina/entity-sdk": "^1.0.0",
+    "@medina/organism-bootstrap": "^1.0.0",
+    "@medina/rship-core": "^0.1.0-alpha.1"
+  }
+}

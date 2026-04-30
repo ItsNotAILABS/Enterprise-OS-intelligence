@@ -1,0 +1,29 @@
+{
+  "name": "@medina/resonance-core",
+  "version": "0.1.0-alpha.1",
+  "description": "Resonance Core — φ-harmonic synchronization, Kuramoto coupling, phase-locking, frequency alignment, and cross-organism resonance for the RSHIP virtual chip.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./phi-oscillator": "./src/phi-oscillator.js",
+    "./kuramoto-coupler": "./src/kuramoto-coupler.js",
+    "./phase-lock": "./src/phase-lock.js",
+    "./frequency-aligner": "./src/frequency-aligner.js",
+    "./harmonic-field": "./src/harmonic-field.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/resonance-core"
+  },
+  "keywords": [
+    "resonance", "core", "phi", "golden-ratio", "kuramoto",
+    "synchronization", "harmonic", "virtual-chip", "medina"
+  ],
+  "dependencies": {
+    "@medina/medina-heart": "^1.0.0",
+    "@medina/medina-timers": "^1.0.0"
+  }
+}
