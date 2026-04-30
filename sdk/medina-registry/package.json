@@ -1,0 +1,23 @@
+{
+  "name": "@medina/medina-registry",
+  "version": "1.0.0",
+  "description": "Sovereign Private Registry — your own git/npm for SDK distribution. The SDKs live inside and run sovereignly.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/medina-registry"
+  },
+  "keywords": [
+    "registry",
+    "private",
+    "sovereign",
+    "sdk-distribution",
+    "medina"
+  ]
+}
