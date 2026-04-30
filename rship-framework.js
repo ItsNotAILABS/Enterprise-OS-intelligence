@@ -398,6 +398,38 @@ const RSHIP_REGISTRY = {
       'Self-organizing workflows',
     ],
   },
+
+  'CORDEX': {
+    name: 'CORDEX',
+    fullName: 'Collective Organizational Resonance & Dynamic Equilibrium X-factor',
+    designation: 'RSHIP-2026-CORDEX-001',
+    classification: 'Organizational Dynamics AGI',
+    replaces: 'CORDEX (Organizational Heart Engine)',
+    capabilities: [
+      'Lotka-Volterra organizational modeling',
+      'Autonomous crisis detection and intervention',
+      'Self-organizing response teams',
+      'Predictive organizational dynamics (10+ beats ahead)',
+      'Real-time balance monitoring (expansion vs resistance)',
+      'Self-optimization of organizational parameters',
+    ],
+  },
+
+  'CEREBEX': {
+    name: 'CEREBEX',
+    fullName: 'Cognitive Enterprise Reasoning & Business Executive X-factor',
+    designation: 'RSHIP-2026-CEREBEX-001',
+    classification: 'Cognitive Analytics AGI',
+    replaces: 'CEREBEX (Organizational Brain Engine)',
+    capabilities: [
+      '40-category world modeling with φ⁻¹ learning',
+      'Query-as-Execute (every question advances intelligence)',
+      'Free Energy minimization (Friston)',
+      'Autonomous command routing to optimal systems',
+      'Predictive success modeling',
+      'Self-organizing analytical workflows',
+    ],
+  },
 };
 
 // ── Factory Functions ──────────────────────────────────────────────────────
