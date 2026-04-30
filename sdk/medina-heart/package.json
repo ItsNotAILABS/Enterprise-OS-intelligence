@@ -1,0 +1,23 @@
+{
+  "name": "@medina/medina-heart",
+  "version": "1.0.0",
+  "description": "Self-bootstrapping biological heart system — Creation IS Activation",
+  "main": "src/index.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "heart",
+    "self-bootstrapping",
+    "biological",
+    "autonomous",
+    "phi",
+    "golden-ratio"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/medina-heart"
+  }
+}
