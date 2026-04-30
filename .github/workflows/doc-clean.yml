@@ -33,7 +33,7 @@ jobs:
       - name: "[E2] Parse — Setup Node.js runtime"
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: "[E13·E14] Evidence Registry + Dispute/Correction — Run Mundator Cognitus (PASS 2 — strict verify)"
         run: node tools/doc-sanitizer.js papers/ --verify
@@ -53,8 +53,10 @@ jobs:
           )
           FOUND=0
           for pattern in "${FORBIDDEN[@]}"; do
-            if git ls-files --error-unmatch "$pattern" 2>/dev/null; then
+            # Use git ls-files with the pattern and check if any files are returned
+            if [ -n "$(git ls-files "$pattern" 2>/dev/null)" ]; then
               echo "::error::Sensitive file found in repo: $pattern"
+              git ls-files "$pattern"
               FOUND=1
             fi
           done

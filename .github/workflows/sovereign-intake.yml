@@ -54,7 +54,7 @@ jobs:
       - name: "[E2] Parse — Setup Node.js runtime"
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: "[E13·E14] PASS 1 — Evidence Registry + Dispute/Correction — Ingest and Auto-Fix"
         id: pass1
