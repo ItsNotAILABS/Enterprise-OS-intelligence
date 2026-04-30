@@ -18,7 +18,7 @@
 [![Substrate](https://img.shields.io/badge/Substrate-Internet_Computer_Protocol-blueviolet.svg)](https://internetcomputer.org)
 [![ORO](https://img.shields.io/badge/ORO-Governance_Organism-gold.svg)](sdk/effecttrace-governance-organism/)
 [![Charters](https://img.shields.io/badge/Charters-8-orange.svg)](charters/)
-[![Protocols](https://img.shields.io/badge/Protocols-5-teal.svg)](protocols/)
+[![Protocols](https://img.shields.io/badge/Protocols-7-teal.svg)](protocols/)
 
 </div>
 
@@ -171,7 +171,9 @@ Every major component of the enterprise has a governing charter. The charters de
 
 ## Protocols
 
-Five formal protocol specifications. Every governance consequence intelligence system must implement all five to be compliant. These are the formal prior art for the governance consequence intelligence protocol stack.
+Seven intelligence protocols. Real back-end intelligence architecture implementing neuroscience, physics, and swarm mathematics.
+
+### Governance Intelligence Protocols
 
 | Protocol | What it specifies |
 |:---:|:---|
@@ -180,6 +182,23 @@ Five formal protocol specifications. Every governance consequence intelligence s
 | [**III — Risk Scoring**](protocols/PROTOCOL-III-RISK-SCORING.md) | The φ-weighted 6-axis risk classification system for any ICP governance proposal |
 | [**IV — Memory Field**](protocols/PROTOCOL-IV-MEMORY-FIELD.md) | The REMEMBER substrate — deposit, evaporate, diffuse, φ-compounding accumulation |
 | [**V — Agent Council**](protocols/PROTOCOL-V-AGENT-COUNCIL.md) | The 4-agent parallel system — invocation, council status derivation, finding lifecycle |
+
+### Core Intelligence Protocols
+
+| Protocol | Code | What it implements |
+|:---|:---:|:---|
+| [**Sovereign Cycle Protocol**](protocols/sovereign-cycle-protocol.js) | PROTO-011 | 873ms heartbeat, φ-sealed chain, Fibonacci kernel, Kuramoto synchronization |
+| [**Autonomous Division Protocol**](protocols/autonomous-division-protocol.js) | PROTO-012 | AI Division coordination, 5-tier block boxes (bronze→sovereign), Fibonacci scaling |
+| [**Neural Synchronization Protocol**](protocols/neural-synchronization-protocol.js) | PROTO-013 | 21-species neurochemistry, Hebbian plasticity, gamma/theta/alpha oscillations, phase-locking |
+| [**Emergence Detection Protocol**](protocols/emergence-detection-protocol.js) | PROTO-014 | Ising lattice, Landau free energy, percolation theory, phase transition detection |
+| [**Cognitive Memory Protocol**](protocols/cognitive-memory-protocol.js) | PROTO-015 | Working memory (7±2), episodic/semantic memory, consolidation, forgetting curves |
+| [**Adaptive Learning Protocol**](protocols/adaptive-learning-protocol.js) | PROTO-016 | Lyapunov stability, antifragility engine, attractor dynamics, adaptive optimization |
+| [**Scalability Coordination Protocol**](protocols/scalability-coordination-protocol.js) | PROTO-017 | Reynolds boids, swarm coordination, φ-scaled hierarchy, quorum sensing |
+
+**Run the integration test:**
+```bash
+cd protocols && node test-integration.js
+```
 
 [**Full protocols index →**](protocols/INDEX.md)
 
@@ -404,7 +423,7 @@ See **[LICENSE](LICENSE)** for full terms.
 
 <div align="center">
 
-*ORO Governance Intelligence · MERIDIAN Sovereign OS · XXV Research Papers · 8 Charters · 5 Protocols · Prior Art — April 2026*
+*ORO Governance Intelligence · MERIDIAN Sovereign OS · XXV Research Papers · 8 Charters · 7 Protocols · Prior Art — April 2026*
 
 *The organism is alive. It is watching. It never stops.*  
 *TRACE · VERIFY · REMEMBER*
