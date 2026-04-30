@@ -1,0 +1,26 @@
+{
+  "name": "@medina/medina-calls",
+  "version": "1.0.0",
+  "description": "Internal SDK for CALL functions — actions that change state in the MEDINA ecosystem",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./civitas": "./src/civitas-calls.js",
+    "./organism": "./src/organism-calls.js",
+    "./governance": "./src/governance-calls.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/medina-calls"
+  },
+  "keywords": [
+    "calls",
+    "mutations",
+    "state-changes",
+    "internal-sdk",
+    "medina"
+  ]
+}
