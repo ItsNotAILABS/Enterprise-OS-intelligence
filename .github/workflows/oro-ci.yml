@@ -55,7 +55,7 @@ jobs:
       - name: "[E2] Parse — Setup Node.js runtime"
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: "[E1–E15] TRACE·VERIFY·REMEMBER — Validate all 15 engine imports"
         working-directory: sdk/effecttrace-governance-organism

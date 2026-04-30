@@ -45,7 +45,7 @@ jobs:
       - name: "[E2] Parse — Setup Node.js runtime"
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: "[E9] Governance Memory — Update catalog timestamp"
         id: sync
@@ -76,8 +76,8 @@ jobs:
 
           if (!ECOSYSTEM_CATALOG) throw new Error('ECOSYSTEM_CATALOG not exported');
           if (!SYSTEM_IDENTITY.latinName) throw new Error('SYSTEM_IDENTITY.latinName missing');
-          if (ENGINES.length !== 15) throw new Error(`Expected 15 engines, got ${ENGINES.length}`);
-          if (AGENTS.length !== 4)  throw new Error(`Expected 4 agents, got ${AGENTS.length}`);
+          if (ENGINES.length !== 16) throw new Error(`Expected 16 engines, got ${ENGINES.length}`);
+          if (AGENTS.length !== 5)  throw new Error(`Expected 5 agents, got ${AGENTS.length}`);
 
           console.log(`  ✓  ${SYSTEM_IDENTITY.officialName}`);
           console.log(`  ✓  Latin: ${SYSTEM_IDENTITY.latinName} — ${SYSTEM_IDENTITY.latinMeaning}`);
