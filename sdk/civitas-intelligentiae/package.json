@@ -1,0 +1,42 @@
+{
+  "name": "@medina/civitas-intelligentiae",
+  "version": "1.0.0",
+  "description": "CIVITAS INTELLIGENTIAE — The Civilization of Intelligences. Autonomous AI agents that run the entire system: reasoning, execution, perception, memory, security, artifact generation, routing, decisions, healing, training, logging, monitoring. The internal organs and workers of the sovereign OS.",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "Alfredo Medina Hernandez",
+    "email": "Medinasitech@outlook.com"
+  },
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./organs": "./src/organs/index.js",
+    "./agents": "./src/agents/index.js",
+    "./runtime": "./src/runtime/index.js"
+  },
+  "keywords": [
+    "ai",
+    "civilization",
+    "autonomous",
+    "agents",
+    "sovereign",
+    "backend",
+    "intelligence",
+    "latin",
+    "animus",
+    "corpus",
+    "sensus",
+    "memoria",
+    "medina-tech",
+    "meridian"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {}
+}
