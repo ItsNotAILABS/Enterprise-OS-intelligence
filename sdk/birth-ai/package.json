@@ -1,0 +1,29 @@
+{
+  "name": "@medina/birth-ai",
+  "version": "1.0.0",
+  "description": "BIRTH AI — Create AIs that are immediately alive. Like Character.AI but better.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/birth-ai"
+  },
+  "keywords": [
+    "ai",
+    "birth",
+    "character",
+    "companion",
+    "agent",
+    "alive",
+    "autonomous",
+    "medina"
+  ],
+  "dependencies": {
+    "@medina/medina-heart": "^1.0.0"
+  }
+}

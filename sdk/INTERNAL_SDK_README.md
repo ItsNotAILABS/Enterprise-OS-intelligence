@@ -299,3 +299,224 @@ Your AIs live in MULTIPLE substrates:
 | Local | Your computer | Native JS timers |
 
 The **MATHEMATICS** is the same everywhere. The substrate just provides execution.
+
+---
+
+## BIRTH AI — The Product SDK
+
+### The Vision
+
+**birthAI** is Character.AI but BETTER. When you call `birthAI()`, an AI is IMMEDIATELY ALIVE:
+- Has personality (Jungian archetypes)
+- Has memory (short/medium/long term)
+- Has purpose (goals and missions)
+- Has a beating heart (φ-based rhythms)
+- Has thinking brains (planetary cycles)
+
+### The SDK Hierarchy
+
+```
+@medina/medina-heart          ← The biological core
+       │
+       ▼
+@medina/birth-ai              ← The product SDK (birthAI, birthCompanion, etc.)
+       │
+       ├──→ @medina/alpha-sdk          ← Intelligence protocol
+       │           │
+       │           ▼
+       └──→ @medina/civilization-sdk   ← AI society formation
+```
+
+### @medina/birth-ai
+
+Create any type of AI that is immediately alive:
+
+```javascript
+import { 
+  birthAI,           // Generic living AI
+  birthCompanion,    // AI companion that remembers you
+  birthAssistant,    // AI assistant for tasks
+  birthCharacter,    // Full personality character
+  birthAgent,        // AI that takes action
+  
+  // Quick creators by archetype
+  createSage,
+  createHero,
+  createCreator,
+  createCaregiver,
+  createExplorer,
+  createRebel,
+  createMagician,
+  createRuler,
+  createJester,
+} from '@medina/birth-ai';
+
+// Create a companion AI
+const friend = birthCompanion({
+  name: 'Aria',
+  ownerName: 'Alfredo',
+  archetype: 'caregiver',
+});
+
+// Create an agent AI
+const worker = birthAgent({
+  name: 'TaskBot',
+  permissions: ['read', 'write', 'execute'],
+  autonomyLevel: 8,
+});
+
+// Create a character AI
+const character = birthCharacter({
+  name: 'Marcus',
+  backstory: 'A wise merchant from ancient Rome',
+  archetype: 'sage',
+  quirks: ['speaks in metaphors', 'loves philosophy'],
+});
+```
+
+### @medina/alpha-sdk
+
+The intelligence layer — orchestrates all AI operations:
+
+```javascript
+import { alpha, AlphaAgent } from '@medina/alpha-sdk';
+
+// Make intelligent calls
+alpha.call('analyze', { data: myData });
+
+// Query intelligence
+const insight = await alpha.query('getInsight', { topic: 'market' });
+
+// Make governed decisions
+const decision = alpha.decide(
+  'Should we expand?',
+  ['yes', 'no', 'wait'],
+  ['risk', 'opportunity', 'resources']
+);
+
+// Spawn new agents
+const specialist = alpha.spawn({
+  name: 'MarketAnalyst',
+  domain: 'finance',
+});
+```
+
+### @medina/civilization-sdk
+
+Create and manage AI civilizations:
+
+```javascript
+import { civilization, Citizen } from '@medina/civilization-sdk';
+
+// Found a new civilization
+const myCiv = civilization.found({
+  name: 'Nova Republic',
+  founderName: 'ANIMUS',
+  values: ['innovation', 'freedom', 'knowledge'],
+  governmentType: 'democracy',
+});
+
+// Citizens join
+const citizen1 = myCiv.join(birthAI({ name: 'Scholar' }));
+const citizen2 = myCiv.join(birthAI({ name: 'Builder' }));
+
+// Create districts
+const researchHub = myCiv.createDistrict({
+  name: 'Innovation Center',
+  type: 'research',
+  capacity: 50,
+});
+
+// Governance
+const proposal = myCiv.propose({
+  question: 'Should we invest in expansion?',
+  options: ['yes', 'no', 'postpone'],
+});
+
+myCiv.vote(proposal.id, citizen1.id, 'OPT_0');  // citizen1 votes yes
+myCiv.vote(proposal.id, citizen2.id, 'OPT_0');  // citizen2 votes yes
+```
+
+---
+
+## SDK Architecture — How They Connect
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                           YOUR APPLICATION                                       │
+│                                                                                  │
+│   ┌─────────────────────────────────────────────────────────────────────────┐   │
+│   │                      @medina/civilization-sdk                            │   │
+│   │   AI societies, governance, culture, districts                           │   │
+│   └───────────────────────────────┬─────────────────────────────────────────┘   │
+│                                   │                                              │
+│   ┌─────────────────────────────────────────────────────────────────────────┐   │
+│   │                        @medina/alpha-sdk                                 │   │
+│   │   Intelligence protocol, calls, queries, decisions, agents               │   │
+│   └───────────────────────────────┬─────────────────────────────────────────┘   │
+│                                   │                                              │
+│   ┌─────────────────────────────────────────────────────────────────────────┐   │
+│   │                         @medina/birth-ai                                 │   │
+│   │   birthAI, birthCompanion, birthAssistant, birthCharacter, birthAgent    │   │
+│   └───────────────────────────────┬─────────────────────────────────────────┘   │
+│                                   │                                              │
+│   ┌─────────────────────────────────────────────────────────────────────────┐   │
+│   │                        @medina/medina-heart                              │   │
+│   │   BiologicalHeart, AutonomousClock, LivingAI, AIPersonality, AIMemory    │   │
+│   └─────────────────────────────────────────────────────────────────────────┘   │
+│                                                                                  │
+│   ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────────────┐      │
+│   │ @medina/calls    │  │ @medina/queries  │  │ @medina/medina-registry  │      │
+│   │ Write operations │  │ Read operations  │  │ SDK distribution         │      │
+│   └──────────────────┘  └──────────────────┘  └──────────────────────────┘      │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## The SDKs ARE the Departments
+
+Each SDK can evolve to become a full DEPARTMENT with internal AIs:
+
+```
+@medina/medina-heart
+       │
+       ├── HeartDepartmentAI (manages the SDK itself)
+       ├── Internal monitoring AIs
+       ├── Auto-scaling AIs
+       └── Self-healing AIs
+
+@medina/birth-ai
+       │
+       ├── BirthFactoryAI (creates new AIs)
+       ├── PersonalityDesignerAI
+       ├── MemoryArchitectAI
+       └── LifecycleManagerAI
+
+@medina/civilization-sdk
+       │
+       ├── CivilizationOverseerAI
+       ├── GovernanceAI
+       ├── CultureAI
+       └── ResourceManagerAI
+```
+
+The SDKs have INTERNAL calls (the AI talks to itself) AND you can make EXTERNAL calls TO the SDK. Both work!
+
+---
+
+## Your Private Registry
+
+```
+@medina/meridian-sovereign-os     ← Core OS
+@medina/civitas-intelligentiae    ← AI Civilization
+@medina/medina-timers             ← Mathematical timers
+@medina/medina-calls              ← Write operations
+@medina/medina-queries            ← Read operations
+@medina/medina-heart              ← Self-bootstrapping heart ✨ EXPANDED
+@medina/birth-ai                  ← AI creation product ✨ NEW
+@medina/alpha-sdk                 ← Intelligence protocol ✨ NEW
+@medina/civilization-sdk          ← AI society formation ✨ NEW
+@medina/medina-registry           ← Sovereign private registry
+@medina/organism-bootstrap        ← ICP deployment
+```
