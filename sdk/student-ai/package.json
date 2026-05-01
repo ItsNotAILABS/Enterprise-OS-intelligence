@@ -1,7 +1,7 @@
 {
   "name": "@medina/student-ai",
-  "version": "0.1.0-alpha",
-  "description": "AI study companion for students. Summarize chapters, generate quiz questions, make flashcards, and get plain-language explanations of anything — all embedded, no subscription, works offline.",
+  "version": "3.0.0",
+  "description": "Student Life Operating System powered by MERIDIAN Intelligence. Every action logged (CHRONO), AI categorization (CEREBEX), intelligent routing (NEXORIS), quorum decisions (COGNOVEX). Connected to BronzeCanister (student) and SilverCanister (school).",
   "license": "SEE LICENSE IN LICENSE",
   "author": {
     "name": "Alfredo Medina Hernandez",
@@ -13,13 +13,22 @@
     ".": "./src/index.js"
   },
   "keywords": [
-    "ai",
-    "education",
-    "study",
-    "quiz",
-    "flashcards",
     "student",
-    "no-api",
+    "education",
+    "school",
+    "meridian",
+    "chrono",
+    "cerebex",
+    "nexoris",
+    "cognovex",
+    "ai",
+    "intelligent",
+    "bronze-canister",
+    "silver-canister",
+    "isd",
+    "disd",
+    "dallas-isd",
+    "sovereign",
     "medina-tech"
   ],
   "repository": {

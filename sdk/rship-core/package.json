@@ -1,0 +1,34 @@
+{
+  "name": "@medina/rship-core",
+  "version": "0.1.0-alpha.1",
+  "description": "RSHIP-2026-MEDINA-CORE — Replication · Scalability · Hierarchy · Intelligence · Permanence. The master core that wires all virtual chip cores into a sovereign on-chain AI organism.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./replication": "./src/replication-engine.js",
+    "./scalability": "./src/scalability-engine.js",
+    "./hierarchy": "./src/hierarchy-engine.js",
+    "./intelligence": "./src/intelligence-engine.js",
+    "./permanence": "./src/permanence-engine.js",
+    "./chip": "./src/chip-interface.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/rship-core"
+  },
+  "keywords": [
+    "rship", "replication", "scalability", "hierarchy", "intelligence",
+    "permanence", "core", "virtual-chip", "sovereign", "on-chain", "medina"
+  ],
+  "dependencies": {
+    "@medina/medina-heart": "^1.0.0",
+    "@medina/neural-emergence-core": "^0.1.0-alpha.1",
+    "@medina/power-core": "^0.1.0-alpha.1",
+    "@medina/generator-core": "^0.1.0-alpha.1",
+    "@medina/resonance-core": "^0.1.0-alpha.1",
+    "@medina/sovereignty-core": "^0.1.0-alpha.1"
+  }
+}

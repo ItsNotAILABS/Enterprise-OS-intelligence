@@ -1,0 +1,28 @@
+{
+  "name": "@medina/power-core",
+  "version": "0.1.0-alpha.1",
+  "description": "Power Core — energy distribution, compute allocation, cycle budgeting, thermal management, and resource throttling for the RSHIP virtual chip.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./energy-distributor": "./src/energy-distributor.js",
+    "./compute-allocator": "./src/compute-allocator.js",
+    "./cycle-budget": "./src/cycle-budget.js",
+    "./thermal-governor": "./src/thermal-governor.js",
+    "./resource-throttle": "./src/resource-throttle.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/power-core"
+  },
+  "keywords": [
+    "power", "core", "energy", "compute", "allocation", "cycles",
+    "thermal", "throttle", "virtual-chip", "medina"
+  ],
+  "dependencies": {
+    "@medina/medina-heart": "^1.0.0"
+  }
+}

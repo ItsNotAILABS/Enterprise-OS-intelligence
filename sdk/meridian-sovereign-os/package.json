@@ -36,6 +36,9 @@
     "./chrono": "./src/chrono.js",
     "./hdi": "./src/hdi.js",
     "./cognovex": "./src/cognovex.js",
-    "./voxis": "./src/voxis.js"
+    "./voxis": "./src/voxis.js",
+    "./edu-config": "./src/edu-config.js",
+    "./vetkeys": "./src/vetkeys.js",
+    "./voice-interface": "./src/voice-interface.js"
   }
 }

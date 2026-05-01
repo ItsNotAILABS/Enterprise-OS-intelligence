@@ -1,0 +1,29 @@
+{
+  "name": "@medina/alpha-sdk",
+  "version": "1.0.0",
+  "description": "ALPHA PROTOCOL SDK — The Intelligence Layer for orchestrating all AI operations.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/alpha-sdk"
+  },
+  "keywords": [
+    "alpha",
+    "protocol",
+    "intelligence",
+    "ai",
+    "governance",
+    "agents",
+    "medina"
+  ],
+  "dependencies": {
+    "@medina/medina-heart": "^1.0.0",
+    "@medina/birth-ai": "^1.0.0"
+  }
+}

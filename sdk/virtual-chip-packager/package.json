@@ -1,0 +1,34 @@
+{
+  "name": "@medina/virtual-chip-packager",
+  "version": "0.1.0-alpha.1",
+  "description": "Virtual Chip Packager — native packager that wires cores into virtual chips. Like NVIDIA packages GPU cores, this packages AI cores into deployable sovereign chip units.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./chip-assembler": "./src/chip-assembler.js",
+    "./wire-router": "./src/wire-router.js",
+    "./pin-mapper": "./src/pin-mapper.js",
+    "./bus-controller": "./src/bus-controller.js",
+    "./chip-validator": "./src/chip-validator.js",
+    "./firmware-writer": "./src/firmware-writer.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/virtual-chip-packager"
+  },
+  "keywords": [
+    "virtual-chip", "packager", "chip-assembly", "wire-routing",
+    "pin-mapping", "bus", "firmware", "medina"
+  ],
+  "dependencies": {
+    "@medina/rship-core": "^0.1.0-alpha.1",
+    "@medina/neural-emergence-core": "^0.1.0-alpha.1",
+    "@medina/power-core": "^0.1.0-alpha.1",
+    "@medina/generator-core": "^0.1.0-alpha.1",
+    "@medina/resonance-core": "^0.1.0-alpha.1",
+    "@medina/sovereignty-core": "^0.1.0-alpha.1"
+  }
+}

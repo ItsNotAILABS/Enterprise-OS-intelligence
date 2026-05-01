@@ -20,4 +20,28 @@
     "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
     "directory": "sdk/medina-heart"
   }
+  "description": "The Biological Heart — self-bootstrapping autonomous clock. The heart IS the bootstrap. Creation IS activation. birthAI() creates AIs that are immediately alive.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/medina-heart"
+  },
+  "keywords": [
+    "heart",
+    "bootstrap",
+    "autonomous",
+    "self-bootstrapping",
+    "biological-clock",
+    "birthAI",
+    "living-ai",
+    "ai-personality",
+    "ai-memory",
+    "medina"
+  ]
 }

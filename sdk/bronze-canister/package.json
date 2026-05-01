@@ -1,0 +1,37 @@
+{
+  "name": "@medina/bronze-canister",
+  "version": "1.0.0",
+  "description": "Bronze Canister Education Platform — sovereign ICP canisters for individual students. Persistent memory, voice-native build interface, behavioral safety laws L72-L79, CHRONO portfolio, CEREBEX learning trajectory. Orchestrated by Silver Canister school systems.",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "Alfredo Medina Hernandez",
+    "email": "Medinasitech@outlook.com"
+  },
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./canister": "./src/bronze-canister.js",
+    "./identity": "./src/student-identity.js",
+    "./memory": "./src/student-memory.js",
+    "./dashboard": "./src/teacher-dashboard.js",
+    "./deployment": "./src/isd-deployment.js"
+  },
+  "keywords": [
+    "education",
+    "sovereign",
+    "icp",
+    "canister",
+    "student",
+    "bronze-canister",
+    "medina-tech"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {}
+}

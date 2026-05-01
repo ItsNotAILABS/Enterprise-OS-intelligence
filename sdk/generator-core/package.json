@@ -1,0 +1,29 @@
+{
+  "name": "@medina/generator-core",
+  "version": "0.1.0-alpha.1",
+  "description": "Generator Core — entity generation, code synthesis, canister spawning, agent birthing, and artifact production for the RSHIP virtual chip.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./entity-generator": "./src/entity-generator.js",
+    "./code-synthesizer": "./src/code-synthesizer.js",
+    "./canister-spawner": "./src/canister-spawner.js",
+    "./agent-birther": "./src/agent-birther.js",
+    "./artifact-producer": "./src/artifact-producer.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/generator-core"
+  },
+  "keywords": [
+    "generator", "core", "entity", "code-synthesis", "canister",
+    "agent", "artifact", "virtual-chip", "medina"
+  ],
+  "dependencies": {
+    "@medina/medina-heart": "^1.0.0",
+    "@medina/birth-ai": "^1.0.0"
+  }
+}

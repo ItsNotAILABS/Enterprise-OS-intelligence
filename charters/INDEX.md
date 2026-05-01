@@ -35,5 +35,21 @@ All charters are prior art as of April 2026.
 
 ---
 
+## Bronze Canister Education Ecosystem Charter
+
+| Charter | What it governs |
+|:---|:---|
+| [**BRONZE CANISTER CHARTER**](BRONZE-CANISTER-CHARTER.md) | Bronze Canister mission, student sovereignty, behavioral laws L72–L79, teacher dashboard, ISD deployment, four-phase implementation, SDK architecture |
+
+---
+
+## Silver Canister School System Charter
+
+| Charter | What it governs |
+|:---|:---|
+| [**SILVER CANISTER CHARTER**](SILVER-CANISTER-CHARTER.md) | School-level sovereign system — curriculum repository, announcement board, academic calendar, resource inventory, school analytics, student services, compliance engine. Controls Bronze Canisters. |
+
+---
+
 *Enterprise OS Intelligence · Medina Tech · Chaos Lab · Dallas, Texas · April 2026*  
 *TRACE · VERIFY · REMEMBER*

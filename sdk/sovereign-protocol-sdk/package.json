@@ -1,0 +1,30 @@
+{
+  "name": "@medina/sovereign-protocol-sdk",
+  "version": "0.1.0-alpha.1",
+  "description": "Sovereign Protocol SDK — own transport layer, own registry, own versioning. No git dependency. Native sovereign protocol for SDK distribution, canister communication, and entity messaging.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./transport": "./src/transport-layer.js",
+    "./registry": "./src/sovereign-registry.js",
+    "./versioning": "./src/version-engine.js",
+    "./messaging": "./src/entity-messaging.js",
+    "./distribution": "./src/distribution-engine.js",
+    "./server": "./src/sovereign-server.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/sovereign-protocol-sdk"
+  },
+  "keywords": [
+    "sovereign", "protocol", "transport", "registry", "versioning",
+    "messaging", "distribution", "no-git", "medina"
+  ],
+  "dependencies": {
+    "@medina/medina-heart": "^1.0.0",
+    "@medina/medina-registry": "^1.0.0"
+  }
+}

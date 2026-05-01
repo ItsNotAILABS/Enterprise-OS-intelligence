@@ -1,0 +1,43 @@
+{
+  "name": "@medina/gold-canister",
+  "version": "1.0.0",
+  "description": "Gold Canister — District-Level Sovereign System for DISD (Dallas ISD). The apex governance layer that orchestrates all schools, allocates resources, enforces policies, and coordinates the civilization of AIs across the entire district.",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "Alfredo Medina Hernandez",
+    "email": "Medinasitech@outlook.com"
+  },
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./canister": "./src/gold-canister.js",
+    "./school-network": "./src/school-network.js",
+    "./district-analytics": "./src/district-analytics.js",
+    "./resource-orchestrator": "./src/resource-orchestrator.js",
+    "./policy-engine": "./src/policy-engine.js",
+    "./state-reporting": "./src/state-reporting.js"
+  },
+  "keywords": [
+    "education",
+    "sovereign",
+    "icp",
+    "canister",
+    "district",
+    "gold-canister",
+    "disd",
+    "dallas-isd",
+    "governance",
+    "ai-civilization",
+    "medina-tech",
+    "meridian"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {}
+}

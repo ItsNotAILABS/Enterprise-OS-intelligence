@@ -1,0 +1,28 @@
+{
+  "name": "@medina/neural-emergence-core",
+  "version": "0.1.0-alpha.1",
+  "description": "Neural Emergence Core — pattern recognition, emergent behavior formation, neural field dynamics, and cognitive architecture for the RSHIP virtual chip.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./neural-field": "./src/neural-field.js",
+    "./pattern-recognizer": "./src/pattern-recognizer.js",
+    "./emergence-detector": "./src/emergence-detector.js",
+    "./cognitive-mesh": "./src/cognitive-mesh.js",
+    "./attention-fabric": "./src/attention-fabric.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/neural-emergence-core"
+  },
+  "keywords": [
+    "neural", "emergence", "core", "pattern-recognition", "cognitive",
+    "attention", "neural-field", "virtual-chip", "medina"
+  ],
+  "dependencies": {
+    "@medina/medina-heart": "^1.0.0"
+  }
+}

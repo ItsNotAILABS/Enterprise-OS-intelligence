@@ -1,0 +1,25 @@
+{
+  "name": "@medina/entity-sdk",
+  "version": "1.0.0",
+  "description": "ENTITY SDK — Internal AI Entities vs External Agents. Defines organism structure.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "keywords": [
+    "entity",
+    "internal",
+    "external",
+    "agent",
+    "organism",
+    "ai",
+    "medina"
+  ],
+  "dependencies": {
+    "@medina/birth-ai": "^1.0.0",
+    "@medina/medina-heart": "^1.0.0"
+  }
+}
