@@ -1,0 +1,24 @@
+{
+  "name": "@medina/edge-coordination-engine",
+  "version": "1.0.0",
+  "description": "EDGE Coordination Engine - Edge computing workload distribution and latency optimization",
+  "main": "edge-engine.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "edge",
+    "iot",
+    "coordination",
+    "organism",
+    "backend-engine",
+    "alpha"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/edge-coordination-engine"
+  }
+}

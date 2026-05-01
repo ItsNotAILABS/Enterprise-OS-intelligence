@@ -1,0 +1,25 @@
+{
+  "name": "@medina/blockchain-operations-engine",
+  "version": "1.0.0",
+  "description": "BLOCKCHAIN Operations Engine - Multi-chain coordination, cross-chain bridges, and EffectTrace governance",
+  "main": "blockchain-engine.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "blockchain",
+    "cross-chain",
+    "web3",
+    "effecttrace",
+    "organism",
+    "backend-engine",
+    "alpha"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/blockchain-operations-engine"
+  }
+}
