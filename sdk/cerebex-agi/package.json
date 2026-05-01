@@ -1,0 +1,27 @@
+{
+  "name": "@medina/cerebex-agi",
+  "version": "1.0.0",
+  "description": "CEREBEX AGI — Cognitive Analytics Intelligence with 40-category world modeling and φ-weighted learning",
+  "main": "cerebex-agi.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "cerebex",
+    "agi",
+    "cognitive-analytics",
+    "world-modeling",
+    "free-energy",
+    "command-routing",
+    "query-as-execute",
+    "friston",
+    "phi"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/cerebex-agi"
+  }
+}

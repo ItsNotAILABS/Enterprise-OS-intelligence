@@ -1,0 +1,25 @@
+{
+  "name": "@medina/medina-phase",
+  "version": "1.0.0",
+  "description": "Phase space dynamics with Kuramoto oscillators, Lyapunov exponents, and attractor reconstruction",
+  "main": "src/index.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "phase-space",
+    "kuramoto",
+    "oscillators",
+    "lyapunov",
+    "attractor",
+    "chaos",
+    "dynamical-systems",
+    "phi"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/medina-phase"
+  }
+}

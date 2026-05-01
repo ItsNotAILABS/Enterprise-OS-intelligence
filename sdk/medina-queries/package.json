@@ -1,6 +1,24 @@
 {
   "name": "@medina/medina-queries",
   "version": "1.0.0",
+  "description": "Query operations for intelligence data with φ-weighted algorithms",
+  "main": "src/index.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "queries",
+    "intelligence",
+    "phi",
+    "query-builder",
+    "time-series"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/medina-queries"
+  }
   "description": "Internal SDK for QUERY functions — read operations that don't change state in the MEDINA ecosystem",
   "type": "module",
   "main": "src/index.js",

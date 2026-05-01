@@ -1,0 +1,23 @@
+{
+  "name": "@medina/protocol-composer",
+  "version": "1.0.0",
+  "description": "Protocol composition engine with φ-weighted synchronization",
+  "main": "src/index.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "protocol",
+    "composer",
+    "composition",
+    "orchestration",
+    "phi",
+    "synchronization"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/protocol-composer"
+  }
+}

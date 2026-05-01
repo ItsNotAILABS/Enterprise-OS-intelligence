@@ -1,6 +1,25 @@
 {
   "name": "@medina/medina-registry",
   "version": "1.0.0",
+  "description": "Sovereign Private Registry — Your own Git/NPM for MEDINA SDKs",
+  "main": "src/index.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "registry",
+    "sovereign",
+    "private",
+    "npm",
+    "git",
+    "package-manager"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/medina-registry"
+  }
   "description": "Sovereign Private Registry — your own git/npm for SDK distribution. The SDKs live inside and run sovereignly.",
   "type": "module",
   "main": "src/index.js",

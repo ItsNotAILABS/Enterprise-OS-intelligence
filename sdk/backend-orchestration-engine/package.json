@@ -1,0 +1,25 @@
+{
+  "name": "@medina/backend-orchestration-engine",
+  "version": "1.0.0",
+  "description": "BACKEND Orchestration Engine - Backend service coordination, load balancing, and auto-scaling",
+  "main": "backend-engine.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "backend",
+    "microservices",
+    "orchestration",
+    "load-balancing",
+    "organism",
+    "backend-engine",
+    "alpha"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/backend-orchestration-engine"
+  }
+}

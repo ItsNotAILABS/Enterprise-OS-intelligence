@@ -1,0 +1,27 @@
+{
+  "name": "@medina/cordex-agi",
+  "version": "1.0.0",
+  "description": "CORDEX AGI — Organizational Dynamics Intelligence with Lotka-Volterra modeling and autonomous crisis response",
+  "main": "cordex-agi.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "cordex",
+    "agi",
+    "organizational-dynamics",
+    "lotka-volterra",
+    "crisis-management",
+    "autonomous-intervention",
+    "response-teams",
+    "heartbeat-monitoring",
+    "phi"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/cordex-agi"
+  }
+}

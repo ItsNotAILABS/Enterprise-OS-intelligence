@@ -1,0 +1,26 @@
+{
+  "name": "@medina/cognovex-agi",
+  "version": "1.0.0",
+  "description": "COGNOVEX AGI — Collective Decision & Quorum Intelligence with φ⁻⁴ crystallization dynamics",
+  "main": "cognovex-agi.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "cognovex",
+    "agi",
+    "collective-intelligence",
+    "quorum",
+    "decision-making",
+    "crystallization",
+    "autonomous-governance",
+    "phi"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/cognovex-agi"
+  }
+}

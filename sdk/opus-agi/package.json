@@ -1,0 +1,25 @@
+{
+  "name": "@medina/opus-agi",
+  "version": "1.0.0",
+  "description": "OPUS AGI — Commercial Construction & Design Intelligence with φ-based project optimization",
+  "main": "opus-agi.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "opus",
+    "agi",
+    "construction",
+    "design",
+    "general-contractor",
+    "project-management",
+    "phi-optimization"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/opus-agi"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "@medina/medina-swarm",
+  "version": "1.0.0",
+  "description": "Distributed swarm intelligence with Reynolds boids, stigmergy, and quorum sensing",
+  "main": "src/index.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "swarm",
+    "boids",
+    "reynolds",
+    "stigmergy",
+    "quorum",
+    "ant-colony",
+    "distributed",
+    "phi"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/medina-swarm"
+  }
+}

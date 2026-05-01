@@ -1,0 +1,23 @@
+{
+  "name": "@medina/organism-ai",
+  "version": "1.0.0",
+  "description": "Multi-model AI orchestration engine with φ-weighted routing",
+  "main": "src/index.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "organism",
+    "orchestration",
+    "multi-model",
+    "ai",
+    "phi",
+    "routing"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/organism-ai"
+  }
+}

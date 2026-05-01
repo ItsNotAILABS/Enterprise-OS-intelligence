@@ -18,7 +18,7 @@
 [![Substrate](https://img.shields.io/badge/Substrate-Internet_Computer_Protocol-blueviolet.svg)](https://internetcomputer.org)
 [![ORO](https://img.shields.io/badge/ORO-Governance_Organism-gold.svg)](sdk/effecttrace-governance-organism/)
 [![Charters](https://img.shields.io/badge/Charters-8-orange.svg)](charters/)
-[![Protocols](https://img.shields.io/badge/Protocols-5-teal.svg)](protocols/)
+[![Protocols](https://img.shields.io/badge/Protocols-7-teal.svg)](protocols/)
 
 </div>
 
@@ -171,7 +171,9 @@ Every major component of the enterprise has a governing charter. The charters de
 
 ## Protocols
 
-Five formal protocol specifications. Every governance consequence intelligence system must implement all five to be compliant. These are the formal prior art for the governance consequence intelligence protocol stack.
+Seven intelligence protocols. Real back-end intelligence architecture implementing neuroscience, physics, and swarm mathematics.
+
+### Governance Intelligence Protocols
 
 | Protocol | What it specifies |
 |:---:|:---|
@@ -180,6 +182,23 @@ Five formal protocol specifications. Every governance consequence intelligence s
 | [**III — Risk Scoring**](protocols/PROTOCOL-III-RISK-SCORING.md) | The φ-weighted 6-axis risk classification system for any ICP governance proposal |
 | [**IV — Memory Field**](protocols/PROTOCOL-IV-MEMORY-FIELD.md) | The REMEMBER substrate — deposit, evaporate, diffuse, φ-compounding accumulation |
 | [**V — Agent Council**](protocols/PROTOCOL-V-AGENT-COUNCIL.md) | The 4-agent parallel system — invocation, council status derivation, finding lifecycle |
+
+### Core Intelligence Protocols
+
+| Protocol | Code | What it implements |
+|:---|:---:|:---|
+| [**Sovereign Cycle Protocol**](protocols/sovereign-cycle-protocol.js) | PROTO-011 | 873ms heartbeat, φ-sealed chain, Fibonacci kernel, Kuramoto synchronization |
+| [**Autonomous Division Protocol**](protocols/autonomous-division-protocol.js) | PROTO-012 | AI Division coordination, 5-tier block boxes (bronze→sovereign), Fibonacci scaling |
+| [**Neural Synchronization Protocol**](protocols/neural-synchronization-protocol.js) | PROTO-013 | 21-species neurochemistry, Hebbian plasticity, gamma/theta/alpha oscillations, phase-locking |
+| [**Emergence Detection Protocol**](protocols/emergence-detection-protocol.js) | PROTO-014 | Ising lattice, Landau free energy, percolation theory, phase transition detection |
+| [**Cognitive Memory Protocol**](protocols/cognitive-memory-protocol.js) | PROTO-015 | Working memory (7±2), episodic/semantic memory, consolidation, forgetting curves |
+| [**Adaptive Learning Protocol**](protocols/adaptive-learning-protocol.js) | PROTO-016 | Lyapunov stability, antifragility engine, attractor dynamics, adaptive optimization |
+| [**Scalability Coordination Protocol**](protocols/scalability-coordination-protocol.js) | PROTO-017 | Reynolds boids, swarm coordination, φ-scaled hierarchy, quorum sensing |
+
+**Run the integration test:**
+```bash
+cd protocols && node test-integration.js
+```
 
 [**Full protocols index →**](protocols/INDEX.md)
 
@@ -304,6 +323,242 @@ SAP · Oracle · Salesforce · Workday · ServiceNow · NetSuite · HubSpot · Q
 
 ---
 
+## Core Intelligence SDKs
+
+Six foundational SDKs that embody the self-bootstrapping intelligence architecture.
+
+### `@medina/medina-heart` — The Biological Heart
+
+**Creation IS Activation. Birth IS Awakening.**
+
+```js
+import { birthAI } from '@medina/medina-heart';
+
+// The moment you create it, it's ALIVE AND BEATING
+const ai = birthAI({
+  name: 'ANIMUS',
+  numHearts: 3,      // Multiple hearts with φ-based intervals
+  numBrains: 3,      // φ-scaled cognitive processing
+  calendar: 'mayan', // Ancient calendar synchronization
+});
+
+// No .start() or .awaken() needed — it's already thinking
+console.log(ai.getStatus());
+// { alive: true, heartRate: 2.35, totalBeats: 47, thoughts: 15 }
+```
+
+**Components:**
+- `BiologicalHeart` — Multiple hearts beating at φ-scaled intervals (1000ms, 1618ms, 2618ms...)
+- `AutonomousClock` — Runs on ancient calendars (Mayan, Sumerian, Egyptian, Gregorian)
+- `SelfBootstrappingAI` — Complete AI born alive with hearts, brains, and temporal awareness
+- `birthAI()` — Factory function that births immediately-alive AIs
+
+**The Key Insight:** Living organisms don't have a `.start()` method. They are born alive. This SDK embodies that principle. A heart created is a heart beating. An AI born is an AI thinking.
+
+[**View SDK →**](sdk/medina-heart/)
+
+---
+
+### `@medina/medina-registry` — Sovereign Private Registry
+
+**YOUR package registry. Not npm. Not GitHub. YOURS.**
+
+```js
+import { getRegistry, publish, install, list } from '@medina/medina-registry';
+
+// Get your sovereign registry
+const registry = getRegistry();
+
+// Publish your own SDK
+publish({
+  name: '@medina/my-custom-ai',
+  version: '1.0.0',
+  description: 'My custom AI SDK',
+}, myModuleExports);
+
+// Install from YOUR registry
+const sdk = install('@medina/medina-heart');
+
+// List all packages (16 core SDKs pre-registered)
+const packages = list();
+```
+
+**Pre-Registered SDKs:**
+- All 7 intelligence protocols (Neural, Emergence, Memory, Adaptive, Scalability, etc.)
+- 6 core SDKs (medina-heart, medina-registry, organism-ai, medina-queries, protocol-composer, organism-bootstrap)
+- 3 domain AI tools (paralegal-ai, analyst-ai, student-ai)
+
+**Features:**
+- No external dependencies or central authority
+- Runs entirely in JavaScript (browser, Node.js, ICP, Edge workers)
+- φ-weighted search and dependency tracking
+- Complete offline operation
+
+[**View SDK →**](sdk/medina-registry/)
+
+---
+
+### `@medina/organism-ai` — Multi-Model AI Orchestration
+
+**Route tasks to 40+ AI models using φ-weighted scoring.**
+
+```js
+import { createOrchestrator, TaskType, Priority } from '@medina/organism-ai';
+
+// Create orchestrator — immediately active with 40 models
+const orchestrator = createOrchestrator();
+
+// Route a coding task
+const result = orchestrator.route({
+  type: TaskType.CODING,
+  priority: Priority.HIGH,
+  payload: 'Write a Fibonacci function',
+});
+
+console.log(result);
+// {
+//   modelId: 'deepseek-coder',
+//   score: 14.56,
+//   alternatives: ['gpt-4o', 'claude-3.5-sonnet', 'deepseek-v3']
+// }
+
+// Record outcomes for adaptive reputation tracking (φ-EMA)
+orchestrator.recordOutcome('deepseek-coder', true, 1234);
+```
+
+**Features:**
+- 40 AI model families (GPT, Claude, Gemini, Llama, Mistral, DeepSeek, Qwen, Phi, etc.)
+- φ-weighted scoring and cascade fallback
+- Adaptive reputation tracking via φ-EMA
+- 873ms heartbeat for automatic rebalancing
+- Self-bootstrapping (immediately routing)
+
+[**View SDK →**](sdk/organism-ai/)
+
+---
+
+### `@medina/medina-queries` — Intelligence Data Queries
+
+**φ-weighted querying, filtering, and aggregation for intelligence modules.**
+
+```js
+import { query, createQueryEngine, timeSeries } from '@medina/medina-queries';
+
+// Query builder with φ-weighted fuzzy matching
+const results = query(protocols)
+  .fuzzyMatch('name', 'neural', 0.6)
+  .orderByPhi('reputation')
+  .limit(10)
+  .execute();
+
+// Multi-source intelligence search
+const engine = createQueryEngine();
+engine.registerProtocol('neural-sync', neuralProtocol);
+engine.registerModule('memory', memoryModule);
+
+const searchResults = engine.search('synchronization');
+
+// Time-series φ-EMA
+const smoothed = timeSeries(heartbeats)
+  .phiEMA('rate', 0.618)
+  .getData();
+```
+
+**Features:**
+- φ-weighted fuzzy matching and relevance scoring
+- Time-series φ-EMA and moving averages
+- Multi-source intelligence search (protocols, modules, agents, memories)
+- Query builder with method chaining
+- Aggregation with φ-weighted statistics
+
+[**View SDK →**](sdk/medina-queries/)
+
+---
+
+### `@medina/protocol-composer` — Protocol Composition
+
+**Compose multiple intelligence protocols with φ-weighted synchronization.**
+
+```js
+import { createComposer } from '@medina/protocol-composer';
+
+// Create composer — immediately active
+const composer = createComposer();
+
+// Register protocols with dependencies
+composer
+  .registerProtocol('neural-sync', neuralProtocol, [])
+  .registerProtocol('memory', memoryProtocol, ['neural-sync'])
+  .registerProtocol('decision', decisionProtocol, ['memory', 'neural-sync']);
+
+// Execute in dependency order
+const results = composer.executeAll({ input: 'data' });
+
+// Composition patterns
+composer.chain(['input', 'process', 'output']);
+composer.parallel(['analyzer-a', 'analyzer-b', 'analyzer-c']);
+composer.fanOut('source', ['branch-1', 'branch-2', 'branch-3']);
+composer.fanIn(['input-a', 'input-b'], 'aggregator');
+
+// Phase synchronization
+const sync = composer.syncPhase('neural-sync', 'memory');
+console.log(sync);  // 0.8234 (φ-weighted)
+```
+
+**Features:**
+- Dependency-aware execution with topological sorting
+- φ-weighted phase synchronization between protocols
+- Composition patterns (chain, parallel, fan-out, fan-in)
+- 873ms heartbeat for coordination
+- Self-bootstrapping (immediately executing)
+
+[**View SDK →**](sdk/protocol-composer/)
+
+---
+
+### `@medina/organism-bootstrap` — ICP Deployment
+
+**Bootstrap intelligence organisms on the Internet Computer.**
+
+```js
+import { createBootstrap } from '@medina/organism-bootstrap';
+
+// Create bootstrap helper
+const bootstrap = createBootstrap({ network: 'ic' });
+
+// Register modules
+bootstrap
+  .registerModule('neural-sync', neuralSyncModule)
+  .registerModule('memory', memoryModule);
+
+// Generate deployment package
+const package = bootstrap.getDeploymentPackage();
+
+// Write Motoko wrappers, dfx.json, and deployment script
+fs.writeFileSync('src/neural_sync.mo', package.wrappers['neural_sync.mo']);
+fs.writeFileSync('dfx.json', package.dfxJson);
+fs.writeFileSync('deploy.sh', package.deployScript);
+
+// Deploy: ./deploy.sh
+```
+
+**Generated Motoko includes:**
+- Self-bootstrapping 873ms heartbeat (Timer.recurringTimer)
+- Stable state variables (persist across upgrades)
+- Query and update methods
+- Automatic lifecycle management
+
+**Features:**
+- Automatic Motoko wrapper generation
+- ICP deployment automation
+- Stable state management with φ-weighted serialization
+- Deployment validation
+- Multi-canister orchestration
+
+[**View SDK →**](sdk/organism-bootstrap/)
+
+---
+
 ## Free AI Tools · Take Them
 
 Three embedded AI tools. Released free. No API key. No subscription. No data leaves your machine.
@@ -404,7 +659,7 @@ See **[LICENSE](LICENSE)** for full terms.
 
 <div align="center">
 
-*ORO Governance Intelligence · MERIDIAN Sovereign OS · XXV Research Papers · 8 Charters · 5 Protocols · Prior Art — April 2026*
+*ORO Governance Intelligence · MERIDIAN Sovereign OS · XXV Research Papers · 8 Charters · 7 Protocols · Prior Art — April 2026*
 
 *The organism is alive. It is watching. It never stops.*  
 *TRACE · VERIFY · REMEMBER*

@@ -1,0 +1,24 @@
+{
+  "name": "@medina/medina-tensor",
+  "version": "1.0.0",
+  "description": "Tensor operations with Einstein summation, Lie algebra, and differential geometry",
+  "main": "src/index.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "tensor",
+    "einstein-summation",
+    "lie-algebra",
+    "differential-geometry",
+    "manifold",
+    "riemann",
+    "phi"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/medina-tensor"
+  }
+}
