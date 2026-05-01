@@ -1,0 +1,26 @@
+{
+  "name": "@medina/tool-ai",
+  "version": "1.0.0",
+  "description": "TOOL AI — AI with real tools: PDF generation, virtual computer, file ops, browser, code execution, database.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "keywords": [
+    "tool",
+    "pdf",
+    "computer",
+    "browser",
+    "code",
+    "database",
+    "ai",
+    "medina"
+  ],
+  "dependencies": {
+    "@medina/birth-ai": "^1.0.0",
+    "@medina/medina-heart": "^1.0.0"
+  }
+}

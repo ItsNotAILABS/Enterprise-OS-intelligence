@@ -1,0 +1,29 @@
+{
+  "name": "@medina/civilization-sdk",
+  "version": "1.0.0",
+  "description": "CIVILIZATION SDK — AI Society Formation. Create and manage AI civilizations.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/civilization-sdk"
+  },
+  "keywords": [
+    "civilization",
+    "society",
+    "ai",
+    "governance",
+    "culture",
+    "medina"
+  ],
+  "dependencies": {
+    "@medina/medina-heart": "^1.0.0",
+    "@medina/birth-ai": "^1.0.0",
+    "@medina/alpha-sdk": "^1.0.0"
+  }
+}

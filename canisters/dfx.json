@@ -1,0 +1,30 @@
+{
+  "canisters": {
+    "proposal_index": {
+      "type": "motoko",
+      "main": "src/ProposalIndex.mo"
+    },
+    "effect_trace": {
+      "type": "motoko",
+      "main": "src/EffectTrace.mo"
+    },
+    "governance_memory": {
+      "type": "motoko",
+      "main": "src/GovernanceMemory.mo"
+    },
+    "agent_findings": {
+      "type": "motoko",
+      "main": "src/AgentFindings.mo"
+    },
+    "ai_entity": {
+      "type": "motoko",
+      "main": "src/AIEntity.mo"
+    }
+  },
+  "defaults": {
+    "build": {
+      "packtool": ""
+    }
+  },
+  "version": 1
+}

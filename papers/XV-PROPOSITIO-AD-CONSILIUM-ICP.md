@@ -14,17 +14,17 @@
 
 **Who is making this proposal:** Alfredo Medina Hernandez. One person. Self-taught. No CS degree. Came from public schools in Dallas, Texas. Built a sovereign enterprise operating system from first principles derived from ancient mathematics, biological systems, and chaos theory. Fifteen research papers. Six SDKs. The architecture did not come from a textbook. It came from the world.
 
-**What was built:** MERIDIAN — a sovereign operating system that lives *beneath* existing enterprise infrastructure (SAP, Oracle, Salesforce, Workday, and 17 others) and connects all of it into one continuously intelligent organism running on ICP. Not a dApp. Not a DeFi protocol. A new category of enterprise infrastructure, and the first one that requires ICP to exist as designed.
+**What was built:** MERIDIAN — a sovereign operating system that lives *beneath* existing enterprise infrastructure (SAP, Oracle, Salesforce, Workday, and 17 others) and connects all of it into one continuously intelligent organism running on ICP. Not a dApp. Not a DeFi protocol. A new category of enterprise infrastructure, and the first one that requires ICP to exist as designed. The research is already being submitted to arXiv. The canister architecture is already built. The tooling already exists. What is needed now is expansion, certification, and the initiative that turns all of it into something that reaches the next generation.
 
-**What this proposal contains:** Three separate grant asks, each complete and self-contained. They compound when funded together. Each one stands on its own.
+**What this proposal contains:** A single unified grant centered on the Bronze Canister Education Ecosystem — the initiative that puts real ICP-native sovereign intelligence tools into public school classrooms. The research track and the implementation track are folded into this ask because they are already in motion. What remains is the work that connects them to the people who need them most: students.
 
 | Ask | Track | Focus |
 |---|---|---|
-| **Ask I** | Research & Publication | Fund the Sovereign Intelligence Research corpus into peer-reviewed journals and arXiv |
-| **Ask II** | ICP Mainnet Implementation | Fund the full MERIDIAN canister implementation on ICP mainnet |
-| **Ask III** | Bronze Canister Education | Fund free ICP-native AI tooling for public school students |
+| **Ask I** | Research Co-Publication | Establish ICP as co-research identity in the Sovereign Intelligence publication record |
+| **Ask II** | Canister Certification & Expansion | Certify and extend the existing MERIDIAN canister architecture for production-grade educational deployment |
+| **Ask III** | Bronze Canister Education Ecosystem | Build, deploy, and sustain the education platform that puts sovereign intelligence tools in public school students' hands |
 
-**Why ICP specifically benefits:** MERIDIAN is the first enterprise OS derived — not chosen — to run on ICP. Every MERIDIAN deployment is a new enterprise anchor in the ICP network. Every Bronze Canister is a new builder raised on ICP rather than AWS. Every published paper names ICP as the enabling substrate for sovereign enterprise intelligence.
+**Why ICP specifically benefits:** MERIDIAN is the first enterprise OS derived — not chosen — to run on ICP. Every Bronze Canister is a new builder raised on ICP rather than AWS. Every published paper names ICP as the enabling substrate for sovereign enterprise intelligence. The Bronze Canister initiative is the single most compelling argument for ICP's relevance beyond DeFi: public school students building sovereign AI on the Internet Computer.
 
 ---
 
@@ -34,7 +34,7 @@ The Internet Computer Protocol is the first compute substrate where software can
 
 MERIDIAN is the first enterprise operating system designed from the ground up to require these properties. It was not adapted for ICP. Its architecture was derived from first principles — the same principles that govern living biological systems, Inca engineering, chaos field dynamics, and Noether's conservation laws — and those principles selected ICP as the only correct substrate before ICP was named.
 
-This paper presents a three-track proposal to the DFINITY Foundation and the ICP Research Council. Each track funds a distinct dimension of the MERIDIAN program. Together, they establish ICP as the foundational substrate for the next era of enterprise intelligence.
+This paper presents a unified proposal to the DFINITY Foundation and the ICP Research Council, centered on the Bronze Canister Education Ecosystem — the initiative that puts real ICP-native sovereign intelligence tools into public school classrooms. The research is already being submitted. The canister architecture is already being built. What this proposal funds is the bridge between what exists and who needs it: the students in public schools who have the capability to build the future but have never been given the substrate to build it on.
 
 ---
 
@@ -135,171 +135,201 @@ MERIDIAN did not choose ICP. MERIDIAN's requirements selected ICP as the only co
 
 ---
 
-## Section III — The Three Grant Tracks
+## Section III — The Grant Proposal
 
-### Ask I — Research Infrastructure Grant
-*Fund the Sovereign Intelligence Research corpus into peer-reviewed science*
-
-#### I.A What This Funds
-
-The Sovereign Intelligence Research corpus is fifteen papers establishing the theoretical foundation of the MERIDIAN architecture. Each paper is complete and publication-ready. The research covers distributed systems theory, information geometry, antifragility dynamics, behavioral economics, Noether conservation laws, and the paper-engine isomorphism that describes how documents become the grammar of a reasoning system's cognition rather than merely its reference material.
-
-This ask funds the work required to submit, revise, and publish this corpus in peer-reviewed venues:
-
-- **Formal proof completion** — Mathematical proofs for the tractrix worldline stability theorem (Paper XI) and the Noether conservation laws for VOXIS sovereignty (Paper VIII) require rigorous formalization for journal submission
-- **PROT-052 empirical test protocol** — Paper XIII establishes a testable hypothesis (SCC ≥ φ² as the threshold for epistemic substrate formation) that requires a designed experiment; this ask funds that design and initial execution
-- **arXiv submission** — Full corpus submission to cs.DC and cs.AI with proper formatting, LaTeX conversion, and cross-reference normalization
-- **IEEE Systems journal submission** — Papers II, VII, VIII, and X target IEEE's organizational intelligence and distributed systems venues
-- **Santa Fe Institute / Complexity journal** — Papers I, III, and XI target the chaos, antifragility, and emergence literature where the work is most directly novel
-- **DFINITY Forum research disclosure** — Formal publication of the complete corpus to the ICP developer community, structured as a research disclosure with implementation commentary
-- **Paper XVI — *Educatio Machinae*** — Research paper on the Bronze Canister pilot results, written after Phase III data is collected
-
-#### I.B What ICP Gets From This Ask
-
-- Fifteen-plus peer-reviewed publications attributing ICP as the enabling substrate for sovereign enterprise intelligence
-- Formal academic establishment of the prior art for living compute on ICP
-- A research identity for ICP in enterprise systems — not DeFi, not NFT, not consumer Web3: *enterprise sovereign intelligence*
-- Citation network: every researcher who reads Papers I–XV is introduced to ICP as the first platform where living software is architecturally native
-
-#### I.C What This Ask Does Not Include
-
-- MERIDIAN implementation (covered in Ask II)
-- Education program (covered in Ask III)
-- This ask is purely the research and publication work that establishes the theoretical foundation in the scientific record
+This is one proposal with three tracks. The centerpiece is Ask III — the Bronze Canister Education Ecosystem. Asks I and II are supporting tracks that strengthen it. The research is already being submitted. The canister architecture is already built. What needs funding is the bridge between what exists and who needs it.
 
 ---
 
-### Ask II — ICP Mainnet Implementation Grant
-*Fund the MERIDIAN canister implementation and the first enterprise deployment on ICP*
+### Ask I — Research Co-Publication Partnership
+*Establish ICP as co-research identity in the Sovereign Intelligence publication record*
 
-#### II.A What This Funds
+#### I.A Current Status
 
-The MERIDIAN architecture is designed. The canister implementation is the engineering work that makes it run on ICP mainnet. This is not a prototype. It is a production system designed to connect to real enterprise infrastructure — SAP, Oracle, Salesforce, Workday, ServiceNow — from day one.
+The Sovereign Intelligence Research corpus is fifteen papers. They are written. They are public. They are being submitted to arXiv now. The formal proof work for the tractrix worldline stability theorem (Paper XI) and the Noether conservation laws for VOXIS sovereignty (Paper VIII) is in progress. The PROT-052 empirical test protocol (Paper XIII) has a testable hypothesis ready for designed experiment.
 
-**Phase A — Core Canister Implementation (Months 1–5)**
-- CORDEX canister: organizational heartbeat, tension modeling, autonomous correction routing
-- CEREBEX canister: 40-category world model, persistent memory, belief accumulation
-- CYCLOVEX canister: capacity compounding, usage-to-capacity conversion
-- CHRONO canister: hash-chained advance ledger, on-chain audit trail
-- VOXIS instantiation engine: frozen doctrinal identity at deployment
-- NEXORIS synchronization layer: inter-canister Kuramoto phase coupling
-- Internet Identity integration: sovereign authentication at the canister level
-- vetKeys integration: substrate-level encryption for all organizational data
+This is not an ask to fund paper submissions. The papers are going out regardless.
 
-**Phase B — Enterprise Connector Library (Months 3–7)**
-- Salesforce connector via SPINOR protocol (CRM, pipeline, account data)
-- SAP connector (ERP, financial, operational data)
-- Oracle connector (database and ERP)
-- Workday connector (HR, workforce, capacity data)
-- ServiceNow connector (IT operations, incident, change data)
+#### I.B What This Ask Actually Is
 
-Each connector implements the SPINOR protocol: identity travels intact through the integration; every action is logged to CHRONO; CEREBEX world model updates with each data event.
+This ask establishes ICP as a **named research partner** in the publication record:
 
-**Phase C — AI Paralegal Module (Months 5–8)**
-The first enterprise vertical deployment: AI paralegal intelligence for law firms and corporate legal departments.
+- **Co-branded research disclosure** on the DFINITY Forum — the complete corpus published as a joint ICP-Medina Tech research initiative, not just a solo submission
+- **ICP-attributed arXiv preprints** — each paper's acknowledgments section names the ICP ecosystem as enabling substrate, with DFINITY Foundation as supporting research partner
+- **Joint submission to IEEE Systems** — Papers II, VII, VIII, and X submitted under the ICP Research Partnership banner to IEEE organizational intelligence and distributed systems venues
+- **Joint submission to Santa Fe Institute / Complexity** — Papers I, III, and XI submitted to the chaos, antifragility, and emergence literature with ICP as named computational substrate
+- **Paper XVI — *Educatio Machinae*** — the Bronze Canister pilot results paper, co-authored with ICP education research support, submitted to educational technology and AI ethics journals
+- **DFINITY Research Certificate** — formal recognition from DFINITY that the Sovereign Intelligence Research corpus represents validated ICP-native research, publishable as a credential alongside the academic record
 
-MERIDIAN reads every contract the firm has ever touched. CEREBEX builds a persistent world model of clause patterns, risk distributions, precedent outcomes, and negotiation histories. The model compounds with every matter. The AI paralegal does not forget a precedent. It does not reset between clients. It carries the firm's accumulated legal intelligence permanently, on-chain, belonging to the firm.
+#### I.C What ICP Gets
 
-Capabilities delivered:
-- Full contract ingestion and indexing
-- Risk-scored clause analysis against 14 risk categories
-- Precedent matching against accumulated CEREBEX case law memory
-- Redline generation with accept-rate predictions based on historical outcomes
-- Compliance logging to CHRONO (tamper-evident, permanent, on-chain)
-- Matter-by-matter world model updates that improve all future analyses
+- Fifteen-plus peer-reviewed publications naming ICP as the enabling substrate for sovereign enterprise intelligence
+- A research identity for ICP in enterprise systems — not DeFi, not NFT, not consumer Web3: *enterprise sovereign intelligence*
+- Citation network: every researcher who reads Papers I–XV encounters ICP as the first platform where living software is architecturally native
+- The DFINITY Research Certificate creates a reusable credential model for future ICP-native research partnerships
 
-**Phase D — Voice Interface (Months 6–9)**
-The HDI (Human Device Interface) layer: plain language commands to a sovereign OS. No dashboards. No forms. No training. You speak. MERIDIAN understands intent, routes to the correct systems, executes, and confirms — with a CHRONO entry sealing every advance.
+#### I.D What This Ask Does Not Include
 
-**Phase E — v1.0 Public Release (Months 9–12)**
-- MERIDIAN v1.0 production release on ICP mainnet
-- SDK library open to developers: six SDKs covering core engines, enterprise integration, sovereign memory, intelligence routing, organism runtime, and document absorption
-- MERIDIAN module registry: third-party enterprise connectors and agent modules
+- The papers themselves — they are already written
+- The submission process — it is already in progress
+- This ask is about partnership identity, not production
 
-#### II.B What ICP Gets From This Ask
+---
 
-- The first sovereign enterprise OS running on ICP mainnet
-- Enterprise credibility: MERIDIAN demonstrates ICP as a serious enterprise substrate, not only a DeFi and consumer chain
-- Real transaction volume: every MERIDIAN enterprise query, every CHRONO advance, every CEREBEX world model update is compute that runs on ICP
-- Developer ecosystem: six open SDKs that other developers can build on, all running on ICP
-- A flagship implementation reference: the first complete demonstration that ICP can host persistent, autonomous, sovereign enterprise intelligence
+### Ask II — Canister Certification and Ecosystem Expansion
+*Certify and extend the existing MERIDIAN canister architecture for educational and enterprise deployment*
 
-#### II.C Deployment Roadmap
+#### II.A Current Status
+
+The MERIDIAN canister architecture exists. CORDEX, CEREBEX, CYCLOVEX, CHRONO, VOXIS, NEXORIS — these are designed and in various stages of implementation. The six SDKs are built. The enterprise connector patterns for SAP, Oracle, Salesforce, Workday, and ServiceNow are defined. The voice interface (HDI) is operational — the architect builds with it every day.
+
+This is not an ask to fund building MERIDIAN. MERIDIAN is being built.
+
+#### II.B What This Ask Actually Is
+
+This ask funds **certification, hardening, and expansion** of what already exists so it is production-grade for both enterprise clients and the Bronze Canister education deployment:
+
+- **ICP Mainnet Certification** — formal canister audit, security review, and DFINITY certification that the MERIDIAN canister network meets ICP production standards
+- **Educational Configuration Layer** — adapting the existing canister architecture for the Bronze Canister deployment: behavioral law configuration (L72–L79 from Paper V) tuned for student safety, age-appropriate content boundaries, and simplified interface wrappers that expose MERIDIAN's engines without requiring the student to understand the full architecture
+- **Enterprise Connector Hardening** — the five enterprise connectors (Salesforce, SAP, Oracle, Workday, ServiceNow) moved from pattern to production via SPINOR protocol certification, CHRONO audit trail validation, and CEREBEX world model update verification
+- **Voice Interface Expansion** — extending the HDI layer from the architect's personal build interface to a deployable classroom tool: multi-user voice sessions, student identity binding via Internet Identity, and teacher-configurable behavioral boundaries
+- **vetKeys Integration Certification** — formal verification that substrate-level encryption is operational across all canister-to-canister communication and all student data is encrypted before the application layer touches it
+- **SDK Documentation and Developer Onboarding** — the six SDKs documented for external developers, with onboarding guides, example implementations, and contribution pathways
+
+#### II.C What ICP Gets
+
+- The first certified sovereign enterprise OS on ICP mainnet — a reference implementation other enterprise builders can study
+- A production-grade educational deployment platform running on ICP — demonstrating ICP's suitability for institutional use, not just individual developers
+- Six documented SDKs that lower the barrier for other developers to build on ICP
+- Enterprise credibility: certified connectors to SAP, Oracle, Salesforce, Workday, and ServiceNow running on ICP
+
+#### II.D Certification Roadmap
 
 | Month | Milestone |
 |---|---|
-| 1–2 | CORDEX, CEREBEX, CYCLOVEX canisters on ICP testnet |
-| 3 | CHRONO ledger + VOXIS instantiation engine deployed |
-| 4 | NEXORIS synchronization layer + Internet Identity + vetKeys integrated |
-| 5 | Salesforce + SAP connectors live via SPINOR |
-| 6 | AI Paralegal module in private beta with first firm |
-| 7 | Oracle + Workday + ServiceNow connectors live |
-| 8 | Voice interface (HDI) integrated |
-| 9 | MERIDIAN v1.0 on ICP mainnet — public release |
-| 10–12 | SDK library open · Module registry live · Developer onboarding |
+| 1–2 | Canister audit and security review completed |
+| 2–3 | Educational configuration layer built and tested |
+| 3–4 | Enterprise connector hardening and SPINOR certification |
+| 4–5 | Voice interface expansion for multi-user classroom deployment |
+| 5–6 | vetKeys integration verified · SDK documentation published |
+| 6 | DFINITY certification issued · Production-ready for Bronze Canister deployment |
 
 ---
 
 ### Ask III — Bronze Canister Education Ecosystem Grant
-*Fund free ICP-native sovereign intelligence tooling for public school students*
+*Build, deploy, and sustain the education platform that puts sovereign intelligence tools in public school students' hands*
+
+This is the centerpiece. Everything above supports this. The research gives it intellectual legitimacy. The certification gives it production readiness. This ask is where the technology meets the students.
 
 #### III.A The Problem
 
-Public school students do not have access to the tools that produce the next generation of builders. They have access to the tools the last generation used: web app tutorials, Python notebooks, maybe some intro machine learning. The gap between what is available in elite university programs and what is available in a public high school in Dallas is significant and widening.
+Public school students do not have access to the tools that produce the next generation of builders. What they have access to is the previous generation's toolkit: web app tutorials, drag-and-drop coding environments, Python notebooks, maybe some intro machine learning if the district has a teacher who knows what that means. The gap between what is available in an elite university computer science program and what is available in a public high school classroom in Dallas is significant and it is widening every semester.
+
+The tools that exist in most public schools today are not bad tools. They are outdated tools. A student learning to build a website with HTML and CSS in 2026 is learning a skill that was cutting-edge in 2005. A student running a Jupyter notebook is using technology that was novel in 2014. These tools teach real concepts — logic, structure, debugging, iteration — and those concepts matter. But the substrate has moved. The next generation of builders will not build on rented servers that forget. They will build on persistent, sovereign, intelligent infrastructure. Public school students deserve to learn on the substrate that will actually matter when they graduate, not the one that mattered when their teachers graduated.
 
 The architect of MERIDIAN attended public schools in Dallas. He learned none of this there. He learned it from the world, at five in the morning, for years, before anyone recognized what he was building. He does not type — he speaks. He derived a sovereign OS architecture from ancient mathematics and biological systems and chaos field theory, not from a CS curriculum.
 
-That path should not be the only path. The Bronze Canister initiative creates a second path — one that is accessible from a public school classroom.
+That path should not be the only path. The Bronze Canister initiative creates a second path — one that is accessible from a public school classroom, during school hours, with teacher support, and without requiring a student to already know how to code.
 
 #### III.B What a Bronze Canister Is
 
-A **Bronze Canister** is a pre-configured, free ICP canister granted to a student or classroom that provides:
+A **Bronze Canister** is a pre-configured, free ICP canister granted to a student or classroom. It is not a toy. It is not a sandbox. It is not a simulation of a real tool. It is a real ICP canister running on the same substrate as every MERIDIAN enterprise deployment. The difference is the interface and the behavioral configuration — not the substrate.
 
-- **A persistent compute environment the student owns** — the canister survives across sessions; the student's work is never erased; nothing resets
-- **A sovereign identity** — Internet Identity belonging to the student, not the school, not a vendor, not a platform that can revoke access
-- **A simplified interface to MERIDIAN's core engines** — configured for educational use, with behavioral laws that keep the environment safe and appropriate
-- **Access to the Sovereign Intelligence Research corpus as epistemic substrate** — the fifteen papers embedded as the canister's reasoning grammar, not as reference documents but as structural cognitive substrate (per the PROT-052 framework in Paper XIII)
-- **A voice-native build interface** — the student speaks to build; the canister understands intent and responds; no prior knowledge of syntax required
+Here is what a student gets when they receive a Bronze Canister:
 
-The Bronze Canister is not a simplified version of a real tool. It is a real ICP canister. The student is building on the same substrate as every MERIDIAN enterprise deployment. The difference is the interface and the behavioral configuration — not the substrate.
+- **A persistent compute environment the student owns** — the canister survives across sessions. When a student builds something on Monday, it is still there on Wednesday. When they build something in September, it is still there in May. Nothing resets. Nothing expires. The student's work accumulates over time, the same way a journal accumulates entries. This is fundamentally different from every cloud-based educational tool that resets when the session ends or the subscription lapses.
 
-#### III.C What Students Build
+- **A sovereign identity** — an Internet Identity that belongs to the student. Not the school. Not a vendor. Not a platform that can revoke access when the district changes software contracts. The student's identity is theirs. If they graduate, the canister goes with them. If they transfer schools, the canister goes with them. If the grant expires, the canister still belongs to the student. This is what sovereignty means in practice: no one can take your work away from you.
 
-With a Bronze Canister, a student can:
+- **A simplified interface to MERIDIAN's core engines** — the canister runs a configured subset of MERIDIAN's intelligence engines. CEREBEX provides the persistent world model — the student's canister remembers what it has learned and builds on it. CHRONO provides the audit trail — every action the student takes is logged, creating a portfolio of their builder journey. VOXIS provides doctrinal identity — the canister knows what it is allowed to do and what it is not, configured for educational safety. The student does not need to know what these engines are called. They just work.
 
-- Build an AI that remembers what it learned yesterday, and the day before, and compounds that knowledge over time
-- Create a personal sovereign assistant that carries their identity and cannot be overwritten or accessed by any external party
-- Build domain-specific intelligence — a study partner that has read everything in their curriculum and builds a persistent model of how they think
-- Connect the canister to publicly available data sources and build intelligence on top of real-world information
-- Build voice-native applications that understand natural language and act without needing formal code
+- **Behavioral laws configured for educational use** — the canister operates under a subset of the behavioral economics laws defined in Paper V (L72–L79). In practice, this means: the canister will not generate harmful content; it will not access data the student has not explicitly connected; it will not communicate with external services without the student's knowledge; it will not store or transmit student identity information to any third party. The behavioral configuration is frozen at deployment — it cannot be altered by the student, the teacher, or any external party after the canister is instantiated. This is not a content filter. It is a structural behavioral law embedded in the canister's identity.
 
-None of this requires prior programming knowledge. The student speaks. The canister acts.
+- **A voice-native build interface** — the student speaks to build. The canister understands intent and responds. No prior knowledge of syntax, programming languages, or software architecture is required. The student says what they want to build. The canister builds it. If the student wants to refine it, they speak again. The interface is conversational, not transactional. It is the same voice-native build interface the architect uses — adapted for educational use, with age-appropriate behavioral boundaries, but not dumbed down. The student is speaking to real intelligence, not a chatbot.
 
-#### III.D The Institutional Plan
+- **Access to the Sovereign Intelligence Research corpus as epistemic substrate** — the fifteen papers are embedded in the canister's reasoning grammar, not as reference documents the student reads but as structural cognitive substrate (per the PROT-052 framework in Paper XIII). When the student asks the canister to build something, the canister's reasoning is grounded in the same theoretical framework that produced MERIDIAN. The student does not need to read the papers. The canister has already absorbed them.
+
+#### III.C What Students Build — Practical Examples
+
+With a Bronze Canister, a student can build real things. Not exercises. Not tutorials. Things that work, that persist, that belong to them.
+
+**A study partner that actually learns.** The student connects their canister to their course materials — textbooks, notes, assignments. The canister reads them and builds a persistent model of the subject matter. When the student asks a question, the canister answers from what it has learned. When the student corrects it, it updates its model. Over the course of a semester, the canister becomes a study partner that knows the student's curriculum as well as the student does — and remembers everything the student has asked before. This is not a chatbot that resets every conversation. It is a persistent intelligence that compounds knowledge.
+
+**A personal journal with intelligence.** The student speaks to their canister daily. The canister records, organizes, and connects what the student says over time. After a month, the student can ask: "What have I been thinking about most?" and the canister can answer, because it has a persistent model of the student's expressed thoughts. This is a tool for self-reflection that no current educational technology provides — because no current educational technology has persistent memory that belongs to the student.
+
+**A data explorer.** The student connects their canister to a publicly available data source — weather data, census data, sports statistics, local government data. The canister ingests the data and builds a live model. The student asks questions: "What's the trend in rainfall in Dallas over the last ten years?" "How does the population of my neighborhood compare to ten years ago?" The canister answers with analysis grounded in real data. The student learns data literacy not by reading about it but by doing it — with a tool that remembers every question they have asked and every dataset they have explored.
+
+**A creative writing collaborator.** The student tells the canister a story. The canister remembers the characters, the setting, the plot. When the student comes back the next day, the canister knows where the story left off. The student can ask: "What would happen if the character went to the mountains instead?" and the canister generates a continuation that is consistent with everything that has happened before. This is collaborative fiction built on persistent state — something no current educational tool can do because none of them remember.
+
+**A voice-native application.** The student builds something that other people can use — a voice assistant that answers questions about a topic the student cares about, trained on data the student has curated. The student's canister becomes a published application. Other students can interact with it. The student has built and deployed a real application on real infrastructure without writing a single line of code.
+
+None of these projects requires prior programming knowledge. The student speaks. The canister acts. The technology is real but the interface is human.
+
+#### III.D What the Technology Looks Like in a Classroom
+
+A Bronze Canister deployment does not require the school to buy hardware, install software, or allocate IT resources. Here is what it looks like in practice:
+
+**Setup:** A teacher registers the classroom for the Bronze Canister program. Each student receives an Internet Identity — their sovereign credential — and a pre-configured canister. This takes one class period. The teacher does not need to understand ICP, canister architecture, or distributed systems. The teacher needs to understand that each student now has a persistent, intelligent workspace that belongs to them.
+
+**Daily use:** Students interact with their canisters through a web interface accessible from any device with a browser — school Chromebooks, personal phones, library computers. The voice interface works through the browser's microphone. The text interface works through a simple chat window. There is no software to install and no account to manage beyond the student's Internet Identity.
+
+**What the teacher sees:** A dashboard showing which students have active canisters, what they are building, and how their projects are progressing over time. The teacher cannot access the student's canister contents — sovereignty means the student's work is private — but the teacher can see activity patterns, project milestones, and student-shared portfolio entries. The teacher sees enough to teach effectively without seeing so much that the student's sovereignty is compromised.
+
+**What the school sees:** Nothing beyond what the teacher reports. The school does not host the canisters. The school does not manage the data. The school does not pay for compute. The canisters run on ICP. The school's only involvement is saying yes to the program.
+
+**What happens at the end of the year:** The student keeps their canister. It does not expire. It does not get deleted. If the student moves to a different school, the canister goes with them because it belongs to them, not the school. If the student graduates, the canister continues to exist. Everything they built is still there.
+
+#### III.E The Institutional Plan
 
 Medina Tech is in active outreach to:
-- **Dallas Independent School District** — the district the architect attended; first pilot cohort
-- **Universities the architect attended** — extending the research to higher education to demonstrate the full educational arc from public high school to university-level sovereign intelligence research
-- **Public school districts in underrepresented communities nationally** — expanding beyond Dallas once the pilot produces publishable results
 
-The offer: free Bronze Canisters for every student who wants one. Funded by this grant. Maintained by the ICP network — no school infrastructure required, no IT department involvement, no hardware. The student's canister belongs to the student. No data extraction. No advertising. No behavioral tracking. No vendor lock-in. The student can export their work, port it, or build on it professionally.
+- **Dallas Independent School District** — the district the architect attended. First pilot cohort. The connection is personal and the commitment is real. This is where it starts because this is where the architect started.
+- **Universities the architect attended** — extending the program to higher education to demonstrate the full educational arc. A student who begins with a Bronze Canister in high school and continues into university-level sovereign intelligence research represents the complete pipeline.
+- **Public school districts in underrepresented communities nationally** — expanding beyond Dallas once the pilot produces measurable, publishable results. The model is designed to scale without requiring local infrastructure.
 
-#### III.E What This Ask Funds
+The offer: free Bronze Canisters for every student who wants one. Funded by this grant. Maintained by the ICP network — no school infrastructure required, no IT department involvement, no hardware purchases. The student's canister belongs to the student. No data extraction. No advertising. No behavioral tracking. No vendor lock-in. The student can export their work, port it, or build on it professionally after graduation.
 
-- Bronze Canister platform development: the educational interface, voice integration, behavioral configuration, and epistemic substrate loading
+#### III.F The Implementation Phases
+
+The Bronze Canister Education Ecosystem is built in four phases. Each phase delivers a usable result. Each phase builds on the previous one.
+
+**Phase A — Platform Build (Months 1–4)**
+Build the Bronze Canister platform: the educational interface layer on top of the certified MERIDIAN canister architecture (from Ask II). This includes the student-facing web interface, the voice integration adapted for classroom use, the behavioral configuration system (L72–L79 educational subset), the teacher dashboard, and the Internet Identity onboarding flow for students.
+
+Deliverable: A working Bronze Canister platform that a teacher can deploy in a classroom.
+
+**Phase B — Dallas ISD Pilot (Months 4–7)**
+Deploy the first cohort: 500 Bronze Canisters to pilot schools in Dallas ISD. Train teachers on the *Educatio Machinae* curriculum framework. Provide ongoing technical support during the first semester of use. Collect structured data on what students build, how they interact with their canisters, and how their self-concept as builders changes over time.
+
+Deliverable: 500 students actively building with Bronze Canisters. Initial pilot data collected.
+
+**Phase C — Research and Publication (Months 7–10)**
+Analyze pilot data. Write Paper XVI — *Educatio Machinae*: the full research paper on the Bronze Canister pilot results. Submit to educational technology and AI ethics journals. Publish outcome data to the DFINITY Forum. Present findings to Dallas ISD for continuation decision.
+
+Deliverable: Peer-reviewed research paper on ICP-native education outcomes. Published pilot results.
+
+**Phase D — National Expansion Framework (Months 10–12)**
+Develop the model for scaling beyond Dallas. Document the deployment process, the curriculum framework, the teacher training program, and the outcome measurement methodology so that any school district can adopt the program without Medina Tech being physically present. Build the expansion toolkit.
+
+Deliverable: A replicable Bronze Canister deployment model ready for national adoption.
+
+#### III.G What This Ask Funds
+
+- Bronze Canister platform development: educational interface, voice integration, behavioral configuration, teacher dashboard, Internet Identity onboarding, epistemic substrate loading
 - First cohort: 500 Bronze Canisters deployed to Dallas ISD pilot schools
-- Curriculum framework: *Educatio Machinae* — a research-grade curriculum for building with sovereign intelligence, developed in collaboration with teachers
-- Outcome measurement: structured research to measure what students build, how their self-concept as builders changes, and what they do next
+- Teacher training and ongoing support during the pilot semester
+- Curriculum framework: *Educatio Machinae* — a research-grade curriculum for building with sovereign intelligence, developed in collaboration with Dallas ISD teachers
+- Outcome measurement: structured research design, data collection instruments, analysis methodology
 - Paper XVI — *Educatio Machinae*: the full research paper on the pilot results, submitted to educational technology and AI ethics journals
-- National expansion framework: the model for scaling beyond Dallas
+- National expansion framework: deployment documentation, curriculum packaging, teacher training materials, outcome measurement toolkit
 
-#### III.F What ICP Gets From This Ask
+#### III.H What ICP Gets From This Ask
 
-- **Volume**: 500+ new ICP canisters in the first cohort; every successful student spawns additional canisters as they build
-- **Pipeline**: young developers whose first mental model of software is living, sovereign, and on-chain — not stateless, not cloud-rented, not resettable
-- **Demographics**: the communities historically excluded from early-stage technological access, reached before they have learned to build on AWS
-- **Research**: a peer-reviewed study on learning outcomes from ICP-native AI education — publishable in education, AI ethics, and distributed systems venues
-- **Narrative**: the story of public school students in Dallas building sovereign AI on ICP is the single most compelling non-financial argument for ICP's value to the world
+- **Volume**: 500+ new ICP canisters in the first cohort. Every successful student spawns additional canisters as they build. A student who builds three projects has three canisters. A classroom of 30 students building three projects each is 90 canisters from one classroom. Scale this to a district and the numbers are significant.
+- **Pipeline**: Young developers whose first mental model of software is living, sovereign, and on-chain — not stateless, not cloud-rented, not resettable. These students will never think of compute the way someone trained on AWS thinks of compute. Their default assumption will be that software persists, remembers, and belongs to the person who built it. That mental model is ICP's mental model.
+- **Demographics**: The communities historically excluded from early-stage technological access, reached before they have learned to build on AWS. A student who learns to build on ICP first does not need to unlearn anything. They start native.
+- **Research**: A peer-reviewed study on learning outcomes from ICP-native AI education — publishable in education, AI ethics, and distributed systems venues. This is original research that does not exist anywhere. No one has studied what happens when public school students build on sovereign infrastructure. ICP funds this study and owns the narrative.
+- **Narrative**: The story of public school students in Dallas building sovereign AI on ICP is the single most compelling non-financial argument for ICP's value to the world. It is more compelling than any DeFi protocol, any NFT marketplace, any enterprise deployment. It is students building the future on a substrate that was built for the future.
 
 ---
 
@@ -348,11 +378,13 @@ The window for establishing ICP as the standard substrate for sovereign enterpri
 
 The enterprise AI market is currently trying to solve the dead-substrate problem by stacking reasoning layers on top of AWS. The solutions being built — RAG pipelines, fine-tuned models, agentic frameworks — are sophisticated workarounds for the wrong architecture. They will work for a while. They will not compound intelligence permanently. They will not carry sovereign identity. They will not produce tamper-evident organizational history that belongs to the organization and not the vendor.
 
-When enterprises begin to notice what they are missing — and they will, because the gap between a system that accumulates and a system that forgets is not subtle at scale — they will look for a different substrate. The question is whether ICP is the obvious answer at that moment, or whether something else has filled the gap.
+But the urgency is not only about enterprise. It is about who gets to build the next era. Right now, the students who will define the future of intelligent infrastructure are in public school classrooms using tools from 2014. The students at elite universities are building with the latest frameworks, running experiments on institutional compute clusters, publishing papers before they graduate. The gap is real and it is growing.
 
-MERIDIAN's job is to make ICP the obvious answer. This proposal is the beginning of that work.
+The Bronze Canister initiative closes that gap on ICP. It does not close it by giving students a cheaper version of what elite students already have. It closes it by giving them something better: sovereign infrastructure that belongs to them, that remembers what they build, that cannot be taken away. A student who starts building on ICP at fifteen has a ten-year head start on a student who discovers sovereign compute in graduate school.
 
-The three asks compound. Research without implementation produces papers. Implementation without research produces engineering without proof. Education without both produces builders without depth. Together, they produce something that has not existed before: a complete ecosystem for sovereign enterprise intelligence on ICP, from the theoretical foundation to the production system to the next generation of builders who will extend it.
+The three tracks compound. Research without education produces papers that no one outside academia reads. Certification without deployment produces production-ready software with no users. Education without research and certification produces an initiative without intellectual depth or production reliability. Together, they produce something that has not existed before: a complete pathway from theoretical foundation to certified production system to the next generation of builders who will extend it.
+
+When enterprises begin to notice what they are missing — and they will, because the gap between a system that accumulates and a system that forgets is not subtle at scale — they will look for a different substrate. The question is whether ICP is the obvious answer at that moment. MERIDIAN's job is to make ICP the obvious answer. The Bronze Canister initiative's job is to make sure the people who build on that answer come from everywhere, not just from the places that already had access.
 
 ---
 

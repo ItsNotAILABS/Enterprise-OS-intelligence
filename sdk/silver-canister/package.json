@@ -1,0 +1,51 @@
+{
+  "name": "@medina/silver-canister",
+  "version": "2.0.0",
+  "description": "Silver Canister v2.0 — School-Level Sovereign System with REAL AI Intelligence. Uses CEREBEX for pattern analysis, NEXORIS for routing, COGNOVEX for quorum decisions. Connected to StudentAI via bidirectional sync. AI features: analyzeSchool(), identifyAtRiskStudents(), predictOutcomes(), recommendInterventions(), aiStaffingRecommendations(), aiResourceAllocation(), aiScheduleOptimization(). District integration for DISD (Dallas ISD) operations.",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "Alfredo Medina Hernandez",
+    "email": "Medinasitech@outlook.com"
+  },
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./canister": "./src/silver-canister.js",
+    "./curriculum": "./src/curriculum-repository.js",
+    "./announcements": "./src/announcement-board.js",
+    "./calendar": "./src/academic-calendar.js",
+    "./resources": "./src/resource-inventory.js",
+    "./analytics": "./src/school-analytics.js",
+    "./services": "./src/student-services.js",
+    "./compliance": "./src/compliance-engine.js"
+  },
+  "keywords": [
+    "education",
+    "sovereign",
+    "icp",
+    "canister",
+    "school",
+    "silver-canister",
+    "curriculum",
+    "administration",
+    "medina-tech",
+    "ai",
+    "intelligence",
+    "cerebex",
+    "nexoris",
+    "cognovex",
+    "meridian",
+    "disd",
+    "dallas-isd",
+    "district"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {}
+}

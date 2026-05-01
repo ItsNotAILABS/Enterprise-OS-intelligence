@@ -1,0 +1,25 @@
+{
+  "name": "@medina/medina-queries",
+  "version": "1.0.0",
+  "description": "Internal SDK for QUERY functions — read operations that don't change state in the MEDINA ecosystem",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./civitas": "./src/civitas-queries.js",
+    "./organism": "./src/organism-queries.js",
+    "./governance": "./src/governance-queries.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/medina-queries"
+  },
+  "keywords": [
+    "queries",
+    "reads",
+    "internal-sdk",
+    "medina"
+  ]
+}

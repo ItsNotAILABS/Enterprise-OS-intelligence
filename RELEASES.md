@@ -9,6 +9,51 @@
 
 ---
 
+## v1.0.0 — *Educatio Vivens* · April 29, 2026
+
+**The Living Education Release**
+
+The education stack is now alive. StudentAI uses the deep tech. Silver Canister runs entire schools.
+
+### What Changed
+
+**StudentAI v1.0.0 — Deep Tech Integration**
+- **CEREBEX Integration** — 40-category world model tracks student learning state with φ⁻¹ learning rate
+- **NEXORIS Integration** — Pheromone field routing optimizes study paths based on what works for each student
+- **COGNOVEX Integration** — Bloom's Taxonomy quorum consensus (RECALL → EVALUATION) validates comprehension
+- **Spaced Repetition** — Leitner boxes with φ-scaled intervals (1, 1.6, 2.6, 4.2... days)
+- **Adaptive Difficulty** — Auto-adjusts EASY → MEDIUM → HARD → EXPERT based on performance
+- **Knowledge Graphs** — Concept nodes with connection tracking
+- **Mastery Levels** — Novice → Bronze → Silver → Gold → Platinum per topic
+- **Study Streaks** — Daily engagement tracking with multipliers
+- **Weakness Detection** — Free energy analysis identifies knowledge gaps
+- **Multi-modal Quizzes** — fill_blank, multiple_choice, essay, concept_map types
+
+**Silver Canister v1.0.0 — School-Level Sovereign System (NEW)**
+- **Classroom Orchestration** — Create/manage classrooms, teacher assignments, Bronze Canister provisioning
+- **Curriculum Repository** — Lesson plans, standards alignment, pacing guides, version control
+- **Announcement Board** — School-wide news, emergency alerts, parent hooks, newsletters
+- **Academic Calendar** — Grading periods, holidays, events, testing windows
+- **Resource Inventory** — Textbooks, devices, supplies, budgets, maintenance
+- **School Analytics** — Privacy-preserving anonymized metrics, gap analysis, trends
+- **Student Services** — Counselor referrals, IEP/504 tracking, interventions, wellness
+- **Compliance Engine** — FERPA verification, state reporting, graduation tracking, CHRONO audit
+
+**Bronze Canister v1.0.0 — Student-Level Canister**
+- Now orchestrated by Silver Canister
+- Enhanced integration with StudentAI v1.0.0
+- All engines upgraded to production status
+
+**Version Matrix**
+| SDK | Version | Status |
+|---|---|---|
+| `@medina/meridian-sovereign-os` | 1.0.0 | ✅ Production |
+| `@medina/student-ai` | 1.0.0 | ✅ Production |
+| `@medina/silver-canister` | 1.0.0 | ✅ Production |
+| `@medina/bronze-canister` | 1.0.0 | ✅ Production |
+
+---
+
 ## v0.2.0 — *Corpus Vivus* · April 26, 2026
 
 **The Living Corpus Release**

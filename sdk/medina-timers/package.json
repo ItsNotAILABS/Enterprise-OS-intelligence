@@ -1,0 +1,28 @@
+{
+  "name": "@medina/medina-timers",
+  "version": "1.0.0",
+  "description": "Mathematical timing functions based on ancient calendars — φ, π, sacred geometry, cosmic cycles. Native timing, NOT ICP-controlled.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./ancient": "./src/ancient-calendars.js",
+    "./sacred": "./src/sacred-geometry.js",
+    "./cosmic": "./src/cosmic-cycles.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/medina-timers"
+  },
+  "keywords": [
+    "timers",
+    "ancient-calendars",
+    "sacred-geometry",
+    "phi",
+    "golden-ratio",
+    "cosmic-cycles",
+    "mathematical-timing"
+  ]
+}

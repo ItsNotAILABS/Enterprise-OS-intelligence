@@ -1,0 +1,26 @@
+{
+  "name": "@medina/organism-bootstrap",
+  "version": "1.0.0",
+  "description": "Bootstrap system for ORGANISM canisters on the Internet Computer — uses mathematical timers, NOT ICP heartbeats",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./motoko": "./src/motoko/index.mo"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MedinaTech/organism-bootstrap"
+  },
+  "keywords": [
+    "icp",
+    "internet-computer",
+    "canister",
+    "organism",
+    "bootstrap",
+    "motoko",
+    "mathematical-timers"
+  ]
+}
