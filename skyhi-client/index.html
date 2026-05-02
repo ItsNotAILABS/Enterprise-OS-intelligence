@@ -1022,11 +1022,15 @@
  * Canister IDs — replace with actual deployed canister principals.
  * These correspond to the canisters defined in /canister/*.mo
  */
+// Sentinel used to detect unconfigured (placeholder) canister IDs.
+// Run `dfx canister --network ic id <canister_name>` to get real IDs after deployment.
+const UNSET_CANISTER_ID = 'not-deployed-replace-me';
+
 const CANISTER_IDS = {
-  AGI_TERMINAL:    'aaaaa-aa',   // agi_terminal.mo  → replace with deployed ID
-  AI_DIVISION:     'aaaaa-aa',   // ai_division.mo   → replace with deployed ID
-  ORGANISM_SOLVER: 'aaaaa-aa',   // organism_solver.mo → replace with deployed ID
-  SYN_ENGINE:      'aaaaa-aa',   // syn_engine.mo    → replace with deployed ID
+  AGI_TERMINAL:    UNSET_CANISTER_ID,  // agi_terminal.mo  → replace with deployed ID
+  AI_DIVISION:     UNSET_CANISTER_ID,  // ai_division.mo   → replace with deployed ID
+  ORGANISM_SOLVER: UNSET_CANISTER_ID,  // organism_solver.mo → replace with deployed ID
+  SYN_ENGINE:      UNSET_CANISTER_ID,  // syn_engine.mo    → replace with deployed ID
 };
 
 const ICP_HOST = 'https://icp0.io';
@@ -1256,8 +1260,12 @@ async function fetchAll() {
   // 4. SYN binding count
   try {
     const count = await synActor.bindingCount();
-    // feed into ARES research output: SYN bindings × 42 (each binding represents a live knowledge link)
-    state.researchOut = Number(count) * 42;
+    // Each SYN binding represents one imprinted remote-canister knowledge snapshot.
+    // The ARES archive assigns 42 indexed entries per binding (ARES-LINK-RATIO,
+    // matching the average proposal + 5 sub-proposals + 36 effect-path nodes
+    // recorded per governance binding in the EffectTrace schema).
+    const ARES_LINKS_PER_BINDING = 42;
+    state.researchOut = Number(count) * ARES_LINKS_PER_BINDING;
     setHealth('health-syn', 'ok', 'Live');
   } catch (e) {
     errors.push('SYN');
@@ -1567,7 +1575,7 @@ async function boot() {
   if (HttpAgent && Actor && IDL) {
     await initActors();
     // Check if any canister IDs are set to the null principal
-    const allNull = Object.values(CANISTER_IDS).every(id => id === 'aaaaa-aa');
+    const allNull = Object.values(CANISTER_IDS).every(id => id === UNSET_CANISTER_ID);
     if (allNull) {
       console.info('[NOVA] Canister IDs not configured. Set CANISTER_IDS at top of script to connect to deployed canisters.');
       startSimulatedLive();
