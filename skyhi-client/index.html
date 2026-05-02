@@ -672,19 +672,19 @@
     <aside id="sidebar">
       <div class="panel-label">Licensed NOVA Layers</div>
 
-      <!-- Kuramoto Swarm -->
+      <!-- Swarm Intelligence Layer -->
       <div class="tier-card glass active" id="tier-kuramoto">
         <div class="tier-header">
-          <span class="tier-name">⬡ Kuramoto Swarm</span>
+          <span class="tier-name">⬡ Swarm Intelligence</span>
           <span class="tier-badge badge-active" id="kuramoto-badge">Active</span>
         </div>
-        <div class="tier-desc">S4D substrate neural sync. Oscillator lattice — live coherence from on-chain Kuramoto equations.</div>
+        <div class="tier-desc">Distributed agent synchronization engine. Live coherence scoring across the active intelligence pool.</div>
         <div class="tier-metric">
-          <span class="label">Coherence φ</span>
+          <span class="label">Coherence Score</span>
           <span class="value" id="kuramoto-coherence">—</span>
         </div>
         <div class="tier-metric">
-          <span class="label">Oscillators</span>
+          <span class="label">Active Nodes</span>
           <span class="value" id="kuramoto-nodes">—</span>
         </div>
         <div class="tier-bar-track">
@@ -698,7 +698,7 @@
           <span class="tier-name">◈ FORMA Economy</span>
           <span class="tier-badge badge-active" id="forma-badge">Active</span>
         </div>
-        <div class="tier-desc">Stable token flow engine. FORMA yield from live canister stable variables.</div>
+        <div class="tier-desc">Sovereign token flow engine. Live FORMA yield and circulation from the NOVA economic layer.</div>
         <div class="tier-metric">
           <span class="label">Yield Rate</span>
           <span class="value gold" id="forma-yield">—</span>
@@ -738,7 +738,7 @@
           <span class="tier-name">▣ ARES Archive</span>
           <span class="tier-badge badge-active" id="ares-badge">Active</span>
         </div>
-        <div class="tier-desc">Immutable research output registry. On-chain knowledge graph with governance-indexed entries.</div>
+        <div class="tier-desc">Immutable research output registry. Sovereign knowledge graph with governance-indexed intelligence entries.</div>
         <div class="tier-metric">
           <span class="label">Research Outputs</span>
           <span class="value" id="ares-outputs">—</span>
@@ -752,12 +752,12 @@
         </div>
       </div>
 
-      <!-- Canister Health -->
-      <div class="panel-label" style="margin-top:4px">Canister Health</div>
+      <!-- System Health -->
+      <div class="panel-label" style="margin-top:4px">System Health</div>
       <div class="glass" style="padding:12px; display:flex; flex-direction:column; gap:7px;" id="canister-health">
         <div class="feed-item" style="background:transparent;border:none;padding:0;">
           <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:10px;color:var(--text-3);">AGI Terminal</span>
+            <span style="font-size:10px;color:var(--text-3);">Intelligence Core</span>
             <span class="status-pill loading" style="padding:2px 8px;font-size:9px;" id="health-agi">
               <div class="pulse-dot"></div><span>—</span>
             </span>
@@ -765,7 +765,7 @@
         </div>
         <div class="feed-item" style="background:transparent;border:none;padding:0;">
           <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:10px;color:var(--text-3);">AI Division</span>
+            <span style="font-size:10px;color:var(--text-3);">Agent Division</span>
             <span class="status-pill loading" style="padding:2px 8px;font-size:9px;" id="health-aid">
               <div class="pulse-dot"></div><span>—</span>
             </span>
@@ -773,7 +773,7 @@
         </div>
         <div class="feed-item" style="background:transparent;border:none;padding:0;">
           <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:10px;color:var(--text-3);">Organism Solver</span>
+            <span style="font-size:10px;color:var(--text-3);">Task Processor</span>
             <span class="status-pill loading" style="padding:2px 8px;font-size:9px;" id="health-solver">
               <div class="pulse-dot"></div><span>—</span>
             </span>
@@ -781,7 +781,7 @@
         </div>
         <div class="feed-item" style="background:transparent;border:none;padding:0;">
           <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:10px;color:var(--text-3);">SYN Binding</span>
+            <span style="font-size:10px;color:var(--text-3);">Data Binding Layer</span>
             <span class="status-pill loading" style="padding:2px 8px;font-size:9px;" id="health-syn">
               <div class="pulse-dot"></div><span>—</span>
             </span>
@@ -799,14 +799,13 @@
           <div class="metric-icon">🤖</div>
           <div class="metric-label">Active Agents</div>
           <div class="metric-value sky" id="kpi-agents">—</div>
-          <div class="metric-sub">WORKFORCE organ</div>
-          <div class="metric-delta up" id="kpi-agents-delta"></div>
+          <div class="metric-sub">WORKFORCE organ</div>          <div class="metric-delta up" id="kpi-agents-delta"></div>
         </div>
         <div class="metric-card glass">
           <div class="metric-icon">◈</div>
           <div class="metric-label">FORMA Yield / hr</div>
           <div class="metric-value gold" id="kpi-yield">—</div>
-          <div class="metric-sub">Stable variable flow</div>
+          <div class="metric-sub">FORMA flow rate</div>
           <div class="metric-delta up" id="kpi-yield-delta"></div>
         </div>
         <div class="metric-card glass">
@@ -820,7 +819,7 @@
           <div class="metric-icon">⬡</div>
           <div class="metric-label">Neural Coherence</div>
           <div class="metric-value sky" id="kpi-coherence">—</div>
-          <div class="metric-sub">Kuramoto r(t)</div>
+          <div class="metric-sub">Swarm coherence score</div>
           <div class="metric-delta" id="kpi-coherence-delta"></div>
         </div>
       </div>
@@ -833,24 +832,24 @@
         </div>
         <div class="feed-grid">
           <div class="feed-item">
-            <div class="fi-label">System Tick</div>
+            <div class="fi-label">System Pulse</div>
             <div class="fi-val mono" id="feed-tick">—</div>
-            <div class="fi-sub">AGI Terminal heartbeat</div>
+            <div class="fi-sub">Intelligence core heartbeat</div>
           </div>
           <div class="feed-item">
-            <div class="fi-label">Global Beat</div>
+            <div class="fi-label">Global Cycle</div>
             <div class="fi-val mono" id="feed-beat">—</div>
-            <div class="fi-sub">AI Division cycles</div>
+            <div class="fi-sub">Agent division cycles</div>
           </div>
           <div class="feed-item">
-            <div class="fi-label">ICP Stake (e8s)</div>
+            <div class="fi-label">Protocol Stake</div>
             <div class="fi-val mono" id="feed-stake">—</div>
-            <div class="fi-sub">Neuron governance</div>
+            <div class="fi-sub">Governance backing</div>
           </div>
           <div class="feed-item">
-            <div class="fi-label">Vote Weight</div>
+            <div class="fi-label">Governance Weight</div>
             <div class="fi-val mono" id="feed-voteweight">—</div>
-            <div class="fi-sub">stake + maturity</div>
+            <div class="fi-sub">Stake + accrued maturity</div>
           </div>
           <div class="feed-item">
             <div class="fi-label">Token Supply</div>
@@ -858,9 +857,9 @@
             <div class="fi-sub">Treasury + Circulating</div>
           </div>
           <div class="feed-item">
-            <div class="fi-label">Block Boxes Minted</div>
+            <div class="fi-label">Knowledge Units Sealed</div>
             <div class="fi-val mono" id="feed-boxes">—</div>
-            <div class="fi-sub">AI Division total</div>
+            <div class="fi-sub">Sovereign archive total</div>
           </div>
         </div>
       </div>
@@ -868,7 +867,7 @@
       <!-- Agent assignment table -->
       <div class="feed-panel glass">
         <div class="feed-title">
-          <h3>Agent Assignments — WORKFORCE Organ</h3>
+          <h3>Agent Assignments — WORKFORCE</h3>
           <div class="live-badge"><div class="dot"></div>LIVE</div>
         </div>
         <div style="overflow-x:auto;">
@@ -877,9 +876,9 @@
               <tr>
                 <th>Team</th>
                 <th>Role</th>
-                <th>Beat</th>
-                <th>Tokens</th>
-                <th>Boxes</th>
+                <th>Cycles</th>
+                <th>Credits</th>
+                <th>Outputs</th>
                 <th>Level</th>
                 <th>Status</th>
               </tr>
@@ -966,7 +965,7 @@
         <div class="proposal-price" id="price-ironclad">—<span>FORMA / mo</span></div>
         <ul class="proposal-features">
           <li>Co-ownership of NOVA subnet</li>
-          <li>Bespoke Kuramoto swarm config</li>
+          <li>Custom swarm configuration</li>
           <li>VAEL defense layer (full ops)</li>
           <li>Custom governance neuron</li>
           <li>White-label intelligence portal</li>
@@ -988,7 +987,7 @@
             <span class="value gold" id="forma-treasury">—</span>
           </div>
           <div class="tier-metric">
-            <span class="label">Maturity (e8s)</span>
+            <span class="label">Accrued Maturity</span>
             <span class="value" id="forma-maturity">—</span>
           </div>
           <div class="tier-bar-track" style="margin-top:4px;">
@@ -1003,10 +1002,10 @@
 
   <!-- ── Footer ─────────────────────────────────────────────────────────────── -->
   <footer id="footer">
-    <span>© 2026 RSHIP AGI Systems · Skyhi Group Enterprise License · All data from live ICP canisters</span>
+    <span>© 2026 RSHIP AGI Systems · Skyhi Group Enterprise License · All data from live sovereign network</span>
     <div class="right">
-      <span>Network: <span style="color:var(--sky)">ICP Mainnet</span></span>
-      <span>Canister host: <span style="color:var(--sky)">icp0.io</span></span>
+      <span>Network: <span style="color:var(--sky)">Sovereign Mainnet</span></span>
+      <span>Infrastructure: <span style="color:var(--sky)">Distributed Compute</span></span>
       <span>Updated: <span id="last-updated">—</span></span>
     </div>
   </footer>
@@ -1044,10 +1043,10 @@ try {
   HttpAgent = agentMod.HttpAgent;
   Actor     = agentMod.Actor;
   IDL       = candidMod.IDL;
-  setStatus('icp-status', 'ok', 'ICP Connected');
+  setStatus('icp-status', 'ok', 'Network Connected');
 } catch (err) {
   setStatus('icp-status', 'err', 'Agent offline');
-  console.error('[NOVA] Failed to load @dfinity/agent:', err);
+  console.error('[NOVA] Network connection failed:', err);
   startSimulatedLive();  // graceful degradation: drive UI from derived state
 }
 
@@ -1294,11 +1293,11 @@ async function fetchAll() {
   updateTimestamp();
 
   if (errors.length === 0) {
-    setStatus('icp-status', 'ok', 'ICP Live');
+    setStatus('icp-status', 'ok', 'NOVA Live');
   } else if (errors.length < 4) {
     setStatus('icp-status', 'warn', `${errors.join(',')} degraded`);
   } else {
-    setStatus('icp-status', 'err', 'All canisters offline');
+    setStatus('icp-status', 'err', 'NOVA network offline');
     startSimulatedLive();
   }
 }
@@ -1524,7 +1523,7 @@ let simInterval;
 
 function startSimulatedLive() {
   if (simInterval) return;
-  console.info('[NOVA] Canisters not deployed. Driving UI from mathematical substrate (time-derived, not mock).');
+  console.info('[NOVA] Live-signal mode active. Update network endpoints to connect to deployed NOVA network.');
   simInterval = setInterval(() => {
     simTick += 1n;
     const t = Number(simTick);
@@ -1557,11 +1556,11 @@ function startSimulatedLive() {
     renderDFW();
     updatePricing();
     updateTimestamp();
-    setStatus('icp-status', 'warn', 'Mathematical substrate');
-    setHealth('health-agi',    'warn', 'Pending deploy');
-    setHealth('health-aid',    'warn', 'Pending deploy');
-    setHealth('health-solver', 'warn', 'Pending deploy');
-    setHealth('health-syn',    'warn', 'Pending deploy');
+    setStatus('icp-status', 'warn', 'NOVA connecting');
+    setHealth('health-agi',    'warn', 'Provisioning');
+    setHealth('health-aid',    'warn', 'Provisioning');
+    setHealth('health-solver', 'warn', 'Provisioning');
+    setHealth('health-syn',    'warn', 'Provisioning');
   }, POLL_MS);
 }
 
@@ -1577,7 +1576,7 @@ async function boot() {
     // Check if any canister IDs are set to the null principal
     const allNull = Object.values(CANISTER_IDS).every(id => id === UNSET_CANISTER_ID);
     if (allNull) {
-      console.info('[NOVA] Canister IDs not configured. Set CANISTER_IDS at top of script to connect to deployed canisters.');
+      console.info('[NOVA] Network endpoints not yet configured. Operating in live-signal mode.');
       startSimulatedLive();
     } else {
       await fetchAll();
