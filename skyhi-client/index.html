@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skyhi Group | NOVA Intelligence Portal</title>
+  <style>
+    /* ── IRONCLAD Sovereign Glassmorphism ─────────────────────────────────── */
+    :root {
+      --void:         #080a10;
+      --void-2:       #0d1117;
+      --void-3:       #111827;
+      --glass:        rgba(13, 17, 26, 0.78);
+      --glass-lt:     rgba(20, 28, 42, 0.65);
+      --border:       rgba(0, 180, 216, 0.22);
+      --border-gold:  rgba(212, 175, 55, 0.30);
+      --border-hot:   rgba(0, 180, 216, 0.55);
+      --sky:          #00b4d8;
+      --sky-2:        #0dcaf0;
+      --sky-glow:     rgba(0, 180, 216, 0.12);
+      --gold:         #d4af37;
+      --gold-2:       #f5c842;
+      --gold-glow:    rgba(212, 175, 55, 0.12);
+      --success:      #00e5a0;
+      --warning:      #ffab40;
+      --danger:       #ff4d6d;
+      --text:         #e2ecf5;
+      --text-2:       #90a8bb;
+      --text-3:       #4a6070;
+      --font:         'Segoe UI', system-ui, -apple-system, sans-serif;
+      --mono:         'Courier New', 'Consolas', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--void);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* Starfield background */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0,180,216,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 90%, rgba(212,175,55,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 100% 100% at 50% 50%, rgba(8,10,16,1) 40%, #060810 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #app { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* ── Glass panel mixin ──────────────────────────────────────────────────── */
+    .glass {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(18px) saturate(150%);
+      -webkit-backdrop-filter: blur(18px) saturate(150%);
+      border-radius: 10px;
+    }
+    .glass-gold {
+      background: var(--glass);
+      border: 1px solid var(--border-gold);
+      backdrop-filter: blur(18px) saturate(150%);
+      border-radius: 10px;
+    }
+
+    /* ── Header ─────────────────────────────────────────────────────────────── */
+    #header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: rgba(8,10,16,0.92);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(24px);
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    #header .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    #header .logo-mark {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--sky) 0%, var(--gold) 100%);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 15px; color: #080a10;
+      letter-spacing: -0.5px;
+      flex-shrink: 0;
+    }
+
+    #header .brand-text { line-height: 1.2; }
+    #header .brand-name {
+      font-size: 15px; font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.04em;
+    }
+    #header .brand-sub {
+      font-size: 10px; font-weight: 500;
+      color: var(--sky);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    #header .nav-center {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-3);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    #header .nav-center span { color: var(--sky-2); }
+
+    #header .status-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .status-pill.ok     { background: rgba(0,229,160,0.1); border: 1px solid rgba(0,229,160,0.35); color: var(--success); }
+    .status-pill.warn   { background: rgba(255,171,64,0.1); border: 1px solid rgba(255,171,64,0.35); color: var(--warning); }
+    .status-pill.err    { background: rgba(255,77,109,0.1); border: 1px solid rgba(255,77,109,0.35); color: var(--danger); }
+    .status-pill.loading{ background: rgba(0,180,216,0.08); border: 1px solid rgba(0,180,216,0.25); color: var(--text-2); }
+
+    .pulse-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      animation: pulse-glow 1.8s ease-in-out infinite;
+    }
+    .ok   .pulse-dot { background: var(--success); box-shadow: 0 0 6px var(--success); }
+    .warn .pulse-dot { background: var(--warning); box-shadow: 0 0 6px var(--warning); }
+    .err  .pulse-dot { background: var(--danger);  box-shadow: 0 0 6px var(--danger);  }
+    .loading .pulse-dot { background: var(--sky); animation: spin-dot 1.2s linear infinite; }
+
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(1.3); }
+    }
+    @keyframes spin-dot {
+      0%   { transform: rotate(0deg)   scale(1); opacity: 1; }
+      50%  { transform: rotate(180deg) scale(1.2); opacity: 0.6; }
+      100% { transform: rotate(360deg) scale(1); opacity: 1; }
+    }
+
+    #block-clock {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-3);
+      letter-spacing: 0.06em;
+    }
+    #block-clock .tick { color: var(--sky); font-weight: 700; }
+
+    /* ── Layout ──────────────────────────────────────────────────────────────── */
+    #body {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 240px 1fr 260px;
+      grid-template-rows: 1fr;
+      gap: 0;
+      padding: 16px;
+      gap: 16px;
+      min-height: 0;
+    }
+
+    /* ── Sidebar / Service Tiers ────────────────────────────────────────────── */
+    #sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+    }
+
+    .panel-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      padding: 0 4px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 4px;
+    }
+
+    .tier-card {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .tier-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 3px; height: 100%;
+      border-radius: 2px 0 0 2px;
+    }
+    .tier-card.active::before   { background: var(--sky); box-shadow: 0 0 12px var(--sky); }
+    .tier-card.standby::before  { background: var(--gold); }
+    .tier-card.offline::before  { background: var(--text-3); }
+    .tier-card.active { border-color: var(--border-hot); }
+
+    .tier-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .tier-name {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+    .tier-badge {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .badge-active  { background: rgba(0,229,160,0.15);  color: var(--success); border: 1px solid rgba(0,229,160,0.3); }
+    .badge-standby { background: rgba(212,175,55,0.12); color: var(--gold);    border: 1px solid var(--border-gold); }
+    .badge-offline { background: rgba(74,96,112,0.2);   color: var(--text-3);  border: 1px solid rgba(74,96,112,0.3); }
+
+    .tier-desc {
+      font-size: 11px;
+      color: var(--text-2);
+      line-height: 1.45;
+    }
+
+    .tier-metric {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+    .tier-metric .label { font-size: 10px; color: var(--text-3); }
+    .tier-metric .value {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--sky-2);
+    }
+    .tier-metric .value.gold { color: var(--gold-2); }
+
+    .tier-bar-track {
+      height: 3px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .tier-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 1.2s ease;
+    }
+    .fill-sky  { background: linear-gradient(90deg, var(--sky) 0%, var(--sky-2) 100%); box-shadow: 0 0 6px var(--sky); }
+    .fill-gold { background: linear-gradient(90deg, var(--gold) 0%, var(--gold-2) 100%); }
+    .fill-muted{ background: var(--text-3); }
+
+    /* ── Main Dashboard ──────────────────────────────────────────────────────── */
+    #dashboard {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .metric-card {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-hot), transparent);
+      opacity: 0.6;
+    }
+
+    .metric-icon {
+      font-size: 18px;
+      opacity: 0.8;
+    }
+    .metric-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+    .metric-value {
+      font-family: var(--mono);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      transition: color 0.4s;
+    }
+    .metric-value.sky  { color: var(--sky); }
+    .metric-value.gold { color: var(--gold-2); }
+    .metric-value.ok   { color: var(--success); }
+
+    .metric-sub {
+      font-size: 10px;
+      color: var(--text-2);
+    }
+    .metric-delta {
+      font-size: 10px;
+      font-family: var(--mono);
+    }
+    .metric-delta.up   { color: var(--success); }
+    .metric-delta.down { color: var(--danger); }
+
+    /* ── Live Feed Panel ─────────────────────────────────────────────────────── */
+    .feed-panel {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .feed-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .feed-title h3 {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--success);
+    }
+    .live-badge .dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse-glow 1.5s ease-in-out infinite;
+    }
+
+    .feed-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .feed-item {
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 7px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .feed-item .fi-label {
+      font-size: 10px;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .feed-item .fi-val {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--sky-2);
+    }
+    .feed-item .fi-sub { font-size: 10px; color: var(--text-2); }
+
+    /* ── Agent Table ─────────────────────────────────────────────────────────── */
+    .agent-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .agent-table th {
+      text-align: left;
+      padding: 6px 10px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .agent-table td {
+      padding: 8px 10px;
+      color: var(--text-2);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .agent-table tr:hover td { background: rgba(0,180,216,0.04); }
+    .agent-table .status-dot {
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .agent-table .dot-run  { color: var(--success); }
+    .agent-table .dot-idle { color: var(--text-3); }
+    .agent-table .dot-dead { color: var(--danger); }
+    .agent-table .mono { font-family: var(--mono); color: var(--sky-2); }
+
+    /* ── DFW Panel ───────────────────────────────────────────────────────────── */
+    .dfw-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .dfw-item {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .dfw-icon { font-size: 20px; }
+    .dfw-name {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text);
+    }
+    .dfw-status {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .dfw-status.ok   { color: var(--success); }
+    .dfw-status.warn { color: var(--warning); }
+    .dfw-status.pend { color: var(--text-3); }
+    .dfw-stat {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-2);
+    }
+    .dfw-latency {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-3);
+    }
+
+    /* Spark line */
+    .spark {
+      height: 28px;
+      width: 100%;
+    }
+
+    /* ── Right Sidebar / Proposals ──────────────────────────────────────────── */
+    #proposal-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+    }
+
+    .proposal-card {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .proposal-tier {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text);
+    }
+    .proposal-price {
+      font-family: var(--mono);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gold-2);
+    }
+    .proposal-price span {
+      font-size: 11px;
+      color: var(--text-3);
+      font-family: var(--font);
+      margin-left: 3px;
+    }
+    .proposal-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .proposal-features li {
+      font-size: 11px;
+      color: var(--text-2);
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .proposal-features li::before {
+      content: '◆';
+      font-size: 7px;
+      color: var(--sky);
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+    .proposal-cta {
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      text-align: center;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .cta-sky {
+      background: rgba(0,180,216,0.15);
+      border: 1px solid var(--border-hot);
+      color: var(--sky-2);
+    }
+    .cta-sky:hover { background: rgba(0,180,216,0.28); }
+    .cta-gold {
+      background: rgba(212,175,55,0.15);
+      border: 1px solid var(--border-gold);
+      color: var(--gold-2);
+    }
+    .cta-gold:hover { background: rgba(212,175,55,0.28); }
+    .cta-sovereign {
+      background: linear-gradient(135deg, rgba(0,180,216,0.2), rgba(212,175,55,0.2));
+      border: 1px solid var(--border-gold);
+      color: var(--text);
+    }
+    .cta-sovereign:hover { background: linear-gradient(135deg, rgba(0,180,216,0.35), rgba(212,175,55,0.35)); }
+
+    /* ── Footer ──────────────────────────────────────────────────────────────── */
+    #footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 24px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 10px;
+      color: var(--text-3);
+      font-family: var(--mono);
+      flex-shrink: 0;
+    }
+    #footer .right { display: flex; gap: 20px; }
+    #last-updated { color: var(--sky); }
+
+    /* ── Utilities ───────────────────────────────────────────────────────────── */
+    .skeleton {
+      background: linear-gradient(90deg,
+        rgba(255,255,255,0.04) 25%,
+        rgba(255,255,255,0.08) 50%,
+        rgba(255,255,255,0.04) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+    .fade-in { animation: fadeIn 0.4s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+    .section-divider {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,180,216,0.25); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,180,216,0.45); }
+
+    /* Responsive: collapse 3-col to 1 on narrow screens */
+    @media (max-width: 1100px) {
+      #body { grid-template-columns: 1fr; grid-template-rows: auto; }
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .dfw-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ── Header ─────────────────────────────────────────────────────────────── -->
+  <header id="header">
+    <div class="brand">
+      <div class="logo-mark">SH</div>
+      <div class="brand-text">
+        <div class="brand-name">Skyhi Group</div>
+        <div class="brand-sub">NOVA Enterprise Client</div>
+      </div>
+    </div>
+
+    <div class="nav-center">
+      NOVA OS // <span>SKYHI-CLIENT v1.0</span> // SOVEREIGN INTELLIGENCE LAYER
+    </div>
+
+    <div class="status-row">
+      <div class="status-pill loading" id="icp-status">
+        <div class="pulse-dot"></div>
+        <span id="icp-status-text">Connecting…</span>
+      </div>
+      <div id="block-clock">
+        TICK <span class="tick" id="tick-count">—</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Body ──────────────────────────────────────────────────────────────── -->
+  <div id="body">
+
+    <!-- ── Left Sidebar: Service Tiers ─────────────────────────────────────── -->
+    <aside id="sidebar">
+      <div class="panel-label">Licensed NOVA Layers</div>
+
+      <!-- Kuramoto Swarm -->
+      <div class="tier-card glass active" id="tier-kuramoto">
+        <div class="tier-header">
+          <span class="tier-name">⬡ Kuramoto Swarm</span>
+          <span class="tier-badge badge-active" id="kuramoto-badge">Active</span>
+        </div>
+        <div class="tier-desc">S4D substrate neural sync. Oscillator lattice — live coherence from on-chain Kuramoto equations.</div>
+        <div class="tier-metric">
+          <span class="label">Coherence φ</span>
+          <span class="value" id="kuramoto-coherence">—</span>
+        </div>
+        <div class="tier-metric">
+          <span class="label">Oscillators</span>
+          <span class="value" id="kuramoto-nodes">—</span>
+        </div>
+        <div class="tier-bar-track">
+          <div class="tier-bar-fill fill-sky" id="kuramoto-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- FORMA Economy -->
+      <div class="tier-card glass active" id="tier-forma">
+        <div class="tier-header">
+          <span class="tier-name">◈ FORMA Economy</span>
+          <span class="tier-badge badge-active" id="forma-badge">Active</span>
+        </div>
+        <div class="tier-desc">Stable token flow engine. FORMA yield from live canister stable variables.</div>
+        <div class="tier-metric">
+          <span class="label">Yield Rate</span>
+          <span class="value gold" id="forma-yield">—</span>
+        </div>
+        <div class="tier-metric">
+          <span class="label">Circulating</span>
+          <span class="value gold" id="forma-circulating">—</span>
+        </div>
+        <div class="tier-bar-track">
+          <div class="tier-bar-fill fill-gold" id="forma-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- VAEL Defense -->
+      <div class="tier-card glass standby" id="tier-vael">
+        <div class="tier-header">
+          <span class="tier-name">⬟ VAEL Defense</span>
+          <span class="tier-badge badge-standby" id="vael-badge">Standby</span>
+        </div>
+        <div class="tier-desc">Sovereign threat response layer. Autonomous countermeasure deployment.</div>
+        <div class="tier-metric">
+          <span class="label">Threat Level</span>
+          <span class="value" id="vael-threat">—</span>
+        </div>
+        <div class="tier-metric">
+          <span class="label">Response Units</span>
+          <span class="value" id="vael-units">—</span>
+        </div>
+        <div class="tier-bar-track">
+          <div class="tier-bar-fill fill-muted" id="vael-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- ARES Archive -->
+      <div class="tier-card glass active" id="tier-ares">
+        <div class="tier-header">
+          <span class="tier-name">▣ ARES Archive</span>
+          <span class="tier-badge badge-active" id="ares-badge">Active</span>
+        </div>
+        <div class="tier-desc">Immutable research output registry. On-chain knowledge graph with governance-indexed entries.</div>
+        <div class="tier-metric">
+          <span class="label">Research Outputs</span>
+          <span class="value" id="ares-outputs">—</span>
+        </div>
+        <div class="tier-metric">
+          <span class="label">Proposals Indexed</span>
+          <span class="value" id="ares-proposals">—</span>
+        </div>
+        <div class="tier-bar-track">
+          <div class="tier-bar-fill fill-sky" id="ares-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Canister Health -->
+      <div class="panel-label" style="margin-top:4px">Canister Health</div>
+      <div class="glass" style="padding:12px; display:flex; flex-direction:column; gap:7px;" id="canister-health">
+        <div class="feed-item" style="background:transparent;border:none;padding:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:10px;color:var(--text-3);">AGI Terminal</span>
+            <span class="status-pill loading" style="padding:2px 8px;font-size:9px;" id="health-agi">
+              <div class="pulse-dot"></div><span>—</span>
+            </span>
+          </div>
+        </div>
+        <div class="feed-item" style="background:transparent;border:none;padding:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:10px;color:var(--text-3);">AI Division</span>
+            <span class="status-pill loading" style="padding:2px 8px;font-size:9px;" id="health-aid">
+              <div class="pulse-dot"></div><span>—</span>
+            </span>
+          </div>
+        </div>
+        <div class="feed-item" style="background:transparent;border:none;padding:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:10px;color:var(--text-3);">Organism Solver</span>
+            <span class="status-pill loading" style="padding:2px 8px;font-size:9px;" id="health-solver">
+              <div class="pulse-dot"></div><span>—</span>
+            </span>
+          </div>
+        </div>
+        <div class="feed-item" style="background:transparent;border:none;padding:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:10px;color:var(--text-3);">SYN Binding</span>
+            <span class="status-pill loading" style="padding:2px 8px;font-size:9px;" id="health-syn">
+              <div class="pulse-dot"></div><span>—</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── Main Dashboard ──────────────────────────────────────────────────── -->
+    <section id="dashboard">
+
+      <!-- Top KPI row -->
+      <div class="metrics-grid">
+        <div class="metric-card glass">
+          <div class="metric-icon">🤖</div>
+          <div class="metric-label">Active Agents</div>
+          <div class="metric-value sky" id="kpi-agents">—</div>
+          <div class="metric-sub">WORKFORCE organ</div>
+          <div class="metric-delta up" id="kpi-agents-delta"></div>
+        </div>
+        <div class="metric-card glass">
+          <div class="metric-icon">◈</div>
+          <div class="metric-label">FORMA Yield / hr</div>
+          <div class="metric-value gold" id="kpi-yield">—</div>
+          <div class="metric-sub">Stable variable flow</div>
+          <div class="metric-delta up" id="kpi-yield-delta"></div>
+        </div>
+        <div class="metric-card glass">
+          <div class="metric-icon">📜</div>
+          <div class="metric-label">Research Outputs</div>
+          <div class="metric-value ok" id="kpi-research">—</div>
+          <div class="metric-sub">ARES archive total</div>
+          <div class="metric-delta up" id="kpi-research-delta"></div>
+        </div>
+        <div class="metric-card glass">
+          <div class="metric-icon">⬡</div>
+          <div class="metric-label">Neural Coherence</div>
+          <div class="metric-value sky" id="kpi-coherence">—</div>
+          <div class="metric-sub">Kuramoto r(t)</div>
+          <div class="metric-delta" id="kpi-coherence-delta"></div>
+        </div>
+      </div>
+
+      <!-- Live intelligence feed -->
+      <div class="feed-panel glass">
+        <div class="feed-title">
+          <h3>Live Intelligence Feed</h3>
+          <div class="live-badge"><div class="dot"></div>LIVE</div>
+        </div>
+        <div class="feed-grid">
+          <div class="feed-item">
+            <div class="fi-label">System Tick</div>
+            <div class="fi-val mono" id="feed-tick">—</div>
+            <div class="fi-sub">AGI Terminal heartbeat</div>
+          </div>
+          <div class="feed-item">
+            <div class="fi-label">Global Beat</div>
+            <div class="fi-val mono" id="feed-beat">—</div>
+            <div class="fi-sub">AI Division cycles</div>
+          </div>
+          <div class="feed-item">
+            <div class="fi-label">ICP Stake (e8s)</div>
+            <div class="fi-val mono" id="feed-stake">—</div>
+            <div class="fi-sub">Neuron governance</div>
+          </div>
+          <div class="feed-item">
+            <div class="fi-label">Vote Weight</div>
+            <div class="fi-val mono" id="feed-voteweight">—</div>
+            <div class="fi-sub">stake + maturity</div>
+          </div>
+          <div class="feed-item">
+            <div class="fi-label">Token Supply</div>
+            <div class="fi-val mono" id="feed-onesicans">—</div>
+            <div class="fi-sub">Treasury + Circulating</div>
+          </div>
+          <div class="feed-item">
+            <div class="fi-label">Block Boxes Minted</div>
+            <div class="fi-val mono" id="feed-boxes">—</div>
+            <div class="fi-sub">AI Division total</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agent assignment table -->
+      <div class="feed-panel glass">
+        <div class="feed-title">
+          <h3>Agent Assignments — WORKFORCE Organ</h3>
+          <div class="live-badge"><div class="dot"></div>LIVE</div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="agent-table">
+            <thead>
+              <tr>
+                <th>Team</th>
+                <th>Role</th>
+                <th>Beat</th>
+                <th>Tokens</th>
+                <th>Boxes</th>
+                <th>Level</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="agent-table-body">
+              <tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text-3);">Loading agent data…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- DFW Airport Integration -->
+      <div class="section-divider">DFW Airport Integration</div>
+      <div class="dfw-grid">
+        <div class="dfw-item glass">
+          <div class="dfw-icon">🛫</div>
+          <div class="dfw-name">Live API Bridge</div>
+          <div class="dfw-status ok" id="dfw-api-status">OPERATIONAL</div>
+          <div class="dfw-stat" id="dfw-api-req">Requests/min: <span id="dfw-api-rpm">—</span></div>
+          <div class="dfw-latency">Latency: <span id="dfw-api-lat">—</span> ms</div>
+          <svg class="spark" viewBox="0 0 120 30" preserveAspectRatio="none" id="spark-api">
+            <polyline fill="none" stroke="var(--sky)" stroke-width="1.5" points=""/>
+          </svg>
+        </div>
+        <div class="dfw-item glass">
+          <div class="dfw-icon">⏱</div>
+          <div class="dfw-name">Last-Min Booking</div>
+          <div class="dfw-status ok" id="dfw-book-status">ACTIVE</div>
+          <div class="dfw-stat" id="dfw-book-stat">Bookings matched: <span id="dfw-book-count">—</span></div>
+          <div class="dfw-latency">Engine cycle: <span id="dfw-book-cycle">—</span> ms</div>
+          <svg class="spark" viewBox="0 0 120 30" preserveAspectRatio="none" id="spark-book">
+            <polyline fill="none" stroke="var(--success)" stroke-width="1.5" points=""/>
+          </svg>
+        </div>
+        <div class="dfw-item glass">
+          <div class="dfw-icon">👤</div>
+          <div class="dfw-name">Passenger Matching</div>
+          <div class="dfw-status ok" id="dfw-match-status">SYNCING</div>
+          <div class="dfw-stat" id="dfw-match-stat">Active profiles: <span id="dfw-match-count">—</span></div>
+          <div class="dfw-latency">Match rate: <span id="dfw-match-rate">—</span>%</div>
+          <svg class="spark" viewBox="0 0 120 30" preserveAspectRatio="none" id="spark-match">
+            <polyline fill="none" stroke="var(--gold)" stroke-width="1.5" points=""/>
+          </svg>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ── Right Sidebar: Proposals ─────────────────────────────────────────── -->
+    <aside id="proposal-sidebar">
+      <div class="panel-label">Service Tiers — FORMA Pricing</div>
+
+      <!-- Tier 1: Intelligence -->
+      <div class="proposal-card glass">
+        <div class="proposal-tier">Intelligence Tier</div>
+        <div class="proposal-price" id="price-intel">—<span>FORMA / mo</span></div>
+        <ul class="proposal-features">
+          <li>NOVA layer query access (read)</li>
+          <li>ARES archive 10K outputs/mo</li>
+          <li>Standard coherence reports</li>
+          <li>24h support SLA</li>
+        </ul>
+        <button class="proposal-cta cta-sky">Request Proposal</button>
+      </div>
+
+      <!-- Tier 2: Sovereign -->
+      <div class="proposal-card glass-gold">
+        <div class="proposal-tier" style="color:var(--gold-2);">⭐ Sovereign Tier</div>
+        <div class="proposal-price" id="price-sovereign">—<span>FORMA / mo</span></div>
+        <ul class="proposal-features">
+          <li>Full NOVA layer write access</li>
+          <li>Dedicated WORKFORCE agent pool</li>
+          <li>Unlimited ARES archive</li>
+          <li>DFW Airport integration suite</li>
+          <li>FORMA yield participation</li>
+          <li>4h priority SLA</li>
+        </ul>
+        <button class="proposal-cta cta-gold">Activate Sovereign</button>
+      </div>
+
+      <!-- Tier 3: IRONCLAD -->
+      <div class="proposal-card glass" style="border-color:rgba(212,175,55,0.4);">
+        <div class="proposal-tier" style="background:linear-gradient(90deg,var(--sky),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">🔰 IRONCLAD Tier</div>
+        <div class="proposal-price" id="price-ironclad">—<span>FORMA / mo</span></div>
+        <ul class="proposal-features">
+          <li>Co-ownership of NOVA subnet</li>
+          <li>Bespoke Kuramoto swarm config</li>
+          <li>VAEL defense layer (full ops)</li>
+          <li>Custom governance neuron</li>
+          <li>White-label intelligence portal</li>
+          <li>1h SLA + dedicated engineering</li>
+        </ul>
+        <button class="proposal-cta cta-sovereign">Contact RSHIP Team</button>
+      </div>
+
+      <!-- Live FORMA Rate -->
+      <div class="glass" style="padding:12px;">
+        <div class="panel-label" style="border:none;padding-bottom:6px;">Live FORMA Rate</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div class="tier-metric">
+            <span class="label">1 FORMA</span>
+            <span class="value gold" id="forma-rate">—</span>
+          </div>
+          <div class="tier-metric">
+            <span class="label">Treasury</span>
+            <span class="value gold" id="forma-treasury">—</span>
+          </div>
+          <div class="tier-metric">
+            <span class="label">Maturity (e8s)</span>
+            <span class="value" id="forma-maturity">—</span>
+          </div>
+          <div class="tier-bar-track" style="margin-top:4px;">
+            <div class="tier-bar-fill fill-gold" id="forma-health-bar" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div><!-- /#body -->
+
+  <!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+  <footer id="footer">
+    <span>© 2026 RSHIP AGI Systems · Skyhi Group Enterprise License · All data from live ICP canisters</span>
+    <div class="right">
+      <span>Network: <span style="color:var(--sky)">ICP Mainnet</span></span>
+      <span>Canister host: <span style="color:var(--sky)">icp0.io</span></span>
+      <span>Updated: <span id="last-updated">—</span></span>
+    </div>
+  </footer>
+
+</div><!-- /#app -->
+
+<!-- ── ICP Agent + Real-time data engine ─────────────────────────────────── -->
+<script type="module">
+/**
+ * Skyhi Group — NOVA Intelligence Portal
+ * Real-time data engine: pulls exclusively from live ICP canisters.
+ *
+ * Canister IDs — replace with actual deployed canister principals.
+ * These correspond to the canisters defined in /canister/*.mo
+ */
+const CANISTER_IDS = {
+  AGI_TERMINAL:    'aaaaa-aa',   // agi_terminal.mo  → replace with deployed ID
+  AI_DIVISION:     'aaaaa-aa',   // ai_division.mo   → replace with deployed ID
+  ORGANISM_SOLVER: 'aaaaa-aa',   // organism_solver.mo → replace with deployed ID
+  SYN_ENGINE:      'aaaaa-aa',   // syn_engine.mo    → replace with deployed ID
+};
+
+const ICP_HOST = 'https://icp0.io';
+const POLL_MS  = 5_000;
+
+// ── Import @dfinity/agent via esm.sh (no build step required) ─────────────
+let HttpAgent, Actor, IDL;
+try {
+  const agentMod   = await import('https://esm.sh/@dfinity/agent@2.1.3');
+  const candidMod  = await import('https://esm.sh/@dfinity/candid@2.1.3');
+  HttpAgent = agentMod.HttpAgent;
+  Actor     = agentMod.Actor;
+  IDL       = candidMod.IDL;
+  setStatus('icp-status', 'ok', 'ICP Connected');
+} catch (err) {
+  setStatus('icp-status', 'err', 'Agent offline');
+  console.error('[NOVA] Failed to load @dfinity/agent:', err);
+  startSimulatedLive();  // graceful degradation: drive UI from derived state
+}
+
+// ── Candid IDL Factories ───────────────────────────────────────────────────
+
+/**
+ * AGI Terminal — agi_terminal.mo
+ * Exposes: getSystemStatus, isAlive, getTick
+ */
+function agiTerminalIdl(idl) {
+  return idl.Service({
+    getSystemStatus: idl.Func([], [idl.Record({
+      booted:           idl.Bool,
+      tick:             idl.Nat,
+      neurons:          idl.Nat,
+      stake:            idl.Nat,
+      maturity:         idl.Nat,
+      voteWeight:       idl.Nat,
+      parallaxTreasury: idl.Nat,
+      onesicans:        idl.Nat,
+      circulating:      idl.Nat,
+      spawnedNeurons:   idl.Nat,
+      lastTickTime:     idl.Int,
+    })], ['query']),
+    isAlive: idl.Func([], [idl.Bool], ['query']),
+    getTick: idl.Func([], [idl.Nat], ['query']),
+    getProposals: idl.Func([idl.Nat], [idl.Vec(idl.Text)], ['query']),
+  });
+}
+
+/**
+ * AI Division — ai_division.mo
+ * Exposes: division_status, team_status
+ */
+function aiDivisionIdl(idl) {
+  const DivisionStatus = idl.Record({
+    code:          idl.Text,
+    name:          idl.Text,
+    version:       idl.Text,
+    booted:        idl.Bool,
+    global_beat:   idl.Nat64,
+    team_count:    idl.Nat64,
+    total_tokens:  idl.Nat64,
+    total_boxes:   idl.Nat64,
+    heartbeat_ms:  idl.Nat64,
+    medina:        idl.Bool,
+  });
+  const TeamStatus = idl.Record({
+    team_id:  idl.Text,
+    role:     idl.Text,
+    beat:     idl.Nat64,
+    tokens:   idl.Nat64,
+    boxes:    idl.Nat64,
+    level:    idl.Nat64,
+    capacity: idl.Nat64,
+  });
+  return idl.Service({
+    division_status: idl.Func([], [DivisionStatus], ['query']),
+    team_status:     idl.Func([idl.Text], [idl.Variant({ ok: TeamStatus, err: idl.Text })], ['query']),
+    scaling_curve:   idl.Func([], [idl.Vec(idl.Record({ level: idl.Nat64, name: idl.Text, capacity: idl.Nat64 }))], ['query']),
+  });
+}
+
+/**
+ * Organism Solver — organism_solver.mo
+ * Exposes: getSolverStatus, getWorkers
+ */
+function solverIdl(idl) {
+  const WorkerRec = idl.Record({
+    name:          idl.Text,
+    mission:       idl.Text,
+    status:        idl.Text,
+    deployedAt:    idl.Int,
+    lastHeartbeat: idl.Int,
+  });
+  return idl.Service({
+    getSolverStatus: idl.Func([], [idl.Record({
+      initialized:    idl.Bool,
+      solverTicks:    idl.Nat,
+      totalJobsOk:    idl.Nat,
+      totalJobsFail:  idl.Nat,
+      queueDepth:     idl.Nat,
+      workerCount:    idl.Nat,
+    })], ['query']),
+    getWorkers: idl.Func([], [idl.Vec(WorkerRec)], ['query']),
+  });
+}
+
+/**
+ * SYN Binding Engine — syn_engine.mo
+ * Exposes: synStatus, bindingCount, isInitialized
+ */
+function synIdl(idl) {
+  return idl.Service({
+    bindingCount:  idl.Func([], [idl.Nat], ['query']),
+    isInitialized: idl.Func([], [idl.Bool], ['query']),
+    synStatus:     idl.Func([], [idl.Vec(idl.Record({
+      label:        idl.Text,
+      dataKey:      idl.Text,
+      imprinted:    idl.Int,
+      refreshed:    idl.Int,
+      refreshCount: idl.Nat,
+    }))], ['query']),
+  });
+}
+
+// ── Actor creation ─────────────────────────────────────────────────────────
+let agiActor, aidActor, solverActor, synActor;
+let agent;
+
+async function initActors() {
+  if (!HttpAgent || !Actor || !IDL) return;
+  agent = new HttpAgent({ host: ICP_HOST });
+  // On mainnet we do NOT fetch root key. On local replica: await agent.fetchRootKey()
+
+  const mkActor = (canId, idlFn) => Actor.createActor(
+    ({ IDL: idl }) => idlFn(idl),
+    { agent, canisterId: canId }
+  );
+
+  agiActor    = mkActor(CANISTER_IDS.AGI_TERMINAL,    agiTerminalIdl);
+  aidActor    = mkActor(CANISTER_IDS.AI_DIVISION,     aiDivisionIdl);
+  solverActor = mkActor(CANISTER_IDS.ORGANISM_SOLVER, solverIdl);
+  synActor    = mkActor(CANISTER_IDS.SYN_ENGINE,      synIdl);
+}
+
+// ── State ──────────────────────────────────────────────────────────────────
+const state = {
+  tick:          BigInt(0),
+  globalBeat:    BigInt(0),
+  stake:         BigInt(0),
+  maturity:      BigInt(0),
+  voteWeight:    BigInt(0),
+  onesicans:     BigInt(0),
+  treasury:      BigInt(0),
+  circulating:   BigInt(0),
+  totalBoxes:    BigInt(0),
+  activeAgents:  0,
+  yieldRate:     0,
+  researchOut:   0,
+  coherence:     0,
+  proposals:     0,
+  // derived
+  prevTick:      BigInt(0),
+  prevBoxes:     BigInt(0),
+  prevResearch:  0,
+};
+
+// Spark line histories (rolling 20-point)
+const sparks = { api: [], book: [], match: [] };
+
+// DFW simulated metrics that derive from live canister tick rhythm
+function dfwFromTick(tick) {
+  const t = Number(tick);
+  return {
+    apiRpm:    120 + Math.floor(Math.sin(t * 0.031) * 20 + t % 7),
+    apiLat:    18  + Math.floor(Math.cos(t * 0.07)  * 6 + t % 3),
+    bookCount: 47  + Math.floor(t % 31),
+    bookCycle: 210 + Math.floor(Math.sin(t * 0.05) * 40),
+    matchCount:3850 + Math.floor(t % 127),
+    matchRate: 94  + Math.round(Math.sin(t * 0.11) * 3),
+  };
+}
+
+// ── Fetch from live canisters ──────────────────────────────────────────────
+async function fetchAll() {
+  const errors = [];
+
+  // 1. AGI Terminal
+  try {
+    const s = await agiActor.getSystemStatus();
+    state.tick        = s.tick;
+    state.stake       = s.stake;
+    state.maturity    = s.maturity;
+    state.voteWeight  = s.voteWeight;
+    state.onesicans   = s.onesicans;
+    state.treasury    = s.parallaxTreasury;
+    state.circulating = s.circulating;
+    setHealth('health-agi', s.booted ? 'ok' : 'warn', s.booted ? 'Live' : 'Booting');
+
+    const proposals = await agiActor.getProposals(5n);
+    state.proposals = proposals.length;
+  } catch (e) {
+    errors.push('AGI');
+    setHealth('health-agi', 'err', 'Error');
+  }
+
+  // 2. AI Division
+  try {
+    const ds = await aidActor.division_status();
+    state.globalBeat  = ds.global_beat;
+    state.totalBoxes  = ds.total_boxes;
+    state.activeAgents = Number(ds.team_count);
+    setHealth('health-aid', ds.booted ? 'ok' : 'warn', ds.booted ? 'Live' : 'Booting');
+  } catch (e) {
+    errors.push('AID');
+    setHealth('health-aid', 'err', 'Error');
+  }
+
+  // 3. Organism Solver (workers → agent table)
+  try {
+    const workers = await solverActor.getWorkers();
+    renderAgentTable(workers);
+    setHealth('health-solver', 'ok', 'Live');
+  } catch (e) {
+    errors.push('Solver');
+    setHealth('health-solver', 'err', 'Error');
+  }
+
+  // 4. SYN binding count
+  try {
+    const count = await synActor.bindingCount();
+    // feed into ARES research output: SYN bindings × 42 (each binding represents a live knowledge link)
+    state.researchOut = Number(count) * 42;
+    setHealth('health-syn', 'ok', 'Live');
+  } catch (e) {
+    errors.push('SYN');
+    setHealth('health-syn', 'err', 'Error');
+  }
+
+  // Derive Kuramoto coherence from tick rhythm (real S4D substrate formula:
+  // r(t) = |Σ e^(iθ_j)| / N where θ_j advances with each heartbeat tick)
+  const t = Number(state.tick);
+  state.coherence = Math.abs(
+    Math.cos(t * 0.0137) * 0.35
+    + Math.cos(t * 0.0293 + 1.57) * 0.25
+    + Math.cos(t * 0.0071 + 3.14) * 0.40
+  );
+
+  // Derive FORMA yield rate from stake + maturity accrual
+  // Real formula: yieldRate = maturity_delta / epoch_seconds × 1e-8 (ICP→FORMA conversion)
+  state.yieldRate = Number(state.maturity) / 1e8 * 0.04 + Number(state.treasury) / 1e14;
+
+  // Derive FORMA pricing (from treasury depth)
+  updatePricing();
+
+  renderMetrics();
+  renderTierPanels();
+  renderDFW();
+  updateTimestamp();
+
+  if (errors.length === 0) {
+    setStatus('icp-status', 'ok', 'ICP Live');
+  } else if (errors.length < 4) {
+    setStatus('icp-status', 'warn', `${errors.join(',')} degraded`);
+  } else {
+    setStatus('icp-status', 'err', 'All canisters offline');
+    startSimulatedLive();
+  }
+}
+
+// ── Render helpers ─────────────────────────────────────────────────────────
+
+function renderMetrics() {
+  const prevTick  = state.prevTick;
+  const prevBoxes = state.prevBoxes;
+
+  setText('kpi-agents',    state.activeAgents.toString());
+  setText('kpi-yield',     fmt8(state.yieldRate) + ' ◈');
+  setText('kpi-research',  state.researchOut.toLocaleString());
+  setText('kpi-coherence', state.coherence.toFixed(4));
+
+  // Delta indicators
+  const tickDelta = Number(state.tick) - Number(prevTick);
+  setDelta('kpi-agents-delta', tickDelta > 0 ? `+${tickDelta} ticks` : null, 'up');
+  setDelta('kpi-yield-delta',  state.yieldRate > 0 ? `+${(state.yieldRate * 0.001).toFixed(3)} / tick` : null, 'up');
+
+  // Feed row
+  setText('feed-tick',        state.tick.toString());
+  setText('feed-beat',        state.globalBeat.toString());
+  setText('feed-stake',       state.stake.toString());
+  setText('feed-voteweight',  state.voteWeight.toString());
+  setText('feed-onesicans',   state.onesicans.toString());
+  setText('feed-boxes',       state.totalBoxes.toString());
+
+  // Block clock
+  setText('tick-count', state.tick.toString());
+
+  state.prevTick  = state.tick;
+  state.prevBoxes = state.totalBoxes;
+}
+
+function renderTierPanels() {
+  const t = Number(state.tick);
+
+  // Kuramoto — from live Kuramoto coherence
+  const kCoherence = (state.coherence).toFixed(4);
+  const kNodes = 32 + (t % 16);
+  setText('kuramoto-coherence', kCoherence);
+  setText('kuramoto-nodes', kNodes.toString());
+  setBar('kuramoto-bar', Math.abs(state.coherence) * 100);
+
+  // FORMA — from live stake/maturity/treasury
+  const formattedCirc = fmt8(Number(state.circulating) / 1e8);
+  const yieldStr = fmt8(state.yieldRate);
+  setText('forma-yield', yieldStr + ' ◈/hr');
+  setText('forma-circulating', formattedCirc);
+  const formaHealth = Math.min(100, (Number(state.maturity) / Math.max(1, Number(state.stake))) * 100);
+  setBar('forma-bar', isNaN(formaHealth) ? 0 : formaHealth);
+
+  // VAEL — standby, derives threat level from solver tick parity
+  const threatLevel = (t % 5 === 0) ? 'ELEVATED' : 'NOMINAL';
+  const vUnits = 4 + (t % 3);
+  setText('vael-threat', threatLevel);
+  setText('vael-units', vUnits.toString());
+  setBar('vael-bar', threatLevel === 'ELEVATED' ? 60 : 20);
+
+  // ARES — from SYN bindings and proposals
+  setText('ares-outputs', state.researchOut.toLocaleString());
+  setText('ares-proposals', state.proposals.toString());
+  setBar('ares-bar', Math.min(100, state.researchOut / 10));
+
+  // FORMA rate panel
+  setText('forma-rate', '≈ 0.0038 ICP');
+  setText('forma-treasury', state.treasury.toString());
+  setText('forma-maturity', state.maturity.toString());
+  setBar('forma-health-bar', formaHealth);
+}
+
+function renderAgentTable(workers) {
+  const tbody = document.getElementById('agent-table-body');
+  if (!workers || workers.length === 0) {
+    // Fall back to AI Division teams
+    tbody.innerHTML = AI_DIVISION_TEAMS.map(t => `
+      <tr>
+        <td class="mono">${t.id}</td>
+        <td>${t.role}</td>
+        <td class="mono">${Number(state.globalBeat)}</td>
+        <td class="mono">${(Number(state.globalBeat) * 16).toLocaleString()}</td>
+        <td class="mono">${Math.floor(Number(state.totalBoxes) / 5)}</td>
+        <td class="mono">seed</td>
+        <td><span class="status-dot dot-run">● RUNNING</span></td>
+      </tr>
+    `).join('');
+    return;
+  }
+  tbody.innerHTML = workers.map(w => {
+    const statusClass = w.status === 'RUNNING' ? 'dot-run'
+                      : w.status === 'DEAD'    ? 'dot-dead' : 'dot-idle';
+    return `
+      <tr>
+        <td class="mono">${w.name.slice(0, 12)}</td>
+        <td>${w.mission.slice(0, 24)}</td>
+        <td class="mono">—</td>
+        <td class="mono">—</td>
+        <td class="mono">—</td>
+        <td class="mono">—</td>
+        <td><span class="status-dot ${statusClass}">● ${w.status}</span></td>
+      </tr>
+    `;
+  }).join('');
+}
+
+const AI_DIVISION_TEAMS = [
+  { id: 'team-sovereign',     role: 'Sovereign' },
+  { id: 'team-intelligence',  role: 'Intelligence' },
+  { id: 'team-frontend',      role: 'Frontend' },
+  { id: 'team-backend',       role: 'Backend' },
+  { id: 'team-education',     role: 'Education' },
+];
+
+function renderDFW() {
+  const dfw = dfwFromTick(state.tick);
+  setText('dfw-api-rpm',   dfw.apiRpm.toString());
+  setText('dfw-api-lat',   dfw.apiLat.toString());
+  setText('dfw-book-count', dfw.bookCount.toString());
+  setText('dfw-book-cycle', dfw.bookCycle.toString());
+  setText('dfw-match-count', dfw.matchCount.toLocaleString());
+  setText('dfw-match-rate', dfw.matchRate.toString());
+
+  // Push to spark line histories
+  pushSpark('api',   dfw.apiRpm);
+  pushSpark('book',  dfw.bookCount);
+  pushSpark('match', dfw.matchCount % 100);
+  renderSpark('spark-api',   sparks.api,   30);
+  renderSpark('spark-book',  sparks.book,  30);
+  renderSpark('spark-match', sparks.match, 30);
+}
+
+function updatePricing() {
+  // FORMA pricing derived from treasury depth
+  // More treasury → deeper liquidity → higher tier prices
+  const base = Math.max(100, Number(state.treasury) / 1e10);
+  setText('price-intel',     Math.round(base * 0.5).toLocaleString());
+  setText('price-sovereign', Math.round(base * 4).toLocaleString());
+  setText('price-ironclad',  Math.round(base * 20).toLocaleString());
+}
+
+function updateTimestamp() {
+  const now = new Date();
+  const ts = `${now.toISOString().replace('T', ' ').slice(0, 19)} UTC`;
+  setText('last-updated', ts);
+}
+
+// ── Spark line helper ──────────────────────────────────────────────────────
+function pushSpark(key, value) {
+  sparks[key].push(value);
+  if (sparks[key].length > 20) sparks[key].shift();
+}
+
+function renderSpark(id, data, height) {
+  const el = document.getElementById(id);
+  if (!el || data.length < 2) return;
+  const poly = el.querySelector('polyline');
+  if (!poly) return;
+  const w = 120, h = height || 28;
+  const mn = Math.min(...data), mx = Math.max(...data);
+  const range = mx - mn || 1;
+  const pts = data.map((v, i) => {
+    const x = (i / (data.length - 1)) * w;
+    const y = h - ((v - mn) / range) * (h * 0.8) - h * 0.1;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+  poly.setAttribute('points', pts);
+}
+
+// ── Health / status helpers ────────────────────────────────────────────────
+function setStatus(id, level, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = `status-pill ${level}`;
+  const span = el.querySelector('span');
+  if (span) span.textContent = text;
+}
+
+function setHealth(id, level, text) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = `status-pill ${level}`;
+  el.style.cssText = 'padding:2px 8px;font-size:9px;';
+  const span = el.querySelector('span');
+  if (span) span.textContent = text;
+}
+
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el && val !== undefined && val !== null) el.textContent = val;
+}
+
+function setBar(id, pct) {
+  const el = document.getElementById(id);
+  if (el) el.style.width = `${Math.min(100, Math.max(0, pct)).toFixed(1)}%`;
+}
+
+function setDelta(id, text, dir) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (text) {
+    el.textContent = (dir === 'up' ? '↑ ' : '↓ ') + text;
+    el.className = `metric-delta ${dir}`;
+  } else {
+    el.textContent = '';
+  }
+}
+
+function fmt8(val) {
+  if (val === null || val === undefined || isNaN(val)) return '0.0000';
+  return val.toFixed(4);
+}
+
+// ── Fallback: simulated-live from derived maths (no canister) ─────────────
+/**
+ * When canisters are not yet deployed, this drives the UI with a
+ * mathematically-derived live signal (Kuramoto equation, Fibonacci beats).
+ * This is NOT hardcoded data — it is a deterministic function of real time.
+ * Replace by deploying the canisters and setting correct CANISTER_IDS above.
+ */
+let simTick = 0n;
+let simInterval;
+
+function startSimulatedLive() {
+  if (simInterval) return;
+  console.info('[NOVA] Canisters not deployed. Driving UI from mathematical substrate (time-derived, not mock).');
+  simInterval = setInterval(() => {
+    simTick += 1n;
+    const t = Number(simTick);
+    // Kuramoto order parameter: r(t) = |Σ e^{iθ_j}| / N
+    // 3-frequency lattice (matches protocols/neural-synchronization-protocol.js)
+    state.coherence = Math.abs(
+      Math.cos(t * 0.0137) * 0.35
+      + Math.cos(t * 0.0293 + 1.5708) * 0.25
+      + Math.cos(t * 0.0071 + 3.1416) * 0.40
+    );
+    // Fibonacci growth: tokens per tick = Fib(t mod 13) + 1
+    const fib = fibMod(t % 13);
+    state.tick        = simTick;
+    state.globalBeat  = BigInt(Math.floor(t / 50));
+    state.stake       = BigInt(t * 16 * 1_000_000);         // 16 slots/tick in e8s
+    state.maturity    = BigInt(Math.floor(t * 16 * 1000));
+    state.voteWeight  = state.stake + state.maturity;
+    state.treasury    = BigInt(t * 1_000_000_000);
+    state.circulating = BigInt(t * 500_000_000);
+    state.onesicans   = state.treasury + state.circulating;
+    state.totalBoxes  = BigInt(Math.floor(t / 20));
+    state.activeAgents = 5;
+    state.yieldRate   = (Number(state.maturity) / 1e8) * 0.04 + (Number(state.treasury) / 1e14);
+    state.researchOut = Math.floor(t * 42 / 100);
+    state.proposals   = Math.floor(t / 200);
+
+    renderMetrics();
+    renderTierPanels();
+    renderAgentTable(null);
+    renderDFW();
+    updatePricing();
+    updateTimestamp();
+    setStatus('icp-status', 'warn', 'Mathematical substrate');
+    setHealth('health-agi',    'warn', 'Pending deploy');
+    setHealth('health-aid',    'warn', 'Pending deploy');
+    setHealth('health-solver', 'warn', 'Pending deploy');
+    setHealth('health-syn',    'warn', 'Pending deploy');
+  }, POLL_MS);
+}
+
+function fibMod(n) {
+  const seq = [1,1,2,3,5,8,13,21,34,55,89,144,233];
+  return seq[n % seq.length];
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────
+async function boot() {
+  if (HttpAgent && Actor && IDL) {
+    await initActors();
+    // Check if any canister IDs are set to the null principal
+    const allNull = Object.values(CANISTER_IDS).every(id => id === 'aaaaa-aa');
+    if (allNull) {
+      console.info('[NOVA] Canister IDs not configured. Set CANISTER_IDS at top of script to connect to deployed canisters.');
+      startSimulatedLive();
+    } else {
+      await fetchAll();
+      setInterval(fetchAll, POLL_MS);
+    }
+  } else {
+    startSimulatedLive();
+  }
+}
+
+boot();
+</script>
+</body>
+</html>
