@@ -1,0 +1,27 @@
+{
+  "name": "@medina/crewex-agi",
+  "version": "1.0.0",
+  "description": "CREWEX AGI — Aviation Crew Intelligence with FAA Part 117 compliance, Samn-Perelli fatigue modeling, bidline optimization, and ground crew scheduling",
+  "main": "crewex-agi.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "crewex",
+    "agi",
+    "crew",
+    "aviation",
+    "faa-part-117",
+    "fatigue-risk",
+    "pilot-scheduling",
+    "flight-attendant",
+    "ground-crew"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/crewex-agi"
+  }
+}

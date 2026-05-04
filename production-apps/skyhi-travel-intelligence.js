@@ -2,16 +2,24 @@
  * Skyhi Travel Intelligence Organism
  *
  * Official Designation: RSHIP-PROD-SKYHI-001
- * Classification: Enterprise Travel Intelligence Production App
+ * Classification: Enterprise Aviation Intelligence Platform
  *
- * Skyhi Group's sovereign intelligence organism for DFW Airport operations.
- * Orchestrates three specialized AGIs — AEROLEX, TRAVEX, and PASSEX — into
- * a unified operational intelligence layer.
+ * The full-spectrum travel intelligence platform for the aviation ecosystem —
+ * airports, airlines, booking platforms, pilots, flight attendants, and
+ * ground crew. Multiple companies connect via the multi-tenant API gateway.
  *
  * Intelligence Organs:
  * - AEROLEX (RSHIP-2026-AEROLEX-001) — Airport Operations & API Bridge
  * - TRAVEX  (RSHIP-2026-TRAVEX-001)  — Travel Demand & Last-Minute Booking
  * - PASSEX  (RSHIP-2026-PASSEX-001)  — Passenger Matching & VIP Routing
+ * - CREWEX  (RSHIP-2026-CREWEX-001)  — Crew Scheduling & Fatigue Intelligence
+ * - VISITEX (RSHIP-2026-VISITEX-001) — Visitor & Booking Platform Gateway
+ *
+ * Tenant Ecosystem:
+ *   AIRLINES:          American Airlines, Delta, United, Southwest, JetBlue, Alaska
+ *   AIRPORTS:          DFW International
+ *   BOOKING PLATFORMS: Expedia, Booking.com, Google Flights, Kayak, Travelport
+ *   CORPORATE TMC:     American Express GBT, BCD Travel
  *
  * Run: node production-apps/skyhi-travel-intelligence.js
  *
@@ -21,94 +29,219 @@
 import { birthAEROLEX } from '../sdk/aerolex-agi/aerolex-agi.js';
 import { birthTRAVEX }  from '../sdk/travex-agi/travex-agi.js';
 import { birthPASSEX }  from '../sdk/passex-agi/passex-agi.js';
+import { birthCREWEX }  from '../sdk/crewex-agi/crewex-agi.js';
+import { birthVISITEX } from '../sdk/visitex-agi/visitex-agi.js';
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
 const PHI     = 1.618033988749895;
 const PHI_INV = 1.0 / PHI;
 
-const DFW_TERMINALS  = ['A', 'B', 'C', 'D', 'E'];
-const DFW_GATE_COUNT = 182;     // DFW total gates
-const DFW_AIRLINES   = ['AA', 'DL', 'UA', 'SW', 'B6', 'AS', 'NK', 'F9'];
+const DFW_AIRLINES = ['AA', 'DL', 'UA', 'SW', 'B6', 'AS', 'NK', 'F9'];
 
-// ── Bootstrap DFW Gate Configuration ─────────────────────────────────────
+// ── Configure DFW Gates ────────────────────────────────────────────────────
 
 function buildDFWGates(aerolex) {
   const terminals = {
-    A: { start: 1,  end: 39,  serviceRate: 28 },
-    B: { start: 1,  end: 24,  serviceRate: 26 },
-    C: { start: 1,  end: 40,  serviceRate: 30 },
-    D: { start: 1,  end: 40,  serviceRate: 30 },
-    E: { start: 1,  end: 39,  serviceRate: 25 },
+    A: { start: 1, end: 8, serviceRate: 28 },
+    B: { start: 1, end: 8, serviceRate: 26 },
+    C: { start: 1, end: 8, serviceRate: 30 },
+    D: { start: 1, end: 8, serviceRate: 30 },
+    E: { start: 1, end: 8, serviceRate: 25 },
   };
-
   for (const [terminal, config] of Object.entries(terminals)) {
-    for (let i = config.start; i <= Math.min(config.end, config.start + 7); i++) {
-      const gateId = `${terminal}${i}`;
-      aerolex.registerGate(gateId, { serviceRate: config.serviceRate, terminal });
+    for (let i = config.start; i <= config.end; i++) {
+      aerolex.registerGate(`${terminal}${i}`, { serviceRate: config.serviceRate, terminal });
     }
   }
 }
 
-// ── Bootstrap DFW Connection Graph ────────────────────────────────────────
+// ── Configure Passenger Connection Graph ──────────────────────────────────
 
 function buildConnectionGraph(passex) {
-  const gates = ['A1','A2','A3','A4','A5','A6','A7','A8',
-                 'B1','B2','B3','B4','B5','B6','B7','B8',
-                 'C1','C2','C3','C4','C5','C6','C7','C8',
-                 'D1','D2','D3','D4','D5','D6','D7','D8',
-                 'E1','E2','E3','E4','E5','E6','E7','E8'];
-
+  const gates = ['A','B','C','D','E'].flatMap(t =>
+    Array.from({ length: 8 }, (_, i) => `${t}${i+1}`)
+  );
   passex.buildConnectionGraph(gates, [
-    // Skybridge connections (same terminal — walkable)
     ...['A','B','C','D','E'].flatMap(t =>
       Array.from({ length: 7 }, (_, i) => [`${t}${i+1}`, `${t}${i+2}`])
     ),
-    // Cross-terminal Skylink (A↔B, C↔D, D↔E)
     ['A1','B1'], ['B1','C1'], ['C1','D1'], ['D1','E1'],
   ]);
 }
 
-// ── Seed DFW Flight Inventory ─────────────────────────────────────────────
+// ── Configure VISITEX Routes ───────────────────────────────────────────────
 
-function seedFlights(aerolex, travex) {
-  const now   = Date.now();
-  const demos = [
-    { id: 'AA1042', airline: 'AA', dest: 'LAX', dep: now + 45  * 60_000, seats: 150, fare: 240, gate: 'D38' },
-    { id: 'AA2204', airline: 'AA', dest: 'ORD', dep: now + 75  * 60_000, seats: 160, fare: 195, gate: 'D12' },
-    { id: 'DL887',  airline: 'DL', dest: 'JFK', dep: now + 55  * 60_000, seats: 150, fare: 275, gate: 'E17' },
-    { id: 'UA504',  airline: 'UA', dest: 'SFO', dep: now + 90  * 60_000, seats: 160, fare: 310, gate: 'C22' },
-    { id: 'SW1331', airline: 'SW', dest: 'MDW', dep: now + 30  * 60_000, seats: 143, fare: 140, gate: 'A8'  },
-    { id: 'B6618',  airline: 'B6', dest: 'BOS', dep: now + 110 * 60_000, seats: 150, fare: 220, gate: 'C11' },
-    { id: 'AA3317', airline: 'AA', dest: 'MIA', dep: now + 115 * 60_000, seats: 160, fare: 190, gate: 'D29' },
-    { id: 'AS421',  airline: 'AS', dest: 'SEA', dep: now + 100 * 60_000, seats: 160, fare: 280, gate: 'B6'  },
+function buildRoutes(visitex) {
+  const routes = [
+    ['DFW-LAX', { airline: 'AA', distKm: 1982, capacity: 150 }],
+    ['DFW-ORD', { airline: 'AA', distKm: 1443, capacity: 160 }],
+    ['DFW-JFK', { airline: 'DL', distKm: 2475, capacity: 150 }],
+    ['DFW-SFO', { airline: 'UA', distKm: 2858, capacity: 160 }],
+    ['DFW-MDW', { airline: 'SW', distKm: 1443, capacity: 143 }],
+    ['DFW-BOS', { airline: 'B6', distKm: 2699, capacity: 150 }],
+    ['DFW-MIA', { airline: 'AA', distKm: 1865, capacity: 160 }],
+    ['DFW-SEA', { airline: 'AS', distKm: 2833, capacity: 160 }],
+  ];
+  for (const [key, details] of routes) visitex.registerRoute(key, details);
+}
+
+// ── Register Multi-Tenant Ecosystem ───────────────────────────────────────
+
+function buildTenants(visitex) {
+  // Airlines
+  const airlines = [
+    { id: 'TENANT-AA', name: 'American Airlines', type: 'AIRLINE', tier: 'enterprise',
+      routes: ['DFW-LAX','DFW-ORD','DFW-MIA'] },
+    { id: 'TENANT-DL', name: 'Delta Air Lines',   type: 'AIRLINE', tier: 'enterprise',
+      routes: ['DFW-JFK'] },
+    { id: 'TENANT-UA', name: 'United Airlines',   type: 'AIRLINE', tier: 'enterprise',
+      routes: ['DFW-SFO'] },
+    { id: 'TENANT-SW', name: 'Southwest Airlines',type: 'AIRLINE', tier: 'premium',
+      routes: ['DFW-MDW'] },
+    { id: 'TENANT-B6', name: 'JetBlue Airways',   type: 'AIRLINE', tier: 'premium',
+      routes: ['DFW-BOS'] },
+    { id: 'TENANT-AS', name: 'Alaska Airlines',   type: 'AIRLINE', tier: 'premium',
+      routes: ['DFW-SEA'] },
   ];
 
-  for (const f of demos) {
-    aerolex.registerFlight(f.id, {
-      gate: f.gate, destination: f.dest, scheduledDep: f.dep,
-    });
-    aerolex.assignFlightToGate(f.id, f.gate);
+  // Airport
+  const airports = [
+    { id: 'TENANT-DFW', name: 'DFW International Airport', type: 'AIRPORT', tier: 'enterprise',
+      routes: [] }, // receives all events
+  ];
 
-    travex.registerFlight(f.id, {
-      airline: f.airline, destination: f.dest,
-      scheduledDep: f.dep, totalSeats: f.seats,
-      fareClass: 'Y',
-    });
-    travex.updateInventory(f.id, {
-      soldSeats: Math.floor(f.seats * (0.60 + Math.random() * 0.25)),
-      baseFare: f.fare,
+  // Booking Platforms
+  const platforms = [
+    { id: 'TENANT-EXPEDIA',    name: 'Expedia',           type: 'OTA',       tier: 'enterprise', routes: [] },
+    { id: 'TENANT-BOOKING',    name: 'Booking.com',       type: 'OTA',       tier: 'enterprise', routes: [] },
+    { id: 'TENANT-GOOGLE',     name: 'Google Flights',    type: 'OTA',       tier: 'enterprise', routes: [] },
+    { id: 'TENANT-KAYAK',      name: 'Kayak',             type: 'METASEARCH',tier: 'premium',    routes: [] },
+    { id: 'TENANT-TRAVELPORT', name: 'Travelport GDS',    type: 'GDS',       tier: 'enterprise', routes: [] },
+    { id: 'TENANT-AMEXGBT',    name: 'Amex GBT',          type: 'CORPORATE', tier: 'enterprise', routes: [] },
+    { id: 'TENANT-BCD',        name: 'BCD Travel',        type: 'CORPORATE', tier: 'premium',    routes: [] },
+  ];
+
+  for (const t of [...airlines, ...airports, ...platforms]) {
+    visitex.registerTenant(t.id, t);
+  }
+}
+
+// ── Seed Aviation Crew ─────────────────────────────────────────────────────
+
+function seedCrew(crewex) {
+  const now = Date.now();
+  const sixMonths = new Date(now + 180 * 86_400_000).toISOString().slice(0,10);
+
+  // Pilots
+  crewex.registerCrew('PILOT-AA-001', {
+    role: 'pilot', airline: 'AA', base: 'DFW',
+    typeRatings: ['B737', 'B757', 'A320'],
+    medCertExpiry: sixMonths, seniority: 12,
+    recencyFlights: [{ type: 'B737', ts: now - 5 * 86_400_000 }],
+  });
+  crewex.registerCrew('PILOT-AA-002', {
+    role: 'pilot', airline: 'AA', base: 'DFW',
+    typeRatings: ['B737', 'A320'],
+    medCertExpiry: sixMonths, seniority: 5,
+    recencyFlights: [{ type: 'B737', ts: now - 2 * 86_400_000 }],
+  });
+  crewex.registerCrew('PILOT-DL-001', {
+    role: 'pilot', airline: 'DL', base: 'DFW',
+    typeRatings: ['B757', 'A330'],
+    medCertExpiry: sixMonths, seniority: 9,
+    recencyFlights: [{ type: 'B757', ts: now - 10 * 86_400_000 }],
+  });
+  crewex.registerCrew('PILOT-UA-001', {
+    role: 'pilot', airline: 'UA', base: 'DFW',
+    typeRatings: ['B737', 'B787'],
+    medCertExpiry: sixMonths, seniority: 7,
+    recencyFlights: [{ type: 'B737', ts: now - 3 * 86_400_000 }],
+  });
+
+  // Flight Attendants
+  const fas = ['FA-AA-001','FA-AA-002','FA-DL-001','FA-UA-001','FA-SW-001','FA-B6-001'];
+  const faAirlines = ['AA','AA','DL','UA','SW','B6'];
+  for (let i = 0; i < fas.length; i++) {
+    crewex.registerCrew(fas[i], {
+      role: 'fa', airline: faAirlines[i], base: 'DFW',
+      typeRatings: ['B737','A320'], medCertExpiry: sixMonths, seniority: i + 1,
+      recencyFlights: [{ type: 'B737', ts: now - i * 86_400_000 }],
     });
   }
 
-  // Connection chain: AA1042 → AA2204 (connection flight)
-  aerolex.connectFlights('AA1042', 'AA2204');
-  aerolex.connectFlights('DL887', 'UA504');
+  // Ground Crew
+  const ground = [
+    'GND-DFW-001','GND-DFW-002','GND-DFW-003','GND-DFW-004',
+    'GND-DFW-005','GND-DFW-006','GND-DFW-007','GND-DFW-008',
+  ];
+  for (const id of ground) {
+    crewex.registerCrew(id, {
+      role: 'ground', airline: 'DFW', base: 'DFW',
+      typeRatings: [], medCertExpiry: sixMonths, seniority: 1,
+    });
+    crewex.shiftScheduler.registerStaff(id, { role: 'ground', available: true });
+  }
 
+  // Ground shifts
+  const shiftStart = now;
+  crewex.shiftScheduler.addShift('SHIFT-AM-A',  { start: shiftStart, end: shiftStart + 8*3_600_000, role: 'ground', gateArea: 'A', minCrew: 2 });
+  crewex.shiftScheduler.addShift('SHIFT-AM-D',  { start: shiftStart, end: shiftStart + 8*3_600_000, role: 'ground', gateArea: 'D', minCrew: 2 });
+  crewex.shiftScheduler.addShift('SHIFT-PM-C',  { start: shiftStart, end: shiftStart + 8*3_600_000, role: 'ground', gateArea: 'C', minCrew: 2 });
+  crewex.shiftScheduler.addShift('SHIFT-PM-E',  { start: shiftStart, end: shiftStart + 8*3_600_000, role: 'ground', gateArea: 'E', minCrew: 2 });
+
+  // Trips
+  crewex.registerTrip('TRIP-AA-DFW-LAX', { airline: 'AA', flightNumbers: ['AA1042'], aircraftType: 'B737', base: 'DFW' });
+  crewex.registerTrip('TRIP-DL-DFW-JFK', { airline: 'DL', flightNumbers: ['DL887'],  aircraftType: 'B757', base: 'DFW' });
+
+  // Assign bidlines
+  crewex.assignBidline('PILOT-AA-001', ['TRIP-AA-DFW-LAX']);
+  crewex.assignBidline('PILOT-AA-002', ['TRIP-AA-DFW-LAX']);
+  crewex.assignBidline('PILOT-DL-001', ['TRIP-DL-DFW-JFK']);
+  crewex.assignBidline('FA-AA-001',    ['TRIP-AA-DFW-LAX']);
+  crewex.assignBidline('FA-DL-001',    ['TRIP-DL-DFW-JFK']);
+}
+
+// ── Seed Flights ───────────────────────────────────────────────────────────
+
+function seedFlights(aerolex, travex, visitex) {
+  const now = Date.now();
+  const demos = [
+    { id: 'AA1042', airline: 'AA', dest: 'LAX', dep: now + 45  * 60_000, seats: 150, fare: 240, gate: 'D1', route: 'DFW-LAX' },
+    { id: 'AA2204', airline: 'AA', dest: 'ORD', dep: now + 75  * 60_000, seats: 160, fare: 195, gate: 'D2', route: 'DFW-ORD' },
+    { id: 'DL887',  airline: 'DL', dest: 'JFK', dep: now + 55  * 60_000, seats: 150, fare: 275, gate: 'E1', route: 'DFW-JFK' },
+    { id: 'UA504',  airline: 'UA', dest: 'SFO', dep: now + 90  * 60_000, seats: 160, fare: 310, gate: 'C1', route: 'DFW-SFO' },
+    { id: 'SW1331', airline: 'SW', dest: 'MDW', dep: now + 30  * 60_000, seats: 143, fare: 140, gate: 'A1', route: 'DFW-MDW' },
+    { id: 'B6618',  airline: 'B6', dest: 'BOS', dep: now + 110 * 60_000, seats: 150, fare: 220, gate: 'C2', route: 'DFW-BOS' },
+    { id: 'AA3317', airline: 'AA', dest: 'MIA', dep: now + 115 * 60_000, seats: 160, fare: 190, gate: 'D3', route: 'DFW-MIA' },
+    { id: 'AS421',  airline: 'AS', dest: 'SEA', dep: now + 100 * 60_000, seats: 160, fare: 280, gate: 'B1', route: 'DFW-SEA' },
+  ];
+
+  for (const f of demos) {
+    aerolex.registerFlight(f.id, { gate: f.gate, destination: f.dest, scheduledDep: f.dep });
+    aerolex.assignFlightToGate(f.id, f.gate);
+
+    travex.registerFlight(f.id, {
+      airline: f.airline, destination: f.dest, scheduledDep: f.dep,
+      totalSeats: f.seats, fareClass: 'Y',
+    });
+    const sold = Math.floor(f.seats * (0.60 + Math.random() * 0.25));
+    travex.updateInventory(f.id, { soldSeats: sold, baseFare: f.fare });
+
+    // Seed booking signals into VISITEX
+    visitex._handleBookingSignal(
+      { tenantId: `TENANT-${f.airline}`, name: f.airline },
+      { routeKey: f.route, fareClass: 'Y', amount: f.fare, channel: 'DIRECT',
+        loadFactor: sold / f.seats }
+    );
+  }
+
+  aerolex.connectFlights('AA1042', 'AA2204');
+  aerolex.connectFlights('DL887',  'UA504');
   return demos;
 }
 
-// ── Seed Passenger Graph ───────────────────────────────────────────────────
+// ── Seed Passengers ────────────────────────────────────────────────────────
 
 function seedPassengers(passex) {
   const profiles = [
@@ -121,210 +254,264 @@ function seedPassengers(passex) {
     { anonId: 'PSX-007', tier: 'preferred',  origin: 'BOS', dest: 'SEA', inbound: 'B6618',  outbound: 'AS421'  },
     { anonId: 'PSX-008', tier: 'standard',   origin: 'MIA', dest: 'ORD', inbound: 'AA3317', outbound: 'AA2204' },
   ];
-
   for (const p of profiles) passex.registerPassenger(p.anonId, p);
 }
 
 // ── Intelligence Cycle ─────────────────────────────────────────────────────
 
-function runIntelligenceCycle(cycle, { aerolex, travex, passex }) {
-  console.log(`\n${'═'.repeat(70)}`);
-  console.log(`  SKYHI TRAVEL INTELLIGENCE — CYCLE ${cycle.toString().padStart(3, '0')}`);
+function runIntelligenceCycle(cycle, { aerolex, travex, passex, crewex, visitex }) {
+  console.log(`\n${'═'.repeat(72)}`);
+  console.log(`  SKYHI AVIATION INTELLIGENCE — CYCLE ${cycle.toString().padStart(3, '0')}`);
   console.log(`  ${new Date().toISOString()}`);
-  console.log(`${'═'.repeat(70)}`);
+  console.log(`${'═'.repeat(72)}`);
 
   // ── AEROLEX: Airport Operations ──────────────────────────────────────────
-  const opsTick  = aerolex.tick(1);
-  const apiStatus = aerolex.apiBridge.health();
+  const opsTick = aerolex.tick(1);
+  aerolex.logAPIRequest({ latencyMs: 40 + Math.random() * 70, success: true, endpoint: 'dfw-gates' });
+  aerolex.logAPIRequest({ latencyMs: 25 + Math.random() * 55, success: true, endpoint: 'dfw-departures' });
 
-  // Simulate API requests
-  aerolex.logAPIRequest({ latencyMs: 45 + Math.random() * 80, success: true, endpoint: 'dfw-gates' });
-  aerolex.logAPIRequest({ latencyMs: 30 + Math.random() * 60, success: true, endpoint: 'dfw-departures' });
+  console.log('\n  ┌─ AEROLEX: Airport Operations ──────────────────────────────────');
+  console.log(`  │  API: ${aerolex.apiBridge.health().toUpperCase().padEnd(10)} | ${aerolex.apiBridge.requestsPerMinute()} req/min | ${aerolex.apiBridge.avgLatency().toFixed(0)}ms avg`);
+  console.log(`  │  Delays: ${opsTick.delaySnapshot.delayed}/${opsTick.delaySnapshot.totalFlights} flights | Interventions: ${aerolex.autonomousInterventions.length}`);
 
-  console.log('\n  ┌─ AEROLEX: Airport Operations ─────────────────────────────────');
-  console.log(`  │  API Bridge: ${apiStatus.toUpperCase().padEnd(12)} | Requests/min: ${aerolex.apiBridge.requestsPerMinute()}`);
-  console.log(`  │  Avg Latency: ${aerolex.apiBridge.avgLatency().toFixed(1)}ms | Error Rate: ${(aerolex.apiBridge.errorRate() * 100).toFixed(2)}%`);
-  console.log(`  │  Delays tracked: ${opsTick.delaySnapshot.delayed} / ${opsTick.delaySnapshot.totalFlights} flights`);
-  console.log(`  │  Gate reallocations: ${aerolex.gateReallocations} | Auto-interventions: ${aerolex.autonomousInterventions.length}`);
-
-  // Simulate occasional delay
   if (cycle === 2) {
     const cascade = aerolex.reportDelay('DL887', 22, 'DL');
-    console.log(`  │  ⚠  Delay injected: DL887 +22min → ${cascade.affectedConnections.length} connection(s) affected`);
-    travex.injectSignal('CONNECTION_MISS', 0.8, { trigger: 'DL887-delay' });
+    console.log(`  │  ⚠  DL887 +22min → ${cascade.affectedConnections.length} connection(s) cascaded`);
+    travex.injectSignal('CONNECTION_MISS', 0.8, { trigger: 'DL887-22min' });
+    visitex.broadcastFlightEvent({ type: 'DELAY', flightId: 'DL887', delayMinutes: 22, routeKey: 'DFW-JFK' });
     passex.passengers.get('PSX-002')?.updateFrustration(22);
+    crewex.crew.get('PILOT-DL-001') && (crewex.crew.get('PILOT-DL-001').wakingHours += 0.4);
   }
+
   if (cycle === 4) {
     const cascade = aerolex.reportDelay('SW1331', 15, 'SW');
-    console.log(`  │  ⚠  Delay injected: SW1331 +15min → ${cascade.affectedConnections.length} connection(s) affected`);
-    travex.injectSignal('CAPACITY_COLLAPSE', 0.6, { trigger: 'SW1331-delay' });
+    console.log(`  │  ⚠  SW1331 +15min → ${cascade.affectedConnections.length} connection(s) cascaded`);
+    travex.injectSignal('CAPACITY_COLLAPSE', 0.65, { trigger: 'SW1331-15min' });
+    visitex.broadcastFlightEvent({ type: 'DELAY', flightId: 'SW1331', delayMinutes: 15, routeKey: 'DFW-MDW' });
   }
 
-  // ── TRAVEX: Booking Engine ───────────────────────────────────────────────
+  // ── TRAVEX: Booking Intelligence ─────────────────────────────────────────
   const scan = travex.scan();
 
-  console.log('\n  ├─ TRAVEX: Last-Minute Booking Engine ─────────────────────────');
-  console.log(`  │  Scan #${scan.scanCycle.toString().padStart(3,'0')}: ${scan.flightsScanned} flights | ${scan.opportunities.length} opportunities | ${scan.scanMs}ms`);
-  console.log(`  │  Acceptance rate: ${(travex.acceptanceRate * 100).toFixed(1)}% | Total recovered: $${travex.recoveredRevenue.toFixed(2)}`);
+  console.log('\n  ├─ TRAVEX: Last-Minute Booking Engine ──────────────────────────');
+  console.log(`  │  Scan #${scan.scanCycle}: ${scan.flightsScanned} flights | ${scan.opportunities.length} opps | ${scan.scanMs}ms | acc: ${(travex.acceptanceRate*100).toFixed(0)}%`);
 
-  if (scan.opportunities.length > 0) {
-    const top3 = scan.opportunities.slice(0, 3);
-    for (const opp of top3) {
-      console.log(`  │  → [${opp.urgency}] ${opp.flightId} → ${opp.destination} | ${opp.availableSeats} seats | conf: ${(opp.confidence * 100).toFixed(0)}% | est. $${opp.estimatedRecovery.toFixed(0)}`);
-    }
+  const topOpps = scan.opportunities.slice(0, 3);
+  for (const opp of topOpps) {
+    console.log(`  │  → [${opp.urgency}] ${opp.flightId}→${opp.destination} | ${opp.availableSeats} seats | ${(opp.confidence*100).toFixed(0)}% conf | $${opp.estimatedRecovery.toFixed(0)}`);
+  }
 
-    // Simulate booking acceptance on first opportunity (cycle 1)
-    if (cycle === 1 && top3[0]) {
-      travex.recordOutcome(top3[0].id, { accepted: true, bookedSeats: 3, actualRevenue: top3[0].estimatedRecovery * 0.7 });
-      console.log(`  │  ✓  Accepted: ${top3[0].id} — revenue recovered`);
+  if (cycle === 1 && topOpps[0]) {
+    travex.recordOutcome(topOpps[0].id, { accepted: true, bookedSeats: 4, actualRevenue: topOpps[0].estimatedRecovery * 0.72 });
+    console.log(`  │  ✓  Booked: ${topOpps[0].id} — $${(topOpps[0].estimatedRecovery * 0.72).toFixed(0)} recovered`);
+  }
+
+  // ── PASSEX: Passenger Intelligence ───────────────────────────────────────
+  const vipScan = passex.runVIPScan(cycle === 2 ? 25 : 5);
+
+  console.log('\n  ├─ PASSEX: Passenger Intelligence ──────────────────────────────');
+  console.log(`  │  ${passex.passengers.size} profiles | VIP alerts: ${passex.vipAlerts} | match rate: ${passex.totalMatchAttempts > 0 ? (passex.successfulMatches/passex.totalMatchAttempts*100).toFixed(0) : 'N/A'}%`);
+
+  if (cycle === 1) {
+    const m = passex.matchConnection('PSX-001', { currentGate: 'D1', destinationGate: 'E5', availableMinutes: 45 });
+    console.log(`  │  PSX-001: ${m.success ? '✓' : '✗'} ${m.path?.join('→')} | ${m.walkMinutes}min walk`);
+  }
+
+  if (cycle === 3) {
+    const m = passex.matchConnection('PSX-004', { currentGate: 'C1', destinationGate: 'D2', availableMinutes: 30 });
+    console.log(`  │  PSX-004: ${m.success ? '✓' : '✗'} ${m.path?.join('→')} | ${m.walkMinutes}min walk`);
+    const pred = passex.predictGateFlow('D1', 10);
+    console.log(`  │  Gate D1 forecast +10min: ${pred.expectedArrivals} pax [±${pred.stddev}]`);
+  }
+
+  for (const alert of vipScan.alerts) {
+    console.log(`  │  🔔 ${alert.tier.toUpperCase()} ${alert.anonId}: ${(alert.frustrationScore*100).toFixed(0)}% → ${alert.action}`);
+  }
+
+  // ── CREWEX: Crew Intelligence ─────────────────────────────────────────────
+  const fatigueReport = crewex.scanFatigue(cycle === 2 ? 22 : 0);
+  const aaFlightCoverage = crewex.checkFlightCoverage('TRIP-AA-DFW-LAX');
+
+  console.log('\n  ├─ CREWEX: Aviation Crew Intelligence ──────────────────────────');
+  console.log(`  │  Crew: ${crewex.crew.size} registered | ${[...crewex.crew.values()].filter(c=>c.role==='pilot').length} pilots | ${[...crewex.crew.values()].filter(c=>c.role==='fa').length} FAs | ${[...crewex.crew.values()].filter(c=>c.role==='ground').length} ground`);
+  console.log(`  │  AA1042 coverage: ${aaFlightCoverage.covered ? '✓ COVERED' : '✗ UNCOVERED'} (${aaFlightCoverage.qualifiedPilots}/2 pilots)`);
+
+  if (fatigueReport.alerts.length > 0) {
+    for (const a of fatigueReport.alerts) {
+      console.log(`  │  ⚠  ${a.role.toUpperCase()} ${a.crewId}: fatigue ${a.fatigueScore}/7 → ${a.severity} — ${a.recommendation}`);
     }
   } else {
-    console.log(`  │  No opportunities in window`);
+    console.log(`  │  Fatigue: all crew within safe limits`);
   }
 
-  // ── PASSEX: Passenger Intelligence ──────────────────────────────────────
-  const vipScan = passex.runVIPScan(cycle === 2 ? 25 : 5); // spike delay on cycle 2
-
-  // Test connection match for VIP PSX-001
-  let matchResult = null;
   if (cycle === 1) {
-    matchResult = passex.matchConnection('PSX-001', {
-      currentGate: 'D1',
-      destinationGate: 'E5',
-      availableMinutes: 45,
-    });
+    const sched = crewex.scheduleGroundCrew();
+    console.log(`  │  Ground shifts: ${sched.coverage.covered}/${sched.coverage.totalShifts} covered`);
   }
 
-  console.log('\n  └─ PASSEX: Passenger Intelligence ─────────────────────────────');
-  console.log(`  │  Active profiles: ${passex.passengers.size} | VIP alerts: ${passex.vipAlerts}`);
-  console.log(`  │  Match rate: ${passex.totalMatchAttempts > 0 ? (passex.successfulMatches / passex.totalMatchAttempts * 100).toFixed(1) : 'N/A'}% | Avg latency: ${passex._avgMatchLatency().toFixed(1)}ms`);
-
-  if (matchResult) {
-    console.log(`  │  PSX-001 routing: ${matchResult.success ? '✓ MATCHED' : '✗ NO PATH'} | Path: ${matchResult.path?.join(' → ')} | Walk: ${matchResult.walkMinutes}min`);
-  }
-
-  if (vipScan.alerts.length > 0) {
-    for (const alert of vipScan.alerts) {
-      console.log(`  │  🔔 ${alert.tier.toUpperCase()} ${alert.anonId}: frustration ${(alert.frustrationScore * 100).toFixed(0)}% → ${alert.action}`);
-    }
-  }
-
-  // Flow prediction for cycle 3
   if (cycle === 3) {
-    const pred = passex.predictGateFlow('D1', 10);
-    console.log(`  │  Gate D1 flow forecast (+10min): ${pred.expectedArrivals} pax [95% CI: ${pred.confidence95[0]}–${pred.confidence95[1]}]`);
+    // Compliance check on active pilots
+    const check1 = crewex.checkCompliance('PILOT-AA-001');
+    const check2 = crewex.checkCompliance('PILOT-DL-001');
+    console.log(`  │  Part 117 check — AA pilot: ${check1.compliant ? '✓ COMPLIANT' : '✗ VIOLATION'} | DL pilot: ${check2.compliant ? '✓ COMPLIANT' : '✗ VIOLATION'}`);
   }
+
+  // ── VISITEX: Booking Platform Gateway ────────────────────────────────────
+  // Simulate API calls from multiple tenants
+  const expFare = visitex.apiRequest('TENANT-EXPEDIA', { endpoint: 'GET /fares', params: { routeKey: 'DFW-LAX', channel: 'OTA' } });
+  const dlYield  = visitex.apiRequest('TENANT-DL',     { endpoint: 'GET /route-yield', params: { routeKey: 'DFW-JFK' } });
+  const forecast = visitex.apiRequest('TENANT-AMEXGBT',{ endpoint: 'GET /demand-forecast', params: { origin: 'DFW', destination: 'LAX', windowDays: 30 } });
+  const optimized = visitex.optimizeAllFares();
+
+  console.log('\n  └─ VISITEX: Multi-Tenant Booking Gateway ───────────────────────');
+  console.log(`  │  Tenants: ${visitex.tenants.size} | API calls: ${visitex.apiCallsTotal} | Events queued: ${visitex.webhookEventsQueued}`);
+  const byType = visitex.tenantsByType();
+  console.log(`  │  ${Object.entries(byType).map(([t,n]) => `${t}:${n}`).join(' | ')}`);
+  if (expFare.success) {
+    console.log(`  │  Expedia DFW-LAX: Y $${expFare.fares?.Y} | J $${expFare.fares?.J} | F $${expFare.fares?.F}`);
+  }
+  if (dlYield.success) {
+    console.log(`  │  DL DFW-JFK yield: LF ${(dlYield.avgLoadFactor*100).toFixed(0)}% | top ch: ${dlYield.topChannel} | opt fare: $${dlYield.optimalFare}`);
+  }
+  if (forecast.success) {
+    console.log(`  │  Amex GBT DFW→LAX: ${forecast.projectedPassengers} pax / 30d | ${forecast.dailyAvg}/day | Kelly: ${forecast.kellyAllocation}`);
+  }
+  const raiseFare = optimized.filter(r => r.action === 'RAISE_FARE').length;
+  const reduceFare = optimized.filter(r => r.action === 'REDUCE_FARE').length;
+  console.log(`  │  Fare optimizer: ${raiseFare} routes RAISE | ${reduceFare} routes REDUCE | ${optimized.length - raiseFare - reduceFare} HOLD`);
 }
 
-// ── Status Digest ──────────────────────────────────────────────────────────
+// ── Final Status Digest ────────────────────────────────────────────────────
 
-function printStatusDigest({ aerolex, travex, passex }) {
-  console.log(`\n${'═'.repeat(70)}`);
-  console.log('  SKYHI INTELLIGENCE DIGEST — END OF SESSION');
-  console.log(`${'═'.repeat(70)}`);
+function printStatusDigest({ aerolex, travex, passex, crewex, visitex }) {
+  console.log(`\n${'═'.repeat(72)}`);
+  console.log('  SKYHI AVIATION INTELLIGENCE — SESSION DIGEST');
+  console.log(`${'═'.repeat(72)}`);
 
   const as = aerolex.getAGIStatus();
   const ts = travex.getAGIStatus();
   const ps = passex.getAGIStatus();
+  const cs = crewex.getAGIStatus();
+  const vs = visitex.getAGIStatus();
 
-  console.log('\n  AEROLEX STATUS');
-  console.log(`    Operational ticks:    ${as.airportOperations.operationalTick}`);
-  console.log(`    Gates managed:        ${as.airportOperations.gates}`);
-  console.log(`    Reallocations:        ${as.airportOperations.gateReallocations}`);
-  console.log(`    Auto-interventions:   ${as.airportOperations.autonomousInterventions}`);
-  console.log(`    API health:           ${as.apiBridge.health}`);
-  console.log(`    API req/min:          ${as.apiBridge.requestsPerMinute}`);
-  console.log(`    Avg latency:          ${as.apiBridge.avgLatencyMs}ms`);
-  console.log(`    Delays tracked:       ${as.delayIntelligence.delayed}`);
+  const row = (label, value) =>
+    console.log(`    ${label.padEnd(28)} ${value}`);
 
-  console.log('\n  TRAVEX STATUS');
-  console.log(`    Scan cycles:          ${ts.bookingIntelligence.scanCycles}`);
-  console.log(`    Opportunities found:  ${ts.bookingIntelligence.opportunitiesFound}`);
-  console.log(`    Recommendations:      ${ts.bookingIntelligence.recommendationsIssued}`);
-  console.log(`    Acceptance rate:      ${(ts.bookingIntelligence.acceptanceRate * 100).toFixed(1)}%`);
-  console.log(`    Revenue recovered:    $${ts.bookingIntelligence.recoveredRevenue}`);
-  console.log(`    Open flights:         ${ts.inventory.openFlights}`);
+  console.log('\n  ▸ AEROLEX — Airport Operations');
+  row('Operational ticks:',          String(as.airportOperations.operationalTick));
+  row('Gates managed:',              String(as.airportOperations.gates));
+  row('Auto-interventions:',         String(as.airportOperations.autonomousInterventions));
+  row('API health:',                 as.apiBridge.health);
+  row('Avg API latency:',            `${as.apiBridge.avgLatencyMs}ms`);
 
-  console.log('\n  PASSEX STATUS');
-  console.log(`    Passenger profiles:   ${ps.passengerGraph.totalPassengers}`);
-  console.log(`    VIP passengers:       ${ps.passengerGraph.vipPassengers}`);
-  console.log(`    Match attempts:       ${ps.connectionMatching.totalAttempts}`);
-  console.log(`    Match rate:           ${(ps.connectionMatching.matchRate * 100).toFixed(1)}%`);
-  console.log(`    Avg match latency:    ${ps.connectionMatching.avgLatencyMs}ms`);
-  console.log(`    VIP alerts issued:    ${ps.vipIntelligence.vipAlertsIssued}`);
-  console.log(`    Gate graph edges:     ${ps.graphTopology.edges}`);
+  console.log('\n  ▸ TRAVEX — Booking Intelligence');
+  row('Scan cycles:',                String(ts.bookingIntelligence.scanCycles));
+  row('Opportunities found:',        String(ts.bookingIntelligence.opportunitiesFound));
+  row('Acceptance rate:',            `${(ts.bookingIntelligence.acceptanceRate * 100).toFixed(1)}%`);
+  row('Revenue recovered:',          `$${ts.bookingIntelligence.recoveredRevenue}`);
 
-  console.log(`\n${'═'.repeat(70)}`);
-  console.log('  RSHIP AGI Systems — Skyhi Group Enterprise License');
-  console.log(`  Organism ID: RSHIP-PROD-SKYHI-001`);
-  console.log(`${'═'.repeat(70)}\n`);
+  console.log('\n  ▸ PASSEX — Passenger Intelligence');
+  row('Active profiles:',            String(ps.passengerGraph.totalPassengers));
+  row('VIP passengers:',             String(ps.passengerGraph.vipPassengers));
+  row('Connection match rate:',      `${(ps.connectionMatching.matchRate * 100).toFixed(1)}%`);
+  row('Avg match latency:',          `${ps.connectionMatching.avgLatencyMs}ms`);
+  row('VIP alerts issued:',          String(ps.vipIntelligence.vipAlertsIssued));
+
+  console.log('\n  ▸ CREWEX — Aviation Crew Intelligence');
+  row('Total crew:',                 String(cs.crewIntelligence.totalCrew));
+  row('Pilots:',                     String(cs.crewIntelligence.pilots));
+  row('Flight attendants:',          String(cs.crewIntelligence.flightAttendants));
+  row('Ground crew:',                String(cs.crewIntelligence.groundCrew));
+  row('Airlines tracked:',           String(cs.crewIntelligence.airlinesTracked));
+  row('Compliance checks:',          String(cs.compliance.checksPerformed));
+  row('FAA violations:',             String(cs.compliance.violations));
+  row('Fatigue alerts:',             String(cs.compliance.fatigueAlerts));
+  row('Auto-reassignments:',         String(cs.compliance.autoReassignments));
+  row('Shifts covered:',             `${cs.scheduling.covered}/${cs.scheduling.totalShifts}`);
+
+  console.log('\n  ▸ VISITEX — Booking Platform Gateway');
+  row('Tenants registered:',         String(vs.multiTenantGateway.totalTenants));
+  row('Tenant types:',               Object.entries(vs.multiTenantGateway.byType).map(([t,n]) => `${t}:${n}`).join(', '));
+  row('Total API calls:',            String(vs.multiTenantGateway.apiCallsTotal));
+  row('Webhook events:',             String(vs.multiTenantGateway.webhookEventsQueued));
+  row('Routes tracked:',             String(vs.routeIntelligence.routesTracked));
+  row('Fare optimizations:',         String(vs.routeIntelligence.fareOptimizations));
+  row('Demand forecasts:',           String(vs.routeIntelligence.demandForecasts));
+
+  console.log(`\n${'═'.repeat(72)}`);
+  console.log('  Platform: RSHIP-PROD-SKYHI-001 | AGIs: AEROLEX·TRAVEX·PASSEX·CREWEX·VISITEX');
+  console.log('  © 2026 RSHIP AGI Systems — Skyhi Group Enterprise License');
+  console.log(`${'═'.repeat(72)}\n`);
 }
 
 // ── Main ───────────────────────────────────────────────────────────────────
 
 async function main() {
-  console.log('\n' + '░'.repeat(70));
-  console.log('  SKYHI TRAVEL INTELLIGENCE ORGANISM');
-  console.log('  RSHIP-PROD-SKYHI-001');
-  console.log('  Powered by AEROLEX · TRAVEX · PASSEX');
-  console.log('  DFW Airport Operations Intelligence');
-  console.log('░'.repeat(70));
+  console.log('\n' + '░'.repeat(72));
+  console.log('  SKYHI AVIATION INTELLIGENCE PLATFORM');
+  console.log('  RSHIP-PROD-SKYHI-001 — Full Ecosystem Edition');
+  console.log('  AEROLEX · TRAVEX · PASSEX · CREWEX · VISITEX');
+  console.log('  Airports · Airlines · Booking Platforms · Pilots · Cabin Crew');
+  console.log('░'.repeat(72));
 
-  // ── Birth AGIs ─────────────────────────────────────────────────────────
+  // ── Birth all 5 AGIs ───────────────────────────────────────────────────
   console.log('\n  Birthing intelligence organs...');
 
-  const aerolex = birthAEROLEX({
-    securityRate: 120,
-    maxLatencyMs: 400,
-  });
+  const aerolex = birthAEROLEX({ securityRate: 120, maxLatencyMs: 400 });
+  const travex   = birthTRAVEX({ bookingWindowMinutes: 120 });
+  const passex   = birthPASSEX();
+  const crewex   = birthCREWEX();
+  const visitex  = birthVISITEX();
 
-  const travex = birthTRAVEX({
-    bookingWindowMinutes: 120,
-  });
+  console.log(`  ✓ AEROLEX  born — ${aerolex.designation}`);
+  console.log(`  ✓ TRAVEX   born — ${travex.designation}`);
+  console.log(`  ✓ PASSEX   born — ${passex.designation}`);
+  console.log(`  ✓ CREWEX   born — ${crewex.designation}`);
+  console.log(`  ✓ VISITEX  born — ${visitex.designation}`);
 
-  const passex = birthPASSEX();
+  // ── Configure Platform Environment ────────────────────────────────────
+  console.log('\n  Configuring platform environment...');
 
-  console.log(`  ✓ AEROLEX born — ${aerolex.designation}`);
-  console.log(`  ✓ TRAVEX  born — ${travex.designation}`);
-  console.log(`  ✓ PASSEX  born — ${passex.designation}`);
-
-  // ── Configure DFW Environment ──────────────────────────────────────────
-  console.log('\n  Configuring DFW environment...');
   buildDFWGates(aerolex);
   buildConnectionGraph(passex);
-  const flights = seedFlights(aerolex, travex);
+  buildRoutes(visitex);
+  buildTenants(visitex);
+  seedCrew(crewex);
+  const flights = seedFlights(aerolex, travex, visitex);
   seedPassengers(passex);
 
-  // Process initial flight arrivals
   passex.processFlightArrival('AA1042', { gateId: 'D1', delayMinutes: 0 });
   passex.processFlightArrival('DL887',  { gateId: 'E1', delayMinutes: 0 });
   passex.processFlightArrival('SW1331', { gateId: 'A1', delayMinutes: 0 });
   passex.recordGateArrivals('D1', 42, 5);
   passex.recordGateArrivals('E1', 38, 5);
 
-  // Warm booking signals
   travex.injectSignal('YIELD_OPPORTUNITY', 0.7, { source: 'startup' });
 
-  console.log(`  ✓ ${flights.length} flights registered across DFW`);
+  // Pilot duty starts
+  crewex.reportDutyStart('PILOT-AA-001', { flightHours: 0 });
+  crewex.reportDutyStart('PILOT-AA-002', { flightHours: 0 });
+  crewex.reportDutyStart('PILOT-DL-001', { flightHours: 0 });
+
+  console.log(`  ✓ ${flights.length} flights active across DFW`);
+  console.log(`  ✓ ${crewex.crew.size} crew registered (${[...crewex.crew.values()].filter(c=>c.role==='pilot').length} pilots, ${[...crewex.crew.values()].filter(c=>c.role==='fa').length} FAs, ${[...crewex.crew.values()].filter(c=>c.role==='ground').length} ground)`);
+  console.log(`  ✓ ${visitex.tenants.size} tenants in booking gateway (${[...visitex.tenants.values()].filter(t=>t.type==='AIRLINE').length} airlines, ${[...visitex.tenants.values()].filter(t=>t.type==='OTA'||t.type==='METASEARCH'||t.type==='GDS').length} platforms)`);
   console.log(`  ✓ ${passex.passengers.size} passenger profiles active`);
   console.log(`  ✓ ${passex.connectionGraph.size} gates in connection graph`);
-  console.log(`  ✓ Intelligence organism alive\n`);
+  console.log(`  ✓ Platform organism alive\n`);
 
-  // ── Run Intelligence Cycles ────────────────────────────────────────────
-  const CYCLES = 5;
-  const CYCLE_DELAY_MS = 800; // 800ms between demo cycles
-
-  for (let cycle = 1; cycle <= CYCLES; cycle++) {
-    await new Promise(r => setTimeout(r, CYCLE_DELAY_MS));
-    runIntelligenceCycle(cycle, { aerolex, travex, passex });
+  // ── Run 5 Intelligence Cycles ──────────────────────────────────────────
+  for (let cycle = 1; cycle <= 5; cycle++) {
+    await new Promise(r => setTimeout(r, 700));
+    runIntelligenceCycle(cycle, { aerolex, travex, passex, crewex, visitex });
   }
 
-  // ── Print Digest ───────────────────────────────────────────────────────
-  await new Promise(r => setTimeout(r, 500));
-  printStatusDigest({ aerolex, travex, passex });
+  // ── Final Digest ───────────────────────────────────────────────────────
+  await new Promise(r => setTimeout(r, 400));
+  printStatusDigest({ aerolex, travex, passex, crewex, visitex });
 }
 
 main().catch(err => {
-  console.error('Skyhi intelligence organism error:', err);
+  console.error('Skyhi platform error:', err);
   process.exit(1);
 });

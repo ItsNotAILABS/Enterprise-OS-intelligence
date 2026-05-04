@@ -1,0 +1,27 @@
+{
+  "name": "@medina/visitex-agi",
+  "version": "1.0.0",
+  "description": "VISITEX AGI — Visitor & Booking Platform Intelligence with multi-tenant API gateway, Kelly Criterion yield optimization, gravity model demand forecasting, and OTA/GDS/direct channel management",
+  "main": "visitex-agi.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "visitex",
+    "agi",
+    "booking-platform",
+    "ota",
+    "yield-management",
+    "demand-forecast",
+    "multi-tenant",
+    "travel-intelligence",
+    "tourism"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/visitex-agi"
+  }
+}
