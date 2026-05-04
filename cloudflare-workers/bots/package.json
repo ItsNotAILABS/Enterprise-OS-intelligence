@@ -1,20 +1,25 @@
 {
   "name": "rship-bots",
-  "version": "1.0.0",
-  "description": "RSHIP AGI Systems — Cloudflare Worker Bots (Slack, Discord, Workflow, Cron, Alerts)",
+  "version": "2.0.0",
+  "description": "RSHIP AGI Systems — Cloudflare Worker Bot Fleet (Slack bots, workflow bus, cron reports, alerts, broadcast)",
   "private": true,
   "scripts": {
     "dev:herald":   "cd herald   && wrangler dev",
     "dev:conduit":  "cd conduit  && wrangler dev",
     "dev:pulse":    "cd pulse    && wrangler dev",
     "dev:sentinel": "cd sentinel && wrangler dev",
+    "dev:imperium": "cd imperium && wrangler dev",
+    "dev:nuntius":  "cd nuntius  && wrangler dev",
 
     "deploy:herald":   "cd herald   && wrangler deploy",
     "deploy:conduit":  "cd conduit  && wrangler deploy",
     "deploy:pulse":    "cd pulse    && wrangler deploy",
     "deploy:sentinel": "cd sentinel && wrangler deploy",
+    "deploy:imperium": "cd imperium && wrangler deploy",
+    "deploy:nuntius":  "cd nuntius  && wrangler deploy",
 
-    "deploy:all": "npm run deploy:herald && npm run deploy:conduit && npm run deploy:pulse && npm run deploy:sentinel"
+    "deploy:slack": "npm run deploy:herald && npm run deploy:imperium && npm run deploy:nuntius",
+    "deploy:all":   "npm run deploy:herald && npm run deploy:conduit && npm run deploy:pulse && npm run deploy:sentinel && npm run deploy:imperium && npm run deploy:nuntius"
   },
   "devDependencies": {
     "wrangler": "^3.0.0"
