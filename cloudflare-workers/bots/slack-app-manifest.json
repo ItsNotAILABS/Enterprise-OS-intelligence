@@ -5,7 +5,7 @@
   },
   "display_information": {
     "name": "RSHIP Intelligence",
-    "description": "RSHIP AGI Systems — sovereign intelligence for your enterprise. Market, supply chain, travel, network status, and full organism control — all from Slack.",
+    "description": "RSHIP AGI for enterprise: market intelligence, supply chain, network status, and organism control - all from Slack.",
     "background_color": "#02050f",
     "long_description": "RSHIP Intelligence connects your Slack workspace to the full RSHIP AGI agent network. HERALD handles intelligence queries (/rship). IMPERIUM controls the entire enterprise organism (/org). All powered by sovereign AI running on the Cloudflare global edge."
   },
@@ -22,19 +22,19 @@
     "slash_commands": [
       {
         "command": "/rship",
-        "description": "RSHIP intelligence — market, supply chain, flight, network status, ask the AI",
+        "description": "RSHIP intelligence - market, supply chain, flight, network status, ask the AI",
         "usage_hint": "[status|market SYMBOL|flight ROUTE|supply NODE|ask QUESTION|help]",
         "should_escape": false
       },
       {
         "command": "/org",
-        "description": "Enterprise control — brief, agents, deploy, alerts, reports, broadcast",
+        "description": "Enterprise control - brief, agents, deploy, alerts, reports, broadcast",
         "usage_hint": "[brief|agents|market SYMBOL|supply|deploy AGENT|alert|report TYPE|speak #channel MESSAGE]",
         "should_escape": false
       },
       {
         "command": "/task",
-        "description": "OPEREX enterprise task & workflow orchestration — create, assign, track, complete",
+        "description": "OPEREX enterprise task and workflow orchestration - create, assign, track, complete",
         "usage_hint": "[new TEMPLATE|workflow WF-ID|create NAME|assign TASK-ID NAME|done TASK-ID|block|escalate|list|report|templates|help]",
         "should_escape": false
       }
