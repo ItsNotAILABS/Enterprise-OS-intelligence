@@ -15,6 +15,7 @@
 | [HERALD](./herald/) | `RSHIP-BOT-HLD-001` | Slack Bot | `/rship` slash command — intelligence queries (market, supply, flight, status, ask) |
 | [IMPERIUM](./imperium/) | `RSHIP-BOT-IMP-001` | Enterprise Control | `/org` slash command — run the entire RSHIP Organism from Slack |
 | [NUNTIUS](./nuntius/) | `RSHIP-BOT-NNT-001` | Broadcast Bot | `/announce` + auto morning/evening briefings → all configured channels |
+| [ARBITER](./arbiter/) | `RSHIP-BOT-ARB-001` | Task Workflow Bot | `/task` slash command — create workflows, assign tasks, track progress, complete work from Slack |
 | [CONDUIT](./conduit/) | `RSHIP-BOT-CDT-001` | Workflow Bus | Webhook message router — route events to any RSHIP agent, broadcast, chain pipelines |
 | [PULSE](./pulse/) | `RSHIP-BOT-PLS-001` | Cron Bot | Scheduled intelligence reports — market, supply chain, network digest → Slack + Discord |
 | [SENTINEL](./sentinel/) | `RSHIP-BOT-SNT-001` | Alert Bot | Real-time threshold monitoring — fires alerts when chaos, disruptions, or signals trigger |

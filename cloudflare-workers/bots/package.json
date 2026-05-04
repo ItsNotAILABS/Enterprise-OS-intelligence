@@ -8,6 +8,7 @@
     "dev:conduit":  "cd conduit  && wrangler dev",
     "dev:pulse":    "cd pulse    && wrangler dev",
     "dev:sentinel": "cd sentinel && wrangler dev",
+    "dev:arbiter":  "cd arbiter  && wrangler dev",
     "dev:imperium": "cd imperium && wrangler dev",
     "dev:nuntius":  "cd nuntius  && wrangler dev",
 
@@ -15,11 +16,12 @@
     "deploy:conduit":  "cd conduit  && wrangler deploy",
     "deploy:pulse":    "cd pulse    && wrangler deploy",
     "deploy:sentinel": "cd sentinel && wrangler deploy",
+    "deploy:arbiter":  "cd arbiter  && wrangler deploy",
     "deploy:imperium": "cd imperium && wrangler deploy",
     "deploy:nuntius":  "cd nuntius  && wrangler deploy",
 
-    "deploy:slack": "npm run deploy:herald && npm run deploy:imperium && npm run deploy:nuntius",
-    "deploy:all":   "npm run deploy:herald && npm run deploy:conduit && npm run deploy:pulse && npm run deploy:sentinel && npm run deploy:imperium && npm run deploy:nuntius"
+    "deploy:slack": "npm run deploy:herald && npm run deploy:imperium && npm run deploy:nuntius && npm run deploy:arbiter",
+    "deploy:all":   "npm run deploy:herald && npm run deploy:conduit && npm run deploy:pulse && npm run deploy:sentinel && npm run deploy:imperium && npm run deploy:nuntius && npm run deploy:arbiter"
   },
   "devDependencies": {
     "wrangler": "^3.0.0"

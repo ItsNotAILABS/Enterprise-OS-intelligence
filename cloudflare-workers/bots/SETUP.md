@@ -3,7 +3,40 @@
 
 ---
 
-## Step 1 — Create the Slack App (2 min)
+## How Slack Slash Commands Work
+
+**You just type a command in any Slack message box and press Enter.** That's it. No code, no buttons.
+
+```
+/org brief        ← type this in any channel → press Enter → bot replies instantly
+/task new INCIDENT client=AcmeCorp
+/announce all 🚀 We're live.
+```
+
+The bot (`@RSHIP`) appears in the channel and responds. Works in DMs too.
+The only one-time setup: wiring the worker URLs in the Slack app settings (Steps 3–4 below).
+
+---
+
+## Option A — Auto-Deploy via GitHub Actions (Recommended — No manual deploy ever again)
+
+Set these 4 secrets in your GitHub repo (**Settings → Secrets and variables → Actions → New repository secret**):
+
+| Secret | How to get it |
+|--------|---------------|
+| `CLOUDFLARE_API_TOKEN` | [dash.cloudflare.com](https://dash.cloudflare.com) → My Profile → API Tokens → Create Token → **Edit Cloudflare Workers** template |
+| `CLOUDFLARE_ACCOUNT_ID` | [dash.cloudflare.com](https://dash.cloudflare.com) → any zone → Overview → scroll right sidebar |
+| `SLACK_BOT_TOKEN` | api.slack.com/apps → your app → OAuth & Permissions → Bot User OAuth Token (`xoxb-...`) |
+| `SLACK_SIGNING_SECRET` | api.slack.com/apps → your app → Basic Information → Signing Secret |
+
+That's it. Every push to `main` that touches `cloudflare-workers/` auto-deploys everything.
+Or manually trigger: **Actions → RSHIP — Auto-Deploy Cloudflare Workers → Run workflow**.
+
+---
+
+## Option B — Deploy Manually (One-time)
+
+
 
 1. Go to **[api.slack.com/apps](https://api.slack.com/apps)** → **Create New App** → **From an app manifest**
 2. Select your workspace
@@ -11,7 +44,7 @@
 4. Click **Create**
 5. Click **Install to Workspace** → **Allow**
 
-Done. Your Slack app now has `/rship`, `/org`, and `/announce` commands registered.
+Done. Your Slack app now has `/rship`, `/org`, `/announce`, and `/task` commands registered.
 
 ---
 
@@ -61,6 +94,19 @@ wrangler secret put NUNTIUS_ALERTS_CHANNEL # channel ID for #rship-alerts
 wrangler deploy
 ```
 
+### Deploy ARBITER (`/task` — workflow & task orchestration)
+
+```bash
+cd cloudflare-workers/bots/arbiter
+
+wrangler secret put SLACK_SIGNING_SECRET   # same as above
+wrangler secret put SLACK_BOT_TOKEN        # same as above
+
+wrangler deploy
+```
+
+URL: `https://rship-arbiter.YOUR-SUBDOMAIN.workers.dev`
+
 ### Deploy PULSE + SENTINEL (optional — scheduled reports + alerts)
 
 ```bash
@@ -95,6 +141,7 @@ In your Slack app → **Slash Commands** → edit each command:
 | `/rship` | `https://rship-herald.YOUR-SUBDOMAIN.workers.dev/slack/command` |
 | `/org` | `https://rship-imperium.YOUR-SUBDOMAIN.workers.dev/slack/command` |
 | `/announce` | `https://rship-nuntius.YOUR-SUBDOMAIN.workers.dev/slack/command` |
+| `/task` | `https://rship-arbiter.YOUR-SUBDOMAIN.workers.dev/slack/command` |
 
 In **Event Subscriptions** → **Request URL**:
 ```
@@ -147,6 +194,17 @@ Copy the webhook URL (`https://hooks.slack.com/services/...`) and use as `PULSE_
 /org speak #rship-ops Today we're live.  → Broadcast to channel
 
 /announce #rship-market VIGIL is now watching BTC.  → Direct broadcast
+
+/task new DEPLOYMENT agent=CEREBRUM     → 7-step agent deployment workflow
+/task new INCIDENT client=AcmeCorp      → Full incident response pipeline
+/task new ONBOARDING name="Acme Inc"    → Enterprise onboarding workflow
+/task new ENTERPRISE_INTAKE             → Sales pipeline
+/task new MARKET_BRIEF                  → Market intelligence workflow
+/task workflows                         → See all active workflows
+/task done T-1ABC230-0001 deployed ok   → Complete task → auto-advances workflow
+/task assign T-1ABC230-0001 Freddy      → Assign task to someone
+/task report                            → Full enterprise report with φ-health score
+/task templates                         → See all 5 workflow templates with step graphs
 ```
 
 ---
@@ -171,6 +229,10 @@ curl https://rship-herald.YOUR-SUBDOMAIN.workers.dev/api/status
 
 # Test IMPERIUM
 curl https://rship-imperium.YOUR-SUBDOMAIN.workers.dev/api/status
+
+# Test ARBITER + see all workflows
+curl https://rship-arbiter.YOUR-SUBDOMAIN.workers.dev/api/workflows
+curl https://rship-arbiter.YOUR-SUBDOMAIN.workers.dev/api/report
 
 # Manually trigger a PULSE report
 curl -X POST https://rship-pulse.YOUR-SUBDOMAIN.workers.dev/report/trigger \

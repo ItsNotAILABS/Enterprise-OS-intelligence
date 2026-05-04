@@ -33,9 +33,9 @@
         "should_escape": false
       },
       {
-        "command": "/announce",
-        "description": "Broadcast a message to RSHIP intelligence channels",
-        "usage_hint": "[#channel] message",
+        "command": "/task",
+        "description": "OPEREX enterprise task & workflow orchestration — create, assign, track, complete",
+        "usage_hint": "[new TEMPLATE|workflow WF-ID|create NAME|assign TASK-ID NAME|done TASK-ID|block|escalate|list|report|templates|help]",
         "should_escape": false
       }
     ]
