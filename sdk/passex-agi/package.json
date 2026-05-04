@@ -1,0 +1,26 @@
+{
+  "name": "@medina/passex-agi",
+  "version": "1.0.0",
+  "description": "PASSEX AGI — Passenger Intelligence with sub-500ms connection matching, VIP proactive routing, and Poisson flow prediction",
+  "main": "passex-agi.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "passex",
+    "agi",
+    "passenger",
+    "connection-matching",
+    "vip-routing",
+    "flow-prediction",
+    "airport",
+    "privacy-preserving"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/passex-agi"
+  }
+}
