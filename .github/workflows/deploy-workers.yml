@@ -1,0 +1,154 @@
+name: "RSHIP — Auto-Deploy Cloudflare Workers"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Automatically deploys all RSHIP Cloudflare Workers and Bots to production
+# whenever code is pushed to the main branch.
+#
+# Every agent + bot redeploys in parallel — zero manual wrangler commands.
+#
+# GitHub Secrets required (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN   — Cloudflare API token with Workers:Edit permission
+#   CLOUDFLARE_ACCOUNT_ID  — Your Cloudflare account ID
+#   SLACK_BOT_TOKEN        — Slack bot OAuth token (xoxb-...) for bot workers
+#   SLACK_SIGNING_SECRET   — Slack app signing secret for bot workers
+#
+# How to get CLOUDFLARE_API_TOKEN:
+#   1. Go to dash.cloudflare.com → My Profile → API Tokens
+#   2. Create Token → Edit Cloudflare Workers template
+#   3. Copy the token → paste into GitHub secret CLOUDFLARE_API_TOKEN
+#
+# How to get CLOUDFLARE_ACCOUNT_ID:
+#   1. Go to dash.cloudflare.com → any zone → Overview
+#   2. Scroll down right sidebar → Account ID
+#   3. Copy → paste into GitHub secret CLOUDFLARE_ACCOUNT_ID
+#
+# Once secrets are set, every push to main auto-deploys everything.
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'cloudflare-workers/**'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Deploy target: all | agents | bots | slack'
+        required: false
+        default: 'all'
+
+concurrency:
+  group: deploy-workers-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # ── Pre-flight: validate secrets exist ──────────────────────────────────────
+  preflight:
+    name: "Pre-flight Check"
+    runs-on: ubuntu-latest
+    outputs:
+      deploy_target: ${{ steps.target.outputs.value }}
+    steps:
+      - name: Determine deploy target
+        id: target
+        run: echo "value=${{ github.event.inputs.target || 'all' }}" >> $GITHUB_OUTPUT
+
+      - name: Check required secrets
+        run: |
+          if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ]; then
+            echo "❌ CLOUDFLARE_API_TOKEN secret not set."
+            echo "   Go to: GitHub repo → Settings → Secrets and variables → Actions → New repository secret"
+            echo "   Get token at: dash.cloudflare.com → My Profile → API Tokens → Create Token → Workers: Edit"
+            exit 1
+          fi
+          if [ -z "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then
+            echo "❌ CLOUDFLARE_ACCOUNT_ID secret not set."
+            echo "   Get it at: dash.cloudflare.com → any domain → Overview → scroll right sidebar"
+            exit 1
+          fi
+          echo "✅ Cloudflare secrets present."
+
+  # ── Deploy: AI Agent Workers ─────────────────────────────────────────────────
+  deploy-agents:
+    name: "Deploy Agent Workers"
+    needs: preflight
+    if: ${{ needs.preflight.outputs.deploy_target == 'all' || needs.preflight.outputs.deploy_target == 'agents' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        agent: [cerebrum, animus, nexus, vigil, cursor, agens]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy ${{ matrix.agent }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: cloudflare-workers/${{ matrix.agent }}
+          command: deploy
+
+  # ── Deploy: Slack & Bot Workers ──────────────────────────────────────────────
+  deploy-bots:
+    name: "Deploy Bot Workers"
+    needs: preflight
+    if: ${{ needs.preflight.outputs.deploy_target == 'all' || needs.preflight.outputs.deploy_target == 'bots' || needs.preflight.outputs.deploy_target == 'slack' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - bot: herald
+            needs_slack: true
+          - bot: imperium
+            needs_slack: true
+          - bot: nuntius
+            needs_slack: true
+          - bot: arbiter
+            needs_slack: true
+          - bot: conduit
+            needs_slack: false
+          - bot: pulse
+            needs_slack: false
+          - bot: sentinel
+            needs_slack: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy ${{ matrix.bot }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: cloudflare-workers/bots/${{ matrix.bot }}
+          command: deploy
+          secrets: |
+            SLACK_BOT_TOKEN
+            SLACK_SIGNING_SECRET
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_SIGNING_SECRET: ${{ secrets.SLACK_SIGNING_SECRET }}
+
+  # ── Summary ──────────────────────────────────────────────────────────────────
+  deploy-summary:
+    name: "Deployment Summary"
+    needs: [deploy-agents, deploy-bots]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report status
+        run: |
+          echo "═══════════════════════════════════════════"
+          echo "  RSHIP Cloudflare Worker Deployment"
+          echo "═══════════════════════════════════════════"
+          echo ""
+          echo "  Agent Workers:  ${{ needs.deploy-agents.result }}"
+          echo "  Bot Workers:    ${{ needs.deploy-bots.result }}"
+          echo ""
+          if [ "${{ needs.deploy-agents.result }}" = "success" ] && [ "${{ needs.deploy-bots.result }}" = "success" ]; then
+            echo "  ✅ RSHIP Organism fully deployed."
+          else
+            echo "  ⚠ Some deployments failed. Check individual job logs above."
+          fi
+          echo "═══════════════════════════════════════════"

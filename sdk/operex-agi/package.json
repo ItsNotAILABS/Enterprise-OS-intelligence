@@ -1,0 +1,24 @@
+{
+  "name": "@medina/operex-agi",
+  "version": "1.0.0",
+  "description": "OPEREX AGI — Enterprise Workflow & Task Orchestration Intelligence. RSHIP-2026-OPEREX-001.",
+  "main": "operex-agi.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "operex",
+    "agi",
+    "workflow",
+    "task-orchestration",
+    "enterprise",
+    "phi",
+    "kuramoto",
+    "slack"
+  ],
+  "exports": {
+    ".": "./operex-agi.js"
+  },
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN LICENSE"
+}

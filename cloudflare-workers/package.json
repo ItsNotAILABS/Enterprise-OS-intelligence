@@ -1,0 +1,45 @@
+{
+  "name": "rship-ais-cloudflare-workers",
+  "version": "4.0.0",
+  "description": "RSHIP AGI Systems — Cloudflare Worker Network: 6 AI Agent workers + 6 Bot workers (Slack, Workflow, Cron, Alerts, Enterprise Control, Broadcast)",
+  "private": true,
+  "scripts": {
+    "dev:cerebrum": "cd cerebrum && wrangler dev",
+    "dev:animus":   "cd animus   && wrangler dev",
+    "dev:agens":    "cd agens    && wrangler dev",
+    "dev:nexus":    "cd nexus    && wrangler dev",
+    "dev:vigil":    "cd vigil    && wrangler dev",
+    "dev:cursor":   "cd cursor   && wrangler dev",
+
+    "deploy:cerebrum": "cd cerebrum && wrangler deploy",
+    "deploy:animus":   "cd animus   && wrangler deploy",
+    "deploy:agens":    "cd agens    && wrangler deploy",
+    "deploy:nexus":    "cd nexus    && wrangler deploy",
+    "deploy:vigil":    "cd vigil    && wrangler deploy",
+    "deploy:cursor":   "cd cursor   && wrangler deploy",
+
+    "dev:herald":   "cd bots/herald   && wrangler dev",
+    "dev:conduit":  "cd bots/conduit  && wrangler dev",
+    "dev:pulse":    "cd bots/pulse    && wrangler dev",
+    "dev:sentinel": "cd bots/sentinel && wrangler dev",
+
+    "deploy:herald":   "cd bots/herald   && wrangler deploy",
+    "deploy:conduit":  "cd bots/conduit  && wrangler deploy",
+    "deploy:pulse":    "cd bots/pulse    && wrangler deploy",
+    "deploy:sentinel": "cd bots/sentinel && wrangler deploy",
+
+    "dev:imperium": "cd bots/imperium && wrangler dev",
+    "dev:nuntius":  "cd bots/nuntius  && wrangler dev",
+
+    "deploy:imperium": "cd bots/imperium && wrangler deploy",
+    "deploy:nuntius":  "cd bots/nuntius  && wrangler deploy",
+
+    "deploy:agents":  "npm run deploy:cerebrum && npm run deploy:animus && npm run deploy:agens && npm run deploy:nexus && npm run deploy:vigil && npm run deploy:cursor",
+    "deploy:bots":    "npm run deploy:herald && npm run deploy:conduit && npm run deploy:pulse && npm run deploy:sentinel && npm run deploy:imperium && npm run deploy:nuntius",
+    "deploy:slack":   "npm run deploy:herald && npm run deploy:imperium && npm run deploy:nuntius",
+    "deploy:all":     "npm run deploy:agents && npm run deploy:bots"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

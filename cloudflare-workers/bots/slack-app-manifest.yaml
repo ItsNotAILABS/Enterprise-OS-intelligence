@@ -1,0 +1,63 @@
+_metadata:
+  major_version: 1
+  minor_version: 1
+
+display_information:
+  name: RSHIP Intelligence
+  description: "RSHIP AGI for enterprise: market intelligence, supply chain, network status, and organism control - all from Slack."
+  background_color: "#02050f"
+  long_description: "RSHIP Intelligence connects your Slack workspace to the full RSHIP AGI agent network. HERALD handles intelligence queries (/rship). IMPERIUM controls the entire enterprise organism (/org). All powered by sovereign AI running on the Cloudflare global edge."
+
+features:
+  app_home:
+    home_tab_enabled: true
+    messages_tab_enabled: true
+    messages_tab_read_only_enabled: false
+  bot_user:
+    display_name: RSHIP
+    always_online: true
+  slash_commands:
+    - command: /rship
+      description: "RSHIP intelligence - market, supply chain, flight, network status, ask the AI"
+      usage_hint: "[status|market SYMBOL|flight ROUTE|supply NODE|ask QUESTION|help]"
+      should_escape: false
+    - command: /org
+      description: "Enterprise control - brief, agents, deploy, alerts, reports, broadcast"
+      usage_hint: "[brief|agents|market SYMBOL|supply|deploy AGENT|alert|report TYPE|speak #channel MESSAGE]"
+      should_escape: false
+    - command: /task
+      description: "OPEREX enterprise task and workflow orchestration - create, assign, track, complete"
+      usage_hint: "[new TEMPLATE|workflow WF-ID|create NAME|assign TASK-ID NAME|done TASK-ID|block|escalate|list|report|templates|help]"
+      should_escape: false
+
+oauth_config:
+  redirect_urls: []
+  scopes:
+    bot:
+      - chat:write
+      - chat:write.public
+      - commands
+      - channels:read
+      - channels:join
+      - app_mentions:read
+      - im:history
+      - im:read
+      - im:write
+      - mpim:read
+      - groups:read
+      - users:read
+      - reactions:write
+      - pins:write
+      - incoming-webhook
+
+settings:
+  event_subscriptions:
+    bot_events:
+      - app_mention
+      - message.im
+      - message.channels
+  interactivity:
+    is_enabled: true
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
