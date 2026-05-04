@@ -1,7 +1,7 @@
 {
   "name": "rship-ais-cloudflare-workers",
-  "version": "2.0.0",
-  "description": "RSHIP AGI Systems — AIS Cloudflare Worker Intelligence Network (6 sovereign agents, 2 interactive AI agents, 1 B2B platform)",
+  "version": "3.0.0",
+  "description": "RSHIP AGI Systems — Cloudflare Worker Network: 6 AI Agent workers + 4 Bot workers (Slack, Workflow, Cron, Alerts)",
   "private": true,
   "scripts": {
     "dev:cerebrum": "cd cerebrum && wrangler dev",
@@ -18,7 +18,19 @@
     "deploy:vigil":    "cd vigil    && wrangler deploy",
     "deploy:cursor":   "cd cursor   && wrangler deploy",
 
-    "deploy:all": "npm run deploy:cerebrum && npm run deploy:animus && npm run deploy:agens && npm run deploy:nexus && npm run deploy:vigil && npm run deploy:cursor"
+    "dev:herald":   "cd bots/herald   && wrangler dev",
+    "dev:conduit":  "cd bots/conduit  && wrangler dev",
+    "dev:pulse":    "cd bots/pulse    && wrangler dev",
+    "dev:sentinel": "cd bots/sentinel && wrangler dev",
+
+    "deploy:herald":   "cd bots/herald   && wrangler deploy",
+    "deploy:conduit":  "cd bots/conduit  && wrangler deploy",
+    "deploy:pulse":    "cd bots/pulse    && wrangler deploy",
+    "deploy:sentinel": "cd bots/sentinel && wrangler deploy",
+
+    "deploy:agents": "npm run deploy:cerebrum && npm run deploy:animus && npm run deploy:agens && npm run deploy:nexus && npm run deploy:vigil && npm run deploy:cursor",
+    "deploy:bots":   "npm run deploy:herald && npm run deploy:conduit && npm run deploy:pulse && npm run deploy:sentinel",
+    "deploy:all":    "npm run deploy:agents && npm run deploy:bots"
   },
   "devDependencies": {
     "wrangler": "^3.0.0"

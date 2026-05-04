@@ -1,0 +1,22 @@
+{
+  "name": "rship-bots",
+  "version": "1.0.0",
+  "description": "RSHIP AGI Systems — Cloudflare Worker Bots (Slack, Discord, Workflow, Cron, Alerts)",
+  "private": true,
+  "scripts": {
+    "dev:herald":   "cd herald   && wrangler dev",
+    "dev:conduit":  "cd conduit  && wrangler dev",
+    "dev:pulse":    "cd pulse    && wrangler dev",
+    "dev:sentinel": "cd sentinel && wrangler dev",
+
+    "deploy:herald":   "cd herald   && wrangler deploy",
+    "deploy:conduit":  "cd conduit  && wrangler deploy",
+    "deploy:pulse":    "cd pulse    && wrangler deploy",
+    "deploy:sentinel": "cd sentinel && wrangler deploy",
+
+    "deploy:all": "npm run deploy:herald && npm run deploy:conduit && npm run deploy:pulse && npm run deploy:sentinel"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
