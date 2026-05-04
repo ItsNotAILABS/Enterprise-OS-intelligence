@@ -1,0 +1,24 @@
+{
+  "name": "rship-ais-cloudflare-workers",
+  "version": "1.0.0",
+  "description": "RSHIP AGI Systems — AIS Cloudflare Worker Intelligence Network (5 sovereign agents)",
+  "private": true,
+  "scripts": {
+    "dev:cerebrum": "cd cerebrum && wrangler dev",
+    "dev:animus":   "cd animus   && wrangler dev",
+    "dev:nexus":    "cd nexus    && wrangler dev",
+    "dev:vigil":    "cd vigil    && wrangler dev",
+    "dev:cursor":   "cd cursor   && wrangler dev",
+
+    "deploy:cerebrum": "cd cerebrum && wrangler deploy",
+    "deploy:animus":   "cd animus   && wrangler deploy",
+    "deploy:nexus":    "cd nexus    && wrangler deploy",
+    "deploy:vigil":    "cd vigil    && wrangler deploy",
+    "deploy:cursor":   "cd cursor   && wrangler deploy",
+
+    "deploy:all": "npm run deploy:cerebrum && npm run deploy:animus && npm run deploy:nexus && npm run deploy:vigil && npm run deploy:cursor"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
