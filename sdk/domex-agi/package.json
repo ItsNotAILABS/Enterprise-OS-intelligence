@@ -1,0 +1,9 @@
+{
+  "name": "@rship/domex-agi",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "domex-agi.js",
+  "description": "RSHIP DOMEX AGI SDK",
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE"
+}

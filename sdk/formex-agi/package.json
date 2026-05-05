@@ -1,0 +1,9 @@
+{
+  "name": "@rship/formex-agi",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "formex-agi.js",
+  "description": "RSHIP FORMEX AGI SDK",
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE"
+}

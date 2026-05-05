@@ -1,0 +1,9 @@
+{
+  "name": "@rship/studex-agi",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "studex-agi.js",
+  "description": "RSHIP STUDEX AGI SDK",
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE"
+}
