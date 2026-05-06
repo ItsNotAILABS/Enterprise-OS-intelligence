@@ -36,7 +36,7 @@ jobs:
         run: |
           set -euo pipefail
           PATTERN='(eval\(|new Function\(|child_process|exec\(|spawn\(|process\.env\.[A-Z_]+|private[_-]?key|BEGIN RSA PRIVATE KEY)'
-          if rg -n --hidden --glob '!**/node_modules/**' --glob '!**/.git/**' "$PATTERN" sdk production-apps protocols; then
+          if grep -RInE --exclude-dir=node_modules --exclude-dir=.git "$PATTERN" sdk production-apps protocols; then
             echo "::error::High-risk pattern detected. Review and remediate."
             exit 1
           fi
