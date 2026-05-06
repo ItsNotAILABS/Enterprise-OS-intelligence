@@ -643,7 +643,7 @@ class PHANTEX_AGI extends RSHIPCore {
     this.attacksAbsorbed  = 0;
     this.secureTransfers  = 0;
     this.modelSignals     = 0;
-    this.electrodeIntegrityEvents = 0;
+    this.cumulativeInactiveElectrodes = 0;
 
     // ── Spawn core ghost processes ────────────────────────────────────────
     this._spawnCoreGhosts();
@@ -930,7 +930,7 @@ class PHANTEX_AGI extends RSHIPCore {
         const statuses = Object.values(this.electrodes).map(e => e.status());
         const active = statuses.filter(s => s.active).length;
         const inactive = statuses.length - active;
-        if (inactive > 0) this.electrodeIntegrityEvents += inactive;
+        if (inactive > 0) this.cumulativeInactiveElectrodes += inactive;
         return { electrodes: statuses.length, active, inactive };
       },
       interval: 6000,
@@ -1015,7 +1015,7 @@ class PHANTEX_AGI extends RSHIPCore {
 
         security: {
           attacksAbsorbed:  this.attacksAbsorbed,
-          electrodeIntegrityEvents: this.electrodeIntegrityEvents,
+          cumulativeInactiveElectrodes: this.cumulativeInactiveElectrodes,
           gaugeInvariance:  'U(1) — φ-symmetric',
           perimeter:        'INTRINSIC (gauge symmetry)',
           secureTransfers:  this.secureTransfers,

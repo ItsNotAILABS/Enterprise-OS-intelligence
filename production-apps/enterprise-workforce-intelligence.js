@@ -272,27 +272,37 @@ class EnterpriseWorkforceIntelligence {
       return { success: false, reason: 'ENGINE_NOT_FOUND', engineId: workflow.engineId };
     }
 
-    workflow.runs += 1;
-    workflow.status = 'completed';
+    workflow.status = 'running';
     workflow.updatedAt = new Date().toISOString();
 
-    if (engine) engine.runs += 1;
+    try {
+      const stepsExecuted = workflow.steps.length;
+      workflow.runs += 1;
+      workflow.status = 'completed';
+      workflow.updatedAt = new Date().toISOString();
 
-    this.profectus.learn(
-      { event: 'career-workflow-run', workflowId, employeeId, lane },
-      { success: true, steps: workflow.steps.length, payloadKeys: Object.keys(payload).length },
-      { id: `career-workflow-${workflowId}-${workflow.runs}` }
-    );
+      if (engine) engine.runs += 1;
 
-    return {
-      success: true,
-      workflowId,
-      employeeId,
-      lane,
-      engineId: workflow.engineId,
-      stepsExecuted: workflow.steps.length,
-      runNumber: workflow.runs,
-    };
+      this.profectus.learn(
+        { event: 'career-workflow-run', workflowId, employeeId, lane },
+        { success: true, steps: stepsExecuted, payloadKeys: Object.keys(payload).length },
+        { id: `career-workflow-${workflowId}-${workflow.runs}` }
+      );
+
+      return {
+        success: true,
+        workflowId,
+        employeeId,
+        lane,
+        engineId: workflow.engineId,
+        stepsExecuted,
+        runNumber: workflow.runs,
+      };
+    } catch (error) {
+      workflow.status = 'failed';
+      workflow.updatedAt = new Date().toISOString();
+      return { success: false, workflowId, employeeId, lane, reason: error.message };
+    }
   }
 
   // ── Enterprise Metrics & ROI ───────────────────────────────────────────────
