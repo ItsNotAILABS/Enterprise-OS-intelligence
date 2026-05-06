@@ -15,7 +15,11 @@ export class FallbackChain {
           return { success: true, attempts: this.lastAttemptCount, failures, result };
         }
       } catch (error) {
-        failures.push(error.message);
+        failures.push({
+          message: error?.message || String(error),
+          stack: error?.stack || null,
+          name: error?.name || 'FallbackError',
+        });
       }
     }
 
