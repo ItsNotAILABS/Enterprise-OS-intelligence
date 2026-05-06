@@ -52,6 +52,34 @@ All models are treated as internal infrastructure — not products, not services
 
 The Model Registry loads at instantiation. The Provider Router is ready to route from heartbeat one.
 
+## Quick Usage
+
+```js
+import { createDefaultMultiModelStack } from '@medina/multi-model-sdk';
+
+const orchestrator = createDefaultMultiModelStack();
+
+const result = orchestrator.infer(
+  {
+    workflowId: 'career-upskill-flow',
+    contextId: 'employee-8472',
+    taskType: 'workflow',
+    lane: 'interior',        // interior | exterior
+    securityLevel: 'hardened',
+    payload: { goal: 'transition-to-ai-ops' },
+  },
+  [
+    ({ route, payload }) => ({ success: true, modelId: route.modelId, output: payload.goal }),
+  ],
+);
+```
+
+## Security + Lane Model
+
+- `interior` lane: internal workforce and sovereign model execution
+- `exterior` lane: partner/customer facing execution surfaces
+- `securityLevel`: `standard` | `hardened` | `critical`
+
 ---
 
 *Multi-Model SDK · RSHIP-2026 · Medina Tech*

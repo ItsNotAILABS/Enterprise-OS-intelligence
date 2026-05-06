@@ -1,0 +1,62 @@
+name: "Security Intelligence [FORTRESS] — Repo Hardening"
+
+on:
+  push:
+    paths:
+      - 'sdk/**'
+      - 'production-apps/**'
+      - 'protocols/**'
+      - '.github/workflows/**'
+  pull_request:
+    paths:
+      - 'sdk/**'
+      - 'production-apps/**'
+      - 'protocols/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fortress-security:
+    name: "FORTRESS Security Hardening Scan"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Scan for high-risk patterns
+        run: |
+          set -euo pipefail
+          PATTERN='(eval\(|new Function\(|child_process|exec\(|spawn\(|process\.env\.[A-Z_]+|private[_-]?key|BEGIN RSA PRIVATE KEY)'
+          if rg -n --hidden --glob '!**/node_modules/**' --glob '!**/.git/**' "$PATTERN" sdk production-apps protocols; then
+            echo "::error::High-risk pattern detected. Review and remediate."
+            exit 1
+          fi
+          echo "No blocked high-risk patterns found."
+
+      - name: Validate JavaScript syntax (changed surfaces)
+        run: |
+          set -euo pipefail
+          FILES=$(find sdk production-apps protocols -type f -name '*.js')
+          for file in $FILES; do
+            node --check "$file"
+          done
+
+      - name: Publish security summary
+        run: |
+          echo "### FORTRESS Security Hardening" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Check | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| High-risk pattern scan | ✅ |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| JavaScript syntax validation | ✅ |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Scope: sdk/, production-apps/, protocols/, workflows." >> "$GITHUB_STEP_SUMMARY"

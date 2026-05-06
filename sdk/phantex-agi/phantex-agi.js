@@ -20,11 +20,13 @@
  *   GAMMA  — φ³ Hz:  Security wave — phantom encryption & verification
  *   DELTA  — φ⁴ Hz:  Infrastructure wave — system state & heartbeat coupling
  *
- * The 4 Electrodes (field interface points):
+ * The 6 Electrodes (field interface points):
  *   ELECTRODE_AGI       — couples to all RSHIP AGI systems
  *   ELECTRODE_PROTOCOL  — couples to ADP/SCP heartbeat protocols
  *   ELECTRODE_BRIDGE    — couples to external chains, APIs, repos
  *   ELECTRODE_GHOST     — couples to phantom background processes
+ *   ELECTRODE_INTERIOR  — couples to interior/private model workflows
+ *   ELECTRODE_EXTERIOR  — couples to exterior/public model workflows
  *
  * Phantom Encryption: Schnorr Zero-Knowledge Proof — prove ownership
  *   without revealing the secret. The verifier learns nothing except "yes".
@@ -47,7 +49,7 @@
  * - 4-frequency field oscillation: φ, φ², φ³, φ⁴ Hz wave modes
  * - Gauge-invariant security perimeter: intrinsic, not bolted on
  * - Ghost process registry: silent background field agents
- * - 4-electrode interface bus: AGI, Protocol, Bridge, Ghost
+ * - 6-electrode interface bus: AGI, Protocol, Bridge, Ghost, Interior, Exterior
  * - Field wave superposition: multiple signals coexist without interference
  * - Cross-AGI phantom bridges: artifact tunneling between any two systems
  * - Quantum tunneling probability: T = e^{−2κL} for barrier penetration
@@ -95,6 +97,8 @@ const ELECTRODES = {
   PROTOCOL: 'ELECTRODE_PROTOCOL',
   BRIDGE:   'ELECTRODE_BRIDGE',
   GHOST:    'ELECTRODE_GHOST',
+  INTERIOR: 'ELECTRODE_INTERIOR',
+  EXTERIOR: 'ELECTRODE_EXTERIOR',
 };
 
 // Tunneling attenuation constant κ (barrier penetration coefficient)
@@ -619,6 +623,8 @@ class PHANTEX_AGI extends RSHIPCore {
       [ELECTRODES.PROTOCOL]: new FieldElectrode(ELECTRODES.PROTOCOL, 'protocol', 'DELTA'),
       [ELECTRODES.BRIDGE]:   new FieldElectrode(ELECTRODES.BRIDGE,   'bridge',   'ALPHA'),
       [ELECTRODES.GHOST]:    new FieldElectrode(ELECTRODES.GHOST,    'ghost',    'GAMMA'),
+      [ELECTRODES.INTERIOR]: new FieldElectrode(ELECTRODES.INTERIOR, 'interior', 'BETA'),
+      [ELECTRODES.EXTERIOR]: new FieldElectrode(ELECTRODES.EXTERIOR, 'exterior', 'ALPHA'),
     };
 
     // ── Bridges (cross-system tunnels) ────────────────────────────────────
@@ -635,6 +641,8 @@ class PHANTEX_AGI extends RSHIPCore {
     this.proofsVerified  = 0;
     this.transfersChecked = 0;
     this.attacksAbsorbed  = 0;
+    this.secureTransfers  = 0;
+    this.modelSignals     = 0;
 
     // ── Spawn core ghost processes ────────────────────────────────────────
     this._spawnCoreGhosts();
@@ -645,7 +653,7 @@ class PHANTEX_AGI extends RSHIPCore {
     this.setGoal('ghost-continuity',    'All ghost processes running on schedule',            9, { metric: 'ghostHealth' });
     this.setGoal('gauge-invariance',    'All attacks absorbed by gauge symmetry',            10, { metric: 'attacksAbsorbed' });
     this.setGoal('tunnel-routing',      'Tunneling probability > 0.5 for critical bridges',   8, { metric: 'tunnelProb' });
-    this.setGoal('electrode-health',    'All 4 electrodes active and accepting packets',       8, { metric: 'activeElectrodes' });
+    this.setGoal('electrode-health',    'All 6 electrodes active and accepting packets',       8, { metric: 'activeElectrodes' });
     this.setGoal('zkp-coverage',        '100% artifact transfers ZKP-authenticated',          9, { metric: 'zkpCoverage' });
   }
 
@@ -813,6 +821,58 @@ class PHANTEX_AGI extends RSHIPCore {
     return this.injectPacket({ mode: electrode.frequencyAffinity, payload: packet });
   }
 
+  secureElectrodeTransfer(electrodeType, payload, message = '') {
+    const electrode = this.electrodes[electrodeType];
+    if (!electrode || !electrode.active) {
+      return { success: false, error: 'ELECTRODE_INACTIVE', electrode: electrodeType };
+    }
+
+    const proof = this.proveOwnership(message || `secure-${electrodeType}`);
+    const encrypted = this.cryptor.encryptPayload(payload, proof);
+    const artifactId = `ELC-${electrodeType}-${Date.now()}`;
+    const reg = this.registerTransfer({ id: artifactId, payload: encrypted });
+    const packet = electrode.inject({
+      encrypted,
+      proofId: proof.proofId,
+      artifactId,
+      lane: electrode.type,
+    });
+    this.injectPacket({ mode: electrode.frequencyAffinity, payload: packet });
+    this.secureTransfers++;
+
+    return {
+      success: true,
+      electrode: electrodeType,
+      proofId: proof.proofId,
+      artifactId,
+      merkleRoot: reg.merkleRoot,
+    };
+  }
+
+  secureInteriorTransfer(payload, message = 'interior-transfer') {
+    return this.secureElectrodeTransfer(ELECTRODES.INTERIOR, payload, message);
+  }
+
+  secureExteriorTransfer(payload, message = 'exterior-transfer') {
+    return this.secureElectrodeTransfer(ELECTRODES.EXTERIOR, payload, message);
+  }
+
+  signalModelWorkflow({ workflowId, modelId, lane = 'interior', payload = {}, securityLevel = 'standard' }) {
+    const normalizedLane = String(lane).toLowerCase();
+    const electrodeType = normalizedLane === 'exterior' ? ELECTRODES.EXTERIOR : ELECTRODES.INTERIOR;
+    const transfer = this.secureElectrodeTransfer(electrodeType, {
+      workflowId,
+      modelId,
+      payload,
+      securityLevel,
+      lane: normalizedLane,
+      timestamp: Date.now(),
+    }, `model-${workflowId}-${modelId}`);
+
+    if (transfer.success) this.modelSignals++;
+    return transfer;
+  }
+
   // ── Ghost Processes ───────────────────────────────────────────────────────
 
   _spawnCoreGhosts() {
@@ -859,6 +919,20 @@ class PHANTEX_AGI extends RSHIPCore {
         return { resonanceScore: score };
       },
       interval: 5000,
+      priority: 9,
+    });
+
+    // Ghost 5: electrode security integrity (every 6s)
+    this.ghosts.spawn({
+      id: 'ghost-electrode-integrity',
+      task: () => {
+        const statuses = Object.values(this.electrodes).map(e => e.status());
+        const active = statuses.filter(s => s.active).length;
+        const inactive = statuses.length - active;
+        if (inactive > 0) this.attacksAbsorbed += inactive;
+        return { electrodes: statuses.length, active, inactive };
+      },
+      interval: 6000,
       priority: 9,
     });
   }
@@ -942,6 +1016,8 @@ class PHANTEX_AGI extends RSHIPCore {
           attacksAbsorbed:  this.attacksAbsorbed,
           gaugeInvariance:  'U(1) — φ-symmetric',
           perimeter:        'INTRINSIC (gauge symmetry)',
+          secureTransfers:  this.secureTransfers,
+          modelSignals:     this.modelSignals,
         },
 
         transfersChecked: this.transfersChecked,

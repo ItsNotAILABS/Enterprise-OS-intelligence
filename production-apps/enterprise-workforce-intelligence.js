@@ -70,6 +70,9 @@ class EnterpriseWorkforceIntelligence {
     this.interventionLog = [];
     this.capacityHistory = [];
     this.retentionHistory = [];
+    this.workflowEngines = new Map();
+    this.careerWorkflows = new Map();
+    this.careerLanes = new Map();
   }
 
   // ── Employee Onboarding ────────────────────────────────────────────────────
@@ -207,6 +210,91 @@ class EnterpriseWorkforceIntelligence {
     };
   }
 
+  // ── Workflow & Career Lanes (Interior / Exterior) ─────────────────────────
+
+  registerWorkflowEngine(engineId, engineConfig = {}) {
+    this.workflowEngines.set(engineId, {
+      engineId,
+      name: engineConfig.name || engineId,
+      model: engineConfig.model || 'generalist',
+      lane: engineConfig.lane || 'interior',
+      securityLevel: engineConfig.securityLevel || 'standard',
+      active: true,
+      runs: 0,
+      createdAt: new Date().toISOString(),
+    });
+
+    return this.workflowEngines.get(engineId);
+  }
+
+  assignCareerLane(employeeId, lane = 'interior') {
+    const employeeExists = this.profectus.employees.has(employeeId);
+    if (!employeeExists) {
+      return { employeeId, assigned: false, reason: 'EMPLOYEE_NOT_FOUND' };
+    }
+
+    const normalizedLane = String(lane).toLowerCase() === 'exterior' ? 'exterior' : 'interior';
+    this.careerLanes.set(employeeId, normalizedLane);
+
+    return { employeeId, assigned: true, lane: normalizedLane };
+  }
+
+  createCareerWorkflow(workflowId, config = {}) {
+    const workflow = {
+      workflowId,
+      title: config.title || workflowId,
+      lane: config.lane || 'interior',
+      engineId: config.engineId || null,
+      steps: config.steps || [],
+      status: 'ready',
+      runs: 0,
+      updatedAt: new Date().toISOString(),
+    };
+
+    this.careerWorkflows.set(workflowId, workflow);
+    return workflow;
+  }
+
+  runCareerWorkflow(workflowId, employeeId, payload = {}) {
+    const workflow = this.careerWorkflows.get(workflowId);
+    if (!workflow) {
+      return { success: false, reason: 'WORKFLOW_NOT_FOUND', workflowId };
+    }
+
+    const employee = this.profectus.employees.get(employeeId);
+    if (!employee) {
+      return { success: false, reason: 'EMPLOYEE_NOT_FOUND', employeeId };
+    }
+
+    const lane = this.careerLanes.get(employeeId) || workflow.lane || 'interior';
+    const engine = workflow.engineId ? this.workflowEngines.get(workflow.engineId) : null;
+    if (workflow.engineId && !engine) {
+      return { success: false, reason: 'ENGINE_NOT_FOUND', engineId: workflow.engineId };
+    }
+
+    workflow.runs += 1;
+    workflow.status = 'completed';
+    workflow.updatedAt = new Date().toISOString();
+
+    if (engine) engine.runs += 1;
+
+    this.profectus.learn(
+      { event: 'career-workflow-run', workflowId, employeeId, lane },
+      { success: true, steps: workflow.steps.length, payloadKeys: Object.keys(payload).length },
+      { id: `career-workflow-${workflowId}-${workflow.runs}` }
+    );
+
+    return {
+      success: true,
+      workflowId,
+      employeeId,
+      lane,
+      engineId: workflow.engineId,
+      stepsExecuted: workflow.steps.length,
+      runNumber: workflow.runs,
+    };
+  }
+
   // ── Enterprise Metrics & ROI ───────────────────────────────────────────────
 
   computeEnterpriseMetrics() {
@@ -271,6 +359,12 @@ class EnterpriseWorkforceIntelligence {
         surplusCycles: status.heartbeat.surplusCycles,
         autonomousInterventions: status.careers.interventions,
       },
+      workflows: {
+        engines: this.workflowEngines.size,
+        workflows: this.careerWorkflows.size,
+        interiorLaneEmployees: Array.from(this.careerLanes.values()).filter(l => l === 'interior').length,
+        exteriorLaneEmployees: Array.from(this.careerLanes.values()).filter(l => l === 'exterior').length,
+      },
     };
   }
 
@@ -303,6 +397,10 @@ class EnterpriseWorkforceIntelligence {
         learningRate: status.learningRate,
         goalsActive: status.goals.active,
         goalsAchieved: status.goals.achieved,
+      },
+      workflows: {
+        engines: this.workflowEngines.size,
+        activeCareerWorkflows: this.careerWorkflows.size,
       },
       heartbeat: {
         alive: status.heartbeat.alive,
