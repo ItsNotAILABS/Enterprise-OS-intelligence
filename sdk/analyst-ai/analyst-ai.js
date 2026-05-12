@@ -1,5 +1,5 @@
 /**
- * ANALYST-AI SDK  
+ * ANALYST-AI SDK
  * AI-powered data analysis and insights generation
  * 
  * RSHIP-2026-ANALYST-AI-001 | Sovereign Intelligence Substrate
