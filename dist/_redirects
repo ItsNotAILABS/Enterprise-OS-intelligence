@@ -1,0 +1,10 @@
+# RSHIP Enterprise OS Intelligence — Cloudflare Pages Redirects
+# Redirect API paths to the appropriate workers
+
+/api/*  https://cerebrum.rship.workers.dev/api/:splat  302
+/cerebrum/*  https://cerebrum.rship.workers.dev/:splat  302
+/animus/*  https://animus.rship.workers.dev/:splat  302
+/nexus/*  https://nexus.rship.workers.dev/:splat  302
+/vigil/*  https://vigil.rship.workers.dev/:splat  302
+/cursor/*  https://cursor.rship.workers.dev/:splat  302
+/agens/*  https://agens.rship.workers.dev/:splat  302
