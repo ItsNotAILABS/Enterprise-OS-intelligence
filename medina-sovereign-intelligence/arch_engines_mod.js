@@ -104,7 +104,7 @@ class LatticeEngine extends EventEmitter {
   }
 
   setNode(ix, iy, iz, data) {
-    const key = \`\${ix},\${iy},\${iz}\`;
+    const key = `${ix},${iy},${iz}`;
     const pos = this.getPosition(ix, iy, iz);
     this.nodes.set(key, { indices: { ix, iy, iz }, position: pos, data, hash: phiHash(ix + iy * 10 + iz * 100) });
     this.emit('node-set', { key, data });
@@ -112,7 +112,7 @@ class LatticeEngine extends EventEmitter {
   }
 
   getNode(ix, iy, iz) {
-    return this.nodes.get(\`\${ix},\${iy},\${iz}\`);
+    return this.nodes.get(`${ix},${iy},${iz}`);
   }
 
   getNeighbors(ix, iy, iz) {
@@ -487,7 +487,7 @@ class NexusBridgeEngine extends EventEmitter {
     const allowed = score > this.threshold;
     
     if (allowed) {
-      const bridgeId = \`\${from}<->\${to}\`;
+      const bridgeId = `${from}<->${to}`;
       this.bridges.set(bridgeId, { from, to, sovereignty, trust, score, created: Date.now(), crossings: 0 });
       this.emit('bridge-created', { bridgeId, score });
       return bridgeId;
@@ -600,7 +600,7 @@ if (require.main === module) {
   
   console.log('📋 Engine Registry:');
   for (const engine of registry.status().engines) {
-    console.log(\`  \${engine.name}: \${engine.formula}\`);
+    console.log(`  ${engine.name}: ${engine.formula}`);
   }
 
   console.log('\n🧪 Testing engines:\n');
@@ -609,18 +609,18 @@ if (require.main === module) {
   const helix = registry.get('HELIX');
   helix.addRung('A', 'T');
   helix.addRung('G', 'C');
-  console.log(\`  HELIX: \${helix.status().rungCount} rungs created\`);
+  console.log(`  HELIX: ${helix.status().rungCount} rungs created`);
 
   // Test MEMBRANE
   const membrane = registry.get('MEMBRANE');
   membrane.createGate('main', 0.8);
   const passage = membrane.attemptPassage('main', 0.9, { data: 'test' });
-  console.log(\`  MEMBRANE: passage \${passage.passed ? 'allowed' : 'blocked'}\`);
+  console.log(`  MEMBRANE: passage ${passage.passed ? 'allowed' : 'blocked'}`);
 
   // Test CRYSTALLIZER
   const crystallizer = registry.get('CRYSTALLIZER');
   for (let i = 0; i < 25; i++) crystallizer.ingest({ i });
-  console.log(\`  CRYSTALLIZER: \${crystallizer.status().crystalCount} crystals formed\`);
+  console.log(`  CRYSTALLIZER: ${crystallizer.status().crystalCount} crystals formed`);
 
   console.log('\n✅ All 10 ARCH engines operational!\n');
 }
