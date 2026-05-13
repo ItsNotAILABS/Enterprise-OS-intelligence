@@ -1,0 +1,11 @@
+{
+  // RSHIP Enterprise OS Intelligence — Cloudflare Pages Configuration
+  // This configuration enables Cloudflare Pages auto-deployment for the repository landing page.
+  // The actual AI Workers are deployed separately via cloudflare-workers/ subdirectories.
+  
+  "name": "enterprise-os-intelligence",
+  "compatibility_date": "2024-09-02",
+  "assets": {
+    "directory": "./dist"
+  }
+}

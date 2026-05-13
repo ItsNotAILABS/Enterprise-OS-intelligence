@@ -38,9 +38,12 @@ secrets/
 
 # Node
 node_modules/
-dist/
 build/
 .cache/
+
+# Ignore dist directories except root dist/ (Cloudflare Pages assets)
+**/dist/
+!dist/
 
 # OS
 .DS_Store
