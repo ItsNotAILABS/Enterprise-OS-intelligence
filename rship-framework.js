@@ -496,6 +496,37 @@ const RSHIP_REGISTRY = {
       'Workforce capacity optimization (target utilization: φ⁻¹ ≈ 0.618)',
     ],
   },
+
+  // ── SUBSTRATE LAYER (below all AGIs — the field itself) ───────────────────
+  'PHANTEX': {
+    name: 'PHANTEX',
+    fullName: 'PHantom Autonomous Network Transmission & EXchange EXpert',
+    designation: 'RSHIP-2026-PHANTEX-001',
+    classification: 'Phantom Field Substrate & Cryptographic Bridge AGI',
+    layer: 'SUBSTRATE',  // below Sovereign Ring — the field layer
+    protocol: 'PROTO-013 (Phantom Field Protocol)',
+    capabilities: [
+      'Schnorr ZKP phantom encryption (Fiat-Shamir non-interactive, φ-seeded hash)',
+      '4-frequency φ-ladder field: ALPHA(φ¹)/BETA(φ²)/GAMMA(φ³)/DELTA(φ⁴) Hz',
+      'Merkle-tree transfer verification (batch root commitment per field cycle)',
+      'U(1) gauge-invariant security perimeter (fences = field symmetry)',
+      'Quantum tunneling routing: T = e^{−2φ⁻¹L} (4 attempts, then tunnel)',
+      '4-electrode interface bus: AGI/Protocol/Bridge/Ghost coupling points',
+      'Ghost process registry: φ⁻¹-allocated phantom background agents',
+      'φ-resonance field: all 4 frequencies at golden-ratio ratios (R = 1.0)',
+      'Cross-system phantom bridges with DH-φ key exchange',
+      'Wave superposition: Ψ(x,t) = Σ Aₙcos(kₙx − ωₙt) over 4 modes',
+    ],
+    frequencies: {
+      ALPHA: 'φ¹ ≈ 1.618 Hz — coordination',
+      BETA:  'φ² ≈ 2.618 Hz — intelligence',
+      GAMMA: 'φ³ ≈ 4.236 Hz — security',
+      DELTA: 'φ⁴ ≈ 6.854 Hz — infrastructure',
+    },
+    electrodes: ['ELECTRODE_AGI', 'ELECTRODE_PROTOCOL', 'ELECTRODE_BRIDGE', 'ELECTRODE_GHOST'],
+    tunnelingConstant: 'κ = φ⁻¹',
+    gaugeGroup: 'U(1)',
+  },
 };
 
 // ── Factory Functions ──────────────────────────────────────────────────────

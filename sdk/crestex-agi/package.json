@@ -1,0 +1,9 @@
+{
+  "name": "@rship/crestex-agi",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "crestex-agi.js",
+  "description": "RSHIP CRESTEX AGI SDK",
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE"
+}

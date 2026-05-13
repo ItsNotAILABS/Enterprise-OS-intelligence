@@ -1,0 +1,9 @@
+{
+  "name": "@rship/vitex-agi",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "vitex-agi.js",
+  "description": "RSHIP VITEX AGI SDK",
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE"
+}

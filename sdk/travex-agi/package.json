@@ -1,0 +1,26 @@
+{
+  "name": "@medina/travex-agi",
+  "version": "1.0.0",
+  "description": "TRAVEX AGI — Travel Demand & Revenue Recovery Intelligence with last-minute booking engine, demand signals, and outcome feedback loop",
+  "main": "travex-agi.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "travex",
+    "agi",
+    "travel",
+    "booking",
+    "revenue-recovery",
+    "last-minute",
+    "demand-intelligence",
+    "aviation"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/travex-agi"
+  }
+}

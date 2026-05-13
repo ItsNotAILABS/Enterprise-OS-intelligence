@@ -1,0 +1,27 @@
+{
+  "name": "@medina/aerolex-agi",
+  "version": "1.0.0",
+  "description": "AEROLEX AGI — Airport Operations Intelligence with M/D/1 queuing, delay propagation graph, and API bridge monitoring",
+  "main": "aerolex-agi.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "aerolex",
+    "agi",
+    "airport",
+    "aviation",
+    "operations",
+    "gate-management",
+    "delay-propagation",
+    "api-bridge",
+    "dfw"
+  ],
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
+    "directory": "sdk/aerolex-agi"
+  }
+}

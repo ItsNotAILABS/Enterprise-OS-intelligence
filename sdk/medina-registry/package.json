@@ -2,8 +2,7 @@
   "name": "@medina/medina-registry",
   "version": "1.0.0",
   "description": "Sovereign Private Registry — Your own Git/NPM for MEDINA SDKs",
-  "main": "src/index.js",
-  "type": "module",
+  "main": "medina-registry.js",
   "keywords": [
     "medina",
     "registry",
@@ -20,23 +19,4 @@
     "url": "https://github.com/FreddyCreates/Enterprise-OS-intelligence.git",
     "directory": "sdk/medina-registry"
   }
-  "description": "Sovereign Private Registry — your own git/npm for SDK distribution. The SDKs live inside and run sovereignly.",
-  "type": "module",
-  "main": "src/index.js",
-  "exports": {
-    ".": "./src/index.js"
-  },
-  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
-  "license": "MEDINA-SOVEREIGN",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/MedinaTech/medina-registry"
-  },
-  "keywords": [
-    "registry",
-    "private",
-    "sovereign",
-    "sdk-distribution",
-    "medina"
-  ]
 }

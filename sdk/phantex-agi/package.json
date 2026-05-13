@@ -1,0 +1,9 @@
+{
+  "name": "@rship/phantex-agi",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "phantex-agi.js",
+  "description": "RSHIP PHANTEX AGI SDK — Phantom Field Substrate Intelligence",
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN ../../LICENSE"
+}
