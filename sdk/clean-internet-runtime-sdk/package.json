@@ -1,0 +1,22 @@
+{
+  "name": "@medina/clean-internet-runtime-sdk",
+  "version": "1.0.0",
+  "description": "Internal clean internet runtime SDK for sovereign routing, trust-gated policy checks, and quarantine control.",
+  "main": "clean-internet-runtime-sdk.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "clean-internet",
+    "runtime",
+    "policy",
+    "security",
+    "routing"
+  ],
+  "exports": {
+    ".": "./clean-internet-runtime-sdk.js"
+  },
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN LICENSE"
+}
+

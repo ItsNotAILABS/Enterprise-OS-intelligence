@@ -1,0 +1,21 @@
+{
+  "name": "@medina/agent-runtime-mesh-sdk",
+  "version": "1.0.0",
+  "description": "Internal runtime mesh SDK for orchestrating multiple agents with channel routing and task traceability.",
+  "main": "agent-runtime-mesh-sdk.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "agent-mesh",
+    "runtime",
+    "orchestration",
+    "internal"
+  ],
+  "exports": {
+    ".": "./agent-runtime-mesh-sdk.js"
+  },
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN LICENSE"
+}
+
