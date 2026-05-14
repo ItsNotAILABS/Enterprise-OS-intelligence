@@ -133,4 +133,3 @@ export class CleanInternetRuntimeSDK extends RSHIPCore {
 export function bootCleanInternetRuntime(config = {}) {
   return new CleanInternetRuntimeSDK(config);
 }
-
