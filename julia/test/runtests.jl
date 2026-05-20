@@ -287,3 +287,236 @@ println("=" ^ 80)
 println("CORE SUBSTRATE MODULE TESTS PASSED")
 println("RSHIP-2026-JULIA-SUBSTRATE - VALIDATED")
 println("=" ^ 80)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Test: Alpha-Omega Transformers
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@testset "AlphaOmegaTransformers Module" begin
+    println("\n--- Testing Alpha-Omega Transformers (12 deep mathematical modules) ---\n")
+    
+    # Include all transformers
+    include("../substrate/transformers/AlphaOmegaTransformers.jl")
+    
+    dimension = 8
+    test_input = randn(dimension)
+    
+    # Test AlphaTransformer (Genesis)
+    @testset "AlphaTransformer" begin
+        alpha = AlphaTransformer(dimension)
+        state = genesis!(alpha)
+        @test length(state) == dimension
+        
+        transformed = transform(alpha, test_input)
+        @test length(transformed) == dimension
+        
+        seed = seed_genesis!(alpha)
+        @test seed.state == NASCENT
+        
+        st = status(alpha)
+        @test haskey(st, :id)
+        println("✓ AlphaTransformer passed")
+    end
+    
+    # Test OmegaTransformer (Completion)
+    @testset "OmegaTransformer" begin
+        omega = OmegaTransformer(dimension)
+        
+        transformed = transform(omega, test_input)
+        @test length(transformed) == dimension
+        
+        completion = measure_completion(omega, test_input)
+        @test 0.0 <= completion <= 1.0
+        
+        st = status(omega)
+        @test haskey(st, :convergence_rate)
+        println("✓ OmegaTransformer passed")
+    end
+    
+    # Test PhiTransformer (Golden Ratio)
+    @testset "PhiTransformer" begin
+        phi_t = PhiTransformer(dimension)
+        
+        transformed = transform(phi_t, test_input)
+        @test length(transformed) == dimension
+        
+        scaled = golden_scale(phi_t, test_input, 2)
+        PHI = (1 + sqrt(5)) / 2
+        @test isapprox(norm(scaled), norm(test_input) * PHI^2, atol=1e-10)
+        
+        encoded = spiral_encode(phi_t, test_input)
+        @test length(encoded) == dimension
+        
+        println("✓ PhiTransformer passed")
+    end
+    
+    # Test ManifoldTransformer (Differential Geometry)
+    @testset "ManifoldTransformer" begin
+        manifold = ManifoldTransformer(dimension)
+        
+        # Transform to a target
+        target = randn(dimension)
+        transformed = transform(manifold, test_input; target=target)
+        @test length(transformed) == dimension
+        
+        # Curvature
+        curv = curvature_at(manifold, test_input)
+        @test isfinite(curv)
+        
+        println("✓ ManifoldTransformer passed")
+    end
+    
+    # Test TensorTransformer
+    @testset "TensorTransformer" begin
+        tensor_t = TensorTransformer(4)
+        
+        transformed = transform(tensor_t, test_input)
+        @test length(transformed) == dimension
+        
+        st = status(tensor_t)
+        @test st.max_rank == 4
+        
+        println("✓ TensorTransformer passed")
+    end
+    
+    # Test SpectralTransformer
+    @testset "SpectralTransformer" begin
+        spectral = SpectralTransformer(dimension)
+        
+        transformed = transform(spectral, test_input)
+        @test length(transformed) == dimension
+        
+        gaps = spectral_gaps(spectral)
+        @test length(gaps) >= 1
+        
+        println("✓ SpectralTransformer passed")
+    end
+    
+    # Test FractalTransformer
+    @testset "FractalTransformer" begin
+        fractal = FractalTransformer(dimension)
+        
+        transformed = transform(fractal, test_input)
+        @test length(transformed) == dimension
+        
+        st = status(fractal)
+        @test st.fractal_dimension > 0
+        
+        println("✓ FractalTransformer passed")
+    end
+    
+    # Test CategoryTransformer
+    @testset "CategoryTransformer" begin
+        category = CategoryTransformer(dimension)
+        
+        transformed = transform(category, test_input)
+        @test length(transformed) == dimension
+        
+        st = status(category)
+        @test haskey(st, :object_count)
+        
+        println("✓ CategoryTransformer passed")
+    end
+    
+    # Test ToposTransformer
+    @testset "ToposTransformer" begin
+        topos = ToposTransformer(dimension)
+        
+        transformed = transform(topos, test_input)
+        @test length(transformed) == dimension
+        
+        st = status(topos)
+        @test haskey(st, :presheaf_count)
+        
+        println("✓ ToposTransformer passed")
+    end
+    
+    # Test HypergraphTransformer
+    @testset "HypergraphTransformer" begin
+        hypergraph = HypergraphTransformer(dimension)
+        
+        transformed = transform(hypergraph, test_input)
+        @test length(transformed) == dimension
+        
+        walk_result = random_walk_transform(hypergraph, test_input; steps=5)
+        @test length(walk_result) == dimension
+        
+        println("✓ HypergraphTransformer passed")
+    end
+    
+    # Test InformationTransformer
+    @testset "InformationTransformer" begin
+        info = InformationTransformer(dimension)
+        
+        transformed = transform(info, abs.(test_input))  # Need positive values
+        @test length(transformed) == dimension
+        
+        st = status(info)
+        @test st.max_entropy ≈ log2(dimension)
+        
+        println("✓ InformationTransformer passed")
+    end
+    
+    # Test SymplecticTransformer
+    @testset "SymplecticTransformer" begin
+        symplectic = SymplecticTransformer(dimension)
+        
+        transformed = transform(symplectic, test_input)
+        @test length(transformed) == 2 * symplectic.dimension  # Phase space
+        
+        st = status(symplectic)
+        @test haskey(st, :hamiltonian)
+        @test st.energy_drift < 0.1  # Symplectic should preserve energy
+        
+        println("✓ SymplecticTransformer passed")
+    end
+    
+    # Test TransformerChain
+    @testset "TransformerChain" begin
+        chain = TransformerChain(
+            PhiTransformer(dimension),
+            SpectralTransformer(dimension)
+        )
+        
+        result = chain_transform(chain, test_input)
+        @test length(result) == dimension
+        
+        toggle_transformer!(chain, 2, false)
+        @test chain.active[2] == false
+        
+        println("✓ TransformerChain passed")
+    end
+    
+    # Test FullTransformerSuite
+    @testset "FullTransformerSuite" begin
+        suite = FullTransformerSuite(dimension)
+        
+        result = full_transform(suite, test_input; pipeline=[:phi, :spectral])
+        @test length(result) == dimension
+        
+        all_status = suite_status(suite)
+        @test haskey(all_status, :alpha)
+        @test haskey(all_status, :omega)
+        @test haskey(all_status, :phi)
+        @test haskey(all_status, :manifold)
+        @test haskey(all_status, :tensor)
+        @test haskey(all_status, :spectral)
+        @test haskey(all_status, :fractal)
+        @test haskey(all_status, :category)
+        @test haskey(all_status, :topos)
+        @test haskey(all_status, :hypergraph)
+        @test haskey(all_status, :information)
+        @test haskey(all_status, :symplectic)
+        
+        println("✓ FullTransformerSuite passed")
+    end
+    
+    println("\n✓✓✓ All 12 Alpha-Omega Transformers PASSED ✓✓✓")
+end
+
+println()
+println("=" ^ 80)
+println("ALPHA-OMEGA TRANSFORMER TESTS PASSED")
+println("RSHIP-2026-ALPHA-OMEGA-TRANSFORMERS - VALIDATED")
+println("12 Deep Mathematical Transformers: OPERATIONAL")
+println("=" ^ 80)

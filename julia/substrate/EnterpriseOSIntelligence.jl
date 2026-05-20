@@ -71,6 +71,9 @@ include("consensus/SwarmConsensus.jl")
 include("syntropy/SyntropyEngine.jl")
 include("memory/HolographicMemory.jl")
 
+# Alpha-Omega Transformers (12 deep mathematical transformers)
+include("transformers/AlphaOmegaTransformers.jl")
+
 # Note: Module files are in julia/substrate/ to avoid repository .gitignore rules for */src/
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -129,5 +132,65 @@ export compute_syntropy, drive_negentropy!, measure_coherence
 # Holographic Memory
 export HolographicMemory, Hologram, AssociativeRecall
 export store_hologram!, recall!, interference_pattern
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ALPHA-OMEGA TRANSFORMERS (12 Deep Mathematical Transformers)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Alpha Transformer (Genesis)
+export GenesisState, VOID, POTENTIAL, NASCENT, MANIFEST
+export PrimordialSeed, GenesisOperator, BifurcationGenesis
+export AlphaTransformer
+
+# Omega Transformer (Completion)
+export ConvergenceState, DIVERGING, OSCILLATING, CONVERGING, CONVERGED
+export StrangeAttractor, CompletionOperator, FixedPointFinder
+export OmegaTransformer
+
+# Phi Transformer (Golden Ratio)
+export FibonacciGenerator, GoldenSpiral, PhiMatrix, SelfSimilarityOperator
+export PhiTransformer, golden_scale, spiral_encode, fibonacci_transform
+
+# Manifold Transformer (Differential Geometry)
+export ManifoldType, EUCLIDEAN, SPHERICAL, HYPERBOLIC, TORUS, CUSTOM
+export MetricTensor, Geodesic, parallel_transport
+export ManifoldTransformer, curvature_at
+
+# Tensor Transformer (Higher-Order Tensors)
+export Tensor, contract, outer, cp_decomposition
+export TensorTransformer
+
+# Spectral Transformer (Eigenvalue Operations)
+export SpectralDecomposition, spectral_decompose, chebyshev, spectral_filter
+export SpectralTransformer, spectral_gaps
+
+# Fractal Transformer (Self-Similarity)
+export IFS, golden_ifs, iterate_ifs, box_counting_dimension
+export FractalTransformer, compute_dimension
+
+# Category Transformer (Category Theory)
+export CatObject, Morphism, Category, Functor, NaturalTransformation, Monad
+export CategoryTransformer, compose_chain
+
+# Topos Transformer (Topos Theory)
+export HeytingAlgebra, SubobjectClassifier, Presheaf
+export ToposTransformer, create_presheaf!, verify_sheaf
+
+# Hypergraph Transformer (Higher-Order Graphs)
+export Hyperedge, Hypergraph, hypergraph_laplacian, normalized_laplacian
+export HypergraphTransformer, create_hypergraph!, random_walk_transform
+
+# Information Transformer (Information Theory)
+export shannon_entropy, joint_entropy, mutual_information, kl_divergence
+export InformationTransformer
+
+# Symplectic Transformer (Hamiltonian Mechanics)
+export symplectic_matrix, is_symplectic, poisson_bracket
+export HamiltonianState, phi_hamiltonian, symplectic_step!
+export SymplecticTransformer
+
+# Unified Transformer Interface
+export TransformerChain, chain_transform, toggle_transformer!
+export FullTransformerSuite, full_transform, suite_status
 
 end # module
