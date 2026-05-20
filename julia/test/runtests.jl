@@ -39,7 +39,7 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @testset "SubstrateBridge Module" begin
-    include("../src/bridges/SubstrateBridge.jl")
+    include("../substrate/bridges/SubstrateBridge.jl")
     
     # Create bridge
     bridge = create_bridge("test_bridge")
@@ -88,7 +88,7 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @testset "EmergenceEngine Module" begin
-    include("../src/engines/EmergenceEngine.jl")
+    include("../substrate/engines/EmergenceEngine.jl")
     
     # Test order parameter
     op = OrderParameter(3)
@@ -138,7 +138,7 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @testset "QuantumMesh Module" begin
-    include("../src/meshes/QuantumMesh.jl")
+    include("../substrate/meshes/QuantumMesh.jl")
     
     # Test quantum amplitude
     α = QuantumAmplitude(0.6, 0.8)
@@ -193,7 +193,7 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @testset "MorphicField Module" begin
-    include("../src/fields/MorphicField.jl")
+    include("../substrate/fields/MorphicField.jl")
     
     # Test pattern creation
     template = [1.0, 2.0, 3.0]
@@ -239,7 +239,7 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @testset "NeuralTopology Module" begin
-    include("../src/topology/NeuralTopology.jl")
+    include("../substrate/topology/NeuralTopology.jl")
     
     # Test simplex
     σ = Simplex([1, 2, 3])
