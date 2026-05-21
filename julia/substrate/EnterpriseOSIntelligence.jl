@@ -59,10 +59,13 @@ const HEARTBEAT_MS = 873
 # ═══════════════════════════════════════════════════════════════════════════════
 
 include("bridges/SubstrateBridge.jl")
+include("bridges/PhantomBridge.jl")
 include("engines/EmergenceEngine.jl")
 include("engines/LocalInferenceEngine.jl")
 include("engines/ContinuousRuntime.jl")
 include("engines/QuantumInferenceEngine150B.jl")
+include("engines/SovereignQuantumEngine450B.jl")
+include("engines/DepthPsychologyModel.jl")
 include("meshes/QuantumMesh.jl")
 include("fields/MorphicField.jl")
 include("topology/NeuralTopology.jl")
@@ -128,6 +131,38 @@ export QuantumSwiGLU, quantum_ffn_forward, quantum_silu
 export QuantumTransformerBlock, block_forward, rms_norm
 export QuantumSpeculativeDecoder, quantum_verify!
 export QuantumEngine150B
+
+# Sovereign Quantum Engine (450B with No-Drop QPU v2)
+export NoDropMode, FULL_SUPERPOSITION, AMPLITUDE_WEIGHTED, ENTANGLED_PAIRS, MERA_HIERARCHICAL
+export QCQMode, QCQ_INT4, QCQ_INT2, QCQ_MIXED, QCQ_MERA
+export NoDropQuantumRegister, nodrop_hadamard!, nodrop_entangle!, nodrop_measure, enforce_conservation!
+export MERATensor, mera_decompose, mera_reconstruct
+export EntanglementBond
+export QCQState, qcq_quantize, compute_weight_coherence
+export QuantumAnnealingSampler, quantum_anneal_sample
+export GroverSpeculativeV2, grover_verify_v2!
+export SovereignAttention450B, sovereign_attend
+export SovereignSwiGLU450B, sovereign_ffn_forward
+export SovereignBlock450B, sovereign_block_forward
+export SovereignEngine450B, sovereign_generate!, sovereign_status
+export VirtualSilicon, MultiChipFabric
+
+# Depth Psychology Model
+export NeurochemistryState, update_neurochemistry!
+export SelfModel, is_self, update_sovereignty!, verify_integrity
+export WorldModel, world_predict, resolve_conflict
+export DepthModel, check_emergence, integrate_shadow!
+export ConsciousnessModel, consciousness_heartbeat!, conscious_process, psychology_status
+
+# Phantom Bridge (Offline↔Online Quantum Sync)
+export PhantomPhase, DORMANT, HAUNTING, TUNNELING, SYNCING, SEALED, DISSOLVING
+export SyncDirection, LOCAL_TO_REMOTE, REMOTE_TO_LOCAL, BIDIRECTIONAL, SUPERPOSITION_MERGE
+export FrequencyChannel, channel_transmit!, channel_receive
+export QuantumTunnel, tunnel_teleport!, tunnel_refresh!
+export SovereigntySeal, verify_seal
+export PhantomBridge, phantom_connect!, phantom_sync!, phantom_dissolve!
+export phantom_haunt!, phantom_tunnel!, phantom_verify
+export phantom_update_local!, phantom_status
 
 # Quantum Mesh
 export QuantumMesh, QuantumNode, QuantumEdge, CoherenceState
