@@ -27,6 +27,14 @@ target_include_directories(organism_kernel_demo PRIVATE
     organism-kernel
 )
 
+# ── Local inference header validation ─────────────────────────────────────────
+# Ensure local_inference.hpp compiles correctly
+add_library(local_inference_check INTERFACE)
+target_include_directories(local_inference_check INTERFACE
+    phi-math
+    organism-kernel
+)
+
 # ── Enable threading (required for std::mutex) ────────────────────────────────
 find_package(Threads REQUIRED)
 target_link_libraries(organism_kernel_demo PRIVATE Threads::Threads)

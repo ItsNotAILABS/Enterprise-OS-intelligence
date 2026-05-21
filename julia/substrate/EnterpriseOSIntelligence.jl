@@ -60,6 +60,8 @@ const HEARTBEAT_MS = 873
 
 include("bridges/SubstrateBridge.jl")
 include("engines/EmergenceEngine.jl")
+include("engines/LocalInferenceEngine.jl")
+include("engines/ContinuousRuntime.jl")
 include("meshes/QuantumMesh.jl")
 include("fields/MorphicField.jl")
 include("topology/NeuralTopology.jl")
@@ -91,6 +93,28 @@ export create_bridge, connect_nodes!, route_signal, propagate!
 export EmergenceEngine, OrderParameter, PhaseState
 export detect_emergence, update_order_parameter!, get_susceptibility
 export SUBCRITICAL, CRITICAL, SUPERCRITICAL
+
+# Local Inference Engine (70B+ Pure Local AI)
+export QuantMode, Q4_0, Q4_K_M, Q5_K_M, Q8_0, FP16, FP32
+export ModelArch, LLAMA_70B, LLAMA_405B, MIXTRAL_8X22B, DEEPSEEK_V2, QWEN2_72B, CUSTOM
+export InferenceState, COLD, LOADING, WARM, GENERATING, PAUSED, CHECKPOINTING
+export HardwareBackend, CPU_AVX2, CPU_AVX512, CUDA, METAL, VULKAN, MULTI_GPU
+export QuantizedTensor, quantize, dequantize, memory_mb
+export RoPEEmbedding, apply_rope
+export RMSNorm, rms_normalize
+export SwiGLU_FFN, swiglu_forward
+export GroupedQueryAttention, gqa_forward
+export KVCache, update_cache!, get_cache, clear_cache!, cache_memory_mb
+export SpeculativeDecoder, speculative_step!
+export ContinuousEngine, load_model!, generate!, thermal_update!, checkpoint!, engine_status
+export EngineOrchestrator, add_engine!, execute_task!, orchestrator_status
+
+# Continuous Runtime (24/7 Operation)
+export TaskPriority, TASK_LOW, TASK_NORMAL, TASK_HIGH, TASK_CRITICAL, TASK_SOVEREIGN
+export RuntimeLifecycle, RT_BOOTING, RT_READY, RT_RUNNING, RT_DRAINING, RT_SHUTDOWN
+export RuntimeTask, ContinuousRuntime
+export boot!, start_continuous!, submit_task!, process_next!, process_batch!
+export heartbeat!, runtime_status, shutdown!, start_local_70b
 
 # Quantum Mesh
 export QuantumMesh, QuantumNode, QuantumEdge, CoherenceState
