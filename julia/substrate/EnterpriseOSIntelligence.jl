@@ -193,4 +193,43 @@ export SymplecticTransformer
 export TransformerChain, chain_transform, toggle_transformer!
 export FullTransformerSuite, full_transform, suite_status
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# PRODUCTION TRANSFORMERS (Enterprise Runtime System)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Runtime States & Modes
+export RuntimeState, INITIALIZING, READY, PROCESSING, ERROR, SHUTDOWN
+export PrecisionMode, FLOAT64, FLOAT32, BFLOAT16, QUANTIZED
+export ExecutionMode, SEQUENTIAL, PARALLEL, STREAMING, BATCH
+export HealthState, HEALTHY, DEGRADED, UNHEALTHY, CRITICAL
+
+# Production Components
+export PositionalEncoding, encode_position
+export LayerNorm, normalize
+export MultiHeadAttention, attend, scaled_dot_product_attention
+export FeedForward, forward, gelu
+export EncoderLayer, encode
+export DecoderLayer, decode
+
+# Production Transformers
+export ProductionTransformer, encode_sequence, decode_sequence, forward_pass
+export EncoderTransformer, encode_and_pool
+export DecoderTransformer, generate_next, greedy_decode
+export generate_causal_mask
+
+# Runtime Integration
+export RuntimeMetrics, record_request!, record_error!, record_memory!, summarize
+export TransformerPool, get_instance, release_instance!, scale_up!, scale_down!, update_health!
+export RuntimeExecutor, execute_production, execute_encoder, execute_decoder
+export RuntimeRequest, RuntimeScheduler, submit!, process_next!, process_all!
+export IntegratedRuntime, start!, process!, apply_alpha_omega!, runtime_status
+
+# Benchmarks
+export BenchmarkResult, BenchmarkSuite
+export benchmark, add_result!, complete!
+export benchmark_attention, benchmark_feedforward, benchmark_encoder_layer
+export benchmark_production_transformer, benchmark_encoder_transformer, benchmark_decoder_transformer
+export benchmark_alpha, benchmark_phi, benchmark_spectral, benchmark_transformer_chain
+export run_comprehensive_benchmarks, print_results, generate_report
+
 end # module

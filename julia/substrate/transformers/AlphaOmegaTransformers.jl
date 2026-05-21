@@ -187,3 +187,11 @@ end
 # Export unified interface
 export TransformerChain, chain_transform, toggle_transformer!
 export FullTransformerSuite, full_transform, suite_status
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PRODUCTION TRANSFORMERS & RUNTIME INTEGRATION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+include("ProductionTransformers.jl")
+include("RuntimeIntegration.jl")
+include("Benchmarks.jl")
