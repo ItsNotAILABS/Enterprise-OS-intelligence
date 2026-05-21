@@ -27,6 +27,31 @@ target_include_directories(organism_kernel_demo PRIVATE
     organism-kernel
 )
 
+# ── Local inference header validation ─────────────────────────────────────────
+# Ensure local_inference.hpp compiles correctly
+add_library(local_inference_check INTERFACE)
+target_include_directories(local_inference_check INTERFACE
+    phi-math
+    organism-kernel
+)
+
+# ── Nova Chip virtual processor ───────────────────────────────────────────────
+# nova_chip.hpp and nova_chip_runtime.hpp are header-only
+add_library(nova_chip_check INTERFACE)
+target_include_directories(nova_chip_check INTERFACE
+    phi-math
+    organism-kernel
+)
+
+# ── Nova Chip v2: 12-core sovereign multi-chip fabric ─────────────────────────
+# nova_chip_v2.hpp extends nova_chip.hpp with 12 cores, 128-qubit QPU,
+# no-drop attention ISA, MERA engine, Phantom I/O, Psychology core
+add_library(nova_chip_v2_check INTERFACE)
+target_include_directories(nova_chip_v2_check INTERFACE
+    phi-math
+    organism-kernel
+)
+
 # ── Enable threading (required for std::mutex) ────────────────────────────────
 find_package(Threads REQUIRED)
 target_link_libraries(organism_kernel_demo PRIVATE Threads::Threads)
