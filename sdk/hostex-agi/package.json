@@ -1,0 +1,27 @@
+{
+  "name": "@medina/hostex-agi",
+  "version": "1.0.0",
+  "description": "HOSTEX AGI — Multi-Provider Hosting & DNS Management Intelligence. RSHIP-2026-HOSTEX-001.",
+  "main": "hostex-agi.js",
+  "type": "module",
+  "keywords": [
+    "medina",
+    "rship",
+    "hostex",
+    "agi",
+    "hosting",
+    "cloudflare",
+    "godaddy",
+    "dns",
+    "ssl",
+    "cdn",
+    "phi",
+    "kuramoto",
+    "infrastructure"
+  ],
+  "exports": {
+    ".": "./hostex-agi.js"
+  },
+  "author": "Alfredo Medina Hernandez",
+  "license": "SEE LICENSE IN LICENSE"
+}
