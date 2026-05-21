@@ -1,0 +1,121 @@
+name: "RSHIP — Deploy Cloudflare Pages"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Triggers Cloudflare Pages deployment via deploy hook whenever code is pushed
+# to main that affects the web app (dist/, platforms/, or production-apps/).
+#
+# Also deploys Cloudflare Workers for production web apps in parallel.
+#
+# GitHub Secrets required (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_PAGES_DEPLOY_HOOK — The Cloudflare Pages deploy hook URL
+#   CLOUDFLARE_API_TOKEN         — Cloudflare API token with Workers:Edit
+#   CLOUDFLARE_ACCOUNT_ID        — Your Cloudflare account ID
+#
+# The deploy hook URL is:
+#   https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/<hook-id>
+#
+# To set up:
+#   1. Copy your deploy hook URL from Cloudflare Pages dashboard
+#   2. Go to GitHub repo → Settings → Secrets → New repository secret
+#   3. Name: CLOUDFLARE_PAGES_DEPLOY_HOOK, Value: <your deploy hook URL>
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dist/**'
+      - 'platforms/**'
+      - 'production-apps/**'
+      - 'wrangler.jsonc'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── Deploy: Cloudflare Pages via Deploy Hook ────────────────────────────────
+  deploy-pages:
+    name: "Deploy Cloudflare Pages"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Cloudflare Pages Deploy Hook
+        run: |
+          echo "🚀 Triggering Cloudflare Pages deployment..."
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK }}")
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "HTTP Status: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "✅ Cloudflare Pages deployment triggered successfully."
+          else
+            echo "❌ Failed to trigger deployment (HTTP $HTTP_CODE)."
+            exit 1
+          fi
+
+  # ── Deploy: Production Web App Workers ──────────────────────────────────────
+  deploy-web-apps:
+    name: "Deploy Web App Workers"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+          - skyhi-travel-intelligence
+          - global-supply-chain-intelligence
+          - financial-market-prediction
+          - enterprise-workforce-intelligence
+          - enterprise-crisis-management
+          - distributed-compute-orchestrator
+          - construction-project-intelligence
+          - commercial-construction-intelligence
+          - autonomous-manufacturing-intelligence
+          - supply-chain-optimizer
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check if app has wrangler config
+        id: check
+        run: |
+          if [ -f "production-apps/${{ matrix.app }}/wrangler.toml" ] || \
+             [ -f "production-apps/${{ matrix.app }}/wrangler.jsonc" ]; then
+            echo "has_config=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_config=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy ${{ matrix.app }}
+        if: steps.check.outputs.has_config == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: production-apps/${{ matrix.app }}
+          command: deploy
+
+  # ── Summary ──────────────────────────────────────────────────────────────────
+  deploy-summary:
+    name: "Pages Deployment Summary"
+    needs: [deploy-pages, deploy-web-apps]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report status
+        run: |
+          echo "═══════════════════════════════════════════"
+          echo "  RSHIP Cloudflare Pages Deployment"
+          echo "═══════════════════════════════════════════"
+          echo ""
+          echo "  Pages Deploy Hook:  ${{ needs.deploy-pages.result }}"
+          echo "  Web App Workers:    ${{ needs.deploy-web-apps.result }}"
+          echo ""
+          if [ "${{ needs.deploy-pages.result }}" = "success" ]; then
+            echo "  ✅ Cloudflare Pages site deployed."
+          else
+            echo "  ⚠ Pages deployment may have issues."
+          fi
+          echo "═══════════════════════════════════════════"
