@@ -1,5 +1,6 @@
-# RSHIP Enterprise OS Intelligence — Cloudflare Pages Redirects
-# Redirect API paths to the appropriate workers
+# Medina Tech Labs — Cloudflare Pages Redirects
+# Domain: medinatechlabs.net
+# Redirect API and module paths to intelligence workers
 
 /api/*  https://cerebrum.rship.workers.dev/api/:splat  302
 /cerebrum/*  https://cerebrum.rship.workers.dev/:splat  302
@@ -8,3 +9,8 @@
 /vigil/*  https://vigil.rship.workers.dev/:splat  302
 /cursor/*  https://cursor.rship.workers.dev/:splat  302
 /agens/*  https://agens.rship.workers.dev/:splat  302
+
+# Production app redirects
+/skyhi/*  https://skyhi-travel-intelligence.rship.workers.dev/:splat  302
+/supply-chain/*  https://supply-chain-optimizer.rship.workers.dev/:splat  302
+/finance/*  https://financial-market-prediction.rship.workers.dev/:splat  302

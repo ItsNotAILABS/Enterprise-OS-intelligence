@@ -3,78 +3,91 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>404 — RSHIP Enterprise OS Intelligence</title>
+  <title>404 — Medina Tech Labs</title>
   <style>
     :root {
-      --phi: 1.618033988749895;
-      --gold: #ffd700;
       --cyan: #00d4ff;
-      --bg: #0a0a0f;
+      --purple: #a855f7;
+      --bg: #030014;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       min-height: 100vh;
       background: var(--bg);
       color: #fff;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
       padding: 2rem;
+      overflow: hidden;
     }
-    .logo {
-      font-size: 4rem;
-      background: linear-gradient(135deg, var(--gold), var(--cyan));
+    .bg-glow {
+      position: fixed;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .glow-1 { background: var(--cyan); top: -200px; left: -100px; }
+    .glow-2 { background: var(--purple); bottom: -200px; right: -100px; }
+    .code {
+      font-size: 8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       margin-bottom: 1rem;
-    }
-    .code {
-      font-size: 6rem;
-      font-weight: 100;
-      color: #333;
-      margin-bottom: 1rem;
+      line-height: 1;
     }
     h1 {
-      font-size: 1.5rem;
-      font-weight: 300;
-      margin-bottom: 0.5rem;
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
     }
     p {
-      color: #888;
-      margin-bottom: 2rem;
+      color: #64748b;
+      margin-bottom: 2.5rem;
+      max-width: 400px;
+      line-height: 1.6;
     }
     a {
-      color: var(--cyan);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #fff;
       text-decoration: none;
-      padding: 0.75rem 2rem;
-      border: 1px solid var(--cyan);
-      border-radius: 4px;
-      transition: all 0.3s ease;
+      padding: 0.9rem 2rem;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      border-radius: 12px;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.3s;
     }
     a:hover {
-      background: var(--cyan);
-      color: var(--bg);
+      transform: translateY(-3px);
+      box-shadow: 0 0 40px rgba(0,212,255,0.3);
     }
     .footer {
       position: absolute;
       bottom: 2rem;
       font-size: 0.75rem;
-      color: #555;
+      color: #334155;
     }
   </style>
 </head>
 <body>
-  <div class="logo">◎</div>
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
   <div class="code">404</div>
-  <h1>Path Not Found</h1>
-  <p>The requested intelligence module does not exist at this location.</p>
-  <a href="/">← Return to Portal</a>
+  <h1>Module Not Found</h1>
+  <p>The intelligence module you're looking for doesn't exist at this coordinates. It may have been relocated or decommissioned.</p>
+  <a href="/">← Return to Platform</a>
   <div class="footer">
-    © 2026 Alfredo Medina Hernandez · RSHIP AGI Systems
+    © 2026 Medina Tech Labs · medinatechlabs.net
   </div>
 </body>
 </html>

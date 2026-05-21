@@ -1,9 +1,11 @@
 {
-  // RSHIP Enterprise OS Intelligence — Cloudflare Pages Configuration
-  // This configuration enables Cloudflare Pages auto-deployment for the repository landing page.
-  // The actual AI Workers are deployed separately via cloudflare-workers/ subdirectories.
+  // Medina Tech Labs — Cloudflare Pages Configuration
+  // Domain: medinatechlabs.net
+  // This configuration enables Cloudflare Pages auto-deployment for the main website.
+  // Custom domain: medinatechlabs.net (configure in Cloudflare Pages dashboard)
+  // The AI Workers are deployed separately via cloudflare-workers/ subdirectories.
   
-  "name": "enterprise-os-intelligence",
+  "name": "medinatechlabs",
   "compatibility_date": "2024-09-02",
   "assets": {
     "directory": "./dist"
