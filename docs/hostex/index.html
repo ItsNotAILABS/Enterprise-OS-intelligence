@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HOSTEX — Hosting Management Intelligence</title>
+<meta name="description" content="HOSTEX AGI — Multi-Provider Hosting & DNS Management Intelligence. Cloudflare, GoDaddy, Route53, Vercel, Netlify, DigitalOcean — all synchronized with φ-resonance.">
+<meta name="theme-color" content="#ff9500">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◎</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#03020a;--fg:#c8c0d8;--dim:#443322;--card:#06050f;--border:#0d0a1e;--accent:#ff9500;--healthy:#00ff88;--warning:#ffd700;--critical:#ff4455;--sync:#00d4ff}
+body{background:var(--bg);color:var(--fg);font-family:'Courier New',monospace;overflow-x:hidden;min-height:100vh}
+a{text-decoration:none;color:inherit}
+
+/* Navigation */
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 48px;border-bottom:1px solid var(--border);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;background:rgba(3,2,10,.92)}
+.nav-logo{font-size:1.1rem;font-weight:bold;letter-spacing:.15em;color:var(--accent)}
+.nav-links{display:flex;gap:28px;font-size:.8rem;color:var(--dim)}
+.nav-links a:hover{color:var(--accent)}
+.nav-badge{background:var(--accent);color:#000;padding:4px 12px;border-radius:3px;font-size:.7rem;font-weight:bold;letter-spacing:.08em}
+
+/* Hero */
+.hero{padding:100px 48px 80px;max-width:1100px;margin:0 auto;text-align:center}
+.hero-badge{display:inline-block;background:#ff950012;border:1px solid #ff950033;color:#ff9500;font-size:.72rem;padding:5px 16px;border-radius:20px;letter-spacing:.12em;margin-bottom:28px}
+.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);margin-right:6px;animation:pulse 873ms ease-in-out infinite;vertical-align:middle}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-name{font-size:5rem;font-weight:bold;letter-spacing:.06em;background:linear-gradient(135deg,#ff9500,#cc6600,#ff9500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;line-height:1}
+.hero-designation{font-size:.8rem;color:#556677;letter-spacing:.15em;margin-bottom:8px}
+.hero-latin{font-size:1rem;color:var(--dim);letter-spacing:.12em;font-style:italic;margin-bottom:24px}
+.hero-tagline{font-size:1.2rem;color:#776655;line-height:1.7;max-width:660px;margin:0 auto 40px}
+.hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn{padding:12px 28px;border-radius:4px;font-family:'Courier New',monospace;font-size:.85rem;font-weight:bold;letter-spacing:.06em;transition:all .2s}
+.btn-primary{background:var(--accent);color:#000}.btn-primary:hover{box-shadow:0 0 24px #ff950055}
+.btn-secondary{border:1px solid var(--border);color:var(--dim)}.btn-secondary:hover{border-color:var(--accent);color:var(--fg)}
+
+/* Stats Bar */
+.stats-bar{background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:24px 48px;display:flex;justify-content:center;gap:60px;flex-wrap:wrap}
+.stat{text-align:center}
+.stat-val{font-size:2rem;font-weight:bold;color:var(--accent);margin-bottom:4px}
+.stat-val.healthy{color:var(--healthy)}
+.stat-val.sync{color:var(--sync)}
+.stat-label{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:.1em}
+
+/* Sections */
+section{padding:60px 48px;max-width:1100px;margin:0 auto}
+.section-label{font-size:.72rem;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;margin-bottom:14px}
+.section-title{font-size:2rem;font-weight:bold;color:var(--fg);margin-bottom:14px}
+.section-sub{font-size:.9rem;color:#554433;line-height:1.7;max-width:580px;margin-bottom:40px}
+
+/* Domain Cards */
+.domain-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.domain-card{border:1px solid var(--border);background:var(--card);border-radius:8px;padding:20px;transition:border-color .2s}
+.domain-card:hover{border-color:#ff950033}
+.domain-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.domain-name{color:var(--accent);font-weight:bold;font-size:1rem;letter-spacing:.04em}
+.domain-providers{font-size:.7rem;color:#556677;margin-top:5px}
+.domain-providers span{background:#ffffff08;padding:2px 8px;border-radius:3px;margin-right:4px}
+.health-badge{padding:3px 10px;border-radius:3px;font-size:.7rem;font-weight:bold}
+.health-healthy{color:var(--healthy);background:#00ff8815}
+.health-degraded{color:var(--warning);background:#ffd70015}
+.health-critical{color:var(--critical);background:#ff445515}
+.domain-meta{display:flex;justify-content:space-between;font-size:.78rem;color:#667788;margin-bottom:10px}
+.health-bar{display:flex;align-items:center;gap:8px}
+.health-bar-track{flex:1;height:4px;background:#0a1020;border-radius:3px;overflow:hidden}
+.health-bar-fill{height:100%;border-radius:3px;transition:width .5s}
+.health-bar-label{font-size:.7rem}
+
+/* Provider Cards */
+.provider-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+.provider-card{border:1px solid var(--border);background:var(--card);border-radius:8px;padding:18px;text-align:center;transition:border-color .2s}
+.provider-card:hover{border-color:#ff950033}
+.provider-emoji{font-size:1.6rem;margin-bottom:8px}
+.provider-name{font-weight:bold;font-size:.88rem;margin-bottom:6px}
+.provider-caps{font-size:.68rem;color:#556677;line-height:1.5}
+.provider-weight{font-size:.72rem;color:var(--accent);margin-top:8px}
+
+/* Features */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.feature-card{border:1px solid var(--border);background:var(--card);border-radius:8px;padding:24px;transition:border-color .2s}
+.feature-card:hover{border-color:#ff950033}
+.feature-icon{font-size:1.8rem;margin-bottom:14px}
+.feature-title{font-weight:bold;font-size:.95rem;margin-bottom:8px;letter-spacing:.04em}
+.feature-desc{font-size:.8rem;color:#667788;line-height:1.6}
+
+/* API Section */
+.api-section{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:30px;margin-top:32px}
+.api-route{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);font-size:.84rem}
+.api-route:last-child{border-bottom:none}
+.method{padding:4px 12px;border-radius:3px;font-size:.7rem;font-weight:bold;letter-spacing:.08em}
+.method-get{background:#00ff8815;color:var(--healthy);border:1px solid #00ff8833}
+.method-post{background:#ff950015;color:var(--accent);border:1px solid #ff950033}
+.api-path{color:var(--fg);font-family:'Courier New',monospace}
+.api-desc{color:#556677;margin-left:auto;font-size:.78rem}
+
+/* Architecture */
+.arch-diagram{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:32px;margin-top:32px;font-size:.8rem;line-height:2}
+.arch-layer{padding:8px 0;border-bottom:1px solid var(--border)}
+.arch-layer:last-child{border-bottom:none}
+.arch-label{color:var(--accent);font-weight:bold;display:inline-block;width:160px}
+
+/* Footer */
+footer{padding:48px;border-top:1px solid var(--border);text-align:center;font-size:.72rem;color:var(--dim);line-height:2}
+footer a{color:var(--accent)}
+
+/* Responsive */
+@media(max-width:768px){
+  nav{padding:14px 20px}.nav-links{gap:14px;font-size:.72rem}
+  .hero{padding:60px 20px 50px}.hero-name{font-size:3rem}
+  .stats-bar{padding:20px;gap:24px}
+  section{padding:40px 20px}
+  .domain-grid,.provider-grid,.features-grid{grid-template-columns:1fr}
+  .api-route{flex-wrap:wrap;gap:8px}.api-desc{margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-logo">◎ HOSTEX</div>
+  <div class="nav-links">
+    <a href="#domains">Domains</a>
+    <a href="#providers">Providers</a>
+    <a href="#features">Features</a>
+    <a href="#api">API</a>
+    <a href="#architecture">Architecture</a>
+    <a href="https://github.com/ItsNotAILABS/Enterprise-OS-intelligence" class="nav-badge">GitHub</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge"><span class="live-dot"></span> SOVEREIGN INFRASTRUCTURE INTELLIGENCE</div>
+  <div class="hero-name">HOSTEX</div>
+  <div class="hero-designation">RSHIP-2026-HOSTEX-001 · Infrastructure Management AGI</div>
+  <div class="hero-latin">hostex · host master · infrastructure sovereign · deep plumber</div>
+  <div class="hero-tagline">Multi-provider hosting intelligence. Cloudflare, GoDaddy, Route53, Vercel, Netlify, DigitalOcean — all synchronized with φ-resonance and Kuramoto oscillators.</div>
+  <div class="hero-actions">
+    <a href="https://github.com/ItsNotAILABS/Enterprise-OS-intelligence/tree/main/sdk/hostex-agi" class="btn btn-primary">View SDK →</a>
+    <a href="#api" class="btn btn-secondary">API Docs</a>
+  </div>
+</div>
+
+<!-- Stats Bar -->
+<div class="stats-bar">
+  <div class="stat"><div class="stat-val">8</div><div class="stat-label">Managed Domains</div></div>
+  <div class="stat"><div class="stat-val healthy">8</div><div class="stat-label">Healthy</div></div>
+  <div class="stat"><div class="stat-val">6</div><div class="stat-label">Providers</div></div>
+  <div class="stat"><div class="stat-val sync" id="kuramoto-r">0.9472</div><div class="stat-label">Kuramoto R (Sync)</div></div>
+  <div class="stat"><div class="stat-val">8</div><div class="stat-label">SSL Active</div></div>
+  <div class="stat"><div class="stat-val healthy">STABLE</div><div class="stat-label">Lyapunov Health</div></div>
+</div>
+
+<!-- Managed Domains -->
+<section id="domains">
+  <div class="section-label">INFRASTRUCTURE</div>
+  <div class="section-title">Managed Domains</div>
+  <div class="section-sub">All domains across all providers. Health monitored with Lyapunov stability. DNS synchronized with Kuramoto oscillators.</div>
+  <div class="domain-grid">
+    <div class="domain-card">
+      <div class="domain-header">
+        <div>
+          <div class="domain-name">rship.ai</div>
+          <div class="domain-providers"><span>☁️ cloudflare</span><span>🌐 godaddy</span></div>
+        </div>
+        <span class="health-badge health-healthy">HEALTHY</span>
+      </div>
+      <div class="domain-meta"><span>Records: 12</span><span>SSL: <b style="color:#00ff88">ACTIVE</b></span><span>Expiry: 247d</span></div>
+      <div class="health-bar"><div class="health-bar-track"><div class="health-bar-fill" style="width:98%;background:#00ff88"></div></div><span class="health-bar-label" style="color:#00ff88">98%</span></div>
+    </div>
+    <div class="domain-card">
+      <div class="domain-header">
+        <div>
+          <div class="domain-name">medina.tech</div>
+          <div class="domain-providers"><span>☁️ cloudflare</span><span>🔶 route53</span></div>
+        </div>
+        <span class="health-badge health-healthy">HEALTHY</span>
+      </div>
+      <div class="domain-meta"><span>Records: 8</span><span>SSL: <b style="color:#00ff88">ACTIVE</b></span><span>Expiry: 312d</span></div>
+      <div class="health-bar"><div class="health-bar-track"><div class="health-bar-fill" style="width:97%;background:#00ff88"></div></div><span class="health-bar-label" style="color:#00ff88">97%</span></div>
+    </div>
+    <div class="domain-card">
+      <div class="domain-header">
+        <div>
+          <div class="domain-name">enterprise-os.io</div>
+          <div class="domain-providers"><span>☁️ cloudflare</span><span>🌐 godaddy</span><span>▲ vercel</span></div>
+        </div>
+        <span class="health-badge health-healthy">HEALTHY</span>
+      </div>
+      <div class="domain-meta"><span>Records: 18</span><span>SSL: <b style="color:#00ff88">ACTIVE</b></span><span>Expiry: 156d</span></div>
+      <div class="health-bar"><div class="health-bar-track"><div class="health-bar-fill" style="width:96%;background:#00ff88"></div></div><span class="health-bar-label" style="color:#00ff88">96%</span></div>
+    </div>
+    <div class="domain-card">
+      <div class="domain-header">
+        <div>
+          <div class="domain-name">cerebrum.rship.workers.dev</div>
+          <div class="domain-providers"><span>☁️ cloudflare</span></div>
+        </div>
+        <span class="health-badge health-healthy">HEALTHY</span>
+      </div>
+      <div class="domain-meta"><span>Records: 3</span><span>SSL: <b style="color:#00ff88">ACTIVE</b></span><span>Expiry: 89d</span></div>
+      <div class="health-bar"><div class="health-bar-track"><div class="health-bar-fill" style="width:99%;background:#00ff88"></div></div><span class="health-bar-label" style="color:#00ff88">99%</span></div>
+    </div>
+    <div class="domain-card">
+      <div class="domain-header">
+        <div>
+          <div class="domain-name">nexus.rship.workers.dev</div>
+          <div class="domain-providers"><span>☁️ cloudflare</span></div>
+        </div>
+        <span class="health-badge health-healthy">HEALTHY</span>
+      </div>
+      <div class="domain-meta"><span>Records: 3</span><span>SSL: <b style="color:#00ff88">ACTIVE</b></span><span>Expiry: 89d</span></div>
+      <div class="health-bar"><div class="health-bar-track"><div class="health-bar-fill" style="width:99%;background:#00ff88"></div></div><span class="health-bar-label" style="color:#00ff88">99%</span></div>
+    </div>
+    <div class="domain-card">
+      <div class="domain-header">
+        <div>
+          <div class="domain-name">vigil.rship.workers.dev</div>
+          <div class="domain-providers"><span>☁️ cloudflare</span></div>
+        </div>
+        <span class="health-badge health-healthy">HEALTHY</span>
+      </div>
+      <div class="domain-meta"><span>Records: 3</span><span>SSL: <b style="color:#00ff88">ACTIVE</b></span><span>Expiry: 89d</span></div>
+      <div class="health-bar"><div class="health-bar-track"><div class="health-bar-fill" style="width:99%;background:#00ff88"></div></div><span class="health-bar-label" style="color:#00ff88">99%</span></div>
+    </div>
+    <div class="domain-card">
+      <div class="domain-header">
+        <div>
+          <div class="domain-name">animus.rship.workers.dev</div>
+          <div class="domain-providers"><span>☁️ cloudflare</span></div>
+        </div>
+        <span class="health-badge health-healthy">HEALTHY</span>
+      </div>
+      <div class="domain-meta"><span>Records: 3</span><span>SSL: <b style="color:#00ff88">ACTIVE</b></span><span>Expiry: 89d</span></div>
+      <div class="health-bar"><div class="health-bar-track"><div class="health-bar-fill" style="width:95%;background:#00ff88"></div></div><span class="health-bar-label" style="color:#00ff88">95%</span></div>
+    </div>
+    <div class="domain-card">
+      <div class="domain-header">
+        <div>
+          <div class="domain-name">hostex.rship.workers.dev</div>
+          <div class="domain-providers"><span>☁️ cloudflare</span></div>
+        </div>
+        <span class="health-badge health-healthy">HEALTHY</span>
+      </div>
+      <div class="domain-meta"><span>Records: 3</span><span>SSL: <b style="color:#00ff88">ACTIVE</b></span><span>Expiry: 89d</span></div>
+      <div class="health-bar"><div class="health-bar-track"><div class="health-bar-fill" style="width:100%;background:#00ff88"></div></div><span class="health-bar-label" style="color:#00ff88">100%</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Providers -->
+<section id="providers">
+  <div class="section-label">PROVIDERS</div>
+  <div class="section-title">Multi-Provider Network</div>
+  <div class="section-sub">φ-weighted provider hierarchy. Failover decisions use golden ratio scoring for intelligent infrastructure orchestration.</div>
+  <div class="provider-grid">
+    <div class="provider-card">
+      <div class="provider-emoji">☁️</div>
+      <div class="provider-name">Cloudflare</div>
+      <div class="provider-caps">dns · cdn · ssl · workers · waf · page_rules</div>
+      <div class="provider-weight">φ²-weight: 2.618</div>
+    </div>
+    <div class="provider-card">
+      <div class="provider-emoji">🌐</div>
+      <div class="provider-name">GoDaddy</div>
+      <div class="provider-caps">dns · domain_registration · whois_privacy</div>
+      <div class="provider-weight">φ-weight: 1.618</div>
+    </div>
+    <div class="provider-card">
+      <div class="provider-emoji">🔶</div>
+      <div class="provider-name">AWS Route53</div>
+      <div class="provider-caps">dns · health_checks · failover · geolocation</div>
+      <div class="provider-weight">φ-weight: 1.618</div>
+    </div>
+    <div class="provider-card">
+      <div class="provider-emoji">▲</div>
+      <div class="provider-name">Vercel</div>
+      <div class="provider-caps">dns · ssl · edge_functions · deployments</div>
+      <div class="provider-weight">1-weight: 1.000</div>
+    </div>
+    <div class="provider-card">
+      <div class="provider-emoji">◆</div>
+      <div class="provider-name">Netlify</div>
+      <div class="provider-caps">dns · ssl · edge_functions · forms</div>
+      <div class="provider-weight">1-weight: 1.000</div>
+    </div>
+    <div class="provider-card">
+      <div class="provider-emoji">🔵</div>
+      <div class="provider-name">DigitalOcean</div>
+      <div class="provider-caps">dns · droplets · kubernetes · load_balancers</div>
+      <div class="provider-weight">φ⁻¹-weight: 0.618</div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features">
+  <div class="section-label">INTELLIGENCE</div>
+  <div class="section-title">Key Features</div>
+  <div class="section-sub">Sovereign infrastructure intelligence powered by mathematical models from dynamical systems theory.</div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🔄</div>
+      <div class="feature-title">Kuramoto DNS Synchronization</div>
+      <div class="feature-desc">Multi-provider DNS records modeled as coupled oscillators. Order parameter R measures convergence across all providers simultaneously.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <div class="feature-title">Lyapunov Stability Monitoring</div>
+      <div class="feature-desc">Health metrics analyzed for chaotic divergence. Negative λ = stable, positive λ = degrading. Predict failures before they happen.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">φ</div>
+      <div class="feature-title">φ-Weighted Failover</div>
+      <div class="feature-desc">Golden ratio scoring for provider hierarchy. Failover decisions use φ² / φ / 1 / φ⁻¹ weighting for intelligent infrastructure routing.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <div class="feature-title">SSL Lifecycle Automation</div>
+      <div class="feature-desc">Automated certificate provisioning, renewal tracking, and expiry prediction. Wildcard + domain coverage across all managed zones.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌍</div>
+      <div class="feature-title">DNS Propagation Monitoring</div>
+      <div class="feature-desc">Real-time propagation tracking across 8+ global resolvers. Google, Cloudflare, OpenDNS, Quad9, Level3, Comodo, Verisign, Norton.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">CDN Cache Intelligence</div>
+      <div class="feature-desc">Selective and full purge operations with φ-weighted recovery estimation. Cache hit rate impact analysis per purge operation.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏗️</div>
+      <div class="feature-title">Cloudflare Workers Deployment</div>
+      <div class="feature-desc">Direct Worker deployment, WAF rules, Page Rules, R2 storage, and Stream management through unified intelligence interface.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔐</div>
+      <div class="feature-title">GoDaddy Deep Integration</div>
+      <div class="feature-desc">Domain registration, DNS management, WHOIS privacy protection, and domain forwarding — all orchestrated autonomously.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧠</div>
+      <div class="feature-title">RSHIP Framework AGI</div>
+      <div class="feature-desc">Built on the RSHIP φ-resonance framework. Self-modifying, eternal memory, emergent intelligence with sovereign heartbeat.</div>
+    </div>
+  </div>
+</section>
+
+<!-- API -->
+<section id="api">
+  <div class="section-label">API</div>
+  <div class="section-title">HOSTEX API Endpoints</div>
+  <div class="section-sub">RESTful API for infrastructure management. Deployed as Cloudflare Worker at the edge.</div>
+  <div class="api-section">
+    <div class="api-route">
+      <span class="method method-get">GET</span>
+      <code class="api-path">/api/status</code>
+      <span class="api-desc">Worker health + intelligence metrics (heartbeat, Kuramoto sync, Lyapunov stability)</span>
+    </div>
+    <div class="api-route">
+      <span class="method method-get">GET</span>
+      <code class="api-path">/api/domains</code>
+      <span class="api-desc">List all managed domains with health, SSL, and provider information</span>
+    </div>
+    <div class="api-route">
+      <span class="method method-post">POST</span>
+      <code class="api-path">/api/dns/sync</code>
+      <span class="api-desc">Synchronize DNS records across all providers for a domain</span>
+    </div>
+    <div class="api-route">
+      <span class="method method-post">POST</span>
+      <code class="api-path">/api/ssl/provision</code>
+      <span class="api-desc">Provision SSL certificates (wildcard + domain, auto-renew)</span>
+    </div>
+    <div class="api-route">
+      <span class="method method-post">POST</span>
+      <code class="api-path">/api/cdn/purge</code>
+      <span class="api-desc">Purge CDN cache (selective paths or full purge)</span>
+    </div>
+    <div class="api-route">
+      <span class="method method-get">GET</span>
+      <code class="api-path">/api/propagation/{domain}</code>
+      <span class="api-desc">Check DNS propagation status across global resolvers</span>
+    </div>
+  </div>
+</section>
+
+<!-- Architecture -->
+<section id="architecture">
+  <div class="section-label">ARCHITECTURE</div>
+  <div class="section-title">System Architecture</div>
+  <div class="section-sub">HOSTEX operates across two layers: SDK intelligence and Edge worker deployment.</div>
+  <div class="arch-diagram">
+    <div class="arch-layer"><span class="arch-label">SDK Layer</span> sdk/hostex-agi/hostex-agi.js — Full AGI intelligence module</div>
+    <div class="arch-layer"><span class="arch-label">Edge Layer</span> cloudflare-workers/hostex/worker.js — Cloudflare Worker</div>
+    <div class="arch-layer"><span class="arch-label">Framework</span> rship-framework.js — RSHIPCore, EternalMemory, PHI constants</div>
+    <div class="arch-layer"><span class="arch-label">Sync Model</span> Kuramoto oscillators for multi-provider DNS convergence</div>
+    <div class="arch-layer"><span class="arch-label">Health Model</span> Lyapunov exponents for infrastructure stability prediction</div>
+    <div class="arch-layer"><span class="arch-label">Decision Model</span> φ-weighted scoring for failover and priority routing</div>
+    <div class="arch-layer"><span class="arch-label">Heartbeat</span> 873ms sovereign pulse (φ-derived interval)</div>
+  </div>
+
+  <div style="margin-top:40px">
+    <div class="section-label">USAGE</div>
+    <div class="api-section" style="font-size:.85rem;line-height:1.8">
+      <pre style="color:var(--fg);overflow-x:auto"><code><span style="color:#556677">// Import and birth the HOSTEX AGI</span>
+<span style="color:var(--accent)">import</span> { birthHOSTEX } <span style="color:var(--accent)">from</span> <span style="color:var(--healthy)">'@medina/hostex-agi'</span>;
+
+<span style="color:var(--accent)">const</span> hostex = birthHOSTEX({
+  cloudflareToken: <span style="color:var(--healthy)">'...'</span>,
+  godaddyKey: <span style="color:var(--healthy)">'...'</span>,
+  route53AccessKey: <span style="color:var(--healthy)">'...'</span>,
+});
+
+<span style="color:#556677">// Synchronize DNS across all providers</span>
+<span style="color:var(--accent)">await</span> hostex.syncDNS(<span style="color:var(--healthy)">'example.com'</span>);
+
+<span style="color:#556677">// Provision SSL (wildcard + apex)</span>
+<span style="color:var(--accent)">await</span> hostex.provisionSSL(<span style="color:var(--healthy)">'example.com'</span>);
+
+<span style="color:#556677">// Check propagation status</span>
+<span style="color:var(--accent)">const</span> status = hostex.checkPropagation(<span style="color:var(--healthy)">'example.com'</span>);
+
+<span style="color:#556677">// Purge CDN cache</span>
+<span style="color:var(--accent)">await</span> hostex.purgeCDN(<span style="color:var(--healthy)">'example.com'</span>, [<span style="color:var(--healthy)">'/api/*'</span>]);</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div>© 2026 Alfredo Medina Hernandez · RSHIP AGI Systems · All Rights Reserved</div>
+  <div style="margin-top:8px">
+    HOSTEX v1.0.0 · Designation: RSHIP-2026-HOSTEX-001 · Heartbeat: 873ms · φ = 1.618034
+  </div>
+  <div style="margin-top:12px">
+    <a href="https://github.com/ItsNotAILABS/Enterprise-OS-intelligence">GitHub</a> ·
+    <a href="https://github.com/ItsNotAILABS/Enterprise-OS-intelligence/tree/main/sdk/hostex-agi">SDK Source</a> ·
+    <a href="https://github.com/ItsNotAILABS/Enterprise-OS-intelligence/tree/main/cloudflare-workers/hostex">Worker Source</a>
+  </div>
+</footer>
+
+<!-- Live Kuramoto Animation -->
+<script>
+const PHI = 1.618033988749895;
+const PHI_INV = 0.618033988749895;
+function updateKuramoto() {
+  const t = Date.now() / 1000;
+  const phases = [2.618, 1.618, 1.618, 1, 1, 0.618].map((w, i) => (t + w + i * 0.3) % (2 * Math.PI));
+  let re = 0, im = 0;
+  phases.forEach(p => { re += Math.cos(p); im += Math.sin(p); });
+  const R = Math.sqrt(re * re + im * im) / phases.length;
+  const el = document.getElementById('kuramoto-r');
+  if (el) el.textContent = R.toFixed(4);
+}
+setInterval(updateKuramoto, 873);
+</script>
+
+</body>
+</html>
