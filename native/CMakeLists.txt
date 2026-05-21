@@ -35,6 +35,14 @@ target_include_directories(local_inference_check INTERFACE
     organism-kernel
 )
 
+# ── Nova Chip virtual processor ───────────────────────────────────────────────
+# nova_chip.hpp and nova_chip_runtime.hpp are header-only
+add_library(nova_chip_check INTERFACE)
+target_include_directories(nova_chip_check INTERFACE
+    phi-math
+    organism-kernel
+)
+
 # ── Enable threading (required for std::mutex) ────────────────────────────────
 find_package(Threads REQUIRED)
 target_link_libraries(organism_kernel_demo PRIVATE Threads::Threads)

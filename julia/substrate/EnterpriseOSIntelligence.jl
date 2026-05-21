@@ -62,6 +62,7 @@ include("bridges/SubstrateBridge.jl")
 include("engines/EmergenceEngine.jl")
 include("engines/LocalInferenceEngine.jl")
 include("engines/ContinuousRuntime.jl")
+include("engines/QuantumInferenceEngine150B.jl")
 include("meshes/QuantumMesh.jl")
 include("fields/MorphicField.jl")
 include("topology/NeuralTopology.jl")
@@ -115,6 +116,18 @@ export RuntimeLifecycle, RT_BOOTING, RT_READY, RT_RUNNING, RT_DRAINING, RT_SHUTD
 export RuntimeTask, ContinuousRuntime
 export boot!, start_continuous!, submit_task!, process_next!, process_batch!
 export heartbeat!, runtime_status, shutdown!, start_local_70b
+
+# Quantum Inference Engine (150B with QPU)
+export QuantumMode, CLASSICAL, SUPERPOSITION, ENTANGLED, ANNEALING, GROVER
+export TensorNetwork, FULL_RANK, MPS, PEPS, TTN, MERA
+export QPUState, QPU_IDLE, QPU_PREPARING, QPU_EXECUTING, QPU_MEASURING, QPU_ERROR
+export QuantumRegister, hadamard!, phase_rotate!, entangle!, entanglement_entropy
+export TensorTrain, tensor_train_decompose, tt_reconstruct
+export QuantumAttention, quantum_attend
+export QuantumSwiGLU, quantum_ffn_forward, quantum_silu
+export QuantumTransformerBlock, block_forward, rms_norm
+export QuantumSpeculativeDecoder, quantum_verify!
+export QuantumEngine150B
 
 # Quantum Mesh
 export QuantumMesh, QuantumNode, QuantumEdge, CoherenceState
