@@ -323,7 +323,7 @@ export default {
 
       return json({ error: 'Not found', availableRoutes: ['/api/status', '/api/domains', '/api/dns/sync', '/api/ssl/provision', '/api/cdn/purge', '/api/propagation/{domain}'] }, 404);
     } catch (err) {
-      return json({ error: err.message, stack: err.stack }, 500);
+      return json({ error: 'Internal server error', code: 'HOSTEX_INTERNAL_ERROR' }, 500);
     }
   },
 };
