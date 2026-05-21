@@ -447,7 +447,13 @@ function generate_report(suite::BenchmarkSuite)
 """
     
     for result in suite.results
-        report *= "| $(result.name) | $(round(result.mean_time_ms, digits=3)) | $(round(result.p50_time_ms, digits=3)) | $(round(result.p95_time_ms, digits=3)) | $(round(result.p99_time_ms, digits=3)) | $(round(result.throughput, digits=1)) tok/s |\n"
+        name = result.name
+        mean_t = round(result.mean_time_ms, digits=3)
+        p50_t = round(result.p50_time_ms, digits=3)
+        p95_t = round(result.p95_time_ms, digits=3)
+        p99_t = round(result.p99_time_ms, digits=3)
+        throughput = round(result.throughput, digits=1)
+        report *= "| $name | $mean_t | $p50_t | $p95_t | $p99_t | $throughput tok/s |\n"
     end
     
     report *= """

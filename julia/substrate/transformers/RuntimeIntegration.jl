@@ -553,6 +553,7 @@ end
 
 """Process request through runtime"""
 function process!(runtime::IntegratedRuntime, request::RuntimeRequest)
+    submit!(runtime.scheduler, request)
     return process_next!(runtime.scheduler)
 end
 
