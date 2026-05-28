@@ -1,6 +1,6 @@
 {
   "name": "@medina/effecttrace-governance-organism",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "EffectTrace — Governance Consequence Intelligence for ICP. POWERED BY ORO. Traces what NNS/SNS proposals actually change, classifies risk, stores governance memory, and runs 24-hour autonomous consequence intelligence. TRACE · VERIFY · REMEMBER.",
   "license": "UNLICENSED",
   "type": "module",
