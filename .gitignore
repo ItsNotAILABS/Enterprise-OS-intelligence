@@ -53,3 +53,4 @@ Thumbs.db
 *.log
 logs/
 python/intelligence/__pycache__/
+dist/

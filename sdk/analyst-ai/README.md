@@ -1,4 +1,4 @@
-# @medina/analyst-ai — v0.1.0-alpha
+# @medina/analyst-ai — v1.0.0
 
 **AI analyst for business professionals.**
 

@@ -1,6 +1,6 @@
 {
   "name": "@medina/analyst-ai",
-  "version": "0.1.0-alpha",
+  "version": "1.0.0",
   "description": "AI analyst for business professionals. Turn long reports, emails, and meeting notes into executive briefs, action items, and trend insights — all embedded, no subscription, no data leaves your machine.",
   "license": "SEE LICENSE IN LICENSE",
   "author": {

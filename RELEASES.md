@@ -9,6 +9,48 @@
 
 ---
 
+## v1.2.0 — *Fabrica Vivens* · May 28, 2026
+
+**The Sovereign Organism Runtime Release**
+
+The three pillars are now one. NovaChip v2 hardware, ORO governance intelligence, and ORGANISM living compute are unified into a single coherent tick.
+
+### What Changed
+
+**SOVEREIGN-ORGANISM-RUNTIME Framework (NEW)**
+- **SOR-2026-V1** — New framework unifying Nova Chip + ORO + EFFECTTRACE + ORGANISM
+- **Core ↔ Engine Mapping** — Each of ORO's 15 engines maps to specific Nova Chip v2 cores
+- **Unified Tick** — Single 873ms tick advances hardware, governance, and organism layers atomically
+- **6 SOR Invariants** — Conservation, compounding, sovereignty, vitality, truth, unity
+- **Three-Word Encoding** — SILICON · GOVERN · LIVE
+
+**Nova Chip v2 — ORO Integration Layer (C++)**
+- `organism::sor` namespace — SOR integration structs in nova_chip_v2.hpp
+- `OROEngine` enum — 15 engines mapped to core execution
+- `TruthPosition` enum — 8-position truth ladder in hardware
+- `AgentID` enum — ARCHON, VECTOR, LUMEN, FORGE with core assignments
+- `CoreEngineMap` — Static mapping of agents/engines to specific cores
+- `GovernanceMemoryField` — φ-compounding memory that never resets
+- `SovereignOrganismRuntime` — Unified tick struct with all-layer advancement
+
+**@medina/effecttrace-governance-organism v1.2.0**
+- Version bump to 1.2.0 reflecting SOR integration
+- SOR mode available via `bootstrapOROProduction({ mode: 'sovereign-organism-runtime' })`
+
+**@medina/analyst-ai v1.0.0**
+- Promoted from 0.1.0-alpha to stable 1.0.0 release
+- First controlled SDK release
+
+**Version Matrix**
+| SDK | Version | Status |
+|---|---|---|
+| `@medina/effecttrace-governance-organism` | 1.2.0 | ✅ Production |
+| `@medina/analyst-ai` | 1.0.0 | ✅ Production |
+| Nova Chip v2 (C++) | v2+SOR | ✅ Native |
+| SOR Framework | SOR-2026-V1 | ✅ Framework |
+
+---
+
 ## v1.0.0 — *Educatio Vivens* · April 29, 2026
 
 **The Living Education Release**

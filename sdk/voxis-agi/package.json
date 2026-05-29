@@ -1,0 +1,20 @@
+{
+  "name": "@rship-agi/voxis-agi",
+  "version": "1.0.0",
+  "description": "VOXIS AGI — Sovereign Voice Memory Intelligence for privacy-first emotional journaling",
+  "main": "voxis-agi.js",
+  "type": "module",
+  "keywords": [
+    "voice-memory",
+    "emotional-ai",
+    "privacy-first",
+    "sovereign-ai",
+    "journaling",
+    "rship-agi"
+  ],
+  "author": "RSHIP AGI Systems",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
