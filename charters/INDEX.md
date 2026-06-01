@@ -51,5 +51,17 @@ All charters are prior art as of April 2026.
 
 ---
 
-*Enterprise OS Intelligence · Medina Tech · Chaos Lab · Dallas, Texas · April 2026*  
+## Governance Instruments
+
+| Instrument | Domain | What it governs |
+|:---|:---|:---|
+| [**RULES OF PROCEDURE**](../governance/RULES-OF-PROCEDURE.md) | Constitutional / Procedural / Committee | Decision-making procedures, committee operations, institutional structure, amendment processes, instrument hierarchy |
+| [**CODE OF CONDUCT**](../governance/CODE-OF-CONDUCT.md) | Personnel / Ethics | Ethical standards, behavioral expectations, agent ethics, enforcement escalation |
+| [**OPEN DATA POLICY**](../governance/OPEN-DATA-POLICY.md) | Openness | Data classification, publication commitments, transparency principles, format standards |
+| [**SAFETY RULES & SAFETY OBJECTIVES**](../governance/SAFETY-RULES.md) | Safety | Safety rules, safety boundaries, incident response, strategic safety objectives, safety metrics |
+| [**GOVERNANCE INDEX**](../governance/INDEX.md) | Reference | Complete hierarchy map, domain coverage, cross-reference |
+
+---
+
+*Enterprise OS Intelligence · Medina Tech · Chaos Lab · Dallas, Texas · June 2026*  
 *TRACE · VERIFY · REMEMBER*
