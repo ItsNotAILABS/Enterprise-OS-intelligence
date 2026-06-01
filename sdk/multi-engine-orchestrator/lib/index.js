@@ -22,6 +22,7 @@ import { EnginePool } from './engine-pool.js';
 import { InferencePipeline, STAGE_TYPES } from './inference-pipeline.js';
 import { FailoverController } from './failover-controller.js';
 import { MetricsCollector } from './metrics-collector.js';
+import crypto from 'node:crypto';
 
 // Re-export all modules
 export {
