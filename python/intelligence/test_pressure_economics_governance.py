@@ -39,6 +39,13 @@ def _proposal(i: int, proposal_type: ProposalType, participation: float) -> Prop
     )
 
 
+def _participation_for_score(score: float, type_weight: float) -> float:
+    # governance_monitor._compute_phi_score:
+    # score = (PHI * type_w + participation) / (1 + PHI)
+    from governance_monitor import PHI
+    return score * (1.0 + PHI) - PHI * type_weight
+
+
 def test_governance_pressure_ingest_sorting_stats_and_digest():
     monitor = GovernanceMonitor()
 
@@ -163,3 +170,52 @@ def test_economics_pressure_portfolio_valuation_synergy_and_monotonicity():
     base.trl = TechnologyReadinessLevel.TRL_8
     bigger.trl = TechnologyReadinessLevel.TRL_8
     assert engine.value_asset(bigger).composite_value_usd > engine.value_asset(base).composite_value_usd
+
+
+def test_governance_pressure_urgency_threshold_boundaries():
+    monitor = GovernanceMonitor()
+
+    # Use specific types so that the computed participation stays within [0, 1]
+    # while hitting each urgency boundary exactly.
+    boundaries = [
+        (ProposalType.MOTION, 0.40, 0.35, UrgencyLevel.MEDIUM),
+        (ProposalType.MOTION, 0.40, 0.60, UrgencyLevel.HIGH),
+        (ProposalType.NETWORK_ECONOMICS, 0.95, 0.80, UrgencyLevel.CRITICAL),
+    ]
+
+    for i, (ptype, type_w, target, expected_urgency) in enumerate(boundaries):
+        participation = _participation_for_score(target, type_w)
+        assert 0.0 <= participation <= 1.0
+        p = monitor.ingest_proposal(_proposal(i, ptype, participation))
+        assert p.phi_score == pytest.approx(target, abs=1e-6)
+        assert p.urgency == expected_urgency
+
+
+def test_governance_pressure_update_status_emits_alerts():
+    monitor = GovernanceMonitor()
+    observed = []
+    monitor.register_watcher(lambda alert: observed.append(alert.message))
+
+    p = monitor.ingest_proposal(_proposal(0, ProposalType.MOTION, 0.2))
+    assert monitor.update_proposal_status(p.proposal_id, ProposalStatus.REJECTED) is not None
+    assert observed == []
+
+    monitor.update_proposal_status(p.proposal_id, ProposalStatus.ADOPTED)
+    monitor.update_proposal_status(p.proposal_id, ProposalStatus.EXECUTED)
+    assert any("Proposal Adopted" in m for m in observed)
+    assert any("Proposal Executed" in m for m in observed)
+
+
+def test_economics_pressure_synergy_single_category_is_one():
+    engine = IPValuationEngine()
+    assets = [
+        IPAsset(name=f"A{i}", category=IPCategory.ALGORITHM, lines_of_code=1000, unique_algorithms=1, defensibility_score=0.5)
+        for i in range(5)
+    ]
+    from ip_valuation import TechnologyReadinessLevel
+    for a in assets:
+        a.trl = TechnologyReadinessLevel.TRL_8
+
+    pv = engine.value_portfolio("single", assets)
+    assert pv.synergy_multiplier == pytest.approx(1.0)
+    assert pv.synergy_adjusted_value_usd == pytest.approx(pv.total_value_usd)
