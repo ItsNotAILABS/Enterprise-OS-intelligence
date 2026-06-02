@@ -17,6 +17,13 @@ Run: python sovereign_vault.py
      python sovereign_vault.py --add "My first memory" --tags "personal,insight"
      python sovereign_vault.py --search "governance"
      python sovereign_vault.py --export vault.enc.json
+     python sovereign_vault.py --import vault.enc.json
+     python sovereign_vault.py --list
+     python sovereign_vault.py --stats
+     python sovereign_vault.py --tag governance
+     python sovereign_vault.py --link <id1> <id2>
+     python sovereign_vault.py --delete <id>
+     python sovereign_vault.py --timeline
 
 © 2026 Alfredo Medina Hernandez. All Rights Reserved.
 Medina Tech · Dallas, Texas
@@ -24,6 +31,7 @@ Medina Tech · Dallas, Texas
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import hmac
 import json
@@ -34,6 +42,7 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum, auto
+from pathlib import Path
 from typing import Any, Optional
 
 sys.path.insert(0, os.path.dirname(__file__))
@@ -42,7 +51,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 PHI = 1.618033988749895
 PHI_INV = 1.0 / PHI
-VAULT_VERSION = "1.0.0"
+VAULT_VERSION = "2.0.0"
+DEFAULT_VAULT_PATH = os.path.expanduser("~/.sovereign_vault/vault.json")
 
 
 # ── Enums ──────────────────────────────────────────────────────────────────────
@@ -125,7 +135,7 @@ class VaultCrypto:
         # XOR stream cipher (demo; use AES-256-GCM in production)
         keystream = self._expand_key(nonce, len(data))
         ciphertext = bytes(a ^ b for a, b in zip(data, keystream))
-        mac = hmac.new(self._key, nonce + ciphertext, hashlib.sha256).hexdigest()
+        mac = hmac.HMAC(self._key, nonce + ciphertext, hashlib.sha256).hexdigest()
         return {
             "nonce": nonce.hex(),
             "ciphertext": ciphertext.hex(),
@@ -139,7 +149,7 @@ class VaultCrypto:
         expected_mac = bundle["mac"]
 
         # Verify MAC
-        computed_mac = hmac.new(self._key, nonce + ciphertext, hashlib.sha256).hexdigest()
+        computed_mac = hmac.HMAC(self._key, nonce + ciphertext, hashlib.sha256).hexdigest()
         if not hmac.compare_digest(computed_mac, expected_mac):
             return None
 
@@ -174,10 +184,76 @@ class SovereignVault:
     >>> print(results[0].entry.content)
     """
 
-    def __init__(self, passphrase: str = "sovereign-default") -> None:
+    def __init__(self, passphrase: str = "sovereign-default", vault_path: Optional[str] = None) -> None:
         self._entries: dict[str, VaultEntry] = {}
         self._passphrase = passphrase
+        self._crypto = VaultCrypto(passphrase)
+        self._vault_path = vault_path or DEFAULT_VAULT_PATH
         self._created_at = datetime.now(timezone.utc).isoformat()
+        self._load()
+
+    # ── Persistence ────────────────────────────────────────────────────────────
+
+    def _load(self) -> None:
+        """Load vault from encrypted JSON file if it exists."""
+        if not os.path.exists(self._vault_path):
+            return
+        try:
+            with open(self._vault_path, "r") as f:
+                data = json.load(f)
+            # Decrypt entries
+            encrypted_entries = data.get("entries", [])
+            for enc_entry in encrypted_entries:
+                plaintext = self._crypto.decrypt(enc_entry["encrypted"])
+                if plaintext is None:
+                    continue  # MAC failure — skip corrupted/wrong-passphrase entries
+                entry_data = json.loads(plaintext)
+                entry = VaultEntry(
+                    entry_id=entry_data["entry_id"],
+                    content=entry_data["content"],
+                    memory_type=MemoryType(entry_data.get("memory_type", "note")),
+                    tags=entry_data.get("tags", []),
+                    created_at=entry_data.get("created_at", ""),
+                    updated_at=entry_data.get("updated_at", ""),
+                    links=entry_data.get("links", []),
+                    retention=RetentionPolicy(entry_data.get("retention", "permanent")),
+                    importance=entry_data.get("importance", 0.5),
+                    metadata=entry_data.get("metadata", {}),
+                )
+                self._entries[entry.entry_id] = entry
+            self._created_at = data.get("created_at", self._created_at)
+        except (json.JSONDecodeError, KeyError, OSError):
+            pass  # Start fresh if vault is corrupted
+
+    def _save(self) -> None:
+        """Save vault to encrypted JSON file."""
+        os.makedirs(os.path.dirname(self._vault_path), exist_ok=True)
+        encrypted_entries = []
+        for entry in self._entries.values():
+            entry_json = json.dumps({
+                "entry_id": entry.entry_id,
+                "content": entry.content,
+                "memory_type": entry.memory_type.value,
+                "tags": entry.tags,
+                "created_at": entry.created_at,
+                "updated_at": entry.updated_at,
+                "links": entry.links,
+                "retention": entry.retention.value,
+                "importance": entry.importance,
+                "metadata": entry.metadata,
+            })
+            encrypted_entries.append({
+                "encrypted": self._crypto.encrypt(entry_json),
+            })
+        data = {
+            "vault_version": VAULT_VERSION,
+            "created_at": self._created_at,
+            "saved_at": datetime.now(timezone.utc).isoformat(),
+            "entry_count": len(self._entries),
+            "entries": encrypted_entries,
+        }
+        with open(self._vault_path, "w") as f:
+            json.dump(data, f, indent=2)
 
     # ── CRUD Operations ────────────────────────────────────────────────────────
 
@@ -200,6 +276,7 @@ class SovereignVault:
             metadata=metadata or {},
         )
         self._entries[entry.entry_id] = entry
+        self._save()
         return entry
 
     def get(self, entry_id: str) -> Optional[VaultEntry]:
@@ -219,6 +296,7 @@ class SovereignVault:
         if importance is not None:
             entry.importance = max(0.0, min(1.0, importance))
         entry.updated_at = datetime.now(timezone.utc).isoformat()
+        self._save()
         return entry
 
     def delete(self, entry_id: str) -> bool:
@@ -228,6 +306,7 @@ class SovereignVault:
                 if entry_id in e.links:
                     e.links.remove(entry_id)
             del self._entries[entry_id]
+            self._save()
             return True
         return False
 
@@ -241,6 +320,7 @@ class SovereignVault:
             a.links.append(entry_id_b)
         if entry_id_a not in b.links:
             b.links.append(entry_id_a)
+        self._save()
         return True
 
     # ── Search ─────────────────────────────────────────────────────────────────
@@ -425,67 +505,313 @@ class SovereignVault:
 
 # ── CLI Entry Point ────────────────────────────────────────────────────────────
 
+def _build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="sovereign_vault",
+        description="Sovereign Memory Vault — Personal Encrypted Intelligence Store",
+        epilog="© 2026 Medina Tech · Enterprise OS Intelligence · TRACE · VERIFY · REMEMBER",
+    )
+    parser.add_argument("--vault", default=None, help="Path to vault file (default: ~/.sovereign_vault/vault.json)")
+    parser.add_argument("--passphrase", default=None, help="Vault passphrase (or set VAULT_PASSPHRASE env var)")
+
+    sub = parser.add_subparsers(dest="command")
+
+    # add
+    add_p = sub.add_parser("add", help="Add a new memory to the vault")
+    add_p.add_argument("content", help="Memory content text")
+    add_p.add_argument("--tags", default="", help="Comma-separated tags")
+    add_p.add_argument("--type", default="note", choices=[m.value for m in MemoryType], help="Memory type")
+    add_p.add_argument("--importance", type=float, default=0.5, help="Importance 0.0-1.0")
+
+    # search
+    search_p = sub.add_parser("search", help="Full-text search across memories")
+    search_p.add_argument("query", help="Search query")
+    search_p.add_argument("--limit", type=int, default=10, help="Max results")
+
+    # tag
+    tag_p = sub.add_parser("tag", help="Find memories by tag")
+    tag_p.add_argument("tagname", help="Tag to search for")
+
+    # list
+    sub.add_parser("list", help="List recent memories")
+
+    # timeline
+    sub.add_parser("timeline", help="Show timeline of memories")
+
+    # stats
+    sub.add_parser("stats", help="Show vault statistics")
+
+    # export
+    export_p = sub.add_parser("export", help="Export vault to JSON file")
+    export_p.add_argument("file", help="Output file path")
+
+    # import
+    import_p = sub.add_parser("import", help="Import memories from JSON file")
+    import_p.add_argument("file", help="Input file path")
+
+    # link
+    link_p = sub.add_parser("link", help="Link two memories together")
+    link_p.add_argument("id1", help="First entry ID (or prefix)")
+    link_p.add_argument("id2", help="Second entry ID (or prefix)")
+
+    # delete
+    del_p = sub.add_parser("delete", help="Delete a memory")
+    del_p.add_argument("entry_id", help="Entry ID (or prefix)")
+
+    # get
+    get_p = sub.add_parser("get", help="Get a specific memory by ID")
+    get_p.add_argument("entry_id", help="Entry ID (or prefix)")
+
+    # Also support --add/--search as shortcuts for backward compat
+    parser.add_argument("--add", metavar="CONTENT", help="Quick add (shortcut for 'add' subcommand)")
+    parser.add_argument("--search", metavar="QUERY", help="Quick search (shortcut for 'search' subcommand)")
+    parser.add_argument("--tags", default="", help="Tags for --add (comma-separated)")
+    parser.add_argument("--export", metavar="FILE", help="Quick export (shortcut)")
+    parser.add_argument("--import-file", metavar="FILE", help="Quick import (shortcut)")
+    parser.add_argument("--list", action="store_true", help="List recent memories")
+    parser.add_argument("--stats", action="store_true", help="Show statistics")
+    parser.add_argument("--timeline", action="store_true", help="Show timeline")
+    parser.add_argument("--demo", action="store_true", help="Run demo with sample data")
+
+    return parser
+
+
+def _resolve_id(vault: SovereignVault, prefix: str) -> Optional[str]:
+    """Resolve a partial ID prefix to a full entry ID."""
+    for eid in vault._entries:
+        if eid.startswith(prefix):
+            return eid
+    return None
+
+
+def _print_entry(entry: VaultEntry) -> None:
+    """Pretty-print a single vault entry."""
+    print(f"  ┌─ {entry.entry_id[:8]}... [{entry.memory_type.value}]")
+    print(f"  │  {entry.content}")
+    if entry.tags:
+        print(f"  │  Tags: {', '.join('#' + t for t in entry.tags)}")
+    print(f"  │  Importance: {entry.importance:.2f} | Created: {entry.created_at[:19]}")
+    if entry.links:
+        print(f"  │  Links: {', '.join(l[:8] + '...' for l in entry.links)}")
+    print(f"  └{'─' * 68}")
+
+
 def main() -> None:
-    """Demonstrate sovereign vault with sample data."""
-    vault = SovereignVault(passphrase="enterprise-os-intelligence")
+    """Sovereign Vault CLI — the face of Enterprise OS Intelligence."""
+    parser = _build_parser()
+    args = parser.parse_args()
+
+    passphrase = args.passphrase or os.environ.get("VAULT_PASSPHRASE", "sovereign-default")
+    vault_path = args.vault
+
+    # Handle --flag shortcuts (backwards compatible with documented CLI)
+    if args.add:
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        tags = [t.strip() for t in args.tags.split(",") if t.strip()] if args.tags else []
+        entry = vault.add(args.add, tags=tags)
+        print(f"  ✓ Memory stored: {entry.entry_id[:8]}...")
+        print(f"    \"{entry.content[:60]}{'...' if len(entry.content) > 60 else ''}\"")
+        return
+
+    if args.search:
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        results = vault.search(args.search)
+        print(f"\n  SEARCH: '{args.search}' — {len(results)} result(s)\n")
+        if not results:
+            print("  No memories found.")
+        for r in results:
+            print(f"  [{r.relevance_score:.3f}] {r.entry.content[:70]}{'...' if len(r.entry.content) > 70 else ''}")
+            if r.entry.tags:
+                print(f"          Tags: {', '.join('#' + t for t in r.entry.tags)}")
+            print(f"          ID: {r.entry.entry_id[:8]}... | Matched: {', '.join(r.matched_terms)}")
+            print()
+        return
+
+    if args.export:
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        export_data = vault.export_vault()
+        with open(args.export, "w") as f:
+            json.dump(export_data, f, indent=2)
+        print(f"  ✓ Exported {export_data['entry_count']} entries to {args.export}")
+        return
+
+    if args.import_file:
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        with open(args.import_file, "r") as f:
+            data = json.load(f)
+        count = vault.import_vault(data)
+        print(f"  ✓ Imported {count} entries")
+        return
+
+    if getattr(args, "list", False) and not args.command:
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        entries = vault.timeline(20)
+        print(f"\n  VAULT — {len(vault._entries)} total memories\n")
+        for entry in entries:
+            _print_entry(entry)
+        return
+
+    if getattr(args, "stats", False) and not args.command:
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        print(vault.render_terminal())
+        return
+
+    if getattr(args, "timeline", False) and not args.command:
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        entries = vault.timeline(20)
+        print(f"\n  TIMELINE — {len(entries)} most recent\n")
+        for entry in entries:
+            _print_entry(entry)
+        return
+
+    if args.demo:
+        _run_demo(passphrase, vault_path)
+        return
+
+    # Handle subcommands
+    if args.command == "add":
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        tags = [t.strip() for t in args.tags.split(",") if t.strip()] if args.tags else []
+        entry = vault.add(
+            args.content,
+            memory_type=MemoryType(args.type),
+            tags=tags,
+            importance=args.importance,
+        )
+        print(f"  ✓ Memory stored: {entry.entry_id[:8]}...")
+        print(f"    \"{entry.content[:60]}{'...' if len(entry.content) > 60 else ''}\"")
+        if tags:
+            print(f"    Tags: {', '.join('#' + t for t in tags)}")
+
+    elif args.command == "search":
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        results = vault.search(args.query, limit=args.limit)
+        print(f"\n  SEARCH: '{args.query}' — {len(results)} result(s)\n")
+        if not results:
+            print("  No memories found.")
+        for r in results:
+            print(f"  [{r.relevance_score:.3f}] {r.entry.content[:70]}{'...' if len(r.entry.content) > 70 else ''}")
+            if r.entry.tags:
+                print(f"          Tags: {', '.join('#' + t for t in r.entry.tags)}")
+            print(f"          ID: {r.entry.entry_id[:8]}... | Matched: {', '.join(r.matched_terms)}")
+            print()
+
+    elif args.command == "tag":
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        entries = vault.search_by_tag(args.tagname)
+        print(f"\n  TAG: #{args.tagname} — {len(entries)} result(s)\n")
+        for entry in entries:
+            _print_entry(entry)
+
+    elif args.command == "list":
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        entries = vault.timeline(20)
+        print(f"\n  VAULT — {len(vault._entries)} total memories\n")
+        for entry in entries:
+            _print_entry(entry)
+
+    elif args.command == "timeline":
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        entries = vault.timeline(20)
+        print(f"\n  TIMELINE — {len(entries)} most recent\n")
+        for entry in entries:
+            _print_entry(entry)
+
+    elif args.command == "stats":
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        print(vault.render_terminal())
+
+    elif args.command == "export":
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        export_data = vault.export_vault()
+        with open(args.file, "w") as f:
+            json.dump(export_data, f, indent=2)
+        print(f"  ✓ Exported {export_data['entry_count']} entries to {args.file}")
+
+    elif args.command == "import":
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        with open(args.file, "r") as f:
+            data = json.load(f)
+        count = vault.import_vault(data)
+        print(f"  ✓ Imported {count} entries")
+
+    elif args.command == "link":
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        id1 = _resolve_id(vault, args.id1) or args.id1
+        id2 = _resolve_id(vault, args.id2) or args.id2
+        if vault.link(id1, id2):
+            print(f"  ✓ Linked {id1[:8]}... ↔ {id2[:8]}...")
+        else:
+            print(f"  ✗ Failed to link — check IDs exist")
+
+    elif args.command == "delete":
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        eid = _resolve_id(vault, args.entry_id) or args.entry_id
+        if vault.delete(eid):
+            print(f"  ✓ Deleted {eid[:8]}...")
+        else:
+            print(f"  ✗ Entry not found: {args.entry_id}")
+
+    elif args.command == "get":
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        eid = _resolve_id(vault, args.entry_id) or args.entry_id
+        entry = vault.get(eid)
+        if entry:
+            _print_entry(entry)
+        else:
+            print(f"  ✗ Entry not found: {args.entry_id}")
+
+    else:
+        # No command — show vault summary or demo if empty
+        vault = SovereignVault(passphrase=passphrase, vault_path=vault_path)
+        if not vault._entries:
+            _run_demo(passphrase, vault_path)
+        else:
+            print(vault.render_terminal())
+
+
+def _run_demo(passphrase: str, vault_path: Optional[str]) -> None:
+    """Run demo with sample data (in-memory, does not persist)."""
+    vault = SovereignVault.__new__(SovereignVault)
+    vault._entries = {}
+    vault._passphrase = passphrase
+    vault._crypto = VaultCrypto(passphrase)
+    vault._vault_path = vault_path or "/dev/null"
+    vault._created_at = datetime.now(timezone.utc).isoformat()
+
+    vault._entries = {}  # Don't load from disk for demo
 
     # Populate with sample memories
-    vault.add(
-        "The organism heartbeat fires every 873 milliseconds. This is the fundamental "
-        "rhythm of the sovereign intelligence layer.",
-        memory_type=MemoryType.INSIGHT,
-        tags=["organism", "heartbeat", "architecture"],
-        importance=0.9,
-    )
-    vault.add(
-        "Phi (1.618033...) drives all routing, scoring, and reputation calculations. "
-        "It creates natural balance without arbitrary thresholds.",
-        memory_type=MemoryType.INSIGHT,
-        tags=["phi", "math", "routing"],
-        importance=0.95,
-    )
-    vault.add(
-        "ORO monitors all NNS governance proposals. It never stops. It accumulates "
-        "knowledge at rate phi and never resets.",
-        memory_type=MemoryType.NOTE,
-        tags=["oro", "governance", "nns", "icp"],
-        importance=0.85,
-    )
-    vault.add(
-        "Decision: Use Internet Computer Protocol as the sovereign substrate. "
-        "Reasons: canister permanence, on-chain execution, no cloud dependency.",
-        memory_type=MemoryType.DECISION,
-        tags=["icp", "substrate", "sovereignty"],
-        importance=0.9,
-    )
-    vault.add(
-        "Nova Chip v2 extends to 12 cores with 128-qubit QPU. 48 new ISA instructions "
-        "enable 1000+ tokens per second inference.",
-        memory_type=MemoryType.NOTE,
-        tags=["nova", "hardware", "quantum", "chip"],
-        importance=0.8,
-    )
-    vault.add(
-        "The 35 research papers establish prior art dated April 2026. They cover "
-        "substrate vivens, fractal sovereignty, antifragility, and more.",
-        memory_type=MemoryType.DOCUMENT,
-        tags=["research", "papers", "prior-art", "ip"],
-        importance=0.85,
-    )
-    vault.add(
-        "MERIDIAN connects SAP, Oracle, Salesforce and 17+ systems into one organism. "
-        "Multi-ring architecture with sovereign guarantees.",
-        memory_type=MemoryType.NOTE,
-        tags=["meridian", "enterprise", "integration"],
-        importance=0.75,
-    )
-    vault.add(
-        "The IP portfolio is valued at $85.5M synergy-adjusted across 10 assets. "
-        "Primary value drivers: Phi-Math Framework, Nova Chip, ORO.",
-        memory_type=MemoryType.INSIGHT,
-        tags=["valuation", "ip", "portfolio"],
-        importance=0.9,
-    )
+    sample_entries = [
+        ("The organism heartbeat fires every 873 milliseconds. This is the fundamental "
+         "rhythm of the sovereign intelligence layer.",
+         MemoryType.INSIGHT, ["organism", "heartbeat", "architecture"], 0.9),
+        ("Phi (1.618033...) drives all routing, scoring, and reputation calculations. "
+         "It creates natural balance without arbitrary thresholds.",
+         MemoryType.INSIGHT, ["phi", "math", "routing"], 0.95),
+        ("ORO monitors all NNS governance proposals. It never stops. It accumulates "
+         "knowledge at rate phi and never resets.",
+         MemoryType.NOTE, ["oro", "governance", "nns", "icp"], 0.85),
+        ("Decision: Use Internet Computer Protocol as the sovereign substrate. "
+         "Reasons: canister permanence, on-chain execution, no cloud dependency.",
+         MemoryType.DECISION, ["icp", "substrate", "sovereignty"], 0.9),
+        ("Nova Chip v2 extends to 12 cores with 128-qubit QPU. 48 new ISA instructions "
+         "enable 1000+ tokens per second inference.",
+         MemoryType.NOTE, ["nova", "hardware", "quantum", "chip"], 0.8),
+        ("The 35 research papers establish prior art dated April 2026. They cover "
+         "substrate vivens, fractal sovereignty, antifragility, and more.",
+         MemoryType.DOCUMENT, ["research", "papers", "prior-art", "ip"], 0.85),
+        ("MERIDIAN connects SAP, Oracle, Salesforce and 17+ systems into one organism. "
+         "Multi-ring architecture with sovereign guarantees.",
+         MemoryType.NOTE, ["meridian", "enterprise", "integration"], 0.75),
+        ("The IP portfolio is valued at $85.5M synergy-adjusted across 10 assets. "
+         "Primary value drivers: Phi-Math Framework, Nova Chip, ORO.",
+         MemoryType.INSIGHT, ["valuation", "ip", "portfolio"], 0.9),
+    ]
+
+    for content, mtype, tags, importance in sample_entries:
+        entry = VaultEntry(content=content, memory_type=mtype, tags=tags, importance=importance)
+        vault._entries[entry.entry_id] = entry
 
     # Display vault
     print(vault.render_terminal())
@@ -498,9 +824,10 @@ def main() -> None:
         print(f"    Score: {r.relevance_score:.3f} | {r.entry.content[:50]}...")
     print()
 
-    # Export
-    export = vault.export_vault()
-    print(f"  Export: {export['entry_count']} entries, version {export['vault_version']}")
+    print("  ─── Run with subcommands to use your own vault ───")
+    print("  python sovereign_vault.py add \"Your memory here\" --tags \"tag1,tag2\"")
+    print("  python sovereign_vault.py search \"query\"")
+    print("  python sovereign_vault.py --help")
 
 
 if __name__ == "__main__":
