@@ -10,6 +10,8 @@ from __future__ import annotations
 import os
 import random
 import sys
+import time
+import tracemalloc
 
 import pytest
 
@@ -219,3 +221,57 @@ def test_economics_pressure_synergy_single_category_is_one():
     pv = engine.value_portfolio("single", assets)
     assert pv.synergy_multiplier == pytest.approx(1.0)
     assert pv.synergy_adjusted_value_usd == pytest.approx(pv.total_value_usd)
+
+
+def test_pressure_benchmark_reports_latency_and_memory():
+    # This test is intentionally non-assertive on performance thresholds to avoid
+    # flakiness across environments, but it *does* measure and report latency and
+    # peak memory for the two main pressure-test workloads.
+    tracemalloc.start()
+    start = time.perf_counter()
+    monitor = GovernanceMonitor()
+    rng = random.Random(1337)
+    types = [
+        ProposalType.MOTION,
+        ProposalType.NETWORK_ECONOMICS,
+        ProposalType.UPGRADE_NETWORK,
+        ProposalType.CREATE_SUBNET,
+        ProposalType.SNS_INIT,
+    ]
+    for i in range(250):
+        t = rng.choice(types)
+        participation = min(1.0, (rng.random() ** 0.35))
+        monitor.ingest_proposal(_proposal(i, t, participation))
+    _ = monitor.get_statistics()
+    _ = monitor.generate_governance_digest()
+    gov_ms = (time.perf_counter() - start) * 1000.0
+    _, gov_peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+
+    tracemalloc.start()
+    start = time.perf_counter()
+    engine = IPValuationEngine()
+    categories = list(IPCategory)
+    assets = []
+    for i in range(40):
+        assets.append(
+            IPAsset(
+                name=f"Asset {i:02d}",
+                category=categories[i % len(categories)],
+                lines_of_code=10_000 + i * 50,
+                research_papers=(i % 5),
+                unique_algorithms=(i % 9),
+                defensibility_score=min(1.0, 0.2 + 0.02 * i),
+            )
+        )
+    from ip_valuation import TechnologyReadinessLevel
+    trls = list(TechnologyReadinessLevel)
+    for i, a in enumerate(assets):
+        a.trl = trls[1 + (i % (len(trls) - 1))]
+    _ = engine.value_portfolio("pressure", assets)
+    eco_ms = (time.perf_counter() - start) * 1000.0
+    _, eco_peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+
+    assert gov_ms > 0.0 and eco_ms > 0.0
+    assert gov_peak >= 0 and eco_peak >= 0
