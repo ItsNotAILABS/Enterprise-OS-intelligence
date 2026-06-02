@@ -1,0 +1,31 @@
+{
+  "name": "@medina/multi-engine-orchestrator",
+  "version": "1.0.0",
+  "description": "Multi-Engine Orchestrator — sovereign AI engine routing, load balancing, failover, and unified inference across reasoning, creative, analytical, operational, and sovereign engine classes.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./engine-registry": "./lib/engine-registry.js",
+    "./engine-router": "./lib/engine-router.js",
+    "./engine-pool": "./lib/engine-pool.js",
+    "./inference-pipeline": "./lib/inference-pipeline.js",
+    "./failover-controller": "./lib/failover-controller.js",
+    "./metrics-collector": "./lib/metrics-collector.js"
+  },
+  "author": "Alfredo Medina Hernandez <medina@medinatech.io>",
+  "license": "MEDINA-SOVEREIGN",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ItsNotAILABS/Enterprise-OS-intelligence"
+  },
+  "keywords": [
+    "multi-engine", "ai", "orchestration", "inference", "routing",
+    "failover", "sovereign", "reasoning", "creative", "analytical", "medina"
+  ],
+  "dependencies": {
+    "@medina/medina-heart": "^1.0.0",
+    "@medina/intelligence-routing-sdk": "^1.0.0",
+    "@medina/ai-model-engines": "^1.0.0"
+  }
+}

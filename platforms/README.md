@@ -2,7 +2,7 @@
 
 ## Enterprise-Grade AI Intelligence Platforms
 
-This directory contains **four major AI platforms** built on the RSHIP framework—complete enterprise solutions for multi-agent workflows, collaborative AI, autonomous operations, and cloud infrastructure.
+This directory contains **five major AI platforms** built on the RSHIP framework—complete enterprise solutions for multi-agent workflows, collaborative AI, autonomous operations, cloud infrastructure, and adaptive user experience intelligence.
 
 ---
 
@@ -14,6 +14,7 @@ This directory contains **four major AI platforms** built on the RSHIP framework
 | **SYNAPSE AI** | RSHIP-2026-SYNAPSE-001 | Distributed Cognitive Architecture | Teams & Collaboration | 2.4x collective intelligence |
 | **MERIDIAN AI** | RSHIP-2026-MERIDIAN-001 | Autonomous Operations Intelligence | Infrastructure & Deployment | 99.97% availability |
 | **PHANTOM AI** | RSHIP-2026-PHANTOM-001 | Cloud Infrastructure & Ghost Registry | Infrastructure & Cross-Platform | φ-tunneling efficiency |
+| **UX AI** | RSHIP-2026-UX-AI-001 | Adaptive Interface Intelligence | UI/UX & Experience | 3.2x engagement lift |
 
 ---
 
@@ -140,6 +141,26 @@ Phantom field substrate for cross-platform communication, quantum tunneling, and
 
 ---
 
+## 🎨 UX AI
+
+**Adaptive Interface Intelligence Platform**
+
+*"Every Pixel Has Purpose, Every Interaction Has Intelligence"*
+
+Full-stack adaptive user experience powered by multi-engine intelligence. Learns user intent, predicts interaction flows, generates adaptive layouts, and orchestrates the UI/UX lifecycle through sovereign AI engines.
+
+**Key Capabilities:**
+- Intent prediction from interaction signals
+- Golden-ratio adaptive layout generation
+- WCAG AAA accessibility intelligence
+- Emotion-aware interfaces (VAD model)
+- Fitts' Law & Hick's Law flow optimization
+- Real-time personalization
+
+**[View Platform →](./ux-ai/)**
+
+---
+
 ## 🔬 Research Papers
 
 Each platform has a corresponding research paper:
@@ -196,6 +217,14 @@ Each platform has a corresponding research paper:
 | Professional | $999/mo | Production infrastructure |
 | Enterprise | $4,999/mo | Multi-platform orchestration |
 
+### UX AI
+| Plan | Price | Best For |
+|------|-------|----------|
+| Starter | $79/mo | Small apps |
+| Professional | $399/mo | Growth-stage products |
+| Enterprise | $1,999/mo | Large-scale platforms |
+| Sovereign | $4,999/mo | Dedicated + full control |
+
 ---
 
 ## 🚀 Quick Start
@@ -214,6 +243,9 @@ node platforms/meridian-ai/meridian-ai-platform.js
 
 # PHANTOM AI Demo
 node platforms/phantom-ai/phantom-ai-platform.js
+
+# UX AI Demo
+node platforms/ux-ai/ux-ai-platform.js
 
 # Command Center Demo
 node platforms/command-center/command-center.js

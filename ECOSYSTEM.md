@@ -464,5 +464,84 @@ MERIDIAN COGNITIVE GOVERNANCE RUNTIME
 
 ---
 
+## FLAGSHIP TOOLS — The Face of This Repository
+
+These two tools are the primary user-facing entry points to Enterprise OS Intelligence. They demonstrate the core capabilities of the sovereign intelligence stack in production-ready CLI form.
+
+---
+
+### Sovereign Vault — Personal Encrypted Memory Store
+
+**Location:** `python/intelligence/sovereign_vault.py`  
+**Category:** Personal Sovereignty · Intelligence Storage  
+**Status:** Production-ready CLI
+
+A personal encrypted memory vault with full-text search, tagging, linking, and import/export. Your memories are encrypted at rest with PBKDF2-derived keys and HMAC-SHA256 integrity verification. The vault persists to `~/.sovereign_vault/vault.json`.
+
+```bash
+# Add a memory
+python sovereign_vault.py add "ORO governance monitoring is online" --tags "governance,oro" --importance 0.9
+
+# Full-text search
+python sovereign_vault.py search "governance"
+python sovereign_vault.py --search "governance"
+
+# Browse by tag
+python sovereign_vault.py tag governance
+
+# View timeline
+python sovereign_vault.py timeline
+
+# Export / Import
+python sovereign_vault.py export backup.json
+python sovereign_vault.py import backup.json
+
+# Link related memories
+python sovereign_vault.py link <id1> <id2>
+
+# Statistics
+python sovereign_vault.py stats
+
+# Demo mode (sample data, no persistence)
+python sovereign_vault.py --demo
+```
+
+**Architecture:** Phi-ranked relevance scoring · Encrypted persistent storage · Bidirectional memory linking · Retention policies · Type classification (note, insight, decision, conversation, document, code, dream)
+
+---
+
+### AI Task Runner — Multi-Model Intelligence Executor
+
+**Location:** `python/intelligence/ai_task_runner.py`  
+**Category:** Intelligence Orchestration · Model Fleet  
+**Status:** Production-ready CLI
+
+Multi-model AI task execution engine with phi-weighted routing across a 40-model fleet. Features automatic model selection, retry cascades with phi-decay fallback, batch processing, persistent history, and a real-time model performance leaderboard.
+
+```bash
+# Execute a single task
+python ai_task_runner.py run "Analyze governance proposal impact" --type analysis --priority high
+python ai_task_runner.py --task "Quick analysis" --priority high
+
+# Batch processing from JSON
+python ai_task_runner.py batch tasks.json
+
+# Model leaderboard (ranked by phi-weighted reputation)
+python ai_task_runner.py leaderboard
+
+# Execution history
+python ai_task_runner.py history
+
+# Statistics
+python ai_task_runner.py stats
+
+# Demo mode (sample tasks, no persistence)
+python ai_task_runner.py --demo
+```
+
+**Architecture:** Phi-weighted model scoring · Cascade fallback (3 retries) · Phi-EMA reputation tracking · 40-model fleet (GPT, Claude, Gemini, Llama, Mistral, DeepSeek, Qwen, Cohere, DBRX) · Persistent task history · Heartbeat integration (873ms)
+
+---
+
 *MERIDIAN Cognitive Governance Runtime — Medina Tech · Chaos Lab · Dallas, Texas*  
 *Alfredo Medina Hernandez — Prior art established April 2026*
