@@ -8,6 +8,7 @@ Examples:
   julia --project=julia julia/tools/workload_runner.jl --mode=pipeline --iterations=50
   julia --project=julia julia/tools/workload_runner.jl --mode=burst --requests=200 --threshold=2
   julia --project=julia julia/tools/workload_runner.jl --mode=spike --ticks=120 --spike_every=20 --spike_requests=50
+  julia --project=julia julia/tools/workload_runner.jl --mode=bench --bench_d_model=128 --bench_seq_len=32
   julia --project=julia julia/tools/workload_runner.jl --mode=both --loops=-1
 """
 
@@ -16,6 +17,7 @@ using Dates
 include("../substrate/transformers/ProductionTransformers.jl")
 include("../substrate/transformers/RuntimeIntegration.jl")
 include("../substrate/transformers/WorkloadHarness.jl")
+include("../substrate/transformers/Benchmarks.jl")
 
 function _parse_kv_args(args)
     opts = Dict{String, String}()
@@ -60,7 +62,7 @@ function _write_snapshots(path::String, run::WorkloadRun)
 end
 
 opts = _parse_kv_args(ARGS)
-mode = _get_str(opts, "mode", "both")  # pipeline|burst|spike|both
+mode = _get_str(opts, "mode", "both")  # pipeline|burst|spike|bench|both
 loops = _get_int(opts, "loops", 1)     # -1 for forever
 
 # Pipeline options
@@ -78,6 +80,12 @@ ticks = _get_int(opts, "ticks", 120)
 base_per_tick = _get_int(opts, "base_per_tick", 2)
 spike_every = _get_int(opts, "spike_every", 20)
 spike_requests = _get_int(opts, "spike_requests", 50)
+
+# Bench options
+bench_iterations = _get_int(opts, "bench_iterations", 10)
+bench_seq_len = _get_int(opts, "bench_seq_len", 32)
+bench_d_model = _get_int(opts, "bench_d_model", 128)
+bench_pressure_seconds = haskey(opts, "bench_pressure_seconds") ? parse(Float64, opts["bench_pressure_seconds"]) : 2.0
 
 snapshots_out = get(opts, "snapshots_out", "")
 
@@ -155,6 +163,16 @@ while loops < 0 || loop_idx < loops
         if !isempty(snapshots_out)
             _write_snapshots(snapshots_out * ".spike.tsv", run)
         end
+    end
+
+    if mode == "bench" || mode == "both"
+        out = run_pressure_and_complexity_benchmarks(
+            d_model=bench_d_model,
+            seq_len=bench_seq_len,
+            iterations=bench_iterations,
+            pressure_seconds=bench_pressure_seconds
+        )
+        print_results(out.suite)
     end
 end
 

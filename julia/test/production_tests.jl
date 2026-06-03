@@ -379,6 +379,35 @@ end
         
         println("✓ Component Benchmarks passed")
     end
+
+    @testset "CPU Pressure Benchmark" begin
+        result = cpu_pressure_benchmark(() -> sum(randn(100)), "Sum 100 Pressure"; seconds=0.2, warmup=2, tokens_per_iter=100)
+        @test result.iterations > 0
+        @test result.mean_time_ms > 0
+        @test isfinite(result.memory_growth_mb)
+        @test isfinite(result.bytes_allocated_per_iter)
+        @test isfinite(result.gc_time_ms_per_iter)
+        println("✓ CPU Pressure Benchmark passed")
+    end
+
+    @testset "Complexity Estimates" begin
+        seq = run_sequence_scaling_with_complexity(32; seq_lengths=[8, 16, 32, 64], iterations=3)
+        @test length(seq.results) == 4
+        @test 0.0 <= seq.complexity.r2 <= 1.0
+        @test isfinite(seq.complexity.exponent)
+
+        dim = run_dimension_scaling_with_complexity(16; dimensions=[16, 32, 64, 128], iterations=3)
+        @test length(dim.results) == 4
+        @test 0.0 <= dim.complexity.r2 <= 1.0
+        @test isfinite(dim.complexity.exponent)
+
+        lay = run_layer_scaling_with_complexity(32, 16; layer_counts=[1, 2, 4], iterations=3)
+        @test length(lay.results) == 3
+        @test 0.0 <= lay.complexity.r2 <= 1.0
+        @test isfinite(lay.complexity.exponent)
+
+        println("✓ Complexity Estimates passed")
+    end
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
