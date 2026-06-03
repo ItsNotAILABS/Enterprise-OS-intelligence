@@ -21,6 +21,7 @@ using Dates
 
 # Import production transformers
 include("ProductionTransformers.jl")
+include("AlphaOmegaTransformers.jl")
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # RUNTIME CONSTANTS
@@ -145,14 +146,20 @@ mutable struct TransformerPool{T}
     active::Vector{Bool}
     load::Vector{Int}  # Current load on each instance
     max_instances::Int
+    builder::Function
     metrics::RuntimeMetrics
     execution_mode::ExecutionMode
     health::HealthState
 end
 
 """Create transformer pool"""
-function TransformerPool(transformer_type::Type{T}, count::Int; max_instances::Int=MAX_INSTANCES) where T
-    instances = [transformer_type() for _ in 1:count]
+function TransformerPool(
+    transformer_type::Type{T},
+    count::Int;
+    max_instances::Int=MAX_INSTANCES,
+    builder::Function=() -> transformer_type()
+) where T
+    instances = [builder() for _ in 1:count]
     
     TransformerPool{T}(
         "POOL-$(rand(10000:99999))",
@@ -160,6 +167,7 @@ function TransformerPool(transformer_type::Type{T}, count::Int; max_instances::I
         fill(true, count),
         zeros(Int, count),
         max_instances,
+        builder,
         RuntimeMetrics(),
         SEQUENTIAL,
         HEALTHY
@@ -197,7 +205,7 @@ end
 """Scale pool up"""
 function scale_up!(pool::TransformerPool{T}) where T
     if length(pool.instances) < pool.max_instances
-        push!(pool.instances, T())
+        push!(pool.instances, pool.builder())
         push!(pool.active, true)
         push!(pool.load, 0)
         return true
@@ -256,13 +264,16 @@ function RuntimeExecutor(;
     production_count::Int=0,
     encoder_count::Int=0,
     decoder_count::Int=0,
-    execution_mode::ExecutionMode=SEQUENTIAL
+    execution_mode::ExecutionMode=SEQUENTIAL,
+    production_builder::Union{Nothing, Function}=nothing,
+    encoder_builder::Union{Nothing, Function}=nothing,
+    decoder_builder::Union{Nothing, Function}=nothing
 )
     RuntimeExecutor(
         "EXECUTOR-$(rand(10000:99999))",
-        production_count > 0 ? TransformerPool(ProductionTransformer, production_count) : nothing,
-        encoder_count > 0 ? TransformerPool(EncoderTransformer, encoder_count) : nothing,
-        decoder_count > 0 ? TransformerPool(DecoderTransformer, decoder_count) : nothing,
+        production_count > 0 ? TransformerPool(ProductionTransformer, production_count; builder=(production_builder === nothing ? () -> ProductionTransformer() : production_builder)) : nothing,
+        encoder_count > 0 ? TransformerPool(EncoderTransformer, encoder_count; builder=(encoder_builder === nothing ? () -> EncoderTransformer() : encoder_builder)) : nothing,
+        decoder_count > 0 ? TransformerPool(DecoderTransformer, decoder_count; builder=(decoder_builder === nothing ? () -> DecoderTransformer() : decoder_builder)) : nothing,
         RuntimeMetrics(),
         execution_mode,
         INITIALIZING,
@@ -515,13 +526,19 @@ function IntegratedRuntime(;
     encoder_instances::Int=2,
     decoder_instances::Int=2,
     alpha_omega_dimension::Int=64,
-    execution_mode::ExecutionMode=PARALLEL
+    execution_mode::ExecutionMode=PARALLEL,
+    production_builder::Union{Nothing, Function}=nothing,
+    encoder_builder::Union{Nothing, Function}=nothing,
+    decoder_builder::Union{Nothing, Function}=nothing
 )
     executor = RuntimeExecutor(
         production_count=production_instances,
         encoder_count=encoder_instances,
         decoder_count=decoder_instances,
-        execution_mode=execution_mode
+        execution_mode=execution_mode,
+        production_builder=production_builder,
+        encoder_builder=encoder_builder,
+        decoder_builder=decoder_builder
     )
     
     scheduler = RuntimeScheduler(executor)
