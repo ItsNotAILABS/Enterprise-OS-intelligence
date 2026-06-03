@@ -7,6 +7,7 @@ Runs simulated runtime workloads to measure latency, memory growth, and scaling 
 Examples:
   julia --project=julia julia/tools/workload_runner.jl --mode=pipeline --iterations=50
   julia --project=julia julia/tools/workload_runner.jl --mode=burst --requests=200 --threshold=2
+  julia --project=julia julia/tools/workload_runner.jl --mode=spike --ticks=120 --spike_every=20 --spike_requests=50
   julia --project=julia julia/tools/workload_runner.jl --mode=both --loops=-1
 """
 
@@ -59,7 +60,7 @@ function _write_snapshots(path::String, run::WorkloadRun)
 end
 
 opts = _parse_kv_args(ARGS)
-mode = _get_str(opts, "mode", "both")  # pipeline|burst|both
+mode = _get_str(opts, "mode", "both")  # pipeline|burst|spike|both
 loops = _get_int(opts, "loops", 1)     # -1 for forever
 
 # Pipeline options
@@ -71,6 +72,12 @@ alpha_omega_dimension = _get_int(opts, "alpha_omega_dimension", 64)
 # Burst options
 requests_n = _get_int(opts, "requests", 200)
 threshold = _get_int(opts, "threshold", 4)
+
+# Spike options
+ticks = _get_int(opts, "ticks", 120)
+base_per_tick = _get_int(opts, "base_per_tick", 2)
+spike_every = _get_int(opts, "spike_every", 20)
+spike_requests = _get_int(opts, "spike_requests", 50)
 
 snapshots_out = get(opts, "snapshots_out", "")
 
@@ -127,6 +134,26 @@ while loops < 0 || loop_idx < loops
         _print_summary(workload_summary(run))
         if !isempty(snapshots_out)
             _write_snapshots(snapshots_out * ".burst.tsv", run)
+        end
+    end
+
+    if mode == "spike" || mode == "both"
+        scheduler = runtime.scheduler
+        run = run_spike_workload!(
+            scheduler;
+            ticks=ticks,
+            base_requests_per_tick=base_per_tick,
+            spike_every=spike_every,
+            spike_requests=spike_requests,
+            request_builder=() -> RuntimeRequest(:encoder, Dict{Symbol, Any}(:input => randn(seq_len, d_model)); priority=5),
+            autoscale=true,
+            threshold_per_instance=threshold,
+            snapshot_interval=max(1, (ticks * base_per_tick + spike_requests) ÷ 50),
+            name="spike(ticks=$(ticks), spike_every=$(spike_every), spike=$(spike_requests))"
+        )
+        _print_summary(workload_summary(run))
+        if !isempty(snapshots_out)
+            _write_snapshots(snapshots_out * ".spike.tsv", run)
         end
     end
 end

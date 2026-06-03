@@ -109,6 +109,19 @@ function maybe_scale_up!(pool, pending::Int; threshold_per_instance::Int=4)
 end
 
 """
+Scale down a pool when pressure is consistently low.
+
+Returns `true` when an instance is deactivated.
+"""
+function maybe_scale_down!(pool, pending::Int; threshold_per_instance::Int=4)
+    active = max(1, sum(pool.active))
+    if pending < max(0, (active - 1) * threshold_per_instance)
+        return scale_down!(pool)
+    end
+    return false
+end
+
+"""
 Run a burst workload through a `RuntimeScheduler`.
 
 The scheduler processes requests sequentially today, but this still validates:
@@ -144,6 +157,16 @@ function run_burst_workload!(
             end
             if executor.decoder_pool !== nothing && maybe_scale_up!(executor.decoder_pool, pending; threshold_per_instance=threshold_per_instance)
                 _emit!(run, :scale_up; details=(; pool=:decoder, pending))
+            end
+
+            if executor.production_pool !== nothing && maybe_scale_down!(executor.production_pool, pending; threshold_per_instance=threshold_per_instance)
+                _emit!(run, :scale_down; details=(; pool=:production, pending))
+            end
+            if executor.encoder_pool !== nothing && maybe_scale_down!(executor.encoder_pool, pending; threshold_per_instance=threshold_per_instance)
+                _emit!(run, :scale_down; details=(; pool=:encoder, pending))
+            end
+            if executor.decoder_pool !== nothing && maybe_scale_down!(executor.decoder_pool, pending; threshold_per_instance=threshold_per_instance)
+                _emit!(run, :scale_down; details=(; pool=:decoder, pending))
             end
         end
 
@@ -215,8 +238,74 @@ function run_pipeline_workload!(
     return run
 end
 
+"""
+Run a sustained workload with periodic spikes.
+
+This approximates a "24/7 sandbox" where load is generally stable but bursts occur.
+"""
+function run_spike_workload!(
+    scheduler;
+    ticks::Int=60,
+    base_requests_per_tick::Int=2,
+    spike_every::Int=15,
+    spike_requests::Int=20,
+    request_builder::Function,
+    name::String="spike-workload",
+    autoscale::Bool=true,
+    threshold_per_instance::Int=4,
+    snapshot_interval::Int=5
+)
+    run = WorkloadRun(name)
+    snapshot!(run)
+
+    processed = 0
+    for t in 1:ticks
+        n = base_requests_per_tick + ((spike_every > 0 && t % spike_every == 0) ? spike_requests : 0)
+        for _ in 1:n
+            submit!(scheduler, request_builder())
+        end
+
+        while !isempty(scheduler.pending_queue) || !isempty(scheduler.processing)
+            if autoscale
+                pending = length(scheduler.pending_queue)
+                executor = scheduler.executor
+                if executor.encoder_pool !== nothing && maybe_scale_up!(executor.encoder_pool, pending; threshold_per_instance=threshold_per_instance)
+                    _emit!(run, :scale_up; details=(; pool=:encoder, pending))
+                end
+                if executor.encoder_pool !== nothing && maybe_scale_down!(executor.encoder_pool, pending; threshold_per_instance=threshold_per_instance)
+                    _emit!(run, :scale_down; details=(; pool=:encoder, pending))
+                end
+            end
+
+            start_ns = time_ns()
+            result = process_next!(scheduler)
+            elapsed_ms = (time_ns() - start_ns) / 1e6
+
+            if result === nothing
+                break
+            end
+
+            push!(run.latencies_ms, elapsed_ms)
+            processed += 1
+
+            if result isa NamedTuple && haskey(result, :error)
+                push!(run.errors, result)
+            end
+
+            if snapshot_interval > 0 && (processed % snapshot_interval == 0)
+                snapshot!(run)
+            end
+        end
+    end
+
+    snapshot!(run)
+    run.completed = now()
+    return run
+end
+
 function workload_summary(run::WorkloadRun)
     lat = run.latencies_ms
+    mem_growth = length(run.rss_mb) >= 2 ? (run.rss_mb[end] - run.rss_mb[1]) : 0.0
     return (
         name = run.name,
         started = run.started,
@@ -226,6 +315,7 @@ function workload_summary(run::WorkloadRun)
         p50_latency_ms = isempty(lat) ? 0.0 : quantile(lat, 0.5),
         p95_latency_ms = isempty(lat) ? 0.0 : quantile(lat, 0.95),
         p99_latency_ms = isempty(lat) ? 0.0 : quantile(lat, 0.99),
+        memory_growth_rss_mb = mem_growth,
         peak_rss_mb = isempty(run.rss_mb) ? 0.0 : maximum(run.rss_mb),
         peak_heap_live_mb = isempty(run.heap_live_mb) ? 0.0 : maximum(run.heap_live_mb),
         scale_events = length(run.scale_events)
@@ -234,4 +324,4 @@ end
 
 export WorkloadRun, WorkloadEvent
 export current_rss_mb, current_heap_live_mb
-export run_burst_workload!, run_pipeline_workload!, workload_summary
+export run_burst_workload!, run_spike_workload!, run_pipeline_workload!, workload_summary

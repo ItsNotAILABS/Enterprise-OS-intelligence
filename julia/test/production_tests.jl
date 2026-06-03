@@ -474,6 +474,44 @@ end
         shutdown!(runtime)
         println("✓ Burst autoscale passed")
     end
+
+    @testset "Spike Workload (Sustained + Bursts)" begin
+        d_model = 64
+        seq_len = 8
+        ao_dim = 16
+
+        runtime = IntegratedRuntime(
+            production_instances=0,
+            encoder_instances=1,
+            decoder_instances=0,
+            alpha_omega_dimension=ao_dim,
+            execution_mode=SEQUENTIAL,
+            encoder_builder=tiny_encoder
+        )
+        start!(runtime)
+
+        run = run_spike_workload!(
+            runtime.scheduler;
+            ticks=20,
+            base_requests_per_tick=1,
+            spike_every=5,
+            spike_requests=15,
+            request_builder=() -> RuntimeRequest(:encoder, Dict{Symbol, Any}(:input => randn(seq_len, d_model)); priority=5),
+            autoscale=true,
+            threshold_per_instance=6,
+            snapshot_interval=5,
+            name="test-spike"
+        )
+        summary = workload_summary(run)
+
+        @test summary.steps > 0
+        @test summary.errors == 0
+        @test summary.scale_events > 0
+        @test isfinite(summary.memory_growth_rss_mb)
+
+        shutdown!(runtime)
+        println("✓ Spike workload passed")
+    end
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
