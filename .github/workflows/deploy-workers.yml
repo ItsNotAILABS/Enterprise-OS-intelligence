@@ -66,6 +66,17 @@ jobs:
             echo "   Get it at: dash.cloudflare.com → any domain → Overview → scroll right sidebar"
             exit 1
           fi
+          TARGET="${{ steps.target.outputs.value }}"
+          if [ "$TARGET" = "all" ] || [ "$TARGET" = "bots" ] || [ "$TARGET" = "slack" ]; then
+            if [ -z "${{ secrets.SLACK_BOT_TOKEN }}" ]; then
+              echo "❌ SLACK_BOT_TOKEN secret not set (required for Slack bot workers)."
+              exit 1
+            fi
+            if [ -z "${{ secrets.SLACK_SIGNING_SECRET }}" ]; then
+              echo "❌ SLACK_SIGNING_SECRET secret not set (required for Slack bot workers)."
+              exit 1
+            fi
+          fi
           echo "✅ Cloudflare secrets present."
 
   # ── Deploy: AI Agent Workers ─────────────────────────────────────────────────
@@ -77,7 +88,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        agent: [cerebrum, animus, nexus, vigil, cursor, agens]
+        agent: [cerebrum, animus, nexus, vigil, cursor, agens, hostex]
     steps:
       - uses: actions/checkout@v4
 
@@ -116,7 +127,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy ${{ matrix.bot }}
+      - name: Deploy Slack Bot ${{ matrix.bot }}
+        if: ${{ matrix.needs_slack }}
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -129,6 +141,15 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_SIGNING_SECRET: ${{ secrets.SLACK_SIGNING_SECRET }}
+
+      - name: Deploy Bot ${{ matrix.bot }}
+        if: ${{ !matrix.needs_slack }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: cloudflare-workers/bots/${{ matrix.bot }}
+          command: deploy
 
   # ── Summary ──────────────────────────────────────────────────────────────────
   deploy-summary:
