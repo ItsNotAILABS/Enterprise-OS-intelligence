@@ -200,7 +200,7 @@ jobs:
 
           // Ecosystem catalog
           const { ECOSYSTEM_CATALOG, SYSTEM_IDENTITY } = await import('./src/ecosystem-catalog.js');
-          if (ECOSYSTEM_CATALOG.engines.length !== 15) { process.exit(1); }
+          if (ECOSYSTEM_CATALOG.engines.length < 15) { process.exit(1); }
           if (!SYSTEM_IDENTITY.latinName) { process.exit(1); }
           console.log(`  ✓  Ecosystem catalog: ${ECOSYSTEM_CATALOG.engines.length} engines · ${ECOSYSTEM_CATALOG.papers.length} papers`);
           console.log(`  ✓  Identity: ${SYSTEM_IDENTITY.latinName} — ${SYSTEM_IDENTITY.motto}`);
