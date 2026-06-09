@@ -25,6 +25,9 @@ export const REMEMBER = 'REMEMBER'; // AURUM     — φ-compounding governance m
 
 export const THREE_WORDS = [TRACE, VERIFY, REMEMBER];
 
+// Golden ratio — φ-weighting used throughout AURUM scoring
+export const PHI = 1.6180339887;
+
 // ---------------------------------------------------------------------------
 // DAO types
 // ---------------------------------------------------------------------------
@@ -291,6 +294,11 @@ export function createRiskProfile({
 }
 
 /**
+ * Alias for createRiskProfile — preferred public API name.
+ */
+export const createRiskScore = createRiskProfile;
+
+/**
  * Create an AgentFinding — output from any of the four agent roles.
  * Every finding must be reviewable and disputable.
  */
@@ -313,6 +321,12 @@ export function createAgentFinding({
     createdAt,
   };
 }
+
+/**
+ * Alias for createAgentFinding — preferred public API name.
+ * Create a Finding record from any of the four agent roles.
+ */
+export const createFinding = createAgentFinding;
 
 /**
  * Create a GovernanceMemoryLink — the REMEMBER layer.
@@ -381,10 +395,11 @@ export function createEffectTraceRecord({
 }
 
 export default {
-  TRACE, VERIFY, REMEMBER, THREE_WORDS,
+  TRACE, VERIFY, REMEMBER, THREE_WORDS, PHI,
   DAO_TYPE, PROPOSAL_STATUS, TRUTH_STATUS, AFFECTED_SYSTEM,
   RISK_CLASS, RISK_LEVEL, AGENT_ROLE, SEVERITY, TRACE_STATUS,
   createSourceLink, createProposalRecord, createEffectPath,
-  createRuntimeTruthBlock, createRiskProfile, createAgentFinding,
+  createRuntimeTruthBlock, createRiskProfile, createRiskScore,
+  createAgentFinding, createFinding,
   createGovernanceMemoryLink, createVerificationPlan, createEffectTraceRecord,
 };

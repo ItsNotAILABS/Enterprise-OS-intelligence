@@ -319,3 +319,21 @@ export function createStatusFetchers({ fetchFn } = {}) {
     afterStateFetcherInstance,
   };
 }
+
+/**
+ * Create a single StatusFetcher instance.
+ * @param {object} [options]
+ * @returns {StatusFetcher}
+ */
+export function createStatusFetcher({ fetchFn } = {}) {
+  return new StatusFetcher({ fetchFn });
+}
+
+/**
+ * Create a single AfterStateFetcher instance.
+ * @param {object} [options]
+ * @returns {AfterStateFetcher}
+ */
+export function createAfterStateFetcher({ fetchFn } = {}) {
+  return new AfterStateFetcher({ fetchFn });
+}
