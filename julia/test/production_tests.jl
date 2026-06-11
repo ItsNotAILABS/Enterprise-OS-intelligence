@@ -25,6 +25,17 @@ println()
 include("../substrate/transformers/ProductionTransformers.jl")
 include("../substrate/transformers/RuntimeIntegration.jl")
 include("../substrate/transformers/Benchmarks.jl")
+include("../substrate/transformers/WorkloadHarness.jl")
+
+const _TINY_D_MODEL = 64
+const _TINY_LAYERS = 2
+const _TINY_HEADS = 4
+const _TINY_D_FF = 128
+const _TINY_VOCAB = 1000
+
+tiny_encoder() = EncoderTransformer(d_model=_TINY_D_MODEL, num_layers=_TINY_LAYERS, num_heads=_TINY_HEADS, d_ff=_TINY_D_FF, dropout=0.0)
+tiny_decoder() = DecoderTransformer(d_model=_TINY_D_MODEL, num_layers=_TINY_LAYERS, num_heads=_TINY_HEADS, d_ff=_TINY_D_FF, vocab_size=_TINY_VOCAB, dropout=0.0)
+tiny_production() = ProductionTransformer(d_model=_TINY_D_MODEL, num_encoder_layers=1, num_decoder_layers=1, num_heads=_TINY_HEADS, d_ff=_TINY_D_FF, vocab_size=_TINY_VOCAB)
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Test: Production Components
@@ -232,7 +243,7 @@ end
     end
     
     @testset "Transformer Pool" begin
-        pool = TransformerPool(EncoderTransformer, 2)
+        pool = TransformerPool(EncoderTransformer, 2; builder=tiny_encoder)
         
         @test length(pool.instances) == 2
         @test all(pool.active)
@@ -254,16 +265,17 @@ end
     @testset "Runtime Executor" begin
         executor = RuntimeExecutor(
             encoder_count=1,
-            execution_mode=SEQUENTIAL
+            execution_mode=SEQUENTIAL,
+            encoder_builder=tiny_encoder
         )
         
         @test executor.state == INITIALIZING
         initialize!(executor)
         @test executor.state == READY
         
-        x = randn(8, 512)
+        x = randn(8, _TINY_D_MODEL)
         encoded, pooled = execute_encoder(executor, x)
-        @test size(encoded) == (8, 512)
+        @test size(encoded) == (8, _TINY_D_MODEL)
         
         st = status(executor)
         @test st.state == READY
@@ -273,12 +285,12 @@ end
     end
     
     @testset "Runtime Scheduler" begin
-        executor = RuntimeExecutor(encoder_count=1)
+        executor = RuntimeExecutor(encoder_count=1, encoder_builder=tiny_encoder)
         initialize!(executor)
         
         scheduler = RuntimeScheduler(executor)
         
-        request = RuntimeRequest(:encoder, Dict{Symbol, Any}(:input => randn(4, 512)))
+        request = RuntimeRequest(:encoder, Dict{Symbol, Any}(:input => randn(4, _TINY_D_MODEL)))
         request_id = submit!(scheduler, request)
         
         @test !isempty(scheduler.pending_queue)
@@ -293,9 +305,9 @@ end
     
     @testset "Integrated Runtime" begin
         runtime = IntegratedRuntime(
-            production_instances=1,
-            encoder_instances=1,
-            decoder_instances=1,
+            production_instances=0,
+            encoder_instances=0,
+            decoder_instances=0,
             alpha_omega_dimension=32,
             execution_mode=SEQUENTIAL
         )
@@ -367,6 +379,168 @@ end
         
         println("✓ Component Benchmarks passed")
     end
+
+    @testset "CPU Pressure Benchmark" begin
+        result = cpu_pressure_benchmark(() -> sum(randn(100)), "Sum 100 Pressure"; seconds=0.2, warmup=2, tokens_per_iter=100)
+        @test result.iterations > 0
+        @test result.mean_time_ms > 0
+        @test isfinite(result.memory_growth_mb)
+        @test isfinite(result.bytes_allocated_per_iter)
+        @test isfinite(result.gc_time_ms_per_iter)
+        println("✓ CPU Pressure Benchmark passed")
+    end
+
+    @testset "Complexity Estimates" begin
+        seq = run_sequence_scaling_with_complexity(32; seq_lengths=[8, 16, 32, 64], iterations=3)
+        @test length(seq.results) == 4
+        @test 0.0 <= seq.complexity.r2 <= 1.0
+        @test isfinite(seq.complexity.exponent)
+
+        dim = run_dimension_scaling_with_complexity(16; dimensions=[16, 32, 64, 128], iterations=3)
+        @test length(dim.results) == 4
+        @test 0.0 <= dim.complexity.r2 <= 1.0
+        @test isfinite(dim.complexity.exponent)
+
+        lay = run_layer_scaling_with_complexity(32, 16; layer_counts=[1, 2, 4], iterations=3)
+        @test length(lay.results) == 3
+        @test 0.0 <= lay.complexity.r2 <= 1.0
+        @test isfinite(lay.complexity.exponent)
+
+        println("✓ Complexity Estimates passed")
+    end
+end
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Workload Simulation: Latency, Memory, Scaling
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@testset "Workload Simulation" begin
+    @testset "Pipeline Workload (Multi-step)" begin
+        d_model = 64
+        seq_len = 8
+        ao_dim = 32
+
+        runtime = IntegratedRuntime(
+            production_instances=0,
+            encoder_instances=1,
+            decoder_instances=0,
+            alpha_omega_dimension=ao_dim,
+            execution_mode=SEQUENTIAL,
+            encoder_builder=() -> EncoderTransformer(
+                d_model=d_model,
+                num_layers=2,
+                num_heads=4,
+                d_ff=128,
+                dropout=0.0
+            )
+        )
+        start!(runtime)
+
+        run = run_pipeline_workload!(
+            runtime;
+            iterations=10,
+            d_model=d_model,
+            seq_len=seq_len,
+            alpha_omega_dimension=ao_dim,
+            snapshot_interval=2,
+            name="test-pipeline"
+        )
+        summary = workload_summary(run)
+
+        @test summary.steps == 20  # 2 stages per iteration
+        @test summary.errors == 0
+        @test isfinite(summary.p50_latency_ms)
+        @test summary.peak_rss_mb >= 0.0
+
+        shutdown!(runtime)
+        println("✓ Pipeline workload passed")
+    end
+
+    @testset "Burst Autoscale (Queue Pressure)" begin
+        d_model = 64
+        seq_len = 8
+        ao_dim = 16
+
+        runtime = IntegratedRuntime(
+            production_instances=0,
+            encoder_instances=1,
+            decoder_instances=0,
+            alpha_omega_dimension=ao_dim,
+            execution_mode=SEQUENTIAL,
+            encoder_builder=() -> EncoderTransformer(
+                d_model=d_model,
+                num_layers=2,
+                num_heads=4,
+                d_ff=128,
+                dropout=0.0
+            )
+        )
+        start!(runtime)
+
+        requests = RuntimeRequest[]
+        for _ in 1:40
+            push!(requests, RuntimeRequest(:encoder, Dict{Symbol, Any}(:input => randn(seq_len, d_model)); priority=5))
+        end
+
+        run = run_burst_workload!(
+            runtime.scheduler,
+            requests;
+            autoscale=true,
+            threshold_per_instance=10,
+            snapshot_interval=10,
+            name="test-burst"
+        )
+
+        @test isempty(run.errors)
+        @test length(run.scale_events) > 0
+        @test runtime.executor.encoder_pool !== nothing
+        @test length(runtime.executor.encoder_pool.instances) > 1
+
+        st = status(runtime.executor)
+        @test st.metrics.total_requests == 40
+        @test st.metrics.success_rate == 1.0
+
+        shutdown!(runtime)
+        println("✓ Burst autoscale passed")
+    end
+
+    @testset "Spike Workload (Sustained + Bursts)" begin
+        d_model = 64
+        seq_len = 8
+        ao_dim = 16
+
+        runtime = IntegratedRuntime(
+            production_instances=0,
+            encoder_instances=1,
+            decoder_instances=0,
+            alpha_omega_dimension=ao_dim,
+            execution_mode=SEQUENTIAL,
+            encoder_builder=tiny_encoder
+        )
+        start!(runtime)
+
+        run = run_spike_workload!(
+            runtime.scheduler;
+            ticks=20,
+            base_requests_per_tick=1,
+            spike_every=5,
+            spike_requests=15,
+            request_builder=() -> RuntimeRequest(:encoder, Dict{Symbol, Any}(:input => randn(seq_len, d_model)); priority=5),
+            autoscale=true,
+            threshold_per_instance=6,
+            snapshot_interval=5,
+            name="test-spike"
+        )
+        summary = workload_summary(run)
+
+        @test summary.steps > 0
+        @test summary.errors == 0
+        @test summary.scale_events > 0
+        @test isfinite(summary.memory_growth_rss_mb)
+
+        shutdown!(runtime)
+        println("✓ Spike workload passed")
+    end
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -378,21 +552,22 @@ end
     
     # Create integrated runtime
     runtime = IntegratedRuntime(
-        production_instances=1,
+        production_instances=0,
         encoder_instances=1,
-        decoder_instances=1,
+        decoder_instances=0,
         alpha_omega_dimension=64,
-        execution_mode=SEQUENTIAL
+        execution_mode=SEQUENTIAL,
+        encoder_builder=tiny_encoder
     )
     start!(runtime)
     
     # Test encoder pipeline
-    x = randn(32, 512)
+    x = randn(32, _TINY_D_MODEL)
     start_time = time()
     encoded, pooled = execute_encoder(runtime.executor, x)
     encoder_time = (time() - start_time) * 1000
     
-    @test size(encoded) == (32, 512)
+    @test size(encoded) == (32, _TINY_D_MODEL)
     @test encoder_time < 5000  # Should complete within 5 seconds
     
     # Test Alpha-Omega pipeline

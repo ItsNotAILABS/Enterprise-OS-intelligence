@@ -34,6 +34,16 @@ from ai_task_runner import AITaskRunner, TaskStatus
 from organism_ai import TaskType, Priority
 
 
+@pytest.fixture
+def vault(tmp_path):
+    return SovereignVault(vault_path=str(tmp_path / "vault.json"))
+
+
+@pytest.fixture
+def runner(tmp_path):
+    return AITaskRunner(history_path=str(tmp_path / "task_history.json"))
+
+
 # ── SovereignDashboard ─────────────────────────────────────────────────────────
 
 class TestSovereignDashboard:
@@ -231,59 +241,51 @@ class TestPortfolioAnalyzer:
 
 class TestSovereignVault:
 
-    def test_add_and_get(self):
-        vault = SovereignVault()
+    def test_add_and_get(self, vault):
         entry = vault.add("Test memory", tags=["test"])
         retrieved = vault.get(entry.entry_id)
         assert retrieved is not None
         assert retrieved.content == "Test memory"
 
-    def test_search(self):
-        vault = SovereignVault()
+    def test_search(self, vault):
         vault.add("The organism heartbeat fires every 873ms", tags=["organism"])
         vault.add("Phi math drives routing", tags=["math"])
         results = vault.search("heartbeat")
         assert len(results) >= 1
         assert "heartbeat" in results[0].entry.content
 
-    def test_search_by_tag(self):
-        vault = SovereignVault()
+    def test_search_by_tag(self, vault):
         vault.add("Entry A", tags=["alpha", "beta"])
         vault.add("Entry B", tags=["gamma"])
         results = vault.search_by_tag("alpha")
         assert len(results) == 1
 
-    def test_update_entry(self):
-        vault = SovereignVault()
+    def test_update_entry(self, vault):
         entry = vault.add("Original content")
         vault.update(entry.entry_id, content="Updated content")
         updated = vault.get(entry.entry_id)
         assert updated.content == "Updated content"
 
-    def test_delete_entry(self):
-        vault = SovereignVault()
+    def test_delete_entry(self, vault):
         entry = vault.add("To be deleted")
         assert vault.delete(entry.entry_id) is True
         assert vault.get(entry.entry_id) is None
 
-    def test_link_entries(self):
-        vault = SovereignVault()
+    def test_link_entries(self, vault):
         a = vault.add("Entry A")
         b = vault.add("Entry B")
         assert vault.link(a.entry_id, b.entry_id) is True
         assert b.entry_id in vault.get(a.entry_id).links
         assert a.entry_id in vault.get(b.entry_id).links
 
-    def test_timeline(self):
-        vault = SovereignVault()
+    def test_timeline(self, vault):
         vault.add("First")
         vault.add("Second")
         vault.add("Third")
         timeline = vault.timeline(2)
         assert len(timeline) == 2
 
-    def test_statistics(self):
-        vault = SovereignVault()
+    def test_statistics(self, vault):
         vault.add("Note one", memory_type=MemoryType.NOTE, tags=["a"])
         vault.add("Insight two", memory_type=MemoryType.INSIGHT, tags=["b"])
         stats = vault.statistics()
@@ -291,28 +293,26 @@ class TestSovereignVault:
         assert "note" in stats.by_type
         assert "insight" in stats.by_type
 
-    def test_export_import_roundtrip(self):
-        vault = SovereignVault()
+    def test_export_import_roundtrip(self, tmp_path):
+        vault = SovereignVault(vault_path=str(tmp_path / "vault1.json"))
         vault.add("Memory Alpha", tags=["alpha"])
         vault.add("Memory Beta", tags=["beta"])
         exported = vault.export_vault()
 
-        vault2 = SovereignVault()
+        vault2 = SovereignVault(vault_path=str(tmp_path / "vault2.json"))
         imported_count = vault2.import_vault(exported)
         assert imported_count == 2
         stats = vault2.statistics()
         assert stats.total_entries == 2
 
-    def test_most_important(self):
-        vault = SovereignVault()
+    def test_most_important(self, vault):
         vault.add("Low importance", importance=0.1)
         vault.add("High importance", importance=0.95)
         vault.add("Medium importance", importance=0.5)
         top = vault.most_important(2)
         assert top[0].importance == 0.95
 
-    def test_importance_clamped(self):
-        vault = SovereignVault()
+    def test_importance_clamped(self, vault):
         entry = vault.add("Over limit", importance=5.0)
         assert entry.importance == 1.0
 
@@ -321,36 +321,31 @@ class TestSovereignVault:
 
 class TestAITaskRunner:
 
-    def test_submit_task(self):
-        runner = AITaskRunner()
+    def test_submit_task(self, runner):
         task = runner.submit("Test task", task_type=TaskType.REASONING)
         assert task.status == TaskStatus.QUEUED
         assert task.description == "Test task"
 
-    def test_execute_task(self):
-        runner = AITaskRunner()
+    def test_execute_task(self, runner):
         task = runner.submit("Analyze this", task_type=TaskType.ANALYSIS)
         result = runner.execute(task.task_id)
         assert result.status in (TaskStatus.COMPLETED, TaskStatus.FAILED)
         assert result.assigned_model is not None
         assert result.latency_ms > 0
 
-    def test_execute_assigns_model(self):
-        runner = AITaskRunner()
+    def test_execute_assigns_model(self, runner):
         task = runner.submit("Code this", task_type=TaskType.CODING, priority=Priority.HIGH)
         runner.execute(task.task_id)
         assert task.assigned_model is not None
 
-    def test_submit_batch(self):
-        runner = AITaskRunner()
+    def test_submit_batch(self, runner):
         batch = runner.submit_batch([
             {"description": "Task 1", "type": "reasoning"},
             {"description": "Task 2", "type": "coding"},
         ])
         assert len(batch.tasks) == 2
 
-    def test_execute_batch(self):
-        runner = AITaskRunner()
+    def test_execute_batch(self, runner):
         batch = runner.submit_batch([
             {"description": "Batch task 1", "type": "analysis"},
             {"description": "Batch task 2", "type": "creative"},
@@ -358,40 +353,34 @@ class TestAITaskRunner:
         result = runner.execute_batch(batch.batch_id)
         assert result.completed_count + result.failed_count == 2
 
-    def test_cancel_queued_task(self):
-        runner = AITaskRunner()
+    def test_cancel_queued_task(self, runner):
         task = runner.submit("Cancel me")
         assert runner.cancel(task.task_id) is True
         assert task.status == TaskStatus.CANCELLED
 
-    def test_cannot_cancel_executed_task(self):
-        runner = AITaskRunner()
+    def test_cannot_cancel_executed_task(self, runner):
         task = runner.submit("Run me")
         runner.execute(task.task_id)
         assert runner.cancel(task.task_id) is False
 
-    def test_get_queue(self):
-        runner = AITaskRunner()
+    def test_get_queue(self, runner):
         runner.submit("Low", priority=Priority.LOW)
         runner.submit("Critical", priority=Priority.CRITICAL)
         queue = runner.get_queue()
         assert queue[0].priority == Priority.CRITICAL
 
-    def test_statistics(self):
-        runner = AITaskRunner()
+    def test_statistics(self, runner):
         task = runner.submit("Stat test")
         runner.execute(task.task_id)
         stats = runner.get_statistics()
         assert stats["total_executed"] == 1
         assert stats["total_submitted"] >= 1
 
-    def test_leaderboard(self):
-        runner = AITaskRunner()
+    def test_leaderboard(self, runner):
         leaderboard = runner.get_leaderboard()
         assert len(leaderboard) == 40  # All seeded models
 
-    def test_render_terminal(self):
-        runner = AITaskRunner()
+    def test_render_terminal(self, runner):
         runner.submit("Render test")
         runner.execute(list(runner._tasks.keys())[0])
         output = runner.render_terminal()

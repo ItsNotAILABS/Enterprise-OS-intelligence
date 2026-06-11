@@ -71,6 +71,25 @@ Pkg.instantiate()
 
 ---
 
+## Testing & Workloads
+
+Core substrate tests:
+
+`julia --project=julia julia/test/runtests.jl`
+
+Production runtime + performance tests:
+
+`julia --project=julia julia/test/production_tests.jl`
+
+Long-running simulated workload runner (latency + memory + scaling signals):
+
+- One-shot: `julia --project=julia julia/tools/workload_runner.jl --mode=both --iterations=50 --requests=200`
+- 24/7 loop: `julia --project=julia julia/tools/workload_runner.jl --mode=both --loops=-1`
+- Write snapshot TSVs: `julia --project=julia julia/tools/workload_runner.jl --mode=both --snapshots_out=/tmp/workload`
+- CPU-pressure + complexity suite: `julia --project=julia julia/tools/workload_runner.jl --mode=bench --bench_pressure_seconds=2.0`
+
+---
+
 ## Quick Start
 
 ```julia

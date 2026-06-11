@@ -24,6 +24,37 @@ using Dates
 # ═══════════════════════════════════════════════════════════════════════════════
 
 const PHI_BENCH = (1 + sqrt(5)) / 2
+const _PROC_STATUS_PATH_BENCH = "/proc/self/status"
+
+function _read_proc_status_kb_bench(key::AbstractString)
+    if !isfile(_PROC_STATUS_PATH_BENCH)
+        return nothing
+    end
+
+    open(_PROC_STATUS_PATH_BENCH, "r") do io
+        for line in eachline(io)
+            if startswith(line, key)
+                parts = split(strip(line))
+                if length(parts) >= 2
+                    return parse(Float64, parts[2])
+                end
+            end
+        end
+    end
+
+    return nothing
+end
+
+"""
+Return current process RSS in MB when available, otherwise fall back to Julia live heap MB.
+"""
+function current_rss_mb_bench()
+    kb = _read_proc_status_kb_bench("VmRSS:")
+    if kb === nothing
+        return Base.gc_live_bytes() / 1e6
+    end
+    return kb / 1024
+end
 
 """Benchmark result container"""
 struct BenchmarkResult
@@ -37,7 +68,11 @@ struct BenchmarkResult
     p95_time_ms::Float64
     p99_time_ms::Float64
     throughput::Float64
-    memory_mb::Float64
+    memory_mb::Float64              # peak RSS (preferred) or live heap MB
+    memory_growth_mb::Float64       # end - start (RSS preferred)
+    bytes_allocated_per_iter::Float64
+    gc_time_ms_per_iter::Float64
+    compile_time_ms_per_iter::Float64
     timestamp::DateTime
 end
 
@@ -77,13 +112,28 @@ function benchmark(f::Function, name::String;
     
     # Timed runs
     times = Float64[]
+    bytes_sum = 0.0
+    gctime_sum_ms = 0.0
+    compile_sum_ms = 0.0
+
+    start_mem_mb = current_rss_mb_bench()
+    peak_mem_mb = start_mem_mb
     
     for _ in 1:iterations
-        start = time()
-        f()
-        elapsed = (time() - start) * 1000  # Convert to ms
-        push!(times, elapsed)
+        t = @timed f()
+        elapsed_ms = t.time * 1000
+        push!(times, elapsed_ms)
+
+        bytes_sum += t.bytes
+        gctime_sum_ms += t.gctime * 1000
+        compile_sum_ms += t.compile_time * 1000
+
+        mem_mb = current_rss_mb_bench()
+        peak_mem_mb = max(peak_mem_mb, mem_mb)
     end
+
+    end_mem_mb = current_rss_mb_bench()
+    memory_growth_mb = end_mem_mb - start_mem_mb
     
     # Calculate statistics
     mean_t = mean(times)
@@ -97,9 +147,6 @@ function benchmark(f::Function, name::String;
     # Throughput (tokens per second)
     throughput = tokens_per_iter / (mean_t / 1000)
     
-    # Approximate memory (simplified)
-    memory_mb = Base.gc_live_bytes() / 1e6
-    
     BenchmarkResult(
         name,
         iterations,
@@ -111,9 +158,127 @@ function benchmark(f::Function, name::String;
         p95_t,
         p99_t,
         throughput,
-        memory_mb,
+        peak_mem_mb,
+        memory_growth_mb,
+        bytes_sum / iterations,
+        gctime_sum_ms / iterations,
+        compile_sum_ms / iterations,
         now()
     )
+end
+
+"""
+Run a fixed-duration CPU-pressure benchmark.
+
+This is useful for "24/7" sandboxes where you want stable, time-boxed pressure
+and consistent metrics regardless of per-iteration speed.
+"""
+function cpu_pressure_benchmark(f::Function, name::String;
+                                seconds::Float64=2.0,
+                                warmup::Int=10,
+                                tokens_per_iter::Int=1)
+    for _ in 1:warmup
+        f()
+    end
+
+    times = Float64[]
+    bytes_sum = 0.0
+    gctime_sum_ms = 0.0
+    compile_sum_ms = 0.0
+
+    start_mem_mb = current_rss_mb_bench()
+    peak_mem_mb = start_mem_mb
+
+    start_ns = time_ns()
+    iters = 0
+    while (time_ns() - start_ns) / 1e9 < seconds
+        t = @timed f()
+        push!(times, t.time * 1000)
+        bytes_sum += t.bytes
+        gctime_sum_ms += t.gctime * 1000
+        compile_sum_ms += t.compile_time * 1000
+        iters += 1
+
+        mem_mb = current_rss_mb_bench()
+        peak_mem_mb = max(peak_mem_mb, mem_mb)
+    end
+
+    if isempty(times)
+        error("cpu_pressure_benchmark produced no samples (seconds=$seconds)")
+    end
+
+    end_mem_mb = current_rss_mb_bench()
+    memory_growth_mb = end_mem_mb - start_mem_mb
+
+    mean_t = mean(times)
+    std_t = std(times)
+    min_t = minimum(times)
+    max_t = maximum(times)
+    p50_t = quantile(times, 0.5)
+    p95_t = quantile(times, 0.95)
+    p99_t = quantile(times, 0.99)
+    throughput = tokens_per_iter / (mean_t / 1000)
+
+    BenchmarkResult(
+        name * " (cpu_pressure=$(seconds)s)",
+        iters,
+        mean_t,
+        std_t,
+        min_t,
+        max_t,
+        p50_t,
+        p95_t,
+        p99_t,
+        throughput,
+        peak_mem_mb,
+        memory_growth_mb,
+        bytes_sum / iters,
+        gctime_sum_ms / iters,
+        compile_sum_ms / iters,
+        now()
+    )
+end
+
+"""
+Estimate a power-law exponent for scaling behavior: y ≈ c * x^k.
+
+Returns exponent `k` and R² on the log-log fit.
+"""
+function estimate_powerlaw(xs::AbstractVector{<:Real}, ys::AbstractVector{<:Real})
+    if length(xs) != length(ys)
+        error("xs and ys must have same length")
+    end
+
+    x = Float64[]
+    y = Float64[]
+    for (xi, yi) in zip(xs, ys)
+        if xi > 0 && yi > 0 && isfinite(xi) && isfinite(yi)
+            push!(x, Float64(xi))
+            push!(y, Float64(yi))
+        end
+    end
+
+    if length(x) < 2
+        return (exponent = 0.0, r2 = 0.0, n = length(x))
+    end
+
+    lx = log.(x)
+    ly = log.(y)
+
+    vx = var(lx)
+    if vx == 0.0
+        return (exponent = 0.0, r2 = 0.0, n = length(x))
+    end
+
+    slope = cov(lx, ly) / vx
+    intercept = mean(ly) - slope * mean(lx)
+    yhat = intercept .+ slope .* lx
+
+    ss_res = sum((ly .- yhat) .^ 2)
+    ss_tot = sum((ly .- mean(ly)) .^ 2)
+    r2 = ss_tot == 0.0 ? 0.0 : max(0.0, 1.0 - ss_res / ss_tot)
+
+    return (exponent = slope, r2 = r2, n = length(x))
 end
 
 """Add result to suite"""
@@ -301,6 +466,18 @@ function benchmark_sequence_scaling(d_model::Int;
 end
 
 """
+Run sequence scaling and estimate algorithmic complexity exponent k for mean latency.
+"""
+function run_sequence_scaling_with_complexity(d_model::Int;
+                                              seq_lengths::Vector{Int}=[32, 64, 128, 256, 512],
+                                              iterations::Int=20)
+    results = benchmark_sequence_scaling(d_model; seq_lengths=seq_lengths, iterations=iterations)
+    ys = [r.mean_time_ms for r in results]
+    complexity = estimate_powerlaw(seq_lengths, ys)
+    return (sizes = seq_lengths, results = results, complexity = complexity)
+end
+
+"""
 Benchmark scaling behavior with model dimension
 """
 function benchmark_dimension_scaling(seq_len::Int;
@@ -314,6 +491,18 @@ function benchmark_dimension_scaling(seq_len::Int;
     end
     
     return results
+end
+
+"""
+Run dimension scaling and estimate algorithmic complexity exponent k for mean latency.
+"""
+function run_dimension_scaling_with_complexity(seq_len::Int;
+                                               dimensions::Vector{Int}=[64, 128, 256, 512],
+                                               iterations::Int=20)
+    results = benchmark_dimension_scaling(seq_len; dimensions=dimensions, iterations=iterations)
+    ys = [r.mean_time_ms for r in results]
+    complexity = estimate_powerlaw(dimensions, ys)
+    return (sizes = dimensions, results = results, complexity = complexity)
 end
 
 """
@@ -331,6 +520,18 @@ function benchmark_layer_scaling(d_model::Int, seq_len::Int;
     end
     
     return results
+end
+
+"""
+Run layer scaling and estimate algorithmic complexity exponent k for mean latency.
+"""
+function run_layer_scaling_with_complexity(d_model::Int, seq_len::Int;
+                                           layer_counts::Vector{Int}=[1, 2, 4, 6, 8, 12],
+                                           iterations::Int=20)
+    results = benchmark_layer_scaling(d_model, seq_len; layer_counts=layer_counts, iterations=iterations)
+    ys = [r.mean_time_ms for r in results]
+    complexity = estimate_powerlaw(layer_counts, ys)
+    return (sizes = layer_counts, results = results, complexity = complexity)
 end
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -401,6 +602,40 @@ function run_comprehensive_benchmarks(;
 end
 
 """
+Run CPU-pressure and complexity scaling benchmarks (fast defaults).
+"""
+function run_pressure_and_complexity_benchmarks(;
+    d_model::Int=128,
+    seq_len::Int=32,
+    iterations::Int=10,
+    pressure_seconds::Float64=2.0
+)
+    suite = BenchmarkSuite("Pressure + Complexity Benchmarks")
+
+    println("=" ^ 80)
+    println("RUNNING PRESSURE + COMPLEXITY BENCHMARK SUITE")
+    println("=" ^ 80)
+    println()
+
+    println(">>> CPU pressure...")
+    layer = EncoderLayer(d_model)
+    x = randn(seq_len, d_model)
+    add_result!(suite, cpu_pressure_benchmark(() -> encode(layer, x), "EncoderLayer CPU Pressure"; seconds=pressure_seconds, tokens_per_iter=seq_len))
+
+    println("\n>>> Scaling complexity (mean latency exponents)...")
+    seq = run_sequence_scaling_with_complexity(d_model; seq_lengths=[16, 32, 64, 128], iterations=iterations)
+    dim = run_dimension_scaling_with_complexity(seq_len; dimensions=[32, 64, 128, 256], iterations=iterations)
+    lay = run_layer_scaling_with_complexity(d_model, seq_len; layer_counts=[1, 2, 4, 8], iterations=iterations)
+
+    println("  - Sequence exponent k ≈ $(round(seq.complexity.exponent, digits=3)) (R²=$(round(seq.complexity.r2, digits=3)))")
+    println("  - Dimension exponent k ≈ $(round(dim.complexity.exponent, digits=3)) (R²=$(round(dim.complexity.r2, digits=3)))")
+    println("  - Layers exponent k ≈ $(round(lay.complexity.exponent, digits=3)) (R²=$(round(lay.complexity.r2, digits=3)))")
+
+    complete!(suite)
+    return (suite = suite, sequence = seq, dimension = dim, layers = lay)
+end
+
+"""
 Print benchmark results
 """
 function print_results(suite::BenchmarkSuite)
@@ -416,7 +651,8 @@ function print_results(suite::BenchmarkSuite)
             rpad("Mean (ms)", 12), " | ",
             rpad("P95 (ms)", 12), " | ",
             rpad("P99 (ms)", 12), " | ",
-            rpad("Throughput", 15))
+            rpad("Throughput", 15), " | ",
+            rpad("MemΔ (MB)", 10))
     println("-" ^ 120)
     
     for result in suite.results
@@ -424,7 +660,8 @@ function print_results(suite::BenchmarkSuite)
                 rpad(round(result.mean_time_ms, digits=3), 12), " | ",
                 rpad(round(result.p95_time_ms, digits=3), 12), " | ",
                 rpad(round(result.p99_time_ms, digits=3), 12), " | ",
-                rpad("$(round(result.throughput, digits=1)) tok/s", 15))
+                rpad("$(round(result.throughput, digits=1)) tok/s", 15), " | ",
+                rpad(round(result.memory_growth_mb, digits=2), 10))
     end
     
     println("-" ^ 120)
@@ -442,8 +679,8 @@ function generate_report(suite::BenchmarkSuite)
 
 ## Results Summary
 
-| Benchmark | Mean (ms) | P50 (ms) | P95 (ms) | P99 (ms) | Throughput |
-|-----------|-----------|----------|----------|----------|------------|
+| Benchmark | Mean (ms) | P50 (ms) | P95 (ms) | P99 (ms) | Throughput | MemΔ (MB) | Bytes/iter | GC ms/iter |
+|-----------|-----------|----------|----------|----------|------------|-----------|-----------|-----------|
 """
     
     for result in suite.results
@@ -453,7 +690,10 @@ function generate_report(suite::BenchmarkSuite)
         p95_t = round(result.p95_time_ms, digits=3)
         p99_t = round(result.p99_time_ms, digits=3)
         throughput = round(result.throughput, digits=1)
-        report *= "| $name | $mean_t | $p50_t | $p95_t | $p99_t | $throughput tok/s |\n"
+        mem_delta = round(result.memory_growth_mb, digits=2)
+        bytes_iter = round(result.bytes_allocated_per_iter, digits=0)
+        gc_ms_iter = round(result.gc_time_ms_per_iter, digits=3)
+        report *= "| $name | $mean_t | $p50_t | $p95_t | $p99_t | $throughput tok/s | $mem_delta | $bytes_iter | $gc_ms_iter |\n"
     end
     
     report *= """
@@ -466,7 +706,8 @@ function generate_report(suite::BenchmarkSuite)
 
 ## System Information
 
-- Memory usage tracked per benchmark
+- Memory usage tracked per benchmark (peak RSS when available)
+- Memory growth = end - start per benchmark
 - Times measured in milliseconds
 - Throughput in tokens per second
 
@@ -482,9 +723,11 @@ end
 # ═══════════════════════════════════════════════════════════════════════════════
 
 export BenchmarkResult, BenchmarkSuite
-export benchmark, add_result!, complete!
+export benchmark, cpu_pressure_benchmark, add_result!, complete!
+export estimate_powerlaw
 export benchmark_attention, benchmark_feedforward, benchmark_encoder_layer
 export benchmark_production_transformer, benchmark_encoder_transformer, benchmark_decoder_transformer
 export benchmark_alpha, benchmark_phi, benchmark_spectral, benchmark_transformer_chain
 export benchmark_sequence_scaling, benchmark_dimension_scaling, benchmark_layer_scaling
-export run_comprehensive_benchmarks, print_results, generate_report
+export run_sequence_scaling_with_complexity, run_dimension_scaling_with_complexity, run_layer_scaling_with_complexity
+export run_comprehensive_benchmarks, run_pressure_and_complexity_benchmarks, print_results, generate_report

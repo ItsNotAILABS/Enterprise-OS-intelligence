@@ -19,6 +19,17 @@ This project has its own GitHub Pages site. To enable it:
 
 Alternatively, configure a custom subdomain (e.g., `hostex.rship.ai`) by adding a CNAME file.
 
+## Cloudflare Worker Deployment
+
+The HOSTEX edge worker lives at `cloudflare-workers/hostex/` and is deployed via GitHub Actions:
+
+- Workflow: `.github/workflows/deploy-workers.yml`
+- Required secrets:
+  - `CLOUDFLARE_API_TOKEN` (Workers:Edit)
+  - `CLOUDFLARE_ACCOUNT_ID`
+
+Once configured, pushes to `main` that touch `cloudflare-workers/**` will auto-deploy.
+
 ## Project Structure
 
 ```

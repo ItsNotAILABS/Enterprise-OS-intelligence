@@ -217,6 +217,9 @@ def _determine_tier(glyphs: list[str]) -> str:
 
     # BRONZE: concept-only or bare expression
     return "bronze"
+
+
+def _tokens_from_source(source: str) -> list[CPLToken]:
     """Extract recognised CPL tokens from a CPX source string."""
     resolved: list[CPLToken] = []
     try:
@@ -1048,4 +1051,3 @@ class CPXRuntime:
 
     def __exit__(self, *args) -> None:
         self.stop()
-
